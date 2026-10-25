@@ -1,0 +1,16 @@
+.track {
+  display: flex;
+  overflow: hidden;
+  background: var(--hp-track);
+}
+
+.fill {
+  background: var(--hp);
+  transition: width 200ms ease-out;
+}
+
+.temp {
+  background: var(--pass);
+  opacity: 0.7;
+  transition: width 200ms ease-out;
+}

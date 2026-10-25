@@ -1,0 +1,35 @@
+.box {
+  min-width: 0;
+  border-radius: 6px;
+  padding: 6px 4px;
+  text-align: center;
+}
+
+.dark {
+  background: var(--chip-fill);
+  border: 1px solid var(--chip-border);
+}
+
+.parchment {
+  border: 1px solid #b89a62;
+}
+
+.label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.parchment .label {
+  color: var(--ink-3);
+}
+
+.value {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 17px;
+  white-space: nowrap;
+}

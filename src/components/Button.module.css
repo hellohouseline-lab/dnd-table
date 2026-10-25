@@ -1,3 +1,4 @@
+/* Variants use two classes so they beat link colours set by containers, such as parchment. */
 .button {
   display: inline-flex;
   align-items: center;
@@ -24,46 +25,46 @@
   opacity: 0.45;
 }
 
-.small {
+.button.small {
   height: 40px;
   padding: 0 16px;
   font-size: 13px;
 }
 
-.primary {
+.button.primary {
   background: var(--gold);
   color: var(--on-gold);
 }
 
-.primary:hover:not(:disabled) {
+.button.primary:hover:not(:disabled) {
   background: var(--gold-light);
   color: var(--on-gold);
 }
 
-.outline {
+.button.outline {
   background: none;
   border-color: var(--gold);
   color: var(--gold-light);
 }
 
-.outline:hover:not(:disabled) {
+.button.outline:hover:not(:disabled) {
   background: rgba(212, 175, 90, 0.12);
   color: var(--gold-light);
 }
 
-.ink {
+.button.ink {
   background: var(--ink);
   border-color: var(--parchment-rule);
   color: var(--gold-light);
 }
 
-.ink:hover:not(:disabled) {
+.button.ink:hover:not(:disabled) {
   background: #3a2818;
   color: var(--gold-light);
 }
 
-.quiet,
-.quietInk {
+.button.quiet,
+.button.quietInk {
   height: auto;
   padding: 0;
   background: none;
@@ -77,18 +78,18 @@
   text-underline-offset: 2px;
 }
 
-.quiet {
+.button.quiet {
   color: var(--gold);
 }
 
-.quiet:hover:not(:disabled) {
+.button.quiet:hover:not(:disabled) {
   color: var(--gold-light);
 }
 
-.quietInk {
+.button.quietInk {
   color: var(--wax);
 }
 
-.quietInk:hover:not(:disabled) {
+.button.quietInk:hover:not(:disabled) {
   color: var(--ink);
 }
