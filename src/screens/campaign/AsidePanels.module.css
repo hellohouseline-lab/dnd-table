@@ -1,0 +1,62 @@
+.people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a3e52;
+}
+
+.here {
+  background: var(--pass);
+}
+
+.name {
+  flex: 1;
+  font-size: 16px;
+}
+
+.state {
+  font-size: 15px;
+  color: var(--label);
+}
+
+.empty .name {
+  font-style: italic;
+  color: var(--label);
+}
+
+.preview {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  border: 1px dashed var(--dm-only);
+  background: #120e17;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7e7387;
+}
+
+.small {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--label);
+}

@@ -1,0 +1,115 @@
+.inkText {
+  font-size: 16px;
+  color: var(--ink-2);
+}
+
+.codeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0;
+}
+
+.codeLabel {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.code {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 44px;
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  padding-left: 0.2em;
+}
+
+.link {
+  padding: 10px 12px;
+  border: 1px solid rgba(138, 106, 42, 0.55);
+  border-radius: 6px;
+  background: #f4ead2;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.actions,
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+
+.confirm > span {
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.inkError {
+  color: var(--wax);
+  font-size: 15px;
+}
+
+.party {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.player {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  min-height: 52px;
+  padding: 6px 0;
+  border-top: 1px solid var(--chip-border);
+}
+
+.dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a3e52;
+}
+
+.here {
+  background: var(--pass);
+}
+
+.playerName {
+  flex: 1;
+  min-width: 120px;
+  font-size: 17px;
+}
+
+.tonight {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.tonight input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
