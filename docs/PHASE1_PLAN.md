@@ -32,7 +32,7 @@ Stack as `CLAUDE.md` says: Vite, React and TypeScript, one static page, hash rou
 
 ### Deploy to GitHub Pages
 
-One **workflow** file. On every push to `main` it installs, runs the tests, builds the site with the two Supabase settings baked in, then publishes with GitHub's own actions (`actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`). It needs the Pages source set to "GitHub Actions" in the repository settings (your step A2). The live address will be `https://hellohouseline-lab.github.io/dnd-table/`. Checked today: Pages has no single-page fallback, which is why we use hash routes; sites built by a custom workflow are not subject to the 10-builds-an-hour limit.
+One **workflow** file. On every push to `main` it installs, runs the tests, builds the site with the two Supabase settings baked in, then publishes with GitHub's own actions (`actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`). It needs the Pages source set to "GitHub Actions" in the repository settings (your step A1). The live address will be `https://hellohouseline-lab.github.io/dnd-table/`. Checked today: Pages has no single-page fallback, which is why we use hash routes; sites built by a custom workflow are not subject to the 10-builds-an-hour limit.
 
 ### Environment variables
 
@@ -51,10 +51,10 @@ One **workflow** file. On every push to `main` it installs, runs the tests, buil
 
 | Job | Library | Version | Note |
 | --- | --- | --- | --- |
-| 3D dice | `@3d-dice/dice-box` | 1.1.4 (Aug 2024) | Built on BabylonJS. Its dice models must be copied into `public/`. Updated slowly, so it sits behind our own small wrapper and can be swapped |
-| Battle map | `konva` + `react-konva` | 10.9.0 / 19.3.2 | Chosen over PixiJS 8.22 because dragging tokens on a 2D grid is its home ground. PixiJS can come in for weather effects in Phase 3 |
-| Audio | `howler` | 2.2.4 (2023) | Not actively developed but stable and used by 1.7 million projects a week. Also behind a wrapper |
-| Tests | Vitest, Playwright | current | Unit tests for the maths; one end-to-end test for the roll flow using two logged-in browsers |
+| 3D dice | `@3d-dice/dice-box` | 1.1.4 (Aug 2024) | Built on BabylonJS; its dice models are copied into `public/`. Slowly updated, so it sits behind our own thin wrapper |
+| Battle map | `konva` + `react-konva` | 10.9.0 / 19.3.2 | Chosen over PixiJS 8.22: dragging tokens on a 2D grid is its home ground |
+| Audio | `howler` | 2.2.4 (2023) | Stable, hugely used, no longer actively developed; also behind a wrapper |
+| Tests | Vitest, Playwright | current | Unit tests for the maths; one end-to-end test of the roll flow with two logged-in browsers |
 
 ## 2. Supabase
 
@@ -90,8 +90,8 @@ These rules live in the database, not just in the screens, so a curious player c
 3. Players cannot read: `combatant_secrets`, `roll_request_secrets`, `dm_notebook`, hidden tokens, maps and art not currently on stage, and DM secret rolls.
 4. Players can change only their own character, their own member row, their own token (when you allow it) and their own rolls.
 5. The DM can read and change everything in their campaign.
-6. **Secret DC.** When you keep the number hidden, the player's browser sends the dice values and bonus to a server function (a small piece of code that runs inside the database with its own rights). It reads the secret DC, decides pass or fail, saves the roll and returns the verdict. The player's screen never receives the number. When you choose to show the number, the browser can judge instantly for the animation, using the same tested maths.
-7. **Overlay links.** The OBS link carries a secret code. When OBS opens it the app makes a throwaway guest login (Supabase "anonymous sign-in"), hands over the code, and the database marks that guest as allowed to watch that campaign, read-only, with the same player-level limits. No real login inside OBS, no secret key in the page.
+6. **Secret DC.** When the number is hidden, the player's browser sends the dice values and bonus to a server function, which reads the secret DC, decides pass or fail, saves the roll and returns only the verdict. When you show the number, the browser judges instantly with the same tested maths.
+7. **Overlay links.** The OBS link carries a secret code. The app makes a throwaway guest login (Supabase anonymous sign-in), hands over the code, and the database lets that guest watch the campaign read-only, with player-level limits. No real login inside OBS.
 
 ### Live updates: what is broadcast and what is saved
 
@@ -118,13 +118,13 @@ A **bucket** is a folder of uploaded files. All three are private and served wit
 
 ### Staying free (limits checked today)
 
-500 MB database, 1 GB files, 5 GB downloads a month, 2 million live messages a month, 50 MB per upload, 200 live connections, and the project pauses after 7 days without activity. A four-hour session with five screens and four overlays uses roughly 150,000 live messages with the cursor throttle above, so about ten sessions a month fit comfortably. Browser caching is what keeps downloads under 5 GB. A tiny scheduled task in the deploy workflow reads one row every three days to keep the project awake; if it pauses anyway, you press "Restore project" in the dashboard before play. No Edge Functions are needed in Phase 1.
+500 MB database, 1 GB files, 5 GB downloads a month, 2 million live messages a month, 50 MB per upload, and the project pauses after 7 days idle. With the cursor throttle, a four-hour session uses roughly 150,000 live messages, so ten sessions a month fit. Browser caching keeps downloads under 5 GB. A small scheduled task reads one row every three days to keep the project awake; if it pauses anyway, press "Restore project" in the dashboard before play. No Edge Functions are needed in Phase 1.
 
 ## 3. Rules data
 
 **Where it comes from.** The `5e-bits/5e-database` repository named in the spec is now archived; its data moved into the `5e-bits/5e-srd-api` repository, folder `packages/5e-database/src/2014/en/` (24 files named `5e-SRD-Classes.json`, `5e-SRD-Monsters.json` and so on, about 4 MB). That folder is the 2014 SRD 5.1 data; the `2024` folder next to it is never touched.
 
-**How it gets in.** `scripts/import-srd.ts` downloads those files from one pinned commit, keeps what Phase 1 needs, converts them into our own slim shapes and writes `src/rules/srd/*.json`, each with a header naming the source commit and licence. The output is committed, so builds are repeatable and offline. Vitest checks the import (counts, a few known entries like Goblin and Longsword). Phase 1 uses: abilities and skills, conditions, equipment (weapons, armour, gear), classes, levels and features, races and traits, spells, monsters, rules text for hover explanations. Monsters load only on DM screens. Everything sits in `src/rules/`, so a later move to the 2024 rules or Open5e is a data swap, not a rebuild.
+**How it gets in.** `scripts/import-srd.ts` downloads those files from one pinned commit, keeps what Phase 1 needs (abilities and skills, conditions, equipment, classes, levels and features, races and traits, spells, monsters, rules text for hover explanations), converts them into our own slim shapes and writes `src/rules/srd/*.json`, each with a header naming the source commit and licence. The output is committed, so builds are repeatable, and Vitest checks it (counts and known entries such as Goblin and Longsword). Monsters load only on DM screens. Because it all sits in `src/rules/`, a later move to the 2024 rules or Open5e is a data swap, not a rebuild.
 
 **Credits.** A `#/credits` page, linked from the join screen footer and both DM headers, and a `CREDITS.md` in the repository, carry: the SRD 5.1 attribution statement word for word ("This work includes material taken from the System Reference Document 5.1 ("SRD 5.1") by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode."); the 5e-database MIT notice; game-icons.net CC BY 3.0 with each icon author used; dice-box themes (CC0); the fonts. An Open Game Licence notice is added when Open5e content arrives in Phase 2. Note: the 5e-database project labels its material as Open Game Licence; Wizards also publishes SRD 5.1 under CC-BY-4.0, which is the licence we credit, as `CLAUDE.md` asks.
 
@@ -163,7 +163,7 @@ Each milestone is its own branch, merged to `main` when it works, so the live si
 
 **Private test one-shot:** possible after milestone 5 for a theatre-of-the-mind game, after 6 if it has a fight. Cameras are not needed for the test (use Discord video). **First stream:** after 8 and a rehearsal.
 
-**Do the dates fit?** Honestly: mid-November (about three weeks away) is tight. It works only if the Supabase project and GitHub settings are done this week, and you try each milestone within a day or two of it landing. The build itself is not the slow part; your testing and the group's camera and OBS setup are. My estimate: milestones 0 to 6 by 15 to 20 November, so a test one-shot the weekend of 21 to 22 November is realistic, with 14 to 15 November possible for a fight-free one. First stream the weekend of 5 to 6 December fits if the test happens by 22 November and every player sets up VDO.Ninja and OBS during November, in parallel, not after.
+**Do the dates fit?** Honestly: mid-November (three weeks away) is tight. It needs the Supabase and GitHub settings done this week and each milestone tried within a day or two of landing. The build is not the slow part; your testing and the group's camera and OBS setup are. My estimate: milestones 0 to 6 by 15 to 20 November, so a test one-shot on 21 to 22 November is realistic, with 14 to 15 November possible for a fight-free one. A first stream on 5 to 6 December fits if the test happens by 22 November and every player sets up VDO.Ninja and OBS during November, in parallel.
 
 ## 6. What you do yourself
 
@@ -187,7 +187,7 @@ Everything with an account, a key or a password is yours to do. I will tell you 
 
 **C. An email sender (about five minutes)**
 
-Simplest: a Gmail **app password**. In your Google Account, **Security**, turn on **2-Step Verification**, then search the account settings for **App passwords**, name it `Supabase`, click **Create** and copy the 16-character password. In B7 use Host `smtp.gmail.com`, Port `465`, Username and Sender email your Gmail address, Password the app password. Gmail allows about 500 emails a day, far more than we need. If you would rather links come from an address at chessart.me, Resend's free tier works but needs DNS records at IONOS; say so and I will give the steps.
+Simplest: a Gmail **app password**. In your Google Account, **Security**, turn on **2-Step Verification**, then search the settings for **App passwords**, name it `Supabase`, click **Create** and copy the 16-character password. In B7 use Host `smtp.gmail.com`, Port `465`, Username and Sender email your Gmail address, Password the app password. If you would rather links come from a chessart.me address, Resend's free tier works but needs DNS records at IONOS; say so and I will give the steps.
 
 **D. Cameras (each player, before milestone 7)**
 
@@ -197,9 +197,9 @@ Simplest: a Gmail **app password**. In your Google Account, **Security**, turn o
 
 **E. OBS (each streamer, milestone 8; I will write the exact steps then)**
 
-In short: import the scene collection file the app gives you, add one **Browser** source with your personal overlay link at 1920 by 1080 on top, place everyone's VDO.Ninja view links and your own Twitch chat behind the windows, and hear game audio from one place only: either the app tab or the overlay with **Control audio via OBS** and monitoring on, never both.
+In short: import the scene collection file the app gives you, add one **Browser** source with your overlay link at 1920 by 1080 on top, place everyone's VDO.Ninja links and your own Twitch chat behind the windows, and hear game audio from one place only, the app tab or the overlay, never both.
 
-**F. Decisions and checks (section 7)**
+**F. Decisions and checks.** Answer the nine questions in section 7; the Envato and players' kit checks can run in parallel with the build.
 
 ## 7. Questions before I start, and things I noticed
 
@@ -219,8 +219,7 @@ In short: import the scene collection file the app gives you, add one **Browser*
 
 - The 5e-database repository in the spec is archived; its data lives on in `5e-srd-api`. Same files, same licence, no change to the plan.
 - Supabase's built-in login email is limited to 2 an hour and to team members. Step B7 is not optional; without it the first login night fails.
-- The DM screens show Phase 2 features (difficulty badge, XP sharing, scenes, NPCs, inventory, handouts, fog, difficult terrain). They are built as drawn and switched off, as `DESIGN_NOTES.md` asks, so they can be lit up in Phase 2 without redesign.
-- The Join screen shows a HP, AC, gold and items card; gold and items only mean something from Phase 2, so Phase 1 shows HP, AC and level.
+- The screens show several Phase 2 features (difficulty badge, XP sharing, scenes, NPCs, inventory, handouts, fog, difficult terrain, the gold and items on the Join card). They are built as drawn and switched off, as `DESIGN_NOTES.md` asks.
 - Supabase image resizing needs the Pro plan, so thumbnails are made in the browser on upload. Egress (5 GB a month) is the limit to watch, which is why caching is in milestone 5, not milestone 9.
 - The free project pauses after 7 days idle. The keep-awake task helps, but check the dashboard on session day.
 - dice-box and Howler are stable but slowly maintained. Both sit behind thin wrappers so they can be replaced without touching the screens.
@@ -234,14 +233,11 @@ In short: import the scene collection file the app gives you, add one **Browser*
 | Workflow (GitHub Actions) | A script GitHub runs for you on every change, here to build and publish the site |
 | Hash route | An address like `/#/play`. The part after `#` never leaves the browser, so a static host can serve every screen from one file |
 | Environment variable | A named setting kept outside the code, such as a web address or key |
-| Table | A list in the database, like one sheet in a spreadsheet |
 | Row-level security | Rules inside the database that decide, per row, who may read or change it |
 | Server function | A small piece of code that runs inside the database with its own rights, so the browser cannot cheat it |
 | Broadcast | A live message sent to everyone connected and then forgotten; nothing is saved |
-| Bucket | A folder of uploaded files |
 | Signed URL | A temporary link to a private file that expires |
 | Migration | A numbered SQL file that makes one change to the database, so the schema has a history too |
 | Magic link | A login email with a one-time link; no password |
 | SMTP | The way email is sent; "custom SMTP" means using your own sender rather than Supabase's |
 | Anonymous sign-in | A throwaway guest login with no email, used only by the OBS overlay |
-| Vitest, Playwright | Test tools: Vitest checks the maths, Playwright drives real browsers through the roll flow |
