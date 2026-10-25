@@ -20,3 +20,11 @@ private/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local-only files
+*.local
+*.log
+.claude/launch.json
+.vscode/*
+!.vscode/extensions.json
+.idea

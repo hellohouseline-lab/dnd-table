@@ -1,0 +1,24 @@
+.panel {
+  background: var(--panel-fill);
+  border: 1px solid var(--gold-rule);
+  box-shadow:
+    inset 0 0 0 3px var(--panel-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.25);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel p {
+  margin: 0;
+  color: var(--text-2);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 17px;
+}

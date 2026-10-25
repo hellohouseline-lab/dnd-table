@@ -1,0 +1,44 @@
+/* Design tokens from docs/DESIGN_NOTES.md. Use these names, not raw hex values, in components. */
+:root {
+  /* Surfaces */
+  --bg-page: #0d0a12;
+  --bg-scene: #1f1a27;
+  --panel-fill: rgba(16, 12, 20, 0.88);
+  --card-fill: #15101b;
+  --chip-fill: #1c1622;
+  --chip-border: #3a2f38;
+
+  /* Gold */
+  --gold-rule: #a8843c;
+  --gold: #d4af5a;
+  --on-gold: #1a1209;
+  --gold-light: #f0d58a;
+
+  /* Text on dark */
+  --text: #efe6d2;
+  --text-2: #d9cdb6;
+  --text-3: #bdb09a;
+  --label: #a99c85;
+
+  /* Parchment */
+  --parchment: #e9dab8;
+  --parchment-shade: #d8c69c;
+  --ink: #2b1d12;
+  --ink-2: #4a3522;
+  --ink-3: #5e4630;
+  --parchment-rule: #8a6a2a;
+  --wax: #8e2a22;
+
+  /* States */
+  --hp: #b8382e;
+  --hp-track: #3a2f38;
+  --pass: #86d4e8;
+  --fail: #e07b42;
+  --fail-light: #f2a777;
+  --dm-only: #5a4c5e;
+
+  /* Type */
+  --font-heading: 'Cinzel', Georgia, serif;
+  --font-display: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
+}
