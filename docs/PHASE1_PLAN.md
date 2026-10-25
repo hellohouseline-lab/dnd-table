@@ -51,7 +51,7 @@ One **workflow** file. On every push to `main` it installs, runs the tests, buil
 
 | Job | Library | Version | Note |
 | --- | --- | --- | --- |
-| 3D dice | `@3d-dice/dice-box` | 1.1.4 (Aug 2024) | Built on BabylonJS; its dice models are copied into `public/`. Slowly updated, so it sits behind our own thin wrapper |
+| 3D dice | `@3d-dice/dice-box` | 1.1.4 (Aug 2024) | Built on BabylonJS; its dice models are copied into `public/`. Slowly updated, so it sits behind our own thin wrapper. Metal, glass and stone dice are made as our own themes in milestone 3, using only free-to-use textures |
 | Battle map | `konva` + `react-konva` | 10.9.0 / 19.3.2 | Chosen over PixiJS 8.22: dragging tokens on a 2D grid is its home ground |
 | Audio | `howler` | 2.2.4 (2023) | Stable, hugely used, no longer actively developed; also behind a wrapper |
 | Tests | Vitest, Playwright | current | Unit tests for the maths; one end-to-end test of the roll flow with two logged-in browsers |
@@ -71,8 +71,8 @@ A **table** is a spreadsheet-like list in the database. Phase 1 needs these (all
 | `roll_request_secrets` | The DC for a request. Separate table so players can never read it | DM; read by the judging function |
 | `rolls` | Every roll: dice values, bonus breakdown, total, natural 20 or 1, pass or fail, DM override, secret flag | Players their own, via a server function; DM any |
 | `encounters` | A fight: round, whose turn, status | DM |
-| `combatants` | A row in turn order: name, initiative, token, conditions, health state (Healthy, Bloodied, Near death) | DM; players roll their own initiative |
-| `combatant_secrets` | Monster HP numbers, max HP and the SRD stat block snapshot | DM only, and only DM can read |
+| `combatants` | A row in turn order: shown name ("Unknown creature" until you reveal a monster), initiative, token, conditions, health state (Healthy, Bloodied, Near death) | DM; players roll their own initiative |
+| `combatant_secrets` | A monster's real name until revealed, HP numbers, max HP and the SRD stat block snapshot | DM only, and only DM can read |
 | `maps` | A battle map: image, grid size and offset | DM |
 | `tokens` | A piece on a map: who or what, size, position, hidden flag, colour | DM; players their own when the toggle is on |
 | `assets` | A library file: kind (scene, map, token, portrait, music, ambience, effect), name, tags, mood, stream-safe flag, credit, hotkey slot | DM; players their own portrait |
@@ -86,7 +86,7 @@ A **table** is a spreadsheet-like list in the database. Phase 1 needs these (all
 These rules live in the database, not just in the screens, so a curious player cannot work round them.
 
 1. You must be a member of a campaign to read anything in it.
-2. Players can read: the party (including each other's HP, as the camera tiles show), roll requests, non-secret rolls, turn order with health states only, the map and tokens that are on stage now, the current scene image, audio files (needed to play them), portraits and the session log entries marked visible.
+2. Players can read: the party (including each other's HP, as the camera tiles show), roll requests, non-secret rolls, turn order with health states only (and "Unknown creature" for any monster you haven't revealed), the map and tokens that are on stage now, the current scene image, audio files (needed to play them), portraits and the session log entries marked visible.
 3. Players cannot read: `combatant_secrets`, `roll_request_secrets`, `dm_notebook`, hidden tokens, maps and art not currently on stage, and DM secret rolls.
 4. Players can change only their own character, their own member row, their own token (when you allow it) and their own rolls.
 5. The DM can read and change everything in their campaign.
@@ -141,7 +141,7 @@ A **bucket** is a folder of uploaded files. All three are private and served wit
 | 7 | DM results (09) | Everyone's totals, passed and failed counts, per-row override, outcome buttons (damage those who failed, half to those who passed, apply a condition, just log it), Done, play on | "Tell the passers a secret" (handouts) |
 | 8 | DM Command (07) | Header with scene name and session clock, notebook (where we are, checklist, key items, quick note), Party tab with Damage or heal, Ask to roll, Rest; Log tab; verb bar: Ask for a roll, Start combat, Rest, Add a note | NPCs tab, Items and loot tab, Show an NPC, Give an item, Give item on cards, "view as player" |
 | 9 | DM Stage (11) | "What everyone sees" preview, art library (Places, Moments, People) with upload, put an image on stage, switch to a battle map, music by mood, ambience sliders, sound effects pad on keys 1 to 9, players-move-their-own-tokens toggle, a one-line "Scene now" name | Tonight's scenes list, people in this scene and lower thirds, Reveal hidden areas, DM-only dashed items, Chapter title card |
-| 10 | Player combat (05) and DM Encounter tab (10) | Start combat rolls monster initiative and prompts players, turn order on every screen, round counter, your-turn banner, This turn pips and End turn, grid map with tokens, movement circle from remaining speed, hands and pings, inspect card (name, art, health state), Acting now card with SRD actions, HP plus and minus, conditions, "Roll its attack in secret", Add a monster from the SRD, Next turn, End fight | Difficulty badge, Too hard? Rebalance, XP sharing, difficult terrain, fog |
+| 10 | Player combat (05) and DM Encounter tab (10) | Start combat rolls monster initiative and prompts players, turn order on every screen, round counter, your-turn banner, This turn pips and End turn, grid map with tokens, movement circle from remaining speed, hands and pings, inspect card (shown name, token picture, health state), Acting now card with SRD actions, HP plus and minus, conditions, "Roll its attack in secret", Add a monster from the SRD, Reveal name (players see "Unknown creature" until you click it), Next turn, End fight | Difficulty badge, Too hard? Rebalance, XP sharing, difficult terrain, fog |
 | 11 | Stream overlay (12) | One 1920 by 1080 link per streamer: frame with transparent camera and chat windows, name plates with HP, turn glow, turn order panel, the stage in the centre, roll toasts and nat 20 or 1 moments, now playing, the streamer's own character card. Pieces can be switched off in the link (`?stage=0`) for anyone who wants to layer differently | Lower third (NPC names, item reveals); the 3-player quest card corner stays empty |
 
 ## 5. Milestones
@@ -153,17 +153,19 @@ Each milestone is its own branch, merged to `main` when it works, so the live si
 | 0 | **Skeleton online.** App, fonts, colours, Panel and Parchment pieces, hash routes, deploy workflow, credits page | Open the live address and see a styled "table being built" page and the credits |
 | 1 | **Login and campaign.** Email links, campaign setup, join code, members, the Join screen, who is online | Log in, create the campaign, join as a player from a private browser window with the code |
 | 2 | **Character sheets.** SRD import, the sheet typed in with live maths, the player plate, "players edit only their own" | Type in a Dwarf Fighter, change Strength and watch attack bonus and saves move; try to edit someone else's and fail |
-| 3 | **Dice and the roll log.** 3D dice, free rolls, roll from a card or skill, advantage, nat 20 and 1 effects, the Log tab; everyone sees everyone's throw | Two browsers; roll in one, watch it land in both |
+| 3 | **Dice and the roll log.** 3D dice with metal, glass and stone materials as well as colours, free rolls, roll from a card or skill, advantage, nat 20 and 1 effects, the Log tab; everyone sees everyone's throw | Two browsers; pick glass dice in one, roll, watch them land in both |
 | 4 | **The roll flow.** Screens 08, 03, 04, 09 end to end, secret DC judged on the server, overrides and outcome buttons, status chips. Playwright test added here | Ask for a Constitution save from the DM screen, roll it as a player, apply damage to the failed |
 | 5 | **Notebook and stage.** DM Command with notebook, party cards, damage or heal, rest, notes; DM Stage with art upload, image on stage, music, ambience, effects, now playing | Upload a tavern image and a track, press play, hear it on the player screen a second later |
-| 6 | **Combat and the battle map.** Map upload with grid alignment, tokens, hands, pings, initiative, turn order, your turn, movement circle, Acting now, health states, conditions, end fight | Run a two-goblin fight across two browsers |
-| 7 | **Cameras in the app.** VDO.Ninja tiles in the column on every screen, name plates, turn glow, roll chips | Two laptops with webcams see each other inside the app |
+| 6 | **Combat and the battle map.** Map upload with grid alignment, tokens, hands, pings, initiative, turn order, your turn, movement circle, Acting now, health states, hidden monster names, conditions, end fight | Run a two-goblin fight across two browsers; the player sees "Unknown creature" until you click Reveal name |
+| 7 | **Cameras in the app.** Camera tiles in the column on every screen, name plates, turn glow, roll chips, built around whichever voice and camera setup wins your test call (step D) | Two laptops with webcams see and hear each other in sync |
 | 8 | **Stream overlay.** Overlay links, guest access, the 1920 by 1080 frame, stage mirror, toasts, own character card, an OBS scene collection file to import, audio through the overlay with "Control audio via OBS" | Add the browser source in OBS and watch a roll toast appear live |
 | 9 | **Rehearsal fixes.** Keyboard shortcuts for every DM verb and effect, caching, keep-awake, whatever the test session showed | A dry run with the whole group on OBS |
 
-**Private test one-shot:** possible after milestone 5 for a theatre-of-the-mind game, after 6 if it has a fight. Cameras are not needed for the test (use Discord video). **First stream:** after 8 and a rehearsal.
+**Private test one-shot:** possible after milestone 5 for a theatre-of-the-mind game, after 6 if it has a fight. Cameras in the app are not needed for the test (use whichever call setup you're trying). **First stream:** after 8 and a rehearsal.
 
 **Do the dates fit?** Honestly: mid-November (three weeks away) is tight. It needs the Supabase and GitHub settings done this week and each milestone tried within a day or two of landing. The build is not the slow part; your testing and the group's camera and OBS setup are. My estimate: milestones 0 to 6 by 15 to 20 November, so a test one-shot on 21 to 22 November is realistic, with 14 to 15 November possible for a fight-free one. A first stream on 5 to 6 December fits if the test happens by 22 November and every player sets up VDO.Ninja and OBS during November, in parallel.
+
+**Agreed on 25 October:** test one-shot with a fight on 21 to 22 November, first stream on 5 to 6 December, with 3 to 6 hours a week from you for trying milestones. The dice materials add a day or two to milestone 3; if that puts the test date at risk, I'll ask before moving anything.
 
 ## 6. What you do yourself
 
@@ -187,33 +189,37 @@ Everything with an account, a key or a password is yours to do. I will tell you 
 
 **C. An email sender (about five minutes)**
 
-Simplest: a Gmail **app password**. In your Google Account, **Security**, turn on **2-Step Verification**, then search the settings for **App passwords**, name it `Supabase`, click **Create** and copy the 16-character password. In B7 use Host `smtp.gmail.com`, Port `465`, Username and Sender email your Gmail address, Password the app password. If you would rather links come from a chessart.me address, Resend's free tier works but needs DNS records at IONOS; say so and I will give the steps.
+Simplest: a Gmail **app password**. In your Google Account, **Security**, turn on **2-Step Verification**, then search the settings for **App passwords**, name it `Supabase`, click **Create** and copy the 16-character password. In B7 use Host `smtp.gmail.com`, Port `465`, Username and Sender email your Gmail address, Password the app password. (Chosen on 25 October.)
 
-**D. Cameras (each player, before milestone 7)**
+**D. Voice and cameras (whole group, test before milestone 7)**
 
-1. Open vdo.ninja and click **Add your Camera to OBS**.
-2. Pick the camera. Set the audio source to **No Audio** (voice stays on Discord, so no echo). Click **Start**.
-3. Click the link icon at the top and copy the **view link** (it looks like `https://vdo.ninja/?view=xxxxxxxx`). Paste it into the **VDO.Ninja link** box on the Join screen. Bookmark the page: the same link works every session.
+You want voice and cameras in sync, so before milestone 7 run one short test call with the group and try:
+
+1. **Twitch Stream Together.** If it gives you voice and cameras in sync and works alongside the app and overlay, use it.
+2. **VDO.Ninja for voice and camera together.** One link per player carries both, so they stay in sync.
+3. **Discord for voice, VDO.Ninja for cameras.** The original plan. Simple, but voice and picture travel separately and can drift slightly.
+
+Tell me which one wins; milestones 7 and 8 are built around it. For options 2 and 3, each player makes a VDO.Ninja link: open vdo.ninja, click **Add your Camera to OBS**, pick the camera, choose the microphone for option 2 or **No Audio** for option 3, click **Start**, then copy the **view link** (it looks like `https://vdo.ninja/?view=xxxxxxxx`) into the **VDO.Ninja link** box on the Join screen. Bookmark the page: the same link works every session.
 
 **E. OBS (each streamer, milestone 8; I will write the exact steps then)**
 
-In short: import the scene collection file the app gives you, add one **Browser** source with your overlay link at 1920 by 1080 on top, place everyone's VDO.Ninja links and your own Twitch chat behind the windows, and hear game audio from one place only, the app tab or the overlay, never both.
+Your group streams from a mix of Macs and Windows PCs, so the steps will cover both. In short: import the scene collection file the app gives you, add one **Browser** source with your overlay link at 1920 by 1080 on top, place everyone's VDO.Ninja links and your own Twitch chat behind the windows, and hear game audio from one place only, the app tab or the overlay, never both.
 
-**F. Decisions and checks.** Answer the nine questions in section 7; the Envato and players' kit checks can run in parallel with the build.
+**F. Decisions.** All nine questions were answered on 25 October; see section 7.
 
-## 7. Questions before I start, and things I noticed
+## 7. Your answers (25 October), and things I noticed
 
-**Questions**
+**Answers**
 
-1. **Time and dates.** How many hours a week can you give to trying milestones? Do you accept the honest dates above (test one-shot 21 to 22 November, first stream 5 to 6 December), or should I plan for mid-November with a fight-free test?
-2. **Email sender.** Gmail app password as in C, or Resend with a chessart.me address?
-3. **Music licence.** Does your Envato Elements licence cover tracks playing on every player's channel, not only yours? Not a build blocker, but a first-stream blocker. Until confirmed, should the "stream-safe" tick default to off?
-4. **Players' kit.** Does every player have OBS and a camera, and which computers (Mac or Windows)? It changes how each stream captures game audio.
-5. **Voice.** Discord confirmed? The app assumes voice is outside it.
-6. **Phase 1 characters.** You pick race, class and background from SRD lists and type the numbers (HP, AC, scores); the app calculates everything else. Weapons come from the SRD list. No wizard until Phase 2. Happy with that for the first session?
-7. **Dice looks.** Phase 1 offers dice-box's built-in themes plus a dice colour and number colour per player. Metal, glass and stone materials come later. Fine?
-8. **One overlay link, not seven.** The spec lists seven separate OBS sources; the screen design draws one combined overlay. I plan one link per streamer with switches in the address for anyone who wants pieces separately. OK?
-9. **Monster names.** Should players see a monster's real name on the inspect card by default, or a name you type ("Hooded figure") until you reveal it? I plan: the token's label, which you can rename, plus health state.
+1. **Time and dates.** 3 to 6 hours a week. Test one-shot with a fight on 21 to 22 November, first stream on 5 to 6 December.
+2. **Email sender.** Gmail app password (step C).
+3. **Music licence.** Your Envato Elements licence covers music on every player's channel, so the "stream-safe" tick starts on for Envato tracks.
+4. **Players' kit.** Everyone has OBS and a camera. The group is a mix of Macs and Windows PCs, so the OBS audio steps cover both.
+5. **Voice.** Not fixed yet. You want voice and cameras in sync and will test a few setups, ideally Twitch Stream Together (step D). Milestones 7 and 8 wait on the result; nothing before them does.
+6. **Phase 1 characters.** Typed in by hand, with race, class and background from SRD lists. The wizard waits for Phase 2.
+7. **Dice looks.** Metal, glass and stone materials in Phase 1, built in milestone 3.
+8. **Overlay.** One link per streamer, with switches in the address to turn pieces off.
+9. **Monster names.** Hidden until revealed. Players see "Unknown creature" until you click Reveal name. The real name is kept in the DM-only table, so it never reaches players' browsers early.
 
 **Things I noticed that you should know**
 
