@@ -3,8 +3,11 @@ import { LoadingScreen } from '../components/LoadingScreen.tsx'
 import { CampaignScreen } from '../screens/campaign/CampaignScreen.tsx'
 import { NewCampaignScreen } from '../screens/campaign/NewCampaignScreen.tsx'
 import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
+import { CharacterEditorScreen } from '../screens/character/CharacterEditorScreen.tsx'
 import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
-import { JoinScreenPreview } from '../screens/dev/JoinScreenPreview.tsx'
+import { CharacterFormPreview, JoinScreenPreview, TablePreview } from '../screens/dev/JoinScreenPreview.tsx'
+import { SheetScreen } from '../screens/sheet/SheetScreen.tsx'
+import { TableScreen } from '../screens/table/TableScreen.tsx'
 import { JoinByCodeScreen } from '../screens/join/JoinByCodeScreen.tsx'
 import { NotConnectedScreen } from '../screens/NotConnectedScreen.tsx'
 import { NotFoundScreen } from '../screens/NotFoundScreen.tsx'
@@ -40,6 +43,34 @@ const ROUTES: Route[] = [
     signedIn: true,
     render: ({ campaignId }) => <CampaignScreen key={campaignId} campaignId={campaignId} />,
   },
+  {
+    pattern: '/c/:campaignId/play',
+    title: APP_NAME,
+    signedIn: true,
+    render: ({ campaignId }) => <TableScreen key={campaignId} campaignId={campaignId} />,
+  },
+  {
+    pattern: '/c/:campaignId/character/new',
+    title: `Your character · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId }) => <CharacterEditorScreen key={campaignId} campaignId={campaignId} />,
+  },
+  {
+    pattern: '/c/:campaignId/character/:characterId/edit',
+    title: `Edit character · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId, characterId }) => (
+      <CharacterEditorScreen key={characterId} campaignId={campaignId} characterId={characterId} />
+    ),
+  },
+  {
+    pattern: '/c/:campaignId/sheet/:characterId',
+    title: `Character sheet · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId, characterId }) => (
+      <SheetScreen key={characterId} campaignId={campaignId} characterId={characterId} />
+    ),
+  },
   { pattern: '/progress', title: `Build progress · ${APP_NAME}`, render: () => <ProgressScreen /> },
   { pattern: '/credits', title: `Credits · ${APP_NAME}`, render: () => <CreditsScreen /> },
   // Design previews with made-up data, only under `npm run dev`; the live build leaves them out.
@@ -51,6 +82,8 @@ const ROUTES: Route[] = [
           title: `Join preview · ${APP_NAME}`,
           render: ({ as }: Record<string, string>) => <JoinScreenPreview as={as} />,
         },
+        { pattern: '/dev/table', title: `Table preview · ${APP_NAME}`, render: () => <TablePreview /> },
+        { pattern: '/dev/character', title: `Character form preview · ${APP_NAME}`, render: () => <CharacterFormPreview /> },
       ]
     : []),
 ]
