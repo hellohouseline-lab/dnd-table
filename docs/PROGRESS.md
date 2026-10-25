@@ -9,6 +9,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - Phase 1 plan written and approved (`PHASE1_PLAN.md`); Matt's answers are in its section 7.
 - **Supabase and email set up (25 October).** Project `dnd-table` in West EU (Ireland), URL `https://ezvogsqupheisvruujwl.supabase.co`. Site URL and redirect URLs set (live site and `http://localhost:5180/**`), email and anonymous sign-ins on, Gmail custom SMTP working (test invite arrived), email rate limit 30 an hour. The URL and publishable key are GitHub repository secrets and in Matt's local `.env.local`.
 - **Milestone 0, skeleton online (25 October).** Vite, React and TypeScript on Node 24; colours and self-hosted fonts from `DESIGN_NOTES.md`; Panel, Parchment, gold divider and button pieces; hash routes (`#/`, `#/credits`, and a "Lost in the fog" page for anything else); a holding page showing build progress; the credits page with the SRD 5.1 statement; GitHub Actions lints, tests, builds and deploys on every push to `main`.
+- **Login code and Sign out button (25 October).** Login emails carry a code as well as the link (templates pasted into Supabase; Matt confirmed it works). Signed-in pages have Your tables and a Sign out button at the top right.
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
@@ -19,7 +20,6 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Paste the two login email templates** into Supabase (Authentication > Emails > Templates: Magic Link and Confirm signup), so emails include the code.
 - **Try milestone 1** on the live site (steps in the milestone 1 hand-over): sign in, start the campaign, and join as a player with a second email address.
 - **Before milestone 7:** a test call with the group to choose voice and cameras (step D): Twitch Stream Together, VDO.Ninja for both, or Discord plus VDO.Ninja.
 
