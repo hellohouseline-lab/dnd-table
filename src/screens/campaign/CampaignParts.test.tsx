@@ -18,7 +18,7 @@ const campaign: Campaign = {
 }
 
 function member(user_id: string, display_name: string, role: 'dm' | 'player', here_tonight = true): Member {
-  return { campaign_id: 'c1', user_id, display_name, role, here_tonight, joined_at: '2026-10-25T20:00:00Z' }
+  return { campaign_id: 'c1', user_id, display_name, role, here_tonight, joined_at: '2026-10-25T20:00:00Z', dice_style: {} }
 }
 
 const members = [member('dm', 'Matt', 'dm'), member('p1', 'Sam', 'player'), member('p2', 'Alex', 'player', false)]

@@ -14,6 +14,20 @@
   border: 1px solid #b89a62;
 }
 
+.button {
+  color: inherit;
+  font: inherit;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--gold);
+}
+
+.label,
+.value {
+  display: block;
+}
+
 .label {
   font-family: var(--font-heading);
   font-weight: 600;

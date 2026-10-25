@@ -68,11 +68,19 @@ export function customAttack(
   }
 }
 
-/** '1d8' and +3 give '1d8+3'; a bonus of 0 gives just '1d8'; −1 gives '1d8−1'. */
+/**
+ * '1d8' and +3 give '1d8+3'; a bonus of 0 gives just '1d8'; −1 gives '1d8−1'. With no dice the
+ * damage is flat, as for an unarmed strike: 1 + the bonus.
+ */
 export function damageText(dice: string, bonus: number): string {
-  if (!dice) return bonus > 0 ? String(bonus) : '1'
+  if (!dice) return String(flatDamage(bonus))
   if (bonus === 0) return dice
   return bonus > 0 ? `${dice}+${bonus}` : `${dice}−${Math.abs(bonus)}`
+}
+
+/** Damage with no dice, such as an unarmed strike: 1 + the bonus, never below 0. */
+export function flatDamage(bonus: number): number {
+  return Math.max(0, 1 + bonus)
 }
 
 /** Spell save DC: 8 + proficiency + the spellcasting ability's modifier. */

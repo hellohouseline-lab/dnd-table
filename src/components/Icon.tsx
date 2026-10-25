@@ -9,6 +9,8 @@ const PATHS = {
   star: ['M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z'],
   camera: ['M15 10l5-3v10l-5-3z', 'M5 6h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z'],
   d20: ['M12 2l8.7 5v10L12 22l-8.7-5V7z', 'M12 7.5l-5 9h10z'],
+  sword: ['M14.5 17.5L3 6V3h3l11.5 11.5', 'M13 19l6-6', 'M16 16l4 4'],
+  log: ['M6 3h12v18H6z', 'M9 8h6M9 12h6M9 16h4'],
 } as const
 
 export type IconName = keyof typeof PATHS
