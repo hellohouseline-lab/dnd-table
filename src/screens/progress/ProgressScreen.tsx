@@ -4,23 +4,24 @@ import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { Panel } from '../../components/Panel.tsx'
 import { Parchment } from '../../components/Parchment.tsx'
+import { SiteFooter } from '../../components/SiteFooter.tsx'
+import columns from '../columns.module.css'
 import { ROADMAP, STATUS_LABEL } from './roadmap.ts'
-import styles from './HomeScreen.module.css'
+import styles from './ProgressScreen.module.css'
 
-/** The holding page shown until sign-in arrives in milestone 1. */
-export function HomeScreen() {
+/** What works now and what's coming, milestone by milestone. Open to anyone, signed in or not. */
+export function ProgressScreen() {
   return (
     <Page>
       <PageHeader
-        eyebrow="The table is being built"
-        title="D&D Table"
-        subtitle="A private table for one party · 2014 rules"
-        note="Nothing to sign in to yet. Your DM will send you a link when the table opens."
+        eyebrow="Behind the scenes"
+        title="Build progress"
+        subtitle="What works now, and what's coming next"
       />
 
-      <div className={styles.columns}>
-        <section className={styles.main} aria-labelledby="roadmap-heading">
-          <h2 id="roadmap-heading" className={styles.sectionTitle}>
+      <div className={columns.columns}>
+        <section className={columns.main} aria-labelledby="roadmap-heading">
+          <h2 id="roadmap-heading" className={columns.sectionTitle}>
             How the build is going
           </h2>
           <Parchment corners>
@@ -39,7 +40,7 @@ export function HomeScreen() {
           </Parchment>
         </section>
 
-        <aside className={styles.side}>
+        <aside className={columns.side}>
           <Panel title="What this is">
             <p>
               A table for our group to play Dungeons &amp; Dragons together online: live dice, rolls the DM asks
@@ -54,11 +55,7 @@ export function HomeScreen() {
         </aside>
       </div>
 
-      <footer className={styles.footer}>
-        <a href={href('/credits')}>Credits</a>
-        <span aria-hidden="true">·</span>
-        <span>An unofficial fan project, not made or endorsed by Wizards of the Coast.</span>
-      </footer>
+      <SiteFooter />
     </Page>
   )
 }

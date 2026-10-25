@@ -1,0 +1,62 @@
+.quiet {
+  margin: 0;
+  color: var(--label);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 24px;
+  background: var(--parchment);
+  color: var(--ink);
+  border: 2px solid var(--parchment-rule);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 6px var(--parchment),
+    inset 0 0 0 7px rgba(138, 106, 42, 0.55);
+  text-decoration: none;
+}
+
+.card:hover {
+  color: var(--ink);
+  border-color: var(--wax);
+}
+
+.cardName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.cardRole {
+  font-size: 16px;
+  color: var(--ink-2);
+}
+
+.cardOpen {
+  margin-top: 10px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wax);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
