@@ -1,0 +1,19 @@
+.notice {
+  padding: 10px 14px;
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  font-size: 16px;
+  color: var(--text-2);
+}
+
+.error {
+  border-color: var(--fail);
+  background: rgba(224, 123, 66, 0.08);
+  color: var(--fail-light);
+}
+
+.success {
+  border-color: var(--pass);
+  background: rgba(134, 212, 232, 0.08);
+  color: var(--pass);
+}

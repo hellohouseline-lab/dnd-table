@@ -46,7 +46,7 @@ One **workflow** file. On every push to `main` it installs, runs the tests, buil
 
 ### Two technical choices worth knowing
 
-- **Login links and hash routes.** Supabase's default login flow puts a `?code=` in the address, not something after the `#`, so it does not fight our hash routes. We keep that default.
+- **Login links and hash routes.** (Corrected in milestone 1.) Supabase's browser default is the "implicit" flow, which puts the login after the `#` where our screens live. We keep it, because unlike the `?code=` (PKCE) flow it works whichever browser opens the email, and the app reads the login first, then tidies the address and opens the right screen.
 - **Libraries, checked today.** All MIT licensed and free.
 
 | Job | Library | Version | Note |

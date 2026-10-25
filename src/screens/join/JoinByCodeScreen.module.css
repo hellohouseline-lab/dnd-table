@@ -1,0 +1,82 @@
+.card {
+  align-items: center;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.tableName {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.15;
+}
+
+.party {
+  font-size: 18px;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.form {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.input {
+  height: 48px;
+  padding: 0 14px;
+  background: #f4ead2;
+  color: var(--ink);
+  border: 1px solid var(--parchment-rule);
+  border-radius: 6px;
+  font-size: 18px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--wax);
+  box-shadow: 0 0 0 1px var(--wax);
+}
+
+.input::placeholder {
+  color: #8f7a5e;
+}
+
+.hint {
+  font-size: 15px;
+  color: var(--ink-3);
+}
+
+.error {
+  padding: 8px 12px;
+  border: 1px solid var(--wax);
+  border-radius: 6px;
+  color: var(--wax);
+  font-size: 16px;
+}
+
+.retry {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
