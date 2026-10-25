@@ -4,6 +4,20 @@ import { customAttack, damageText, spellAttackBonus, spellSaveDc, weaponAbility,
 import { initiativeBonus, passiveScore, saveBonus, skillBonus } from './checks.ts'
 import { abilityModifier, formatBonus, proficiencyBonus } from './core.ts'
 import { gainTempHp, heal, suggestedMaxHp, takeDamage } from './hitPoints.ts'
+import { spellLevelName } from '../spellLevels.ts'
+
+describe('spellLevelName', () => {
+  it('names cantrips and each spell level', () => {
+    expect([0, 1, 2, 3, 4, 9].map(spellLevelName)).toEqual([
+      'Cantrips',
+      '1st level',
+      '2nd level',
+      '3rd level',
+      '4th level',
+      '9th level',
+    ])
+  })
+})
 
 const scores: AbilityScores = {
   strength: 16,
