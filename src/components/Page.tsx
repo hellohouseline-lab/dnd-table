@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { AccountBar } from './AccountBar.tsx'
 import { cx } from './cx.ts'
 import styles from './Page.module.css'
 
@@ -12,7 +13,10 @@ type PageProps = {
 export function Page({ width = 'wide', children }: PageProps) {
   return (
     <main className={styles.page}>
-      <div className={cx(styles.inner, styles[width])}>{children}</div>
+      <div className={cx(styles.inner, styles[width])}>
+        <AccountBar />
+        {children}
+      </div>
     </main>
   )
 }

@@ -1,5 +1,7 @@
 // Local development only (the route exists only under `npm run dev`): the Join screen with
 // made-up people, so its look can be checked without signing in. Buttons that save won't work here.
+import type { User } from '@supabase/supabase-js'
+import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import type { Campaign, Member } from '../../live/campaigns.ts'
 import { CampaignView } from '../campaign/CampaignScreen.tsx'
 
@@ -25,15 +27,19 @@ const noop = () => {}
 
 export function JoinScreenPreview({ as }: { as: string }) {
   const me = members.find((member) => member.user_id === (as === 'dm' ? 'dm' : 'p1')) ?? members[1]
+  // Pretend to be signed in, so the account bar and footer look as they do for real.
+  const signedIn: AuthState = { status: 'signedIn', user: { id: me.user_id } as User }
   return (
-    <CampaignView
-      table={campaign}
-      members={members}
-      me={me}
-      online={online}
-      siteUrl="http://localhost:5180/dnd-table/"
-      onCampaignChanged={noop}
-      onMembersChanged={noop}
-    />
+    <AuthContext.Provider value={signedIn}>
+      <CampaignView
+        table={campaign}
+        members={members}
+        me={me}
+        online={online}
+        siteUrl="http://localhost:5180/dnd-table/"
+        onCampaignChanged={noop}
+        onMembersChanged={noop}
+      />
+    </AuthContext.Provider>
   )
 }
