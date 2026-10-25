@@ -1,0 +1,44 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-25T19:35:00Z"},
+  "title": "D&D Table Screens",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "PlayerJoin.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 900, "title": "1 · Join and pick your character", "expand": "fill"},
+    "Main.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 900, "title": "2 · At the table (click the dice)", "expand": "fill", "is_interactive": true},
+    "PlayerRoll.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 900, "title": "3 · The DM calls for a roll", "expand": "fill"},
+    "PlayerResult.dc.html": {"x": 4560, "y": 0, "w": 1440, "h": 900, "title": "4 · Pass or fail (try the Outcome tweak)", "expand": "fill"},
+    "PlayerCombat.dc.html": {"x": 6080, "y": 0, "w": 1440, "h": 900, "title": "5 · Combat: your turn on the battle map", "expand": "fill"},
+    "PlayerSheet.dc.html": {"x": 7600, "y": 0, "w": 1440, "h": 900, "title": "6 · Inventory cards and the sheet", "expand": "fill"},
+    "DMCommand.dc.html": {"x": 0, "y": 1400, "w": 1440, "h": 900, "title": "7 · DM screen 1: story and party", "expand": "fill"},
+    "DMRollAsk.dc.html": {"x": 1520, "y": 1400, "w": 1440, "h": 900, "title": "8 · DM: ask for a roll", "expand": "fill"},
+    "DMRollResults.dc.html": {"x": 3040, "y": 1400, "w": 1440, "h": 900, "title": "9 · DM: the results", "expand": "fill"},
+    "DMCombat.dc.html": {"x": 4560, "y": 1400, "w": 1440, "h": 900, "title": "10 · DM screen 1: encounter tab", "expand": "fill"},
+    "DMStage.dc.html": {"x": 6080, "y": 1400, "w": 1440, "h": 900, "title": "11 · DM screen 2: stage, art and sound", "expand": "fill"},
+    "OBSOverlay.dc.html": {"x": 0, "y": 2800, "w": 1920, "h": 1080, "title": "12 · Stream overlay, 1920 × 1080"}
+  },
+  "order": [
+    "Main.dc.html",
+    "PlayerJoin.dc.html",
+    "PlayerRoll.dc.html",
+    "PlayerResult.dc.html",
+    "PlayerCombat.dc.html",
+    "PlayerSheet.dc.html",
+    "DMCommand.dc.html",
+    "DMRollAsk.dc.html",
+    "DMRollResults.dc.html",
+    "DMCombat.dc.html",
+    "DMStage.dc.html",
+    "OBSOverlay.dc.html"
+  ],
+  "notes": {
+    "rowPlayer": {"x": 0, "y": -300, "text": "Player screens", "kind": "title1", "maxW": 9040},
+    "rowDM": {"x": 0, "y": 1100, "text": "DM screens", "kind": "title1", "maxW": 7520},
+    "rowStream": {"x": 0, "y": 2500, "text": "Stream overlay", "kind": "title1", "maxW": 1920},
+    "rollFlow": {"x": 9200, "y": 0, "text": "Roll flow: the DM asks for a roll (8), each player gets the prompt (3), rolls and sees pass or fail (4), and the DM gets the results (9) to apply the outcome and play on.", "w": 420, "fill": "orange"},
+    "sample": {"x": 9200, "y": 640, "text": "Names, numbers and items are sample content to show layout. Camera tiles are 16:9 VDO.Ninja feeds; scene art comes from the DM's art library.", "w": 420, "fill": "gray"},
+    "dmLogic": {"x": 7600, "y": 1400, "text": "How the DM screens work. Screen 1 is your notebook: the story on the left, the party or the fight in the middle, cameras on the right, and big one-click actions along the bottom. Screen 2 is the stage: what everyone sees, the art library, the people in each scene, and sound.", "w": 440, "fill": "teal"}
+  },
+  "designSystems": []
+}

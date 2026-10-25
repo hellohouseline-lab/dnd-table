@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Player: combat, your turn</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cinzel+Decorative:wght@700&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#0D0A12}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:#D4AF5A}a:hover{color:#F0D58A}
+</style>
+</helmet>
+<div aria-label="Battle map" style="position: relative; height: 900px; overflow: hidden; background-color: #2A2430; background-image: linear-gradient(rgba(239,230,210,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(239,230,210,0.09) 1px, transparent 1px); background-size: 40px 40px; color: #EFE6D2; font-family: 'EB Garamond', Georgia, serif;">
+
+<div aria-hidden="true" style="position: absolute; left: 800px; top: 440px; width: 200px; height: 160px; box-sizing: border-box; border: 1px dashed #E07B42; background-image: repeating-linear-gradient(45deg, rgba(224,123,66,0.22) 0px, rgba(224,123,66,0.22) 6px, transparent 6px, transparent 12px);"></div>
+<span style="position: absolute; left: 806px; top: 604px; font-size: 15px; color: #F2A777;">Difficult terrain: costs double</span>
+
+<div aria-hidden="true" style="position: absolute; left: 460px; top: 220px; width: 400px; height: 400px; box-sizing: border-box; border-radius: 50%; border: 2px dashed #D4AF5A; background: rgba(212,175,90,0.12);"></div>
+<span style="position: absolute; left: 600px; top: 234px; font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; color: #F0D58A;">You can reach 25 ft</span>
+
+<div aria-label="You, Dwarf Fighter" style="position: absolute; left: 640px; top: 400px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #1C1622; border: 3px solid #D4AF5A; box-shadow: 0 0 16px rgba(212,175,90,0.5); display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">DF</div>
+<div aria-label="Elf Wizard" style="position: absolute; left: 520px; top: 520px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #1C1622; border: 2px solid #BDB09A; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">EW</div>
+<div aria-label="Halfling Rogue" style="position: absolute; left: 760px; top: 560px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #1C1622; border: 2px solid #BDB09A; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">HR</div>
+<div aria-label="Human Cleric" style="position: absolute; left: 560px; top: 280px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #1C1622; border: 2px solid #BDB09A; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">HC</div>
+<div aria-label="Goblin A" style="position: absolute; left: 840px; top: 320px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #3A1D14; border: 2px solid #E07B42; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">G1</div>
+<div aria-label="Goblin B" style="position: absolute; left: 880px; top: 480px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #3A1D14; border: 2px solid #E07B42; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">G2</div>
+<div aria-label="Hobgoblin" style="position: absolute; left: 960px; top: 400px; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; background: #3A1D14; border: 2px solid #E07B42; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">HB</div>
+
+<div role="dialog" aria-label="Inspecting Goblin A" style="position: absolute; left: 890px; top: 196px; width: 220px; box-sizing: border-box; background: rgba(16,12,20,0.94); border: 1px solid #E07B42; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; gap: 10px; align-items: center;">
+<div style="width: 42px; height: 42px; border-radius: 6px; background: #2A2231; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #A99C85;">Art</div>
+<div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 15px;">Goblin A</div><div style="font-size: 15px; color: #F2A777;">Healthy</div></div>
+</div>
+<div style="font-size: 14px; line-height: 1.35; color: #BDB09A;">Only what the party knows. The DM chooses what's revealed.</div>
+</div>
+
+<div style="position: absolute; left: 802px; top: 394px; display: flex; align-items: center; gap: 4px;">
+<svg aria-hidden="true" viewBox="0 0 24 24" style="width: 26px; height: 26px; fill: #D9CDB6; stroke: #15101B; stroke-width: 1.2; stroke-linejoin: round;"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6V3.5a1.5 1.5 0 0 1 3 0V11V5a1.5 1.5 0 0 1 3 0v6V7.5a1.5 1.5 0 0 1 3 0V15a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.7-3L4 15a1.6 1.6 0 0 1 2.6-1.8z"></path></svg>
+<span style="font-size: 14px; padding: 2px 8px; border-radius: 999px; background: rgba(16,12,20,0.92); color: #D9CDB6;">Player 2</span>
+</div>
+<div aria-hidden="true" style="position: absolute; left: 1040px; top: 600px; width: 36px; height: 36px; box-sizing: border-box; border-radius: 50%; border: 2px solid #86D4E8; box-shadow: 0 0 14px rgba(134,212,232,0.5);"></div>
+<span style="position: absolute; left: 1000px; top: 644px; font-size: 14px; padding: 2px 8px; border-radius: 999px; background: rgba(16,12,20,0.92); color: #86D4E8;">Player 3 pinged</span>
+
+<div style="position: absolute; top: 16px; left: 352px; right: 280px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+<span style="padding: 7px 18px; border-radius: 999px; background: #D4AF5A; color: #1A1209; font-family: Cinzel, serif; font-weight: 700; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase;">Your turn · Round 2</span>
+<div aria-label="Turn order" style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;">
+<sc-for list="{{order}}" as="o" hint-placeholder-count="7">
+<span style="padding: 3px 10px; border-radius: 999px; background: rgba(16,12,20,0.88); border: 1px solid {{o.border}}; color: {{o.color}}; font-size: 14px;">{{o.label}}</span>
+</sc-for>
+</div>
+</div>
+
+<div style="position: absolute; top: 16px; left: 16px; width: 320px; display: flex; flex-direction: column; gap: 10px;">
+<section aria-label="Your character" style="background: rgba(16,12,20,0.9); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.9), inset 0 0 0 4px rgba(212,175,90,0.25); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; gap: 12px; align-items: center;">
+<div style="width: 52px; height: 52px; flex: 0 0 auto; box-sizing: border-box; border-radius: 50%; border: 2px solid #D4AF5A; background: #2A2231;"></div>
+<div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">Dwarf Fighter</div><div style="font-size: 15px; color: #BDB09A;">Level 2 · you</div></div>
+</div>
+<div>
+<div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font-family: Cinzel, serif; font-weight: 600; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #A99C85;">Hit points</span><span style="font-family: Cinzel, serif; font-weight: 700; font-size: 22px;">17 <span style="font-size: 15px; color: #A99C85;">/ 20</span></span></div>
+<div style="height: 8px; border-radius: 4px; background: #3A2F38; margin-top: 6px;"><div style="width: 85%; height: 8px; border-radius: 4px; background: #B8382E;"></div></div>
+</div>
+<div style="display: flex; gap: 6px;">
+<div style="flex: 1; background: #1C1622; border: 1px solid #3A2F38; border-radius: 6px; padding: 6px; text-align: center;"><div style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: #A99C85;">AC</div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">18</div></div>
+<div style="flex: 1; background: #1C1622; border: 1px solid #3A2F38; border-radius: 6px; padding: 6px; text-align: center;"><div style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: #A99C85;">SPEED</div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">25</div></div>
+</div>
+</section>
+<section aria-label="This turn" style="background: rgba(16,12,20,0.9); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.9), inset 0 0 0 4px rgba(212,175,90,0.25); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 9px;">
+<div style="font-family: Cinzel, serif; font-weight: 600; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #A99C85;">This turn</div>
+<sc-for list="{{economy}}" as="e" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 16px;">
+<span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 50%; border: 2px solid {{e.color}}; background: {{e.fill}}; flex: 0 0 auto;"></span>
+<span style="flex: 1;">{{e.label}}</span>
+<span style="color: #BDB09A;">{{e.state}}</span>
+</div>
+</sc-for>
+<button style="margin-top: 4px; height: 44px; border-radius: 6px; background: none; border: 1px solid #D4AF5A; color: #F0D58A; font-family: Cinzel, serif; font-weight: 700; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;">End turn</button>
+</section>
+</div>
+
+<div aria-label="Your hand" style="position: absolute; bottom: 18px; left: 352px; right: 280px; display: flex; justify-content: center; align-items: flex-end; gap: 6px;">
+<sc-for list="{{hand}}" as="h" hint-placeholder-count="6">
+<button style="width: 96px; height: 128px; flex: 0 0 auto; box-sizing: border-box; border-radius: 8px; background: #15101B; border: {{h.border}}; box-shadow: inset 0 0 0 3px #15101B, inset 0 0 0 4px rgba(212,175,90,0.3); color: #EFE6D2; padding: 10px 7px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; opacity: {{h.opacity}}; transform: rotate({{h.rot}}deg) translateY({{h.lift}}px);">
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{h.tagColor}};">{{h.tag}}</span>
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px; line-height: 1.15;">{{h.name}}</span>
+<span style="font-size: 13px; line-height: 1.15; color: #BDB09A;">{{h.detail}}</span>
+</button>
+</sc-for>
+</div>
+
+<div style="position: absolute; left: 16px; bottom: 18px; display: flex; align-items: center; gap: 12px;">
+<button aria-label="Dice" aria-expanded="false" style="width: 84px; height: 84px; box-sizing: border-box; border-radius: 50%; background: #15101B; border: 2px solid #D4AF5A; box-shadow: inset 0 0 0 4px #15101B, inset 0 0 0 5px rgba(212,175,90,0.4); color: #F0D58A; display: flex; align-items: center; justify-content: center;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 40px; height: 40px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round;"><path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"></path><path d="M12 7.5l-5 9h10z"></path></svg></button>
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 15px;">Your dice</div>
+</div>
+
+<div aria-label="Cameras in turn order" style="position: absolute; top: 16px; right: 16px; width: 248px; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{cams}}" as="c" hint-placeholder-count="5">
+<div style="position: relative; width: 248px; height: 140px; box-sizing: border-box; border-radius: 6px; background: #120E17; border: {{c.border}}; box-shadow: {{c.glow}}; overflow: hidden;">
+<div style="position: absolute; inset: 0; padding-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7E7387;">Live camera 16:9</div>
+<span style="position: absolute; top: 6px; left: 6px; min-width: 28px; height: 28px; box-sizing: border-box; padding: 0 6px; border-radius: 14px; background: rgba(13,10,18,0.88); border: 1px solid {{c.chipColor}}; color: {{c.chipColor}}; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 13px;">{{c.chip}}</span>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: rgba(13,10,18,0.86);">
+<div style="flex: 1; min-width: 0;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">{{c.name}}</div>
+<div style="font-size: 13px; line-height: 1.1; color: #BDB09A;">{{c.who}}</div>
+</div>
+<sc-if value="{{c.hasHp}}" hint-placeholder-val="{{true}}">
+<div style="width: 64px; flex: 0 0 auto;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 11px; text-align: right;">{{c.hp}}</div>
+<div style="height: 4px; border-radius: 2px; background: #3A2F38;"><div style="height: 4px; border-radius: 2px; background: #B8382E; width: {{c.hpPct}}%;"></div></div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const quiet = '1px solid #3A2F38';
+    return {
+      cams: [
+        { name: 'Dwarf Fighter', who: 'Player 1 · acting now', chip: '18', chipColor: '#F0D58A', hasHp: true, hp: '17/20', hpPct: 85, border: '2px solid #D4AF5A', glow: '0 0 0 4px rgba(212,175,90,0.25), 0 0 24px rgba(212,175,90,0.35)' },
+        { name: 'Elf Wizard', who: 'Player 2 · next', chip: '14', chipColor: '#BDB09A', hasHp: true, hp: '12/14', hpPct: 86, border: quiet, glow: 'none' },
+        { name: 'Halfling Rogue', who: 'Player 3', chip: '11', chipColor: '#BDB09A', hasHp: true, hp: '9/15', hpPct: 60, border: quiet, glow: 'none' },
+        { name: 'Human Cleric', who: 'Player 4', chip: '6', chipColor: '#BDB09A', hasHp: true, hp: '17/17', hpPct: 100, border: quiet, glow: 'none' },
+        { name: 'Matt', who: 'Dungeon Master · monsters', chip: 'DM', chipColor: '#BDB09A', hasHp: false, border: quiet, glow: 'none' }
+      ],
+      order: [
+        { label: '18 Dwarf Fighter', border: '#D4AF5A', color: '#F0D58A' },
+        { label: '15 Goblin A', border: '#6A3A26', color: '#F2A777' },
+        { label: '14 Elf Wizard', border: '#3A2F38', color: '#D9CDB6' },
+        { label: '12 Hobgoblin', border: '#6A3A26', color: '#F2A777' },
+        { label: '11 Halfling Rogue', border: '#3A2F38', color: '#D9CDB6' },
+        { label: '9 Goblin B', border: '#6A3A26', color: '#F2A777' },
+        { label: '6 Human Cleric', border: '#3A2F38', color: '#D9CDB6' }
+      ],
+      economy: [
+        { label: 'Action', state: 'Ready', color: '#D4AF5A', fill: '#D4AF5A' },
+        { label: 'Bonus action', state: 'Ready', color: '#86D4E8', fill: '#86D4E8' },
+        { label: 'Reaction', state: 'Ready', color: '#BDB09A', fill: '#BDB09A' },
+        { label: 'Movement', state: '25 of 25 ft', color: '#D4AF5A', fill: 'transparent' }
+      ],
+      hand: [
+        { tag: 'Action', tagColor: '#F0D58A', name: 'Longsword', detail: '+5 · 1d8+3', border: '2px solid #F0D58A', opacity: 1, rot: -7, lift: 12 },
+        { tag: 'Action', tagColor: '#F0D58A', name: 'Handaxe', detail: 'Thrown · 1d6+3', border: '1px solid #A8843C', opacity: 1, rot: -4, lift: 4 },
+        { tag: 'Bonus', tagColor: '#86D4E8', name: 'Second Wind', detail: 'Heal 1d10+2', border: '1px solid #A8843C', opacity: 1, rot: -1, lift: 0 },
+        { tag: 'Feature', tagColor: '#86D4E8', name: 'Action Surge', detail: 'Extra action', border: '1px solid #A8843C', opacity: 1, rot: 1, lift: 0 },
+        { tag: 'Item', tagColor: '#BDB09A', name: 'Healing Potion', detail: '2d4+2 · ×2', border: '1px solid #A8843C', opacity: 1, rot: 4, lift: 4 },
+        { tag: 'Reaction', tagColor: '#BDB09A', name: 'Opportunity Attack', detail: 'On their turn', border: '1px solid #4A3E52', opacity: 0.45, rot: 7, lift: 12 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Dependencies and builds
+node_modules/
+dist/
+.vite/
+coverage/
+playwright-report/
+test-results/
+
+# Secrets: never commit these
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+
+# Private content: book text, licensed music and art stay out of this public repo
+# (they go in Supabase Storage). A local private/ folder is safe for scratch copies.
+private/
+
+# System files
+.DS_Store
+Thumbs.db

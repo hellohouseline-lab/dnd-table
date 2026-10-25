@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Player: pass or fail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cinzel+Decorative:wght@700&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#0D0A12}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:#D4AF5A}a:hover{color:#F0D58A}
+</style>
+</helmet>
+<div style="position: relative; height: 900px; overflow: hidden; background: #1F1A27; color: #EFE6D2; font-family: 'EB Garamond', Georgia, serif;">
+
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: #19141F;"></div>
+<div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 0; right: 280px; background: rgba(8,6,12,0.7);"></div>
+
+<div style="position: absolute; top: 0; bottom: 0; left: 0; right: 280px; display: flex; align-items: center; justify-content: center; padding: 24px;">
+<div role="status" aria-live="polite" style="position: relative; width: 540px; max-width: 100%; box-sizing: border-box; background: rgba(13,10,18,0.95); border: 1px solid {{color}}; box-shadow: inset 0 0 0 5px rgba(13,10,18,0.95), inset 0 0 0 6px {{soft}}, 0 0 70px {{glow}}; border-radius: 10px; padding: 28px 40px 32px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #A99C85;">Constitution saving throw</div>
+<div style="position: relative; width: 240px; height: 240px; display: flex; align-items: center; justify-content: center;">
+<svg aria-hidden="true" viewBox="0 0 240 240" style="position: absolute; inset: 0; width: 240px; height: 240px; fill: none; stroke: {{color}};">
+<circle cx="120" cy="120" r="114" style="stroke-width: 1.5; opacity: 0.85;"></circle>
+<circle cx="120" cy="120" r="102" style="stroke-width: 1; stroke-dasharray: 2 7; opacity: 0.8;"></circle>
+<circle cx="120" cy="120" r="92" style="stroke-width: 0.8; opacity: 0.5;"></circle>
+<path d="M120 50L180.6 85v70L120 190l-60.6-35V85z" style="stroke-width: 2; fill: #15101B;"></path>
+<path d="M120 82l-38 66h76z" style="stroke-width: 1.2; opacity: 0.7;"></path>
+</svg>
+<span style="position: relative; margin-top: 22px; font-family: Cinzel, serif; font-weight: 700; font-size: 44px; color: {{color}};">{{die}}</span>
+</div>
+<div style="font-family: Cinzel, serif; font-weight: 600; font-size: 20px;">{{die}} + 4 = {{total}} <span style="color: #A99C85;">vs DC 15</span></div>
+<div style="font-family: 'Cinzel Decorative', serif; font-weight: 700; font-size: 54px; line-height: 1.05; color: {{color}}; text-shadow: 0 0 22px {{glow}};">{{label}}</div>
+<div style="max-width: 420px; font-size: 18px; line-height: 1.45; color: #D9CDB6;">{{sub}}</div>
+<div style="font-size: 15px; font-style: italic; color: #A99C85;">Shown on your screen and on stream. The DM applies the outcome and play moves on.</div>
+</div>
+</div>
+
+<div aria-label="Cameras" style="position: absolute; top: 16px; right: 16px; width: 248px; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{cams}}" as="c" hint-placeholder-count="5">
+<div style="position: relative; width: 248px; height: 140px; box-sizing: border-box; border-radius: 6px; background: #120E17; border: {{c.border}}; overflow: hidden;">
+<div style="position: absolute; inset: 0; padding-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7E7387;">Live camera 16:9</div>
+<span style="position: absolute; top: 6px; right: 6px; font-family: Cinzel, serif; font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: rgba(13,10,18,0.88); border: 1px solid {{c.chipColor}}; color: {{c.chipColor}};">{{c.chip}}</span>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 5px 8px; background: rgba(13,10,18,0.86);">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">{{c.name}}</div>
+<div style="font-size: 13px; line-height: 1.1; color: #BDB09A;">{{c.who}}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"outcome":{"editor":"enum","options":["pass","fail","nat20","nat1"],"default":"pass"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const outcome = this.props.outcome ?? 'pass';
+    const looks = {
+      pass: { die: 14, total: 18, label: 'Passed', color: '#86D4E8', soft: 'rgba(134,212,232,0.45)', glow: 'rgba(134,212,232,0.35)', sub: 'Your total beats the DC. A spectral blue pass plays, and your camera tile shows it to everyone.' },
+      fail: { die: 7, total: 11, label: 'Failed', color: '#E07B42', soft: 'rgba(224,123,66,0.45)', glow: 'rgba(224,123,66,0.3)', sub: 'Your total falls short. The DM decides what happens and applies it in one click.' },
+      nat20: { die: 20, total: 24, label: 'Natural 20', color: '#F0D58A', soft: 'rgba(240,213,138,0.5)', glow: 'rgba(240,213,138,0.4)', sub: 'A burst of gold and a roar from the crowd, on screen and on stream. The total still decides: 24 beats the DC.' },
+      nat1: { die: 1, total: 5, label: 'Natural 1', color: '#E07B42', soft: 'rgba(224,123,66,0.45)', glow: 'rgba(224,123,66,0.3)', sub: 'A crack of thunder and a comic sting. The total still decides: 5 falls short.' }
+    };
+    const look = looks[outcome] || looks.pass;
+    const passed = look.total >= 15;
+    const quiet = '1px solid #3A2F38';
+    const mine = passed ? { chip: 'Passed', chipColor: '#86D4E8' } : { chip: 'Failed', chipColor: '#E07B42' };
+    return {
+      die: look.die,
+      total: look.total,
+      label: look.label,
+      color: look.color,
+      soft: look.soft,
+      glow: look.glow,
+      sub: look.sub,
+      cams: [
+        { name: 'Matt', who: 'Dungeon Master', border: quiet, chip: 'Results in', chipColor: '#BDB09A' },
+        { name: 'Dwarf Fighter', who: 'Player 1 · you', border: '2px solid ' + look.color, chip: mine.chip, chipColor: mine.chipColor },
+        { name: 'Elf Wizard', who: 'Player 2', border: quiet, chip: 'Failed', chipColor: '#E07B42' },
+        { name: 'Halfling Rogue', who: 'Player 3', border: quiet, chip: 'Passed', chipColor: '#86D4E8' },
+        { name: 'Human Cleric', who: 'Player 4', border: quiet, chip: 'Failed', chipColor: '#E07B42' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

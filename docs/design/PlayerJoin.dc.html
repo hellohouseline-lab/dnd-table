@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Player: join and pick a character</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cinzel+Decorative:wght@700&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#0D0A12}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:#D4AF5A}a:hover{color:#F0D58A}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; background: #0D0A12; color: #EFE6D2; font-family: 'EB Garamond', Georgia, serif; padding: 40px 24px;">
+<div style="max-width: 1160px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px;">
+
+<header style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+<div style="font-family: Cinzel, serif; font-weight: 600; font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase; color: #D4AF5A;">Take your seat at the table</div>
+<h1 style="margin: 0; font-family: 'Cinzel Decorative', serif; font-weight: 700; font-size: 48px; line-height: 1.1; color: #F0D58A;">[Campaign name]</h1>
+<div style="display: flex; align-items: center; gap: 12px; width: 360px; max-width: 100%;"><span style="flex: 1; height: 1px; background: #8A6A2A;"></span><span style="width: 8px; height: 8px; transform: rotate(45deg); background: #D4AF5A;"></span><span style="flex: 1; height: 1px; background: #8A6A2A;"></span></div>
+<div style="font-size: 18px; font-style: italic; color: #BDB09A;">A party of four · Run by Matt · Level 2</div>
+<div style="margin-top: 6px; font-size: 15px; color: #A99C85;">Signed in with your email link. No password needed.</div>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+<section aria-labelledby="choose" style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+<h2 id="choose" style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 22px;">Welcome back, Player 1. Choose your character</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+
+<article style="position: relative; background: #E9DAB8; color: #2B1D12; border: 2px solid #8A6A2A; border-radius: 6px; box-shadow: inset 0 0 0 6px #E9DAB8, inset 0 0 0 7px rgba(138,106,42,0.55); padding: 26px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; gap: 14px; align-items: center;">
+<div style="width: 84px; height: 84px; flex: 0 0 auto; box-sizing: border-box; border-radius: 50%; border: 2px solid #8A6A2A; box-shadow: inset 0 0 0 4px #E9DAB8, inset 0 0 0 5px rgba(138,106,42,0.6); background: #D8C69C; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #5E4630;">Portrait</div>
+<div>
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 22px; line-height: 1.15;">Dwarf Fighter</div>
+<div style="font-size: 16px; color: #4A3522;">Level 2 · Hill dwarf · Soldier</div>
+<div style="margin-top: 4px; font-size: 15px; font-style: italic; color: #5E4630;">Saved after last session</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+<div style="border: 1px solid #B89A62; border-radius: 6px; padding: 6px; text-align: center;"><div style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: #5E4630;">HP</div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 18px;">17/20</div></div>
+<div style="border: 1px solid #B89A62; border-radius: 6px; padding: 6px; text-align: center;"><div style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: #5E4630;">AC</div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 18px;">18</div></div>
+<div style="border: 1px solid #B89A62; border-radius: 6px; padding: 6px; text-align: center;"><div style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: #5E4630;">GOLD</div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 18px;">32</div></div>
+<div style="border: 1px solid #B89A62; border-radius: 6px; padding: 6px; text-align: center;"><div style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: #5E4630;">ITEMS</div><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 18px;">14</div></div>
+</div>
+<a href="Main.dc.html" style="height: 54px; border-radius: 6px; background: #2B1D12; border: 1px solid #8A6A2A; color: #F0D58A; font-family: Cinzel, serif; font-weight: 700; font-size: 16px; letter-spacing: 0.12em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; text-decoration: none;">Take your seat</a>
+</article>
+
+<article style="background: rgba(16,12,20,0.88); border: 1px dashed #8A6A2A; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 22px;">Forge a new character</div>
+<div style="font-size: 16px; line-height: 1.5; color: #BDB09A;">A guided wizard with a plain-English explanation at every choice. Everything comes filled in from the rules data.</div>
+<ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; font-size: 16px; color: #EFE6D2;">
+<li>Race and subrace</li>
+<li>Class</li>
+<li>Background</li>
+<li>Ability scores: standard set, point buy or rolled dice</li>
+<li>Starting equipment, picked as cards</li>
+<li>Spells, if your class casts them</li>
+</ol>
+<button style="margin-top: auto; height: 54px; border-radius: 6px; background: none; border: 1px solid #D4AF5A; color: #F0D58A; font-family: Cinzel, serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase;">Start the wizard</button>
+</article>
+</div>
+</section>
+
+<aside style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px;">
+<section aria-labelledby="table" style="background: rgba(16,12,20,0.88); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.88), inset 0 0 0 4px rgba(212,175,90,0.25); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+<h2 id="table" style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">At the table now</h2>
+<sc-for list="{{people}}" as="p" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: {{p.dot}}; flex: 0 0 auto;"></span>
+<span style="flex: 1; font-size: 16px;">{{p.name}}</span>
+<span style="font-size: 15px; color: #A99C85;">{{p.state}}</span>
+</div>
+</sc-for>
+</section>
+<section aria-labelledby="cam" style="background: rgba(16,12,20,0.88); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.88), inset 0 0 0 4px rgba(212,175,90,0.25); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+<h2 id="cam" style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">Your camera</h2>
+<div style="aspect-ratio: 16 / 9; border-radius: 6px; background: #120E17; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #7E7387;">Camera preview 16:9</div>
+<div style="display: flex; justify-content: space-between; font-size: 16px;"><span style="color: #BDB09A;">VDO.Ninja link</span><span style="color: #86D4E8; font-weight: 600;">Connected</span></div>
+<div style="font-size: 15px; line-height: 1.45; color: #A99C85;">The same feed appears in everyone's camera column and in every streamer's overlay.</div>
+</section>
+</aside>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      people: [
+        { name: 'Matt (DM)', state: 'Here', dot: '#86D4E8' },
+        { name: 'Player 1 · you', state: 'Choosing', dot: '#D4AF5A' },
+        { name: 'Player 2 · Elf Wizard', state: 'Here', dot: '#86D4E8' },
+        { name: 'Player 3 · Halfling Rogue', state: 'Joining', dot: '#D4AF5A' },
+        { name: 'Player 4 · Human Cleric', state: 'Not here yet', dot: '#4A3E52' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

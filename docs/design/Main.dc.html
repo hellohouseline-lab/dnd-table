@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Player: at the table</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cinzel+Decorative:wght@700&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#0D0A12}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:#D4AF5A}a:hover{color:#F0D58A}
+</style>
+</helmet>
+<div style="position: relative; height: 900px; overflow: hidden; background: #1F1A27; color: #EFE6D2; font-family: 'EB Garamond', Georgia, serif;">
+
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: #19141F;"></div>
+<div style="position: absolute; inset: 0; padding-right: 264px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center;">
+<div style="font-family: Cinzel, serif; font-weight: 600; font-size: 30px; letter-spacing: 0.08em; color: #8F8780;">[Full-screen scene art]</div>
+<div style="font-size: 19px; font-style: italic; color: #8F8780;">The DM's scene fills the screen. Everything else floats over it.</div>
+</div>
+
+<div style="position: absolute; top: 16px; left: 16px; width: 320px; display: flex; flex-direction: column; gap: 10px;">
+<section aria-label="Your character" style="background: rgba(16,12,20,0.88); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.88), inset 0 0 0 4px rgba(212,175,90,0.25); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; gap: 12px; align-items: center;">
+<div style="width: 60px; height: 60px; flex: 0 0 auto; box-sizing: border-box; border-radius: 50%; border: 2px solid #D4AF5A; box-shadow: inset 0 0 0 3px #15101B, inset 0 0 0 4px rgba(212,175,90,0.4); background: #2A2231; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #A99C85;">Portrait</div>
+<div>
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 18px; line-height: 1.15;">Dwarf Fighter</div>
+<div style="font-size: 15px; color: #BDB09A;">Level 2 · Player 1 (you)</div>
+</div>
+</div>
+<div>
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<span style="font-family: Cinzel, serif; font-weight: 600; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #A99C85;">Hit points</span>
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 22px;">17 <span style="font-size: 15px; color: #A99C85;">/ 20</span></span>
+</div>
+<div style="height: 8px; border-radius: 4px; background: #3A2F38; margin-top: 6px;"><div style="width: 85%; height: 8px; border-radius: 4px; background: #B8382E;"></div></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
+<div style="background: #1C1622; border: 1px solid #3A2F38; border-radius: 6px; padding: 6px 4px; text-align: center;">
+<div style="font-family: Cinzel, serif; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #A99C85;">{{s.label}}</div>
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">{{s.value}}</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-label="Abilities and conditions" style="background: rgba(16,12,20,0.88); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.88), inset 0 0 0 4px rgba(212,175,90,0.25); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px;">
+<sc-for list="{{abilities}}" as="a" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+<span style="font-family: Cinzel, serif; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; color: #A99C85;">{{a.k}}</span>
+<span style="width: 42px; height: 42px; box-sizing: border-box; border-radius: 50%; border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px #15101B, inset 0 0 0 4px rgba(212,175,90,0.3); background: #15101B; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-weight: 700; font-size: 15px; color: #F0D58A;">{{a.mod}}</span>
+<span style="font-size: 13px; color: #BDB09A;">{{a.score}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid #2E2533; padding-top: 10px; font-size: 15px;">
+<span><span style="color: #A99C85;">Conditions:</span> none</span>
+<span style="display: flex; align-items: center; gap: 6px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: none; stroke: #D4AF5A; stroke-width: 1.6; stroke-linejoin: round;"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z"></path></svg><span style="color: #A99C85;">Inspiration:</span> not yet</span>
+</div>
+</section>
+
+<nav aria-label="Panels" style="display: flex; gap: 5px;">
+<button aria-label="Character sheet" style="width: 60px; height: 56px; box-sizing: border-box; border-radius: 8px; background: rgba(16,12,20,0.88); border: 1px solid #A8843C; color: #EFE6D2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-family: Cinzel, serif; font-weight: 600; font-size: 10px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: #D4AF5A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h7M9 15h7"></path></svg>Sheet</button>
+<button aria-label="Inventory" style="width: 60px; height: 56px; box-sizing: border-box; border-radius: 8px; background: rgba(16,12,20,0.88); border: 1px solid #A8843C; color: #EFE6D2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-family: Cinzel, serif; font-weight: 600; font-size: 10px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: #D4AF5A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M5 8h14l-1 12H6z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>Items</button>
+<button aria-label="Features and spells" style="width: 60px; height: 56px; box-sizing: border-box; border-radius: 8px; background: rgba(16,12,20,0.88); border: 1px solid #A8843C; color: #EFE6D2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-family: Cinzel, serif; font-weight: 600; font-size: 10px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: #D4AF5A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M13 2L3 14h9l-1 8 10-12h-9z"></path></svg>Powers</button>
+<button aria-label="Journal" style="width: 60px; height: 56px; box-sizing: border-box; border-radius: 8px; background: rgba(16,12,20,0.88); border: 1px solid #A8843C; color: #EFE6D2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-family: Cinzel, serif; font-weight: 600; font-size: 10px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: #D4AF5A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"></path><path d="M4 21V5"></path></svg>Journal</button>
+<button aria-label="Handouts, one new" style="width: 60px; height: 56px; box-sizing: border-box; border-radius: 8px; background: rgba(16,12,20,0.88); border: 1px solid #F0D58A; color: #EFE6D2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-family: Cinzel, serif; font-weight: 600; font-size: 10px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: none; stroke: #F0D58A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M4 4h16v16H4z"></path><path d="M4 15l5-5 4 4 3-3 4 4"></path></svg>Lore</button>
+</nav>
+</div>
+
+<div style="position: absolute; top: 16px; left: 352px; right: 280px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+<div style="display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgba(16,12,20,0.85); border: 1px solid #3A2F38; font-size: 15px;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: none; stroke: #D4AF5A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg><span>Now playing: Tavern ambience</span></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 999px; background: rgba(16,12,20,0.9); border: 1px solid #D4AF5A; font-size: 15px;"><span>The DM shared a handout</span><button style="background: none; border: none; padding: 0; color: #F0D58A; font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 0.1em;">VIEW</button></div>
+</div>
+
+<div aria-label="Your hand" style="position: absolute; bottom: 18px; left: 352px; right: 280px; display: flex; justify-content: center; align-items: flex-end; gap: 6px;">
+<sc-for list="{{hand}}" as="h" hint-placeholder-count="6">
+<button style="width: 96px; height: 136px; flex: 0 0 auto; box-sizing: border-box; border-radius: 8px; background: #15101B; border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px #15101B, inset 0 0 0 4px rgba(212,175,90,0.3); color: #EFE6D2; padding: 9px 7px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; transform: rotate({{h.rot}}deg) translateY({{h.lift}}px);">
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{h.tagColor}};">{{h.tag}}</span>
+<span style="flex: 1; display: flex; align-items: center; justify-content: center; color: #D4AF5A;">
+<sc-if value="{{h.isWeapon}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"></path><path d="M13 19l6-6"></path><path d="M16 16l4 4"></path></svg></sc-if>
+<sc-if value="{{h.isFeature}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M13 2L3 14h9l-1 8 10-12h-9z"></path></svg></sc-if>
+<sc-if value="{{h.isItem}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M9 3h6"></path><path d="M10 3v6L4.5 18.5A2 2 0 0 0 6.2 21.5h11.6a2 2 0 0 0 1.7-3L14 9V3"></path></svg></sc-if>
+</span>
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 11px; line-height: 1.15;">{{h.name}}</span>
+<span style="font-size: 12px; line-height: 1.15; color: #BDB09A;">{{h.detail}}</span>
+</button>
+</sc-for>
+</div>
+
+<div style="position: absolute; left: 16px; bottom: 18px; display: flex; align-items: center; gap: 12px;">
+<button aria-label="Dice" aria-expanded="{{diceOpen}}" onClick="{{toggleDice}}" style="width: 84px; height: 84px; box-sizing: border-box; border-radius: 50%; background: #15101B; border: 2px solid #D4AF5A; box-shadow: inset 0 0 0 4px #15101B, inset 0 0 0 5px rgba(212,175,90,0.4), 0 0 24px rgba(212,175,90,0.25); color: #F0D58A; display: flex; align-items: center; justify-content: center;"><svg aria-hidden="true" viewBox="0 0 24 24" style="width: 40px; height: 40px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round;"><path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"></path><path d="M12 7.5l-5 9h10z"></path></svg></button>
+<div>
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 15px;">Your dice</div>
+<div style="font-size: 14px; color: #BDB09A;">Obsidian, gold numbers</div>
+</div>
+</div>
+
+<sc-if value="{{diceOpen}}" hint-placeholder-val="{{true}}">
+<div role="dialog" aria-label="Choose dice" style="position: absolute; left: 16px; bottom: 116px; width: 300px; box-sizing: border-box; background: rgba(16,12,20,0.94); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px rgba(16,12,20,0.94), inset 0 0 0 4px rgba(212,175,90,0.3); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 15px;">Roll dice</span>
+<span style="font-size: 14px; color: #A99C85;">Pick a die, then how many</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<sc-for list="{{dice}}" as="d" hint-placeholder-count="7">
+<button aria-pressed="{{d.on}}" onClick="{{d.pick}}" style="height: 44px; border-radius: 6px; background: {{d.bg}}; border: 1px solid {{d.border}}; color: {{d.color}}; font-family: Cinzel, serif; font-weight: 700; font-size: 14px;">{{d.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between;">
+<span style="font-size: 15px; color: #BDB09A;">How many</span>
+<div style="display: flex; align-items: center; gap: 8px;">
+<button aria-label="One fewer die" onClick="{{dec}}" style="width: 44px; height: 44px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38; color: #EFE6D2; font-size: 20px;">−</button>
+<span style="min-width: 24px; text-align: center; font-family: Cinzel, serif; font-weight: 700; font-size: 18px;">{{count}}</span>
+<button aria-label="One more die" onClick="{{inc}}" style="width: 44px; height: 44px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38; color: #EFE6D2; font-size: 20px;">+</button>
+</div>
+</div>
+<button style="height: 48px; border-radius: 6px; background: #D4AF5A; border: none; color: #1A1209; font-family: Cinzel, serif; font-weight: 700; font-size: 15px; letter-spacing: 0.08em;">Roll {{rollLabel}}</button>
+<div style="font-size: 14px; line-height: 1.35; color: #A99C85;">Rolling from a card adds your bonuses for you.</div>
+</div>
+</sc-if>
+
+<div aria-label="Cameras" style="position: absolute; top: 16px; right: 16px; width: 248px; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{cams}}" as="c" hint-placeholder-count="5">
+<div style="position: relative; width: 248px; height: 140px; box-sizing: border-box; border-radius: 6px; background: #120E17; border: {{c.border}}; box-shadow: {{c.glow}}; overflow: hidden;">
+<div style="position: absolute; inset: 0; padding-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7E7387;">
+<svg aria-hidden="true" viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;"><path d="M15 10l5-3v10l-5-3z"></path><rect x="3" y="6" width="12" height="12" rx="2"></rect></svg>
+<span>Live camera 16:9</span>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: rgba(13,10,18,0.86);">
+<div style="flex: 1; min-width: 0;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{c.name}}</div>
+<div style="font-size: 13px; line-height: 1.1; color: #BDB09A;">{{c.who}}</div>
+</div>
+<sc-if value="{{c.hasHp}}" hint-placeholder-val="{{true}}">
+<div style="width: 64px; flex: 0 0 auto;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 11px; text-align: right;">{{c.hp}}</div>
+<div style="height: 4px; border-radius: 2px; background: #3A2F38;"><div style="height: 4px; border-radius: 2px; background: #B8382E; width: {{c.hpPct}}%;"></div></div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const open = s.diceOpen ?? true;
+    const die = s.die ?? 'd20';
+    const count = s.count ?? 1;
+    const quiet = '1px solid #3A2F38';
+    return {
+      diceOpen: open,
+      toggleDice: () => this.setState({ diceOpen: !open }),
+      count: count,
+      inc: () => this.setState({ count: Math.min(10, count + 1) }),
+      dec: () => this.setState({ count: Math.max(1, count - 1) }),
+      rollLabel: count + die,
+      dice: ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'].map((d) => ({
+        label: d,
+        on: d === die ? 'true' : 'false',
+        pick: () => this.setState({ die: d }),
+        bg: d === die ? '#D4AF5A' : '#1C1622',
+        border: d === die ? '#D4AF5A' : '#3A2F38',
+        color: d === die ? '#1A1209' : '#EFE6D2'
+      })),
+      cams: [
+        { name: 'Matt', who: 'Dungeon Master', hasHp: false, border: quiet, glow: 'none' },
+        { name: 'Dwarf Fighter', who: 'Player 1 · you', hasHp: true, hp: '17/20', hpPct: 85, border: '2px solid #D4AF5A', glow: 'none' },
+        { name: 'Elf Wizard', who: 'Player 2', hasHp: true, hp: '12/14', hpPct: 86, border: quiet, glow: 'none' },
+        { name: 'Halfling Rogue', who: 'Player 3', hasHp: true, hp: '9/15', hpPct: 60, border: quiet, glow: 'none' },
+        { name: 'Human Cleric', who: 'Player 4', hasHp: true, hp: '17/17', hpPct: 100, border: quiet, glow: 'none' }
+      ],
+      stats: [
+        { label: 'AC', value: '18' },
+        { label: 'Speed', value: '25' },
+        { label: 'Init.', value: '+1' },
+        { label: 'Percep.', value: '11' }
+      ],
+      abilities: [
+        { k: 'STR', score: 16, mod: '+3' },
+        { k: 'DEX', score: 12, mod: '+1' },
+        { k: 'CON', score: 15, mod: '+2' },
+        { k: 'INT', score: 10, mod: '+0' },
+        { k: 'WIS', score: 12, mod: '+1' },
+        { k: 'CHA', score: 8, mod: '−1' }
+      ],
+      hand: [
+        { tag: 'Action', tagColor: '#F0D58A', name: 'Longsword', detail: '+5 · 1d8+3', isWeapon: true, rot: -7, lift: 12 },
+        { tag: 'Action', tagColor: '#F0D58A', name: 'Handaxe', detail: 'Thrown · 1d6+3', isWeapon: true, rot: -4, lift: 4 },
+        { tag: 'Bonus', tagColor: '#86D4E8', name: 'Second Wind', detail: 'Heal 1d10+2', isFeature: true, rot: -1, lift: 0 },
+        { tag: 'Feature', tagColor: '#86D4E8', name: 'Action Surge', detail: '1 use left', isFeature: true, rot: 1, lift: 0 },
+        { tag: 'Item', tagColor: '#BDB09A', name: 'Healing Potion', detail: '2d4+2 · ×2', isItem: true, rot: 4, lift: 4 },
+        { tag: 'Action', tagColor: '#F0D58A', name: 'Dodge', detail: 'Foes get disadv.', isFeature: true, rot: 7, lift: 12 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

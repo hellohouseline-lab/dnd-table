@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DM: roll results</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cinzel+Decorative:wght@700&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#0D0A12}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:#D4AF5A}a:hover{color:#F0D58A}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; background: #0D0A12; color: #EFE6D2; font-family: 'EB Garamond', Georgia, serif; display: flex; flex-direction: column;">
+
+<header style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 12px 20px; background: #120E17; border-bottom: 1px solid #3A2F38; opacity: 0.5;">
+<span style="font-family: 'Cinzel Decorative', serif; font-weight: 700; font-size: 20px; color: #F0D58A;">[Campaign name]</span>
+<span style="font-size: 17px; color: #BDB09A;">Scene now: Arrive at the tavern</span>
+</header>
+
+<div style="flex: 1; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px;">
+<div style="flex: 999 1 640px; min-width: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(8,6,12,0.7);">
+
+<div role="dialog" aria-labelledby="res" style="width: 700px; max-width: 100%; box-sizing: border-box; background: rgba(16,12,20,0.97); border: 1px solid #A8843C; box-shadow: inset 0 0 0 5px rgba(16,12,20,0.97), inset 0 0 0 6px rgba(212,175,90,0.3), 0 30px 80px rgba(0,0,0,0.55); border-radius: 10px; padding: 26px 30px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+<div>
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #D4AF5A;">The dice have spoken</div>
+<h2 id="res" style="margin: 2px 0 0; font-family: 'Cinzel Decorative', serif; font-weight: 700; font-size: 28px;">Constitution saving throw</h2>
+<div style="font-size: 17px; color: #BDB09A;">Needed 15 or more · number kept secret · everyone has rolled</div>
+</div>
+<div style="display: flex; gap: 8px;">
+<div style="width: 84px; padding: 8px 0; border-radius: 8px; border: 1px solid #86D4E8; text-align: center;"><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 28px; color: #86D4E8;">2</div><div style="font-size: 15px; color: #D9CDB6;">passed</div></div>
+<div style="width: 84px; padding: 8px 0; border-radius: 8px; border: 1px solid #E07B42; text-align: center;"><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 28px; color: #E07B42;">2</div><div style="font-size: 15px; color: #D9CDB6;">failed</div></div>
+</div>
+</div>
+
+<section aria-label="Each player's roll" style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border-radius: 8px; background: #1C1622; border: 1px solid #3A2F38;">
+<span style="flex: 1 1 160px; font-family: Cinzel, serif; font-weight: 700; font-size: 15px;">{{r.name}}</span>
+<span style="font-size: 17px; color: #BDB09A;">rolled {{r.die}} + {{r.bonus}} =</span>
+<span style="width: 34px; font-family: Cinzel, serif; font-weight: 700; font-size: 22px;">{{r.total}}</span>
+<span style="width: 74px; text-align: center; font-family: Cinzel, serif; font-weight: 700; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 0; border-radius: 999px; border: 1px solid {{r.color}}; color: {{r.color}};">{{r.result}}</span>
+<button style="height: 36px; padding: 0 10px; border-radius: 6px; background: none; border: 1px solid #3A2F38; color: #D9CDB6; font-size: 14px;">{{r.flip}}</button>
+</div>
+</sc-for>
+<div style="font-size: 15px; font-style: italic; color: #A99C85;">Human Cleric missed by 1. You can always change a result, for example to reward good roleplay.</div>
+</section>
+
+<section aria-labelledby="apply" style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #3A2F38; padding-top: 14px;">
+<h3 id="apply" style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 15px; letter-spacing: 0.06em;">What happens now?</h3>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<button style="height: 46px; border-radius: 6px; background: #1C1622; border: 1px solid #E07B42; color: #EFE6D2; font-size: 16px;">Damage the 2 who failed</button>
+<button style="height: 46px; border-radius: 6px; background: #1C1622; border: 1px solid #86D4E8; color: #EFE6D2; font-size: 16px;">Half damage to the 2 who passed</button>
+<button style="height: 46px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38; color: #EFE6D2; font-size: 16px;">Poison the ones who failed</button>
+<button style="height: 46px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38; color: #EFE6D2; font-size: 16px;">Tell the passers a secret</button>
+</div>
+</section>
+
+<div style="display: flex; gap: 8px;">
+<button style="flex: 1; height: 52px; border-radius: 6px; background: #D4AF5A; border: none; color: #1A1209; font-family: Cinzel, serif; font-weight: 700; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase;">Done, play on</button>
+<button style="height: 52px; padding: 0 18px; border-radius: 6px; background: none; border: 1px solid #3A2F38; color: #D9CDB6; font-size: 16px;">Just log it</button>
+</div>
+</div>
+</div>
+
+<aside aria-label="Cameras" style="flex: 0 0 248px; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{cams}}" as="c" hint-placeholder-count="5">
+<div style="position: relative; width: 248px; height: 140px; box-sizing: border-box; border-radius: 6px; background: #120E17; border: {{c.border}}; overflow: hidden;">
+<div style="position: absolute; inset: 0; padding-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7E7387;">Live camera 16:9</div>
+<sc-if value="{{c.hasChip}}" hint-placeholder-val="{{true}}"><span style="position: absolute; top: 6px; right: 6px; font-family: Cinzel, serif; font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: rgba(13,10,18,0.88); border: 1px solid {{c.chipColor}}; color: {{c.chipColor}};">{{c.chip}}</span></sc-if>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 5px 8px; background: rgba(13,10,18,0.86);">
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">{{c.name}}</span>
+</div>
+</div>
+</sc-for>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const quiet = '1px solid #3A2F38';
+    return {
+      cams: [
+        { name: 'Matt · you', border: '2px solid #D4AF5A', hasChip: false },
+        { name: 'Dwarf Fighter', border: quiet, hasChip: true, chip: 'Passed', chipColor: '#86D4E8' },
+        { name: 'Elf Wizard', border: quiet, hasChip: true, chip: 'Failed', chipColor: '#E07B42' },
+        { name: 'Halfling Rogue', border: quiet, hasChip: true, chip: 'Passed', chipColor: '#86D4E8' },
+        { name: 'Human Cleric', border: quiet, hasChip: true, chip: 'Failed', chipColor: '#E07B42' }
+      ],
+      rows: [
+        { name: 'Dwarf Fighter', die: 14, bonus: 4, total: 18, result: 'Passed', color: '#86D4E8', flip: 'Make it a fail' },
+        { name: 'Elf Wizard', die: 9, bonus: 2, total: 11, result: 'Failed', color: '#E07B42', flip: 'Make it a pass' },
+        { name: 'Halfling Rogue', die: 17, bonus: 1, total: 18, result: 'Passed', color: '#86D4E8', flip: 'Make it a fail' },
+        { name: 'Human Cleric', die: 12, bonus: 2, total: 14, result: 'Failed', color: '#E07B42', flip: 'Make it a pass' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

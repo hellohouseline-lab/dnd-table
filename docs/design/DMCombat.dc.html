@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DM screen 1: encounter tab</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cinzel+Decorative:wght@700&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#0D0A12}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:#D4AF5A}a:hover{color:#F0D58A}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; background: #0D0A12; color: #EFE6D2; font-family: 'EB Garamond', Georgia, serif; display: flex; flex-direction: column;">
+
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 12px 20px; background: #120E17; border-bottom: 1px solid #3A2F38;">
+<div style="display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;">
+<span style="font-family: 'Cinzel Decorative', serif; font-weight: 700; font-size: 20px; color: #F0D58A;">[Campaign name]</span>
+<span style="font-size: 17px; color: #BDB09A;">Chapter 2 · [Chapter name]</span>
+<span style="font-size: 17px; color: #BDB09A;">Scene now: <strong style="color: #EFE6D2;">Bar fight</strong></span>
+</div>
+<div style="display: flex; align-items: center; gap: 12px;">
+<span style="padding: 4px 12px; border-radius: 999px; border: 1px solid #E07B42; color: #F2A777; font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;">In combat · round 2</span>
+<a href="DMStage.dc.html" style="height: 40px; padding: 0 14px; border-radius: 6px; border: 1px solid #A8843C; color: #F0D58A; font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; text-decoration: none;">Screen 2: Stage</a>
+</div>
+</header>
+
+<div style="flex: 1; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px;">
+
+<aside aria-label="Story" style="flex: 0 1 300px; min-width: 260px; box-sizing: border-box; background: #E9DAB8; color: #2B1D12; border: 2px solid #8A6A2A; border-radius: 6px; box-shadow: inset 0 0 0 6px #E9DAB8, inset 0 0 0 7px rgba(138,106,42,0.55); padding: 22px 20px 18px; display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 16px; letter-spacing: 0.06em;">Where we are</h2>
+<p style="margin: 0; padding: 10px 12px; border-left: 3px solid #8E2A22; background: rgba(43,29,18,0.05); font-size: 17px; line-height: 1.45;">[A fight has broken out in the tavern. The goblins are after the merchant's ledger.]</p>
+<h2 style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 16px; letter-spacing: 0.06em;">Why this fight matters</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45;">[If the goblins escape with the ledger, the party loses the trail to the ruins.]</p>
+<h2 style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 16px; letter-spacing: 0.06em;">Read aloud when it ends</h2>
+<p style="margin: 0; font-size: 16px; font-style: italic; line-height: 1.45;">[Your prepped closing words for this fight.]</p>
+</aside>
+
+<main aria-label="Workspace" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+<div role="tablist" aria-label="DM panels" style="display: flex; gap: 6px; flex-wrap: wrap;">
+<a role="tab" aria-selected="false" href="DMCommand.dc.html" style="height: 42px; padding: 0 18px; border-radius: 6px; border: 1px solid #3A2F38; color: #D9CDB6; font-family: Cinzel, serif; font-weight: 600; font-size: 13px; display: flex; align-items: center; text-decoration: none;">Party</a>
+<button role="tab" aria-selected="true" style="height: 42px; padding: 0 18px; border-radius: 6px; background: #D4AF5A; border: 1px solid #D4AF5A; color: #1A1209; font-family: Cinzel, serif; font-weight: 700; font-size: 13px;">Encounter</button>
+<button role="tab" aria-selected="false" style="height: 42px; padding: 0 18px; border-radius: 6px; background: none; border: 1px solid #3A2F38; color: #D9CDB6; font-family: Cinzel, serif; font-weight: 600; font-size: 13px;">NPCs</button>
+<button role="tab" aria-selected="false" style="height: 42px; padding: 0 18px; border-radius: 6px; background: none; border: 1px solid #3A2F38; color: #D9CDB6; font-family: Cinzel, serif; font-weight: 600; font-size: 13px;">Items and loot</button>
+<button role="tab" aria-selected="false" style="height: 42px; padding: 0 18px; border-radius: 6px; background: none; border: 1px solid #3A2F38; color: #D9CDB6; font-family: Cinzel, serif; font-weight: 600; font-size: 13px;">Log</button>
+</div>
+
+<div style="flex: 1; display: flex; gap: 12px; flex-wrap: wrap;">
+<section aria-labelledby="order" style="flex: 999 1 380px; min-width: 0; background: rgba(16,12,20,0.9); border: 1px solid #A8843C; box-shadow: inset 0 0 0 3px #100C14, inset 0 0 0 4px rgba(212,175,90,0.22); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+<h2 id="order" style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 16px;">Turn order</h2>
+<span style="padding: 4px 10px; border-radius: 999px; border: 1px solid #86D4E8; color: #86D4E8; font-size: 15px;">Medium: a fair fight for 4 level 2 heroes</span>
+</div>
+<sc-for list="{{init}}" as="r" hint-placeholder-count="7">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; background: {{r.bg}}; border: {{r.border}};">
+<span style="width: 28px; font-family: Cinzel, serif; font-weight: 700; font-size: 17px;">{{r.init}}</span>
+<span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 600; color: {{r.color}};">{{r.name}}</span>
+<span style="width: 58px; font-family: Cinzel, serif; font-weight: 700; font-size: 14px;">{{r.hp}}</span>
+<span style="width: 74px; font-size: 14px; color: #BDB09A;">{{r.cond}}</span>
+<button aria-label="Damage {{r.name}}" style="width: 36px; height: 32px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38; color: #F2A777; font-weight: 700;">−</button>
+<button aria-label="Heal {{r.name}}" style="width: 36px; height: 32px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38; color: #86D4E8; font-weight: 700;">+</button>
+</div>
+</sc-for>
+</section>
+
+<section aria-labelledby="acting" style="flex: 1 1 260px; max-width: 300px; box-sizing: border-box; background: rgba(16,12,20,0.9); border: 1px solid #E07B42; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+<div style="font-family: Cinzel, serif; font-weight: 700; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #F2A777;">Acting now</div>
+<div style="display: flex; gap: 10px; align-items: center;">
+<div style="width: 52px; height: 52px; border-radius: 6px; background: #2A2231; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #A99C85;">Art</div>
+<div><h2 id="acting" style="margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 18px;">Goblin A</h2><div style="font-size: 15px; color: #BDB09A;">AC 15 · HP 7/7 · speed 30 ft</div></div>
+</div>
+<div style="font-size: 15px; line-height: 1.4; color: #D9CDB6;">What it can do this turn:</div>
+<div style="padding: 8px 10px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38;"><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 13px;">Scimitar</div><div style="font-size: 15px; color: #BDB09A;">+4 to hit · 1d6+2 slashing</div></div>
+<div style="padding: 8px 10px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38;"><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 13px;">Shortbow</div><div style="font-size: 15px; color: #BDB09A;">+4 to hit · 1d6+2 piercing</div></div>
+<div style="padding: 8px 10px; border-radius: 6px; background: #1C1622; border: 1px solid #3A2F38;"><div style="font-family: Cinzel, serif; font-weight: 700; font-size: 13px;">Nimble Escape</div><div style="font-size: 15px; color: #BDB09A;">Bonus action: disengage or hide</div></div>
+<button style="margin-top: auto; height: 44px; border-radius: 6px; background: #1C1622; border: 1px solid #E07B42; color: #EFE6D2; font-size: 16px;">Roll its attack in secret</button>
+</section>
+</div>
+
+<nav aria-label="Combat actions" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;">
+<button style="height: 60px; border-radius: 8px; background: #D4AF5A; border: none; color: #1A1209; font-family: Cinzel, serif; font-weight: 700; font-size: 13px;">Next turn</button>
+<a href="DMRollAsk.dc.html" style="height: 60px; box-sizing: border-box; border-radius: 8px; background: rgba(16,12,20,0.9); border: 1px solid #A8843C; color: #EFE6D2; font-family: Cinzel, serif; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none;">Ask for a roll</a>
+<button style="height: 60px; border-radius: 8px; background: rgba(16,12,20,0.9); border: 1px solid #A8843C; color: #EFE6D2; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">Add a monster</button>
+<button style="height: 60px; border-radius: 8px; background: rgba(16,12,20,0.9); border: 1px solid #A8843C; color: #EFE6D2; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">Too hard? Rebalance</button>
+<button style="height: 60px; border-radius: 8px; background: rgba(16,12,20,0.9); border: 1px solid #A8843C; color: #EFE6D2; font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">End fight, share XP</button>
+</nav>
+</main>
+
+<aside aria-label="Cameras" style="flex: 0 0 248px; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{cams}}" as="c" hint-placeholder-count="5">
+<div style="position: relative; width: 248px; height: 140px; box-sizing: border-box; border-radius: 6px; background: #120E17; border: {{c.border}}; overflow: hidden;">
+<div style="position: absolute; inset: 0; padding-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7E7387;">Live camera 16:9</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 5px 8px; background: rgba(13,10,18,0.86); display: flex; justify-content: space-between; gap: 8px;">
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 12px;">{{c.name}}</span>
+<span style="font-family: Cinzel, serif; font-weight: 700; font-size: 11px; color: #BDB09A;">{{c.hp}}</span>
+</div>
+</div>
+</sc-for>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const quiet = '1px solid #3A2F38';
+    const row = { bg: '#1C1622', border: '1px solid transparent' };
+    return {
+      cams: [
+        { name: 'Matt · you', hp: 'DM', border: '2px solid #D4AF5A' },
+        { name: 'Dwarf Fighter', hp: '17/20', border: quiet },
+        { name: 'Elf Wizard', hp: '12/14', border: quiet },
+        { name: 'Halfling Rogue', hp: '9/15', border: quiet },
+        { name: 'Human Cleric', hp: '17/17', border: quiet }
+      ],
+      init: [
+        Object.assign({ init: 18, name: 'Dwarf Fighter', hp: '17/20', cond: 'Done', color: '#EFE6D2' }, row),
+        { init: 15, name: 'Goblin A', hp: '7/7', cond: 'Acting', color: '#F2A777', bg: '#2A1A14', border: '1px solid #E07B42' },
+        Object.assign({ init: 14, name: 'Elf Wizard', hp: '12/14', cond: 'Next', color: '#EFE6D2' }, row),
+        Object.assign({ init: 12, name: 'Hobgoblin', hp: '11/11', cond: '', color: '#F2A777' }, row),
+        Object.assign({ init: 11, name: 'Halfling Rogue', hp: '9/15', cond: 'Poisoned', color: '#EFE6D2' }, row),
+        Object.assign({ init: 9, name: 'Goblin B', hp: '4/7', cond: 'Bloodied', color: '#F2A777' }, row),
+        Object.assign({ init: 6, name: 'Human Cleric', hp: '17/17', cond: '', color: '#EFE6D2' }, row)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
