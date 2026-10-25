@@ -7,20 +7,17 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - 12 screens designed and reviewed with Matt (`design/`, `DESIGN_NOTES.md`).
 - Repository created: https://github.com/hellohouseline-lab/dnd-table (public). GitHub Pages switched on (step A1).
 - Phase 1 plan written and approved (`PHASE1_PLAN.md`); Matt's answers are in its section 7.
+- **Supabase and email set up (25 October).** Project `dnd-table` in West EU (Ireland), URL `https://ezvogsqupheisvruujwl.supabase.co`. Site URL and redirect URLs set (live site and `http://localhost:5180/**`), email and anonymous sign-ins on, Gmail custom SMTP working (test invite arrived), email rate limit 30 an hour. The URL and publishable key are GitHub repository secrets and in Matt's local `.env.local`.
 - **Milestone 0, skeleton online (25 October).** Vite, React and TypeScript on Node 24; colours and self-hosted fonts from `DESIGN_NOTES.md`; Panel, Parchment, gold divider and button pieces; hash routes (`#/`, `#/credits`, and a "Lost in the fog" page for anything else); a holding page showing build progress; the credits page with the SRD 5.1 statement; GitHub Actions lints, tests, builds and deploys on every push to `main`.
 
 ## Next
-- **Milestone 1, login and campaign:** email login links, campaign setup, join code, members, the Join screen, who is online.
+- **Milestone 1, login and campaign:** email login links, campaign setup, join code, members, the Join screen, who is online. First step: run `supabase login` (Matt clicks **Authorize** in the browser) and link the CLI to the project.
 
 ## Targets
 - Test one-shot with a fight: 21 to 22 November 2026.
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Before milestone 1** (`PHASE1_PLAN.md` section 6):
-  - Supabase steps B1 to B7. In B5 the local redirect is `http://localhost:5180/**`.
-  - Gmail app password, step C.
-  - GitHub step A2: add the two Supabase values as repository secrets.
 - **Before milestone 7:** a test call with the group to choose voice and cameras (step D): Twitch Stream Together, VDO.Ninja for both, or Discord plus VDO.Ninja.
 
 ## Notes for the next session
