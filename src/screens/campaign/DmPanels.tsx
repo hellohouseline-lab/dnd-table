@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from 'react'
+import { href } from '../../app/router.ts'
+import { ButtonLink } from '../../components/Button.tsx'
 import { buttonClassName } from '../../components/buttonClassName.ts'
 import { cx } from '../../components/cx.ts'
 import { Notice } from '../../components/Notice.tsx'
@@ -14,6 +16,7 @@ import {
 } from '../../live/campaigns.ts'
 import { messageFor } from '../../live/errors.ts'
 import { inviteLink } from '../../live/joinCode.ts'
+import type { Character } from '../../rules/character.ts'
 import { CampaignFields, type CampaignForm } from './CampaignFields.tsx'
 import { seatsFilled } from './describeParty.ts'
 import styles from './DmPanels.module.css'
@@ -98,12 +101,13 @@ export function DmInvitePanel({ campaign, siteUrl, onRenewed }: DmInviteProps) {
 type DmPartyProps = {
   campaign: Campaign
   members: Member[]
+  characters: Character[]
   online: ReadonlySet<string>
   onChanged: () => void
 }
 
-/** Everyone who has joined, with "Here tonight" and "Remove" for each player. */
-export function DmPartyPanel({ campaign, members, online, onChanged }: DmPartyProps) {
+/** Everyone who has joined, with their character, "Here tonight" and "Remove" for each player. */
+export function DmPartyPanel({ campaign, members, characters, online, onChanged }: DmPartyProps) {
   const players = members.filter((member) => member.role === 'player')
   const [removing, setRemoving] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -123,10 +127,20 @@ export function DmPartyPanel({ campaign, members, online, onChanged }: DmPartyPr
       <p>{seatsFilled(players.length, campaign.party_size)}.</p>
       {players.length > 0 && (
         <ul className={styles.party}>
-          {players.map((player) => (
+          {players.map((player) => {
+            const character = characters.find((c) => c.ownerId === player.user_id)
+            return (
             <li key={player.user_id} className={styles.player}>
               <span className={cx(styles.dot, online.has(player.user_id) && styles.here)} aria-hidden="true" />
-              <span className={styles.playerName}>{player.display_name}</span>
+              <span className={styles.playerName}>
+                {player.display_name}
+                <span className={styles.characterName}>{character ? ` · ${character.name}` : ' · no character yet'}</span>
+              </span>
+              {character && (
+                <ButtonLink href={href(`/c/${campaign.id}/sheet/${character.id}`)} variant="quiet">
+                  Sheet
+                </ButtonLink>
+              )}
               <label className={styles.tonight}>
                 <input
                   type="checkbox"
@@ -156,7 +170,8 @@ export function DmPartyPanel({ campaign, members, online, onChanged }: DmPartyPr
                 </button>
               )}
             </li>
-          ))}
+            )
+          })}
         </ul>
       )}
       {error && <Notice tone="error">{error}</Notice>}

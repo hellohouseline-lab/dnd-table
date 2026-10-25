@@ -1,15 +1,18 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
+import type { CharacterChange, CharacterRow } from './characterRows.ts'
 import { supabase } from './supabase.ts'
 
 // Each campaign has one private live channel, 'campaign:<id>'. The database only lets people at
-// that table use it. Everything on screen that needs it shares the one connection, which closes a
-// moment after the last user lets go, so React reopening a screen doesn't reconnect.
+// that table use it. It carries who is online (presence) and changes to the party's characters.
+// Everything on screen shares the one connection, which closes a moment after the last user
+// lets go, so React reopening a screen doesn't reconnect.
 
 type LiveCampaign = {
   channel: RealtimeChannel
   online: ReadonlySet<string>
-  listeners: Set<() => void>
+  presenceListeners: Set<() => void>
+  characterListeners: Set<(change: CharacterChange) => void>
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
@@ -30,11 +33,34 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
   const channel = supabase.channel(`campaign:${campaignId}`, {
     config: { private: true, presence: { key: userId } },
   })
-  const live: LiveCampaign = { channel, online: NOBODY, listeners: new Set(), users: 1 }
+  const live: LiveCampaign = {
+    channel,
+    online: NOBODY,
+    presenceListeners: new Set(),
+    characterListeners: new Set(),
+    users: 1,
+  }
+
   channel.on('presence', { event: 'sync' }, () => {
     live.online = new Set(Object.keys(channel.presenceState()))
-    live.listeners.forEach((listener) => listener())
+    live.presenceListeners.forEach((listener) => listener())
   })
+
+  // Listeners for database changes must be in place before subscribing.
+  channel.on<CharacterRow>(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'characters', filter: `campaign_id=eq.${campaignId}` },
+    (payload) => {
+      const change: CharacterChange | null =
+        payload.eventType === 'DELETE'
+          ? payload.old.id
+            ? { type: 'delete', id: payload.old.id }
+            : null
+          : { type: 'upsert', row: payload.new }
+      if (change) live.characterListeners.forEach((listener) => listener(change))
+    },
+  )
+
   channel.subscribe((status) => {
     if (status === 'SUBSCRIBED') void channel.track({ since: new Date().toISOString() })
   })
@@ -61,13 +87,30 @@ export function useOnlineIds(campaignId: string, userId: string): ReadonlySet<st
     const live = acquire(campaignId, userId)
     if (!live) return
     const update = () => setOnline(live.online)
-    live.listeners.add(update)
+    live.presenceListeners.add(update)
     update()
     return () => {
-      live.listeners.delete(update)
+      live.presenceListeners.delete(update)
       release(campaignId)
     }
   }, [campaignId, userId])
 
   return online
+}
+
+/** Calls `onChange` whenever a character at this table is added, changed or removed. */
+export function useCharacterChanges(
+  campaignId: string,
+  userId: string,
+  onChange: (change: CharacterChange) => void,
+): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.characterListeners.add(onChange)
+    return () => {
+      live.characterListeners.delete(onChange)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onChange])
 }

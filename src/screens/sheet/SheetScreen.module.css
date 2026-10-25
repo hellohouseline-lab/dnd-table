@@ -1,0 +1,13 @@
+.screen {
+  height: 100vh;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-page);
+}
+
+.panel {
+  flex: 1;
+  min-height: 0;
+}

@@ -2,6 +2,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { Campaign, Member } from '../../live/campaigns.ts'
+import { sampleFighter } from '../dev/sampleData.ts'
 import { AtTheTablePanel, CameraPanel } from './AsidePanels.tsx'
 import { DmDetailsPanel, DmInvitePanel, DmPartyPanel } from './DmPanels.tsx'
 import { PlayerChoices } from './PlayerChoices.tsx'
@@ -27,7 +28,13 @@ const text = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' '
 describe('At the table now', () => {
   const html = text(
     renderToStaticMarkup(
-      <AtTheTablePanel members={members} online={new Set(['dm'])} myId="p1" partySize={4} />,
+      <AtTheTablePanel
+        members={members}
+        characters={[sampleFighter]}
+        online={new Set(['dm'])}
+        myId="p1"
+        partySize={4}
+      />,
     ),
   )
 
@@ -36,9 +43,13 @@ describe('At the table now', () => {
     expect(html).toContain('Sam · you')
   })
 
+  it('names each player’s character', () => {
+    expect(html).toContain('Sam · you · Thorin Ironfist')
+  })
+
   it('says who is here, who is expected and who is out tonight', () => {
     expect(html).toMatch(/Matt \(DM\) Here/)
-    expect(html).toMatch(/Sam · you Not here yet/)
+    expect(html).toMatch(/Thorin Ironfist Not here yet/)
     expect(html).toMatch(/Alex Not tonight/)
   })
 
@@ -60,12 +71,23 @@ describe('The DM panels', () => {
 
   it('list the players with Here tonight and Remove, but not the DM', () => {
     const html = text(
-      renderToStaticMarkup(<DmPartyPanel campaign={campaign} members={members} online={new Set()} onChanged={noop} />),
+      renderToStaticMarkup(
+        <DmPartyPanel campaign={campaign} members={members} characters={[sampleFighter]} online={new Set()} onChanged={noop} />,
+      ),
     )
     expect(html).toContain('2 of 4 players have joined')
     expect(html.match(/Here tonight/g)).toHaveLength(2)
     expect(html.match(/Remove/g)).toHaveLength(2)
     expect(html).not.toContain('Matt')
+  })
+
+  it('show each player’s character with a link to the sheet, or that they have none yet', () => {
+    const html = renderToStaticMarkup(
+      <DmPartyPanel campaign={campaign} members={members} characters={[sampleFighter]} online={new Set()} onChanged={noop} />,
+    )
+    expect(text(html)).toContain('Sam · Thorin Ironfist')
+    expect(text(html)).toContain('Alex · no character yet')
+    expect(html).toContain('href="#/c/c1/sheet/fighter"')
   })
 
   it('fill the details form with the campaign as it is', () => {
@@ -75,11 +97,24 @@ describe('The DM panels', () => {
 })
 
 describe('The player cards', () => {
-  it('show both cards from the design, not usable yet', () => {
-    const html = renderToStaticMarkup(<PlayerChoices />)
-    expect(html).toContain('Your character')
+  it('offer to create a character when the player has none', () => {
+    const html = renderToStaticMarkup(<PlayerChoices campaignId="c1" />)
+    expect(text(html)).toContain('Create your character')
+    expect(html).toContain('href="#/c/c1/character/new"')
+  })
+
+  it('show the character card with Take your seat once there is one', () => {
+    const html = renderToStaticMarkup(<PlayerChoices campaignId="c1" character={sampleFighter} />)
+    expect(text(html)).toContain('Thorin Ironfist')
+    expect(text(html)).toContain('Level 2 · Hill Dwarf · Fighter')
+    expect(text(html)).toContain('17/20')
+    expect(html).toContain('href="#/c/c1/play"')
+  })
+
+  it('keep the wizard card from the design, switched off until Phase 2', () => {
+    const html = renderToStaticMarkup(<PlayerChoices campaignId="c1" />)
     expect(html).toContain('Forge a new character')
-    expect(html.match(/disabled=""/g)).toHaveLength(2)
+    expect(html.match(/disabled=""/g)).toHaveLength(1)
   })
 
   it('keep the camera box from the design', () => {

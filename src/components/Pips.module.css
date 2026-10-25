@@ -1,0 +1,42 @@
+.pips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  vertical-align: middle;
+}
+
+.pip {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold-rule);
+  background: transparent;
+}
+
+button.pip:hover {
+  box-shadow: 0 0 0 2px rgba(212, 175, 90, 0.25);
+}
+
+.on.gold {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.pass {
+  border-color: rgba(134, 212, 232, 0.6);
+}
+
+.on.pass {
+  background: var(--pass);
+  border-color: var(--pass);
+}
+
+.fail {
+  border-color: rgba(224, 123, 66, 0.6);
+}
+
+.on.fail {
+  background: var(--fail);
+  border-color: var(--fail);
+}

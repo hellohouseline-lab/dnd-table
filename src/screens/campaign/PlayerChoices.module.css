@@ -8,6 +8,18 @@
   gap: 16px;
 }
 
+.who {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .forge {
   background: var(--panel-fill);
   border: 1px dashed var(--parchment-rule);
@@ -30,6 +42,13 @@
   color: var(--ink-2);
 }
 
+.inkNote {
+  margin-top: 4px;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink-3);
+}
+
 .darkText {
   margin: 0;
   font-size: 16px;
@@ -48,4 +67,8 @@
 
 .push {
   margin-top: auto;
+}
+
+.centre {
+  align-self: center;
 }

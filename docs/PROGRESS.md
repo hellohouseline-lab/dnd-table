@@ -9,18 +9,23 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - Phase 1 plan written and approved (`PHASE1_PLAN.md`); Matt's answers are in its section 7.
 - **Supabase and email set up (25 October).** Project `dnd-table` in West EU (Ireland), URL `https://ezvogsqupheisvruujwl.supabase.co`. Site URL and redirect URLs set (live site and `http://localhost:5180/**`), email and anonymous sign-ins on, Gmail custom SMTP working (test invite arrived), email rate limit 30 an hour. The URL and publishable key are GitHub repository secrets and in Matt's local `.env.local`.
 - **Milestone 0, skeleton online (25 October).** Vite, React and TypeScript on Node 24; colours and self-hosted fonts from `DESIGN_NOTES.md`; Panel, Parchment, gold divider and button pieces; hash routes (`#/`, `#/credits`, and a "Lost in the fog" page for anything else); a holding page showing build progress; the credits page with the SRD 5.1 statement; GitHub Actions lints, tests, builds and deploys on every push to `main`.
+- **Milestone 2, character sheets (25 October).**
+  - Rules maths in `src/rules/maths/` (modifiers, proficiency, saves, skills, passives, attacks with finesse and versatile, spell DC and attack, hit points with temporary HP) with tests.
+  - SRD 5.1 (2014) data imported by `scripts/import-srd.ts` from 5e-database at commit `386930c` into `src/rules/srd/`; spells and feature descriptions load only when needed. Credited on the credits page and in `CREDITS.md`.
+  - Database: `characters` (one per player per campaign; players change only their own, the DM any; checks on scores, skills, conditions and HP) and a private `portraits` bucket; live updates through the campaign channel. 24 more database tests.
+  - Screens: the character form (`#/c/<id>/character/new` and `.../<character id>/edit`) fills in hit die, saves, spell slots, speed, languages, background skills and class features from the rules; anything can be typed instead. The table screen (`#/c/<id>/play`, design 02) has the plate, ability medallions, conditions, Inspiration, panel buttons and a camera column showing who is here and their HP. The Sheet and Powers tabs (design 06 frame) show every worked-out number and let the owner or DM change HP, temporary HP, hit dice, death saves, conditions, exhaustion, feature uses, spell slots and concentration. The DM opens any player's sheet from The party (`#/c/<id>/sheet/<character id>`). Inventory, Journal and Lore stay switched off until Phase 2.
 - **Login code and Sign out button (25 October).** Login emails carry a code as well as the link (templates pasted into Supabase; Matt confirmed it works). Signed-in pages have Your tables and a Sign out button at the top right.
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Milestone 2, character sheets:** SRD import, the sheet typed in with live maths, the player plate, "players edit only their own".
+- **Milestone 3, dice and the roll log:** 3D dice in metal, glass and stone, free rolls, roll from a card or skill, advantage, natural 20 and 1 effects, the Log tab; everyone sees everyone's throw.
 
 ## Targets
 - Test one-shot with a fight: 21 to 22 November 2026.
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Try milestone 1** on the live site (steps in the milestone 1 hand-over): sign in, start the campaign, and join as a player with a second email address.
+- **Try milestone 2** on the live site: as a player, create a character, take your seat, open Sheet and Powers; as the DM, open the player's sheet from The party and change their HP.
 - **Before milestone 7:** a test call with the group to choose voice and cameras (step D): Twitch Stream Together, VDO.Ninja for both, or Discord plus VDO.Ninja.
 
 ## Notes for the next session
@@ -31,4 +36,5 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - Database: the Supabase CLI is logged in and linked. `npm run db:push` applies new files in `supabase/migrations/`, `npm run db:types` regenerates `src/live/database.types.ts`, and `npm run test:db` runs the pgTAP tests in `supabase/tests/database/` against the live project inside a transaction that is always undone (no Docker on this Mac, so `supabase test db` can't run).
 - Supabase's advisor warns that signed-in users can call the security-definer functions and that the table rules apply to anonymous guests too. Both are on purpose: each function checks the caller, and guests can't join a table, so they see nothing (covered by tests). Leaked-password protection doesn't apply, as nobody uses passwords.
 - Login uses the implicit flow (see the corrected note in `PHASE1_PLAN.md` section 1). A link opened on a different device, such as a phone, signs in that device, so the email also carries a code: after asking for a login, the "Check your email" step has a box for it. The email wording lives in `supabase/templates/` and must match the dashboard's Magic Link and Confirm signup templates.
-- Design previews with made-up data, only under `npm run dev`: `#/dev/join/dm`, `#/dev/join/player` and `#/dev/check-email`.
+- Design previews with made-up data, only under `npm run dev`: `#/dev/join/dm`, `#/dev/join/player`, `#/dev/join/new`, `#/dev/table`, `#/dev/character` and `#/dev/check-email`. Sample characters live in `src/screens/dev/sampleData.ts` and are reused by the render tests.
+- To update the rules data, change the commit in `scripts/import-srd.ts`, run `node scripts/import-srd.ts`, and check `npm test`.

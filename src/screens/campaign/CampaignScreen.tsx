@@ -11,6 +11,8 @@ import { useOnlineIds } from '../../live/campaignChannel.ts'
 import { getCampaign, listMembers, type Campaign, type Member } from '../../live/campaigns.ts'
 import { siteUrl } from '../../live/supabase.ts'
 import { useLoad } from '../../live/useLoad.ts'
+import { useParty } from '../../live/useParty.ts'
+import type { Character } from '../../rules/character.ts'
 import columns from '../columns.module.css'
 import { AtTheTablePanel, CameraPanel } from './AsidePanels.tsx'
 import { describeParty, welcomeWord } from './describeParty.ts'
@@ -23,6 +25,7 @@ export function CampaignScreen({ campaignId }: { campaignId: string }) {
   const campaign = useLoad(() => getCampaign(campaignId), [campaignId])
   const members = useLoad(() => listMembers(campaignId), [campaignId])
   const online = useOnlineIds(campaignId, user.id)
+  const party = useParty(campaignId, user.id)
 
   // When someone new comes online, fetch the list again so their name appears.
   const memberList = members.status === 'ready' ? members.data : null
@@ -36,7 +39,7 @@ export function CampaignScreen({ campaignId }: { campaignId: string }) {
     if (name) document.title = `${name} · D&D Table`
   }, [name])
 
-  if (campaign.status === 'loading' || members.status === 'loading') return <LoadingScreen />
+  if (campaign.status === 'loading' || members.status === 'loading' || party.status === 'loading') return <LoadingScreen />
 
   if (campaign.status === 'error' || members.status === 'error') {
     const message = campaign.status === 'error' ? campaign.message : members.status === 'error' ? members.message : ''
@@ -73,6 +76,7 @@ export function CampaignScreen({ campaignId }: { campaignId: string }) {
       table={campaign.data}
       members={members.data}
       me={me}
+      characters={party.status === 'ready' ? party.characters : []}
       online={online}
       siteUrl={siteUrl()}
       onCampaignChanged={campaign.reload}
@@ -85,6 +89,7 @@ type CampaignViewProps = {
   table: Campaign
   members: Member[]
   me: Member
+  characters: Character[]
   online: ReadonlySet<string>
   siteUrl: string
   onCampaignChanged: () => void
@@ -92,7 +97,16 @@ type CampaignViewProps = {
 }
 
 /** What the Join screen shows once everything has loaded. */
-export function CampaignView({ table, members, me, online, siteUrl, onCampaignChanged, onMembersChanged }: CampaignViewProps) {
+export function CampaignView({
+  table,
+  members,
+  me,
+  characters,
+  online,
+  siteUrl,
+  onCampaignChanged,
+  onMembersChanged,
+}: CampaignViewProps) {
   const dm = members.find((member) => member.role === 'dm')
   const isDm = me.role === 'dm'
 
@@ -114,16 +128,28 @@ export function CampaignView({ table, members, me, online, siteUrl, onCampaignCh
           {isDm ? (
             <>
               <DmInvitePanel campaign={table} siteUrl={siteUrl} onRenewed={onCampaignChanged} />
-              <DmPartyPanel campaign={table} members={members} online={online} onChanged={onMembersChanged} />
+              <DmPartyPanel
+                campaign={table}
+                members={members}
+                characters={characters}
+                online={online}
+                onChanged={onMembersChanged}
+              />
               <DmDetailsPanel campaign={table} onSaved={onCampaignChanged} />
             </>
           ) : (
-            <PlayerChoices />
+            <PlayerChoices campaignId={table.id} character={characters.find((c) => c.ownerId === me.user_id)} />
           )}
         </section>
 
         <aside className={columns.side}>
-          <AtTheTablePanel members={members} online={online} myId={me.user_id} partySize={table.party_size} />
+          <AtTheTablePanel
+            members={members}
+            characters={characters}
+            online={online}
+            myId={me.user_id}
+            partySize={table.party_size}
+          />
           <CameraPanel />
         </aside>
       </div>
