@@ -1,0 +1,208 @@
+.screen {
+  position: relative;
+  height: 100vh;
+  min-height: 680px;
+  overflow: hidden;
+  background: var(--bg-page);
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 66px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid #2e2533;
+}
+
+.campaign {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerNote {
+  font-size: 16px;
+  color: var(--text-3);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.headerLink {
+  font-size: 15px;
+}
+
+.stage {
+  padding: 9px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.left {
+  position: absolute;
+  top: 82px;
+  left: 16px;
+  width: 330px;
+  bottom: 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notebook {
+  flex: 0 0 auto;
+}
+
+.ink {
+  margin: 0 0 10px;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+.dice {
+  position: absolute;
+  left: 16px;
+  bottom: 18px;
+  z-index: 5;
+}
+
+.centre {
+  position: absolute;
+  top: 82px;
+  bottom: 16px;
+  left: 362px;
+  right: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid var(--chip-border);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
+.tab:hover:not(:disabled) {
+  border-color: var(--gold-rule);
+}
+
+.tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tabOn,
+.tabOn:hover:not(:disabled) {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.verbs {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.verb {
+  height: 64px;
+  border-radius: 6px;
+  background: var(--card-fill);
+  border: 1px solid var(--gold-rule);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.verb svg {
+  color: var(--gold);
+}
+
+.verb:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+}
+
+.tray {
+  position: absolute;
+  top: 0;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
+}
+
+.tray[data-state='fading'] {
+  opacity: 0;
+}
+
+.toasts {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  z-index: 30;
+}
+
+/* Below the header, unlike on the player's screen. */
+.screen > .cameras {
+  top: 82px;
+}

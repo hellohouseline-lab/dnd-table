@@ -1,0 +1,10 @@
+.moments {
+  min-height: 100vh;
+  padding: 80px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 60px 40px;
+  background: var(--bg-scene);
+}

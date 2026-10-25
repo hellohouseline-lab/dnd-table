@@ -1,0 +1,149 @@
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-3);
+}
+
+.filter select {
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: var(--chip-fill);
+  border: 1px solid var(--chip-border);
+  color: var(--text);
+  font: inherit;
+}
+
+.empty {
+  margin: 12px 0;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 6px;
+  border-bottom: 1px solid rgba(58, 47, 56, 0.6);
+}
+
+.time {
+  align-self: start;
+  padding-top: 2px;
+  font-size: 14px;
+  color: var(--label);
+}
+
+.what {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 16px;
+}
+
+.who {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.chip {
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.secret {
+  border-color: var(--dm-only);
+}
+
+.moment {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nat20 .moment {
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+
+.nat1 .moment {
+  border-color: var(--fail);
+  color: var(--fail-light);
+}
+
+.sum {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.parts {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.damage {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--fail-light);
+}
+
+.total {
+  min-width: 48px;
+  text-align: right;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--gold-light);
+}

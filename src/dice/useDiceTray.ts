@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createDiceTray, type DiceTray, type TrayThrow } from './diceTray.ts'
 
 /**
- * Puts a 3D dice tray in the element given to `ref`. `throwDice` resolves once the dice land. If
+ * Puts a 3D dice tray in the element given to `attach` (as its ref). `throwDice` resolves once the dice land. If
  * the browser can't show 3D (no WebGL), it resolves straight away and only the result card shows.
  */
 export function useDiceTray() {
@@ -38,5 +38,5 @@ export function useDiceTray() {
     await tray?.throw(dice)
   }, [])
 
-  return { ref: setElement, throwDice }
+  return { attach: setElement, throwDice }
 }

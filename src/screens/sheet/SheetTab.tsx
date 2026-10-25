@@ -6,8 +6,8 @@ import { Icon } from '../../components/Icon.tsx'
 import { Pips } from '../../components/Pips.tsx'
 import { StatBox } from '../../components/StatBox.tsx'
 import type { TrackerPatch } from '../../live/characterRows.ts'
-import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
-import type { Character } from '../../rules/character.ts'
+import { ABILITIES, ABILITY_NAME, ABILITY_SHORT, type Ability } from '../../rules/abilities.ts'
+import type { AttackEntry, Character } from '../../rules/character.ts'
 import type { SkillRank } from '../../rules/maths/checks.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import { gainTempHp, heal, takeDamage } from '../../rules/maths/hitPoints.ts'
@@ -15,10 +15,20 @@ import { deriveSheet } from '../../rules/sheet.ts'
 import { CONDITIONS, findCondition, findWeapon } from '../../rules/srd/index.ts'
 import styles from './sheet.module.css'
 
-type TabProps = { character: Character; canEdit: boolean; onUpdate: (patch: TrackerPatch) => void }
+/** What clicking a number on the sheet rolls. Without it, the sheet only shows the numbers. */
+export type SheetRolls = {
+  ability: (ability: Ability) => void
+  save: (ability: Ability) => void
+  skill: (index: string) => void
+  initiative: () => void
+  attack: (attack: AttackEntry) => void
+  disabled?: boolean
+}
+
+type TabProps = { character: Character; canEdit: boolean; onUpdate: (patch: TrackerPatch) => void; rolls?: SheetRolls }
 
 /** Abilities, saves, skills, hit points and the other things that change in play, and attacks. */
-export function SheetTab({ character, canEdit, onUpdate }: TabProps) {
+export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
   const sheet = deriveSheet(character)
   const edit = canEdit ? onUpdate : undefined
 
@@ -27,23 +37,46 @@ export function SheetTab({ character, canEdit, onUpdate }: TabProps) {
       <div className={styles.column}>
         <Section title="Abilities">
           <div className={styles.abilityGrid}>
-            {ABILITIES.map((ability) => (
-              <div key={ability} className={styles.ability} title={ABILITY_NAME[ability]}>
-                <span className={styles.abilityShort}>{ABILITY_SHORT[ability]}</span>
-                <span className={styles.medallion}>{formatBonus(sheet.modifiers[ability])}</span>
-                <span className={styles.abilityScore}>{character.scores[ability]}</span>
-              </div>
-            ))}
+            {ABILITIES.map((ability) => {
+              const inside = (
+                <>
+                  <span className={styles.abilityShort}>{ABILITY_SHORT[ability]}</span>
+                  <span className={styles.medallion}>{formatBonus(sheet.modifiers[ability])}</span>
+                  <span className={styles.abilityScore}>{character.scores[ability]}</span>
+                </>
+              )
+              return rolls ? (
+                <button
+                  key={ability}
+                  type="button"
+                  className={cx(styles.ability, styles.rollable)}
+                  title={`Roll a ${ABILITY_NAME[ability]} check`}
+                  disabled={rolls.disabled}
+                  onClick={() => rolls.ability(ability)}
+                >
+                  {inside}
+                </button>
+              ) : (
+                <div key={ability} className={styles.ability} title={ABILITY_NAME[ability]}>
+                  {inside}
+                </div>
+              )
+            })}
           </div>
         </Section>
         <Section title="Saving throws">
           <ul className={styles.rows}>
             {sheet.saves.map((save) => (
-              <li key={save.ability} className={styles.row}>
+              <RollRow
+                key={save.ability}
+                title={`Roll a ${ABILITY_NAME[save.ability]} save`}
+                onRoll={rolls && (() => rolls.save(save.ability))}
+                disabled={rolls?.disabled}
+              >
                 <RankMarker rank={save.proficient ? 'proficient' : 'none'} />
                 <span className={styles.rowName}>{ABILITY_NAME[save.ability]}</span>
                 <span className={styles.bonus}>{formatBonus(save.bonus)}</span>
-              </li>
+              </RollRow>
             ))}
           </ul>
         </Section>
@@ -57,16 +90,21 @@ export function SheetTab({ character, canEdit, onUpdate }: TabProps) {
       </div>
 
       <div className={styles.column}>
-        <Section title="Skills" note="● proficient  ◆ expertise">
+        <Section title="Skills" note={rolls ? 'Click any to roll' : '● proficient  ◆ expertise'}>
           <ul className={styles.rows}>
             {sheet.skills.map((skill) => (
-              <li key={skill.index} className={styles.row}>
+              <RollRow
+                key={skill.index}
+                title={`Roll a ${skill.name} check`}
+                onRoll={rolls && (() => rolls.skill(skill.index))}
+                disabled={rolls?.disabled}
+              >
                 <RankMarker rank={skill.rank} />
                 <span className={styles.rowName}>
                   {skill.name} <span className={styles.muted}>({ABILITY_SHORT[skill.ability]})</span>
                 </span>
                 <span className={styles.bonus}>{formatBonus(skill.bonus)}</span>
-              </li>
+              </RollRow>
             ))}
           </ul>
         </Section>
@@ -76,7 +114,13 @@ export function SheetTab({ character, canEdit, onUpdate }: TabProps) {
         <HitPoints character={character} onUpdate={edit} />
         <div className={styles.statRow}>
           <StatBox label="AC" value={character.armourClass} title="Armour class" />
-          <StatBox label="Init." value={formatBonus(sheet.initiative)} title="Initiative" />
+          <StatBox
+            label="Init."
+            value={formatBonus(sheet.initiative)}
+            title={rolls ? 'Roll initiative' : 'Initiative'}
+            onClick={rolls?.initiative}
+            disabled={rolls?.disabled}
+          />
           <StatBox label="Speed" value={character.speed} title="Speed in feet" />
           <StatBox label="Prof." value={formatBonus(sheet.proficiencyBonus)} title="Proficiency bonus" />
         </div>
@@ -145,6 +189,11 @@ export function SheetTab({ character, canEdit, onUpdate }: TabProps) {
                   <th scope="col">Attack</th>
                   <th scope="col">To hit</th>
                   <th scope="col">Damage</th>
+                  {rolls && (
+                    <th scope="col">
+                      <span className={styles.visuallyHidden}>Roll</span>
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -168,6 +217,18 @@ export function SheetTab({ character, canEdit, onUpdate }: TabProps) {
                           <span className={styles.muted}> ({result.versatileDamage} two hands)</span>
                         )}
                       </td>
+                      {rolls && (
+                        <td>
+                          <button
+                            type="button"
+                            className={buttonClassName('outline', { size: 'small' })}
+                            disabled={rolls.disabled}
+                            onClick={() => rolls.attack(entry)}
+                          >
+                            Roll
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   )
                 })}
@@ -196,6 +257,34 @@ export function Section({ title, note, children }: { title: string; note?: strin
       </h3>
       {children}
     </section>
+  )
+}
+
+/** A row on the sheet; with `onRoll`, the whole row is a button that rolls it. */
+function RollRow({
+  title,
+  onRoll,
+  disabled,
+  children,
+}: {
+  title: string
+  onRoll?: () => void
+  disabled?: boolean
+  children: ReactNode
+}) {
+  if (!onRoll) return <li className={styles.row}>{children}</li>
+  return (
+    <li>
+      <button
+        type="button"
+        className={cx(styles.row, styles.rollRow)}
+        title={title}
+        disabled={disabled}
+        onClick={onRoll}
+      >
+        {children}
+      </button>
+    </li>
   )
 }
 
@@ -242,7 +331,9 @@ function HitPoints({ character, onUpdate }: { character: Character; onUpdate?: (
         </span>
       </div>
       <HpBar current={hp.current} max={hp.max} temp={hp.temp} height={10} />
-      {hp.current === 0 && <p className={styles.downed}>Down at 0 hit points: roll a death save on each of your turns.</p>}
+      {hp.current === 0 && (
+        <p className={styles.downed}>Down at 0 hit points: roll a death save on each of your turns.</p>
+      )}
       {onUpdate && (
         <form className={styles.hpControls} onSubmit={damage}>
           <label className={styles.visuallyHidden} htmlFor={`hp-amount-${character.id}`}>

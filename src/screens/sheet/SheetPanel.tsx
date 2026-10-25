@@ -4,7 +4,7 @@ import { cx } from '../../components/cx.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Character } from '../../rules/character.ts'
 import { PowersTab } from './PowersTab.tsx'
-import { SheetTab } from './SheetTab.tsx'
+import { SheetTab, type SheetRolls } from './SheetTab.tsx'
 import styles from './SheetPanel.module.css'
 
 export type SheetTabName = 'sheet' | 'powers'
@@ -27,11 +27,24 @@ type SheetPanelProps = {
   onClose: () => void
   closeLabel: string
   onUpdate: (patch: TrackerPatch) => void
+  /** Click a skill, save or attack to roll it. */
+  rolls?: SheetRolls
   className?: string
 }
 
 /** The big character panel from design 06, with the Sheet and Powers tabs working in Phase 1. */
-export function SheetPanel({ character, canEdit, editHref, tab, onTab, onClose, closeLabel, onUpdate, className }: SheetPanelProps) {
+export function SheetPanel({
+  character,
+  canEdit,
+  editHref,
+  tab,
+  onTab,
+  onClose,
+  closeLabel,
+  onUpdate,
+  rolls,
+  className,
+}: SheetPanelProps) {
   useEffect(() => {
     const close = (event: KeyboardEvent) => event.key === 'Escape' && onClose()
     window.addEventListener('keydown', close)
@@ -67,7 +80,7 @@ export function SheetPanel({ character, canEdit, editHref, tab, onTab, onClose, 
       </div>
       <div className={styles.body} role="tabpanel">
         {tab === 'sheet' ? (
-          <SheetTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
+          <SheetTab character={character} canEdit={canEdit} onUpdate={onUpdate} rolls={rolls} />
         ) : (
           <PowersTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
         )}

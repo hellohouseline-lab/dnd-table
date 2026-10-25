@@ -47,5 +47,5 @@ export const PRACTICE_SET: RollRequest = {
   parts: [],
   mode: 'normal',
   damage: null,
-  secret: true,
+  secret: false,
 }

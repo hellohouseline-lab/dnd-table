@@ -45,6 +45,8 @@ export function RollToast({ roll, who, onDismiss }: { roll: Roll; who: string; o
   const note = naturalNote(roll)
   const damage = damageLine(roll)
   const mode = modeText(roll)
+  // "13 = 13" says nothing: the dice show what was thrown, so the sum only matters with a bonus.
+  const showSum = roll.modifier !== 0
   return (
     <div className={styles.wrap}>
       {moment === 'nat20' && <span className={styles.burst} aria-hidden="true" />}
@@ -71,10 +73,13 @@ export function RollToast({ roll, who, onDismiss }: { roll: Roll; who: string; o
           <DiceFaces dice={roll.dice} natural={roll.natural} size="large" />
           <span className={styles.total}>{roll.total}</span>
         </div>
-        <div className={styles.sum}>
-          {sumText(roll)} = {roll.total}
-          {mode && <span className={styles.mode}> · {mode}</span>}
-        </div>
+        {(showSum || mode) && (
+          <div className={styles.sum}>
+            {showSum && `${sumText(roll)} = ${roll.total}`}
+            {showSum && mode && ' · '}
+            {mode && <span className={styles.mode}>{mode}</span>}
+          </div>
+        )}
         {roll.parts.length > 0 && <div className={styles.parts}>{partsText(roll.parts)}</div>}
         {damage && (
           <div className={styles.damage}>

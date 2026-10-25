@@ -137,6 +137,41 @@
   border-bottom: 0;
 }
 
+/* Rows and abilities that roll when clicked. */
+.rollRow {
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(58, 47, 56, 0.6);
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+}
+
+.rows li:last-child .rollRow {
+  border-bottom: 0;
+}
+
+.rollRow:hover:not(:disabled),
+.rollable:hover:not(:disabled) {
+  background: rgba(212, 175, 90, 0.08);
+}
+
+.rollRow:hover:not(:disabled) .rowName {
+  color: var(--gold-light);
+}
+
+.rollable {
+  color: inherit;
+  font: inherit;
+}
+
+.rollable:hover:not(:disabled) {
+  border-color: var(--gold-rule);
+}
+
 .rowName {
   flex: 1;
   min-width: 0;

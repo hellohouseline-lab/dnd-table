@@ -1,0 +1,84 @@
+.hand {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.card {
+  width: 96px;
+  height: 136px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: var(--card-fill);
+  border: 1px solid var(--gold-rule);
+  box-shadow:
+    inset 0 0 0 3px var(--card-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.3);
+  color: var(--text);
+  padding: 9px 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  transform: rotate(var(--rot)) translateY(var(--lift));
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out;
+}
+
+.card:hover:not(:disabled),
+.card:focus-visible {
+  transform: rotate(var(--rot)) translateY(calc(var(--lift) - 14px));
+  box-shadow:
+    inset 0 0 0 3px var(--card-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.5),
+    0 0 18px rgba(212, 175, 90, 0.35);
+}
+
+.card:disabled {
+  cursor: not-allowed;
+}
+
+.spent {
+  opacity: 0.45;
+}
+
+.tag {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.action {
+  color: var(--gold-light);
+}
+
+.feature {
+  color: var(--pass);
+}
+
+.art {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.detail {
+  font-size: 12px;
+  line-height: 1.15;
+  color: var(--text-3);
+}
