@@ -19,6 +19,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Paste the two login email templates** into Supabase (Authentication > Emails > Templates: Magic Link and Confirm signup), so emails include the code.
 - **Try milestone 1** on the live site (steps in the milestone 1 hand-over): sign in, start the campaign, and join as a player with a second email address.
 - **Before milestone 7:** a test call with the group to choose voice and cameras (step D): Twitch Stream Together, VDO.Ninja for both, or Discord plus VDO.Ninja.
 
@@ -29,5 +30,5 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - When a milestone merges, update `src/screens/progress/roadmap.ts` so the Build progress page shows the new status.
 - Database: the Supabase CLI is logged in and linked. `npm run db:push` applies new files in `supabase/migrations/`, `npm run db:types` regenerates `src/live/database.types.ts`, and `npm run test:db` runs the pgTAP tests in `supabase/tests/database/` against the live project inside a transaction that is always undone (no Docker on this Mac, so `supabase test db` can't run).
 - Supabase's advisor warns that signed-in users can call the security-definer functions and that the table rules apply to anonymous guests too. Both are on purpose: each function checks the caller, and guests can't join a table, so they see nothing (covered by tests). Leaked-password protection doesn't apply, as nobody uses passwords.
-- Login uses the implicit flow (see the corrected note in `PHASE1_PLAN.md` section 1). A login link opened on a different device, such as a phone, signs in that device, not the computer that asked.
-- Design previews with made-up data, only under `npm run dev`: `#/dev/join/dm` and `#/dev/join/player`.
+- Login uses the implicit flow (see the corrected note in `PHASE1_PLAN.md` section 1). A link opened on a different device, such as a phone, signs in that device, so the email also carries a code: after asking for a login, the "Check your email" step has a box for it. The email wording lives in `supabase/templates/` and must match the dashboard's Magic Link and Confirm signup templates.
+- Design previews with made-up data, only under `npm run dev`: `#/dev/join/dm`, `#/dev/join/player` and `#/dev/check-email`.
