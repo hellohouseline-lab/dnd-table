@@ -79,6 +79,143 @@ export type Database = {
         }
         Relationships: []
       }
+      characters: {
+        Row: {
+          armour_class: number
+          attacks: Json
+          background: string
+          campaign_id: string
+          charisma: number
+          class: string
+          concentration: string | null
+          conditions: string[]
+          constitution: number
+          created_at: string
+          current_hp: number
+          death_save_failures: number
+          death_save_successes: number
+          dexterity: number
+          exhaustion: number
+          features: Json
+          hit_dice_used: number
+          hit_die: number
+          id: string
+          inspiration: boolean
+          intelligence: number
+          languages: string
+          level: number
+          max_hp: number
+          name: string
+          other_proficiencies: string
+          owner_id: string
+          portrait_path: string | null
+          race: string
+          save_proficiencies: string[]
+          skill_expertise: string[]
+          skill_proficiencies: string[]
+          speed: number
+          spellcasting: Json
+          strength: number
+          subclass: string
+          subrace: string
+          temp_hp: number
+          updated_at: string
+          wisdom: number
+        }
+        Insert: {
+          armour_class?: number
+          attacks?: Json
+          background?: string
+          campaign_id: string
+          charisma?: number
+          class?: string
+          concentration?: string | null
+          conditions?: string[]
+          constitution?: number
+          created_at?: string
+          current_hp?: number
+          death_save_failures?: number
+          death_save_successes?: number
+          dexterity?: number
+          exhaustion?: number
+          features?: Json
+          hit_dice_used?: number
+          hit_die?: number
+          id?: string
+          inspiration?: boolean
+          intelligence?: number
+          languages?: string
+          level?: number
+          max_hp?: number
+          name: string
+          other_proficiencies?: string
+          owner_id: string
+          portrait_path?: string | null
+          race?: string
+          save_proficiencies?: string[]
+          skill_expertise?: string[]
+          skill_proficiencies?: string[]
+          speed?: number
+          spellcasting?: Json
+          strength?: number
+          subclass?: string
+          subrace?: string
+          temp_hp?: number
+          updated_at?: string
+          wisdom?: number
+        }
+        Update: {
+          armour_class?: number
+          attacks?: Json
+          background?: string
+          campaign_id?: string
+          charisma?: number
+          class?: string
+          concentration?: string | null
+          conditions?: string[]
+          constitution?: number
+          created_at?: string
+          current_hp?: number
+          death_save_failures?: number
+          death_save_successes?: number
+          dexterity?: number
+          exhaustion?: number
+          features?: Json
+          hit_dice_used?: number
+          hit_die?: number
+          id?: string
+          inspiration?: boolean
+          intelligence?: number
+          languages?: string
+          level?: number
+          max_hp?: number
+          name?: string
+          other_proficiencies?: string
+          owner_id?: string
+          portrait_path?: string | null
+          race?: string
+          save_proficiencies?: string[]
+          skill_expertise?: string[]
+          skill_proficiencies?: string[]
+          speed?: number
+          spellcasting?: Json
+          strength?: number
+          subclass?: string
+          subrace?: string
+          temp_hp?: number
+          updated_at?: string
+          wisdom?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "characters_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
