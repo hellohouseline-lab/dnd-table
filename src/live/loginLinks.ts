@@ -46,6 +46,30 @@ export function loginLinkError(code: string | null): string {
   return "That login link didn't work. Ask for a new one below."
 }
 
+// The login email also carries a code, for signing in on a different device from the one that
+// opened the email (say, reading email on a phone while playing on a PC).
+
+/** What people type as the code: '123 456' becomes '123456'. */
+export function normaliseLoginCode(input: string): string {
+  return input.replace(/\D/g, '')
+}
+
+/** Supabase sends 6 digits unless its Email OTP Length setting says otherwise (up to 10). */
+export function isLoginCode(code: string): boolean {
+  return /^\d{6,10}$/.test(code)
+}
+
+/** Plain words for a code that didn't sign someone in. */
+export function loginCodeError(error: { status?: number; code?: string }): string {
+  if (error.status === 429 || error.code?.includes('rate_limit')) {
+    return 'Too many tries just now. Wait a minute, then try again.'
+  }
+  if (error.code === 'otp_expired' || error.status === 401 || error.status === 403) {
+    return "That code didn't work. Check it, and if you asked for more than one email, use the newest."
+  }
+  return "The code couldn't be checked. Check your internet connection and try again."
+}
+
 /** Plain words for a failure to send the login email. */
 export function loginSendError(error: { status?: number; code?: string }): string {
   if (error.status === 429 || error.code?.includes('rate_limit')) {

@@ -8,6 +8,7 @@ import { PageHeader } from '../../components/PageHeader.tsx'
 import { Panel } from '../../components/Panel.tsx'
 import { SiteFooter } from '../../components/SiteFooter.tsx'
 import { messageFor } from '../../live/errors.ts'
+import { CheckEmailPanel } from './CheckEmailPanel.tsx'
 import styles from './SignInScreen.module.css'
 
 type SignInScreenProps = {
@@ -47,26 +48,13 @@ export function SignInScreen({ next, loginError }: SignInScreenProps) {
         subtitle="A private table for one party · 2014 rules"
       />
 
-      <Panel title={sentTo ? 'Check your email' : 'Sign in'} className={styles.panel}>
-        {sentTo ? (
-          <>
-            <p>
-              We&rsquo;ve sent a login link to <strong>{sentTo}</strong>. Open the email and click the link to come
-              straight back here, signed in.
-            </p>
-            <p>It can take a minute to arrive. If it doesn&rsquo;t, look in your spam folder.</p>
-            <div>
-              <button type="button" className={buttonClassName('quiet')} onClick={() => setSentTo(null)}>
-                Use a different email
-              </button>
-            </div>
-          </>
-        ) : (
+      {sentTo ? (
+        <CheckEmailPanel email={sentTo} onDifferentEmail={() => setSentTo(null)} />
+      ) : (
+        <Panel title="Sign in" className={styles.panel}>
           <form className={styles.form} onSubmit={(event) => void send(event)}>
             <p>
-              {invited
-                ? 'Sign in first, then you can join the table. '
-                : ''}
+              {invited ? 'Sign in first, then you can join the table. ' : ''}
               Type your email and we&rsquo;ll send you a link to sign in. No password needed.
             </p>
             {error && <Notice tone="error">{error}</Notice>}
@@ -83,8 +71,8 @@ export function SignInScreen({ next, loginError }: SignInScreenProps) {
               {sending ? 'Sending…' : 'Send my login link'}
             </button>
           </form>
-        )}
-      </Panel>
+        </Panel>
+      )}
 
       <SiteFooter />
     </Page>

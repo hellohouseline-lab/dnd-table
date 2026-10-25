@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { loginLinkError, loginRedirectUrl, loginSendError, readAuthCallback, safeNext } from './loginLinks.ts'
+import {
+  isLoginCode,
+  loginCodeError,
+  loginLinkError,
+  loginRedirectUrl,
+  loginSendError,
+  normaliseLoginCode,
+  readAuthCallback,
+  safeNext,
+} from './loginLinks.ts'
 
 const SITE = 'https://hellohouseline-lab.github.io/dnd-table/'
 
@@ -48,6 +57,28 @@ describe('safeNext', () => {
     expect(safeNext('https://evil.example')).toBeNull()
     expect(safeNext('')).toBeNull()
     expect(safeNext(null)).toBeNull()
+  })
+})
+
+describe('login codes', () => {
+  it('ignore spaces and other characters people type', () => {
+    expect(normaliseLoginCode(' 123 456 ')).toBe('123456')
+    expect(normaliseLoginCode('123-456')).toBe('123456')
+  })
+
+  it('are six to ten digits', () => {
+    expect(isLoginCode('123456')).toBe(true)
+    expect(isLoginCode('1234567890')).toBe(true)
+    expect(isLoginCode('12345')).toBe(false)
+    expect(isLoginCode('12345678901')).toBe(false)
+  })
+
+  it('explain a wrong or used code', () => {
+    expect(loginCodeError({ status: 403, code: 'otp_expired' })).toMatch(/didn't work/)
+  })
+
+  it('ask people to wait after too many tries', () => {
+    expect(loginCodeError({ status: 429 })).toMatch(/Wait a minute/)
   })
 })
 

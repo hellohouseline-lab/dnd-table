@@ -1,5 +1,5 @@
 import { NOT_CONNECTED, TableError } from '../live/errors.ts'
-import { loginRedirectUrl, loginSendError, safeNext } from '../live/loginLinks.ts'
+import { loginCodeError, loginRedirectUrl, loginSendError, normaliseLoginCode, safeNext } from '../live/loginLinks.ts'
 import { siteUrl, supabase } from '../live/supabase.ts'
 import { navigate } from './router.ts'
 
@@ -12,6 +12,17 @@ export async function sendLoginLink(email: string, next: string): Promise<void> 
     options: { emailRedirectTo: loginRedirectUrl(siteUrl(), next) },
   })
   if (error) throw new TableError(loginSendError(error))
+}
+
+/** Signs in with the code from the login email, for when the email was opened on another device. */
+export async function signInWithCode(email: string, code: string): Promise<void> {
+  if (!supabase) throw new TableError(NOT_CONNECTED)
+  const { error } = await supabase.auth.verifyOtp({
+    email: email.trim(),
+    token: normaliseLoginCode(code),
+    type: 'email',
+  })
+  if (error) throw new TableError(loginCodeError(error))
 }
 
 export async function signOut(): Promise<void> {
