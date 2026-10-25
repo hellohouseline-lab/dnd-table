@@ -19,12 +19,23 @@
     border-color 120ms;
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.small {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
 .primary {
   background: var(--gold);
   color: var(--on-gold);
 }
 
-.primary:hover {
+.primary:hover:not(:disabled) {
   background: var(--gold-light);
   color: var(--on-gold);
 }
@@ -35,7 +46,7 @@
   color: var(--gold-light);
 }
 
-.outline:hover {
+.outline:hover:not(:disabled) {
   background: rgba(212, 175, 90, 0.12);
   color: var(--gold-light);
 }
@@ -46,7 +57,38 @@
   color: var(--gold-light);
 }
 
-.ink:hover {
+.ink:hover:not(:disabled) {
   background: #3a2818;
   color: var(--gold-light);
+}
+
+.quiet,
+.quietInk {
+  height: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.quiet {
+  color: var(--gold);
+}
+
+.quiet:hover:not(:disabled) {
+  color: var(--gold-light);
+}
+
+.quietInk {
+  color: var(--wax);
+}
+
+.quietInk:hover:not(:disabled) {
+  color: var(--ink);
 }

@@ -37,6 +37,17 @@ export function href(path: string): string {
   return `#${path}`
 }
 
+/**
+ * Moves to another screen from code (links just use href). `replace` swaps the current history
+ * entry instead of adding one, so Back skips it. Anything before the '#', like ?next=, is dropped.
+ */
+export function navigate(path: string, { replace = false }: { replace?: boolean } = {}): void {
+  const url = `${window.location.pathname}#${path}`
+  if (replace) window.history.replaceState(null, '', url)
+  else window.history.pushState(null, '', url)
+  window.dispatchEvent(new HashChangeEvent('hashchange'))
+}
+
 /** The current route path, updating when the hash changes. */
 export function useHashPath(): string {
   return useSyncExternalStore(subscribe, () => pathFromHash(window.location.hash), () => '/')
@@ -44,7 +55,11 @@ export function useHashPath(): string {
 
 function subscribe(onChange: () => void): () => void {
   window.addEventListener('hashchange', onChange)
-  return () => window.removeEventListener('hashchange', onChange)
+  window.addEventListener('popstate', onChange)
+  return () => {
+    window.removeEventListener('hashchange', onChange)
+    window.removeEventListener('popstate', onChange)
+  }
 }
 
 function safeDecode(value: string): string | null {

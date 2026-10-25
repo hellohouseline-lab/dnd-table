@@ -1,0 +1,30 @@
+/** An error whose message is already in plain words and safe to show on screen. */
+export class TableError extends Error {}
+
+export const NOT_CONNECTED = "This copy of the table isn't connected to its database."
+
+const SOMETHING_WENT_WRONG = 'Something went wrong. Try again in a moment.'
+
+/** Turns a database error into words a player understands. */
+export function fromDatabaseError(error: { code?: string; message?: string }): TableError {
+  switch (error.code) {
+    case 'P0002':
+      return new TableError("That code doesn't match a table. Check it with your DM; they may have made a new one.")
+    case '42501':
+      return new TableError("You're not allowed to do that at this table.")
+    case '23514':
+      return new TableError('Something you typed is empty or too long.')
+  }
+  if (/fetch|network/i.test(error.message ?? '')) {
+    return new TableError("Couldn't reach the table. Check your internet connection and try again.")
+  }
+  console.error(error)
+  return new TableError(SOMETHING_WENT_WRONG)
+}
+
+/** The message to show for anything thrown while loading or saving. */
+export function messageFor(error: unknown): string {
+  if (error instanceof TableError) return error.message
+  console.error(error)
+  return SOMETHING_WENT_WRONG
+}
