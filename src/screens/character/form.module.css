@@ -1,0 +1,227 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.abilityGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.abilityField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modifier {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold-light);
+}
+
+.note {
+  margin: 0;
+  font-size: 15px;
+  color: var(--label);
+}
+
+.filled {
+  margin: 0;
+  font-size: 15px;
+  color: var(--pass);
+}
+
+.checkGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px 16px;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+}
+
+.skillTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.skillTable th,
+.skillTable td {
+  padding: 4px 6px;
+  border-bottom: 1px solid rgba(58, 47, 56, 0.6);
+  text-align: left;
+}
+
+.skillTable thead th {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.skillTable input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+}
+
+.centre {
+  text-align: center !important;
+}
+
+.bonus {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.muted {
+  color: var(--label);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 70px;
+  padding: 10px 14px;
+  background: var(--card-fill);
+  color: var(--text);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.textarea:focus,
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.input,
+.select {
+  height: 40px;
+  padding: 0 10px;
+  background: var(--card-fill);
+  color: var(--text);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.narrow {
+  width: 72px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--card-fill);
+  border: 1px solid var(--chip-border);
+  border-radius: 8px;
+}
+
+.itemRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.grow {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.result {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 14px 18px;
+  background: rgba(13, 10, 18, 0.95);
+  border: 1px solid var(--gold-rule);
+  border-radius: 8px;
+}
+
+.portraitRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.fileLabel {
+  cursor: pointer;
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.spellLevelHeading {
+  margin: 4px 0 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gold-light);
+}
