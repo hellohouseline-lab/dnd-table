@@ -3,6 +3,7 @@ import { LoadingScreen } from '../components/LoadingScreen.tsx'
 import { CampaignScreen } from '../screens/campaign/CampaignScreen.tsx'
 import { NewCampaignScreen } from '../screens/campaign/NewCampaignScreen.tsx'
 import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
+import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
 import { JoinScreenPreview } from '../screens/dev/JoinScreenPreview.tsx'
 import { JoinByCodeScreen } from '../screens/join/JoinByCodeScreen.tsx'
 import { NotConnectedScreen } from '../screens/NotConnectedScreen.tsx'
@@ -43,7 +44,14 @@ const ROUTES: Route[] = [
   { pattern: '/credits', title: `Credits · ${APP_NAME}`, render: () => <CreditsScreen /> },
   // Design previews with made-up data, only under `npm run dev`; the live build leaves them out.
   ...(import.meta.env.DEV
-    ? [{ pattern: '/dev/join/:as', title: `Join preview · ${APP_NAME}`, render: ({ as }: Record<string, string>) => <JoinScreenPreview as={as} /> }]
+    ? [
+        { pattern: '/dev/check-email', title: `Check email preview · ${APP_NAME}`, render: () => <CheckEmailPreview /> },
+        {
+          pattern: '/dev/join/:as',
+          title: `Join preview · ${APP_NAME}`,
+          render: ({ as }: Record<string, string>) => <JoinScreenPreview as={as} />,
+        },
+      ]
     : []),
 ]
 

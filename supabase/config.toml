@@ -249,6 +249,16 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# Login emails carry a link and a code. The live project's copies are pasted into the dashboard
+# (Authentication > Emails > Templates); keep these files and the dashboard the same.
+[auth.email.template.magic_link]
+subject = "Your D&D Table login"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "Your D&D Table login"
+content_path = "./supabase/templates/confirmation.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true
