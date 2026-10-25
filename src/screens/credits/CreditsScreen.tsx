@@ -10,7 +10,7 @@ const SRD_URL = 'https://dnd.wizards.com/resources/systems-reference-document'
 const CC_BY_URL = 'https://creativecommons.org/licenses/by/4.0/legalcode'
 
 // Keep in step with CREDITS.md. Add each new source here when it first ships:
-// 5e-database (rules data), dice-box themes, game-icons.net icons, Open5e content.
+// dice-box themes, game-icons.net icons, Open5e content.
 export function CreditsScreen() {
   return (
     <Page width="narrow">
@@ -27,6 +27,10 @@ export function CreditsScreen() {
           Wizards of the Coast LLC and available at <a href={SRD_URL}>{SRD_URL}</a>. The SRD 5.1 is licensed
           under the Creative Commons Attribution 4.0 International License available at{' '}
           <a href={CC_BY_URL}>{CC_BY_URL}</a>.
+        </p>
+        <p>
+          The rules data was prepared by the <a href="https://github.com/5e-bits/5e-srd-api">5e-database project</a>{' '}
+          by 5e-bits, shared under the MIT License. Only its 2014 SRD 5.1 data is used.
         </p>
       </Parchment>
 
