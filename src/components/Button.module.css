@@ -1,0 +1,52 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background-color 120ms,
+    color 120ms,
+    border-color 120ms;
+}
+
+.primary {
+  background: var(--gold);
+  color: var(--on-gold);
+}
+
+.primary:hover {
+  background: var(--gold-light);
+  color: var(--on-gold);
+}
+
+.outline {
+  background: none;
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.outline:hover {
+  background: rgba(212, 175, 90, 0.12);
+  color: var(--gold-light);
+}
+
+.ink {
+  background: var(--ink);
+  border-color: var(--parchment-rule);
+  color: var(--gold-light);
+}
+
+.ink:hover {
+  background: #3a2818;
+  color: var(--gold-light);
+}

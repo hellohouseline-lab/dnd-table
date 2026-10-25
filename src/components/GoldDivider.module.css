@@ -1,0 +1,23 @@
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: var(--parchment-rule);
+}
+
+.diamond {
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: var(--gold);
+}
+
+.ink .diamond {
+  background: var(--parchment-rule);
+}
