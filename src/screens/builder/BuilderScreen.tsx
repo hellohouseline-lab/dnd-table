@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { useSignedInUser } from '../../app/authContext.ts'
-import { href } from '../../app/router.ts'
+import { href, navigate } from '../../app/router.ts'
+import { createCharacter } from '../../live/characters.ts'
+import { messageFor } from '../../live/errors.ts'
 import { getCampaign, listMembers } from '../../live/campaigns.ts'
 import { listCharacters } from '../../live/characters.ts'
 import { useLoad } from '../../live/useLoad.ts'
@@ -44,6 +46,12 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
     document.title = 'Make your character · D&D Table'
   }, [])
 
+  // A player with a character already is sent to change it instead.
+  const mine = characters.find((c) => c.ownerId === user.id)
+  useEffect(() => {
+    if (me?.role === 'player' && mine) navigate(`/c/${campaignId}/character/${mine.id}/edit`, { replace: true })
+  }, [me?.role, mine, campaignId])
+
   return (
     <BuilderView
       draft={draft}
@@ -57,7 +65,30 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
       onRoll={() => rollScores(campaignId)}
       campaignName={campaign?.name}
       exitHref={href(`/c/${campaignId}/${me?.role === 'dm' ? 'dm' : 'play'}`)}
-      formHref={me?.role === 'player' && !hasCharacter ? href(`/c/${campaignId}/character/new`) : null}
+      formHref={me?.role === 'player' && !hasCharacter ? href(`/c/${campaignId}/character/new/form`) : null}
+      cantSave={
+        data.status !== 'ready'
+          ? 'Opening the table…'
+          : me?.role === 'dm'
+            ? 'As the DM you can try the builder; making ready-made characters for players comes next.'
+            : hasCharacter
+              ? 'You have a character at this table already.'
+              : null
+      }
+      onSave={async (build) => {
+        try {
+          await createCharacter(campaignId, user.id, build)
+          try {
+            localStorage.removeItem(`dnd-table-builder-${campaignId}-${user.id}`)
+          } catch {
+            // Nothing to tidy in a private window.
+          }
+          navigate(`/c/${campaignId}/play`, { replace: true })
+          return null
+        } catch (caught) {
+          return messageFor(caught)
+        }
+      }}
     />
   )
 }

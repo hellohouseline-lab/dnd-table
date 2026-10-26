@@ -468,10 +468,23 @@ test('the builder: a fighter picks starting gear and gets AC 18 from chain mail 
   await page.getByRole('button', { name: /^Explorer/ }).click()
   await page.getByRole('button', { name: 'one of the holy symbols' }).click()
   await page.getByLabel('Pick one of the holy symbols').selectOption('amulet')
-  await expect(page.getByText('Done so far.')).toBeVisible()
+  await expect(page.getByText('Gear done.')).toBeVisible()
   const summary = page.getByRole('complementary', { name: 'Your character so far' })
   await expect(summary).toContainText('Longsword, Handaxe')
   await expect(page.getByText('Chain Mail 16, shield +2')).toBeVisible()
+
+  // A fighter has no spells; then a name, an alignment, and the review.
+  await page.getByRole('button', { name: 'Next: Spells' }).click()
+  await expect(page.getByText(/doesn’t cast spells/)).toBeVisible()
+  await page.getByRole('button', { name: 'Next: Who they are' }).click()
+  await page.getByLabel('Your character’s name').fill('Bruenna Stonehelm')
+  await page.getByRole('button', { name: /^Lawful good/ }).click()
+  await page.getByRole('button', { name: 'Next: Review' }).click()
+  await expect(page.getByRole('heading', { name: 'Meet Bruenna Stonehelm' })).toBeVisible()
+  await expect(page.getByText(/Level 1 Human Fighter, once an acolyte/)).toBeVisible()
+  await expect(page.getByText(/Second Wind \(1 use\)/)).toBeVisible()
+  await page.getByRole('button', { name: 'Save and go to the table' }).click()
+  await expect(page.getByText('Saved (in the preview nothing is kept).')).toBeVisible()
 })
 
 test('outside a fight, a player rolls a d20 for the DM, with advantage', async ({ page }) => {

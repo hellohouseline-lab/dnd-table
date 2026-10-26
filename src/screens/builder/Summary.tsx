@@ -16,6 +16,8 @@ type SummaryProps = {
   /** The final scores, racial bonuses included; null until placed. */
   scores: Scores | null
   armourClass: number | null
+  /** Every language: the race's, its picks and the background's. */
+  languages: string[]
   /** Weapons in the hand. */
   attacks: string[]
 }
@@ -35,6 +37,7 @@ export function Summary({
   scores,
   armourClass,
   attacks,
+  languages,
 }: SummaryProps) {
   return (
     <aside className={styles.summary} aria-label="Your character so far">
@@ -122,7 +125,7 @@ export function Summary({
       {race && (
         <>
           <div className={styles.summaryLabel}>Languages</div>
-          <p className={styles.summaryText}>{race.languages.join(', ')}</p>
+          <p className={styles.summaryText}>{languages.join(', ')}</p>
           {race.traits.length > 0 && (
             <>
               <div className={styles.summaryLabel}>Traits</div>

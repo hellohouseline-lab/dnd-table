@@ -270,6 +270,7 @@ export type Database = {
           speed: number
           spellcasting: Json
           stable: boolean
+          story: Json
           strength: number
           subclass: string
           subrace: string
@@ -322,6 +323,7 @@ export type Database = {
           speed?: number
           spellcasting?: Json
           stable?: boolean
+          story?: Json
           strength?: number
           subclass?: string
           subrace?: string
@@ -374,6 +376,7 @@ export type Database = {
           speed?: number
           spellcasting?: Json
           stable?: boolean
+          story?: Json
           strength?: number
           subclass?: string
           subrace?: string

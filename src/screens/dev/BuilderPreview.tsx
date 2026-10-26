@@ -36,6 +36,9 @@ export function BuilderPreview() {
       campaignName="The Ember Road"
       exitHref="#/dev/table"
       formHref="#/dev/character"
+      cantSave={null}
+      // Nothing is saved in the preview.
+      onSave={async () => 'Saved (in the preview nothing is kept).'}
     />
   )
 }
