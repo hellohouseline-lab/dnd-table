@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Death saves outside a fight (live).** At 0 hit points a player's table screen now shows the death save card in or out of a fight: the three successes and three failures, and **Roll a death save** (outside a fight, whenever the DM says). The pips tick themselves; a 20 brings them back with 1 hit point; three failures and they die. On the DM's Party tab a dying character's card shows the same pips with **Roll their death save**, **Stabilise** and **Up with 1 HP**, instead of the "1 saved, 2 failed" line. Tests: 397 unit (2 new), 30 preview browser tests.
 - **C2d: the builder finished, saving, and levelling up (live).**
   - **New characters now open the builder** (`#/c/<campaign>/character/new`); "Type it in instead" leads to the old form. All nine steps work:
     - **Spells:** cantrips and level 1 spells for every caster, as many as the class allows: spells known (bard, sorcerer, warlock), a cleric's or druid's prepared spells, a wizard's six spellbook spells and the ones prepared from them. A Life cleric's Bless and Cure Wounds are always ready. C marks concentration; hold the mouse on a spell to read it.

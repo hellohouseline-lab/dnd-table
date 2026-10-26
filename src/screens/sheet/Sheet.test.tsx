@@ -125,4 +125,26 @@ describe('the table screen', () => {
     )
     expect(wizardView).toContain('Conditions: Poisoned')
   })
+
+  it('shows the death saves at 0 hit points outside a fight, with a roll', () => {
+    const down = { ...sampleFighter, currentHp: 0, deathSaveSuccesses: 1, deathSaveFailures: 2 }
+    const dyingView = text(
+      renderToStaticMarkup(
+        <TableView
+          campaignId="c1"
+          me={sampleMembers[1]}
+          character={down}
+          members={sampleMembers}
+          characters={sampleCharacters}
+          online={new Set(['p1'])}
+          onUpdate={noop}
+          diceStyle={DEFAULT_DICE_STYLE}
+          onDiceStyleChange={noop}
+          asking={nobodyAsked}
+        />,
+      ),
+    )
+    expect(dyingView).toContain('Dying')
+    expect(dyingView).toContain('Roll a death save')
+  })
 })

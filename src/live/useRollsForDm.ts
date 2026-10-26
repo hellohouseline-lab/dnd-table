@@ -14,12 +14,13 @@ export type RollsForDmControls = {
   error: string | null
 }
 
-/** The DM's queue of rolls for the DM, kept up to date live. */
-export function useRollsForDm(campaignId: string, userId: string): RollsForDmControls {
+/** The DM's queue of rolls for the DM, kept up to date live. Off in the previews, which have no database. */
+export function useRollsForDm(campaignId: string, userId: string, enabled = true): RollsForDmControls {
   const [rolls, setRolls] = useState<Roll[]>([])
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!enabled) return
     let live = true
     listRolls(campaignId).then(
       (list) => live && setRolls(list.filter((r) => r.forDm).reverse()),
@@ -28,7 +29,7 @@ export function useRollsForDm(campaignId: string, userId: string): RollsForDmCon
     return () => {
       live = false
     }
-  }, [campaignId])
+  }, [campaignId, enabled])
 
   const onInsert = useCallback((roll: Roll) => {
     if (roll.forDm) setRolls((now) => (now.some((r) => r.id === roll.id) ? now : [...now, roll]))
