@@ -112,6 +112,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       onDiceStyleChange={changeDiceStyle}
       asking={asking}
       stageImage={stageImage}
+      readAloud={stage.readAloud}
       campaignName={campaign.status === 'ready' ? campaign.data?.name : undefined}
       audio={audio}
       handOver={handOver(character.id)}

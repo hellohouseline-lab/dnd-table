@@ -955,3 +955,31 @@ test('the DM sees what things are worth, and clears the party stash', async ({ p
   await stash.getByRole('button', { name: 'Clear the stash' }).click()
   await expect(stash).toContainText('Empty.')
 })
+
+test('story mode: the DM writes a scene, goes there and shows the read-aloud', async ({ page }) => {
+  await page.goto('#/dev/dm/story')
+  const outline = page.getByRole('navigation', { name: 'Chapters and scenes' })
+  await expect(outline).toContainText('Arrive at the tavern')
+  await outline.getByRole('button', { name: 'The mill road' }).click()
+  const scene = page.getByRole('article', { name: 'Scene: The mill road' })
+  await expect(scene.getByRole('textbox', { name: 'Reminders' })).toHaveValue(/Goblin tracks/)
+  await scene.getByRole('button', { name: 'Go here' }).click()
+  await expect(page.getByText('Scene now:')).toContainText('The mill road')
+  await expect(outline.getByRole('button', { name: /The mill road/ })).toContainText('Where we are')
+  await expect(scene.getByRole('button', { name: 'Go here again' })).toBeVisible()
+
+  await scene.getByRole('button', { name: 'Show the read-aloud' }).click()
+  await expect(scene.getByText('Everyone can read this on the stage now.')).toBeVisible()
+  await scene.getByRole('button', { name: 'Take it off the stage' }).click()
+  await expect(scene.getByText('Everyone can read this on the stage now.')).toHaveCount(0)
+
+  await outline.getByRole('button', { name: 'New scene' }).click()
+  const fresh = page.getByRole('article', { name: 'Scene: A new scene' })
+  await fresh.getByRole('textbox', { name: 'Scene title' }).fill('The old mill')
+  await expect(outline).toContainText('The old mill')
+})
+
+test('story mode: players read the read-aloud on stage', async ({ page }) => {
+  await page.goto('#/dev/table/story')
+  await expect(page.getByRole('region', { name: 'Read aloud' })).toContainText('Rain drums on the shutters.')
+})

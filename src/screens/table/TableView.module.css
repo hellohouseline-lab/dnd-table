@@ -906,3 +906,12 @@
   box-shadow: 0 0 24px rgba(212, 175, 90, 0.35);
   animation: arrive 0.5s ease-out;
 }
+
+/* A scene's read-aloud, over the picture, when the DM shows it. */
+.readAloud {
+  position: absolute;
+  left: 50%;
+  bottom: 190px;
+  transform: translateX(-50%);
+  z-index: 20;
+}

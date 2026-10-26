@@ -19,6 +19,7 @@ import { useNotebook } from '../../live/useNotebook.ts'
 import { useLibrary, useLogEvents, useStage } from '../../live/useStage.ts'
 import { useGivingControls } from '../../live/giving.ts'
 import { useShopControls } from '../../live/shops.ts'
+import { useStory } from '../../live/story.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight } from '../../live/useFight.ts'
 import { DmView } from './DmView.tsx'
@@ -40,7 +41,8 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
     user.id,
     campaign.status === 'ready' ? (campaign.data?.players_add_gear ?? true) : true,
   )
-  const { stage } = useStage(campaignId, user.id)
+  const { stage, change: changeStage } = useStage(campaignId, user.id)
+  const story = useStory(campaignId)
   const library = useLibrary(campaignId, user.id)
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
   const fight = useFight(campaignId, user.id)
@@ -97,6 +99,10 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
     <DmView
       giving={giving}
       shops={shops}
+      story={story}
+      stage={stage}
+      onStage={changeStage}
+      library={library.assets}
       campaign={campaign.data}
       me={me}
       members={members.data}

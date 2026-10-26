@@ -722,3 +722,13 @@ button.padButton:active {
   margin: 0;
   padding: 0 4px;
 }
+
+/* A scene's read-aloud over the picture, as everyone sees it. */
+.readAloud {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 16px;
+}

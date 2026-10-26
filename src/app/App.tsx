@@ -162,6 +162,11 @@ const ROUTES: Route[] = [
           render: () => <TablePreview key="dual" fighting variant="dual" />,
         },
         {
+          pattern: '/dev/table/story',
+          title: `Table preview · ${APP_NAME}`,
+          render: () => <TablePreview key="story" variant="story" />,
+        },
+        {
           pattern: '/dev/table/gift',
           title: `Table preview · ${APP_NAME}`,
           render: () => <TablePreview key="gift" variant="gift" />,
