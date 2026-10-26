@@ -58,10 +58,12 @@ export function useStage(campaignId: string, userId: string): StageControls {
         (caught: unknown) => {
           saving.current -= 1
           setError(messageFor(caught))
+          // Show what everyone else really sees, not the change that didn't save.
+          if (saving.current === 0) load()
         },
       )
     },
-    [campaignId],
+    [campaignId, load],
   )
 
   return { stage, change, error }

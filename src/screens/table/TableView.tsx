@@ -97,6 +97,8 @@ type TableViewProps = {
   asking: Pick<RequestControls, 'request' | 'answers' | 'putAnswer'>
   /** The picture the DM has put on stage. */
   stageImage?: Asset | null
+  /** Shown on parchment while the DM hasn't put anything on stage. */
+  campaignName?: string
   /** The table's sound in this tab (left out in the previews). */
   audio?: TableAudio
   /** Fights and the battle map (left out in the tests). */
@@ -171,6 +173,7 @@ export function TableView({
   thrower,
   asking,
   stageImage = null,
+  campaignName,
   audio,
   combat,
 }: TableViewProps) {
@@ -571,9 +574,17 @@ export function TableView({
         </div>
       ) : (
         <div className={styles.scene}>
-          <div className={styles.sceneTitle}>The DM&rsquo;s scene appears here</div>
-          <div className={styles.sceneNote}>
-            When the DM puts a picture on stage, it fills this space. Dice land here.
+          <div className={styles.parchment}>
+            <div className={styles.parchmentEyebrow}>Welcome to</div>
+            <h1 className={styles.parchmentTitle}>{campaignName || 'The Adventure'}</h1>
+            <div className={styles.flourish} aria-hidden="true">
+              <span />
+              ✦
+              <span />
+            </div>
+            <p className={styles.parchmentNote}>
+              The DM will set the scene soon. Pictures, maps and your dice appear here.
+            </p>
           </div>
         </div>
       )}

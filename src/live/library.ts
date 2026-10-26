@@ -212,25 +212,64 @@ export async function deleteAsset(asset: Asset): Promise<void> {
   paths.forEach((path) => forgetFile(bucket, path))
 }
 
-/** Battle maps that come with the table (drawn for it, free to use), at 70 pixels a square. */
-export const STARTER_MAPS = [
-  { file: 'tavern.svg', name: 'Tavern', hint: 'A bar, a fireplace, a back kitchen and a cellar trapdoor' },
-  { file: 'forest-road.svg', name: 'Forest road', hint: 'A road through the trees, a stream with a bridge, a camp' },
-  { file: 'old-crypt.svg', name: 'Old crypt', hint: 'Sarcophagi, an altar, a pit trap and a collapsed room' },
-] as const
+/**
+ * Pictures that come with the table (drawn for it, free to use): battle maps at 70 pixels a square,
+ * and a simple example for each other kind, to try the stage with before buying art.
+ */
+export const STARTER_ART = [
+  {
+    file: 'maps/tavern.svg',
+    category: 'maps',
+    name: 'Tavern',
+    hint: 'A bar, a fireplace, a back kitchen and a cellar trapdoor',
+  },
+  {
+    file: 'maps/forest-road.svg',
+    category: 'maps',
+    name: 'Forest road',
+    hint: 'A road through the trees, a stream with a bridge, a camp',
+  },
+  {
+    file: 'maps/old-crypt.svg',
+    category: 'maps',
+    name: 'Old crypt',
+    hint: 'Sarcophagi, an altar, a pit trap and a collapsed room',
+  },
+  {
+    file: 'art/market-city.svg',
+    category: 'places',
+    name: 'Market city',
+    hint: 'A city street on market day, a castle on the hill',
+  },
+  {
+    file: 'art/campfire-night.svg',
+    category: 'moments',
+    name: 'Campfire at night',
+    hint: 'The party round a fire under the moon',
+  },
+  {
+    file: 'art/innkeeper.svg',
+    category: 'people',
+    name: 'The innkeeper',
+    hint: 'A cheerful innkeeper raising a tankard',
+  },
+] as const satisfies readonly { file: string; category: ArtCategory; name: string; hint: string }[]
 
-export type StarterMap = (typeof STARTER_MAPS)[number]
+export type StarterArt = (typeof STARTER_ART)[number]
+export type StarterMap = Extract<StarterArt, { category: 'maps' }>
 
-/** Where a starter map's drawing is served from. */
-export function starterMapUrl(starter: StarterMap): string {
-  return `${import.meta.env.BASE_URL}maps/${starter.file}`
+export const STARTER_MAPS = STARTER_ART.filter((s): s is StarterMap => s.category === 'maps')
+
+/** Where a starter picture's drawing is served from. */
+export function starterMapUrl(starter: StarterArt): string {
+  return `${import.meta.env.BASE_URL}${starter.file}`
 }
 
 /**
- * Adds a starter map to this table's library, like any uploaded map: the drawing is turned into a
- * picture in the browser first. Its squares are 70 pixels, the grid's default, so they line up.
+ * Adds a starter picture to this table's library, like any upload: the drawing is turned into a
+ * picture in the browser first. A map's squares are 70 pixels, the grid's default, so they line up.
  */
-export async function addStarterMap(campaignId: string, starter: StarterMap): Promise<Asset> {
+export async function addStarterMap(campaignId: string, starter: StarterArt): Promise<Asset> {
   const image = new Image()
   image.src = starterMapUrl(starter)
   await image.decode()
@@ -242,5 +281,5 @@ export async function addStarterMap(campaignId: string, starter: StarterMap): Pr
   context.drawImage(image, 0, 0)
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
   if (!blob) throw new TableError("Your browser couldn't prepare the map.")
-  return uploadArt(campaignId, new File([blob], `${starter.name}.png`, { type: 'image/png' }), 'maps')
+  return uploadArt(campaignId, new File([blob], `${starter.name}.png`, { type: 'image/png' }), starter.category)
 }

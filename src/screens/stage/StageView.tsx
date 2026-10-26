@@ -13,7 +13,7 @@ import {
   type Asset,
   type AssetPatch,
   type SoundDetails,
-  type StarterMap,
+  type StarterArt,
 } from '../../live/library.ts'
 import type { LibraryControls, StageControls } from '../../live/useStage.ts'
 import type { Character } from '../../rules/character.ts'
@@ -37,7 +37,7 @@ export type LibraryActions = {
   update: (id: string, patch: AssetPatch) => Promise<Asset>
   remove: (asset: Asset) => Promise<void>
   /** Adds one of the maps that come with the table to the library. */
-  addStarter?: (starter: StarterMap) => Promise<Asset>
+  addStarter?: (starter: StarterArt) => Promise<Asset>
 }
 
 type StageViewProps = {

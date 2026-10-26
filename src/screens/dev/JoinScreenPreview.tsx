@@ -162,6 +162,7 @@ export function TablePreview({
   return (
     <SignedInAs userId={caster ? 'p2' : 'p1'}>
       <TableView
+        campaignName="The Ember Road"
         campaignId="preview"
         me={sampleMembers[caster ? 2 : 1]}
         character={characters[caster ? 1 : 0]}

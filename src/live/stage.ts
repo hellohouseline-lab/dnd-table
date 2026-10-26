@@ -99,11 +99,18 @@ export async function getStage(campaignId: string): Promise<Stage> {
   return data ? rowToStage(data) : emptyStage(campaignId)
 }
 
-/** The DM changes the stage (setting it up the first time). */
+/**
+ * The DM changes the stage (setting it up the first time). An update, then an insert if there's no
+ * row yet: an upsert would also rewrite campaign_id, which nobody may change, so it was refused.
+ */
 export async function saveStage(campaignId: string, patch: StagePatch): Promise<Stage> {
+  const row = patchToRow(patch)
+  const updated = await db().from('stage').update(row).eq('campaign_id', campaignId).select('*').maybeSingle()
+  if (updated.error) throw fromDatabaseError(updated.error)
+  if (updated.data) return rowToStage(updated.data)
   const { data, error } = await db()
     .from('stage')
-    .upsert({ campaign_id: campaignId, ...patchToRow(patch) }, { onConflict: 'campaign_id' })
+    .insert({ campaign_id: campaignId, ...row })
     .select('*')
     .single()
   if (error) throw fromDatabaseError(error)

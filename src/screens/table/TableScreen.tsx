@@ -7,7 +7,7 @@ import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
 import { useOnlineIds } from '../../live/campaignChannel.ts'
-import { listMembers } from '../../live/campaigns.ts'
+import { getCampaign, listMembers } from '../../live/campaigns.ts'
 import { messageFor } from '../../live/errors.ts'
 import { saveDiceStyle } from '../../live/rolls.ts'
 import { useLoad } from '../../live/useLoad.ts'
@@ -23,6 +23,7 @@ import { TableView } from './TableView.tsx'
 export function TableScreen({ campaignId }: { campaignId: string }) {
   const user = useSignedInUser()
   const members = useLoad(() => listMembers(campaignId), [campaignId])
+  const campaign = useLoad(() => getCampaign(campaignId), [campaignId])
   const party = useParty(campaignId, user.id)
   const online = useOnlineIds(campaignId, user.id)
   const asking = useRollRequest(campaignId, user.id, false)
@@ -91,6 +92,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       onDiceStyleChange={changeDiceStyle}
       asking={asking}
       stageImage={stageImage}
+      campaignName={campaign.status === 'ready' ? campaign.data?.name : undefined}
       audio={audio}
       combat={{
         fight: fight.fight,
