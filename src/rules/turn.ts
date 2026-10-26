@@ -170,3 +170,26 @@ export function inReach(reach: Reach, feet: number): { allowed: boolean; disadva
   const limit = Math.max(reach.melee ?? 0, reach.long ?? 0)
   return { allowed: false, disadvantage: false, why: `That's ${feet} ft away, and it only reaches ${limit} ft` }
 }
+
+/** What can be done as a bonus action instead of the action: a rogue's Cunning Action, a monk's ki moves. */
+export type BonusMove = 'dash' | 'disengage' | 'hide' | 'dodge'
+
+/**
+ * From level 2: a rogue can Dash, Disengage or Hide as a bonus action (Cunning Action); a monk can
+ * Dash or Disengage (Step of the Wind) or Dodge (Patient Defense), each for a ki point.
+ */
+export function bonusMoves(className: string, level: number): BonusMove[] {
+  const name = className.toLowerCase()
+  if (level >= 2 && name.includes('rogue')) return ['dash', 'disengage', 'hide']
+  if (level >= 2 && name.includes('monk')) return ['dash', 'disengage', 'dodge']
+  return []
+}
+
+/**
+ * How far you can jump (2014 rules), in feet, with a 10-foot run-up; standing, half that. Long:
+ * your Strength score. High: 3 + your Strength modifier (never below 0). It costs movement.
+ */
+export function jumps(strength: number): { long: number; standingLong: number; high: number; standingHigh: number } {
+  const high = Math.max(0, 3 + Math.floor((strength - 10) / 2))
+  return { long: strength, standingLong: Math.floor(strength / 2), high, standingHigh: Math.floor(high / 2) }
+}

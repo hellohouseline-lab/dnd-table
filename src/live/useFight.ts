@@ -16,6 +16,7 @@ import {
   endFight,
   getActiveFight,
   castSpell,
+  offhandAttack,
   listEvents,
   listPrompts,
   rollConcentrationSave,
@@ -85,6 +86,8 @@ export type FightControls = {
    * Resolves with the roll, to be shown with the dice; throws in plain words if it's refused.
    */
   attack: (attacker: Combatant, target: Combatant, request: RollRequest) => Promise<Roll>
+  /** Two-weapon fighting: the off-hand attack, for the bonus action. Throws in plain words if refused. */
+  offhandAttack: (attacker: Combatant, target: Combatant, request: RollRequest) => Promise<Roll>
   /** Spends part of a turn: Dash, Disengage, Dodge, or the action, bonus action or reaction. */
   act: (combatant: Combatant, what: TurnAction) => void
   /** DM: takes back the newest thing that happened. */
@@ -391,6 +394,17 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reload],
   )
 
+  const offhand = useCallback(
+    async (attacker: Combatant, target: Combatant, request: RollRequest) => {
+      setError(null)
+      const { roll, event } = await offhandAttack(attacker.id, target.id, request)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
   const act = useCallback(
     (combatant: Combatant, what: TurnAction) => {
       void attempt(() => spendAction(combatant.id, what)).then((event) => {
@@ -490,6 +504,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
     error,
     events,
     attack,
+    offhandAttack: offhand,
     act,
     undo,
     prompts,

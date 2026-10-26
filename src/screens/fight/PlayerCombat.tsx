@@ -5,7 +5,7 @@ import { HEALTH_WORDS } from '../../rules/combat.ts'
 import type { RollMode } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import { initiativeRoll } from '../../rules/rolls.ts'
-import { actionFree, attacksLeft, movementLeft, type TurnRecord } from '../../rules/turn.ts'
+import { actionFree, attacksLeft, jumps, movementLeft, type BonusMove, type TurnRecord } from '../../rules/turn.ts'
 import type { TurnAction } from '../../live/combat.ts'
 import type { FightRow } from './fightRows.ts'
 import styles from './PlayerCombat.module.css'
@@ -69,6 +69,10 @@ type YourTurnProps = {
   started: boolean
   /** False while unconscious: no actions or movement, only End turn. */
   canAct?: boolean
+  /** What this character can do as a bonus action instead (a rogue's Cunning Action). */
+  bonusMoves?: BonusMove[]
+  /** Strength score, for how far you can jump. */
+  strength?: number
   onAct: (what: TurnAction) => void
   onEndTurn: () => void
 }
@@ -78,7 +82,18 @@ type YourTurnProps = {
  * reaction and movement, Dash, Disengage and Dodge, and End turn. It all comes back at the start of
  * your next turn. Bonus action and reaction are clicked when you use one for a spell or feature.
  */
-export function YourTurn({ turn, speed, perAction, myTurn, started, canAct = true, onAct, onEndTurn }: YourTurnProps) {
+export function YourTurn({
+  turn,
+  speed,
+  perAction,
+  myTurn,
+  started,
+  canAct = true,
+  bonusMoves = [],
+  strength,
+  onAct,
+  onEndTurn,
+}: YourTurnProps) {
   const attacks = attacksLeft(turn, perAction)
   const free = actionFree(turn)
   const action =
@@ -110,6 +125,21 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, canAct = tru
     ['disengage', 'Disengage', 'Spend your action so moving away draws no opportunity attacks'],
     ['dodge', 'Dodge', 'Spend your action: attacks against you have disadvantage until your next turn'],
   ]
+  // The other things the rules let you do with your action.
+  const others: [TurnAction, string, string][] = [
+    ['hide', 'Hide', 'Spend your action to hide: roll Stealth against what the enemies can see'],
+    ['help', 'Help', 'Spend your action: an ally has advantage on their next check, or on an attack next to you'],
+    ['search', 'Search', 'Spend your action looking for something: roll Perception'],
+    ['ready', 'Ready', 'Spend your action to choose a trigger and what you will do (it uses your reaction)'],
+    ['object', 'Use an object', 'Spend your action on something like drinking a potion or opening a door'],
+  ]
+  const leap = strength === undefined ? null : jumps(strength)
+  const BONUS_WORDS: Record<BonusMove, string> = {
+    dash: 'Dash',
+    disengage: 'Disengage',
+    hide: 'Hide',
+    dodge: 'Dodge',
+  }
   const title = myTurn ? 'Your turn' : started ? 'Waiting for your turn' : 'Waiting for everyone’s initiative'
   return (
     <section className={styles.thisTurn} aria-label="This turn">
@@ -144,6 +174,11 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, canAct = tru
           </span>
         </li>
       </ul>
+      {leap && (
+        <p className={styles.jump} title="A jump costs movement. Standing still first, it's half as far.">
+          Jump: {leap.long} ft long, {leap.high} ft high ({leap.standingLong} and {leap.standingHigh} from standing)
+        </p>
+      )}
       <div className={styles.moves} role="group" aria-label="Other actions">
         {moves.map(([what, label, hint]) => (
           <button
@@ -158,6 +193,37 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, canAct = tru
           </button>
         ))}
       </div>
+      <div className={styles.moves} role="group" aria-label="More actions">
+        {others.map(([what, label, hint]) => (
+          <button
+            key={what}
+            type="button"
+            className={cx(styles.move, styles.moveSmall)}
+            title={hint}
+            disabled={!myTurn || !free || !canAct}
+            onClick={() => onAct(what)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {bonusMoves.length > 0 && (
+        <div className={styles.moves} role="group" aria-label="As a bonus action">
+          <span className={styles.bonusLabel}>Bonus action:</span>
+          {bonusMoves.map((move) => (
+            <button
+              key={move}
+              type="button"
+              className={cx(styles.move, styles.moveBonus)}
+              title={`${BONUS_WORDS[move]} with your bonus action, keeping your action`}
+              disabled={!myTurn || turn.bonusUsed || !canAct}
+              onClick={() => onAct(`bonus_${move}` as TurnAction)}
+            >
+              {BONUS_WORDS[move]}
+            </button>
+          ))}
+        </div>
+      )}
       <button type="button" className={styles.endTurn} disabled={!myTurn} onClick={onEndTurn}>
         End turn
       </button>

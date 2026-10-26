@@ -167,6 +167,39 @@ export function attackRoll(character: RollCharacter, attack: AttackEntry, choice
   }
 }
 
+/**
+ * Two-weapon fighting: after attacking this turn, a second attack with a light melee weapon, for the
+ * bonus action. You need two light melee weapons on the sheet.
+ */
+export function canAttackOffhand(
+  character: Pick<Character, 'attacks'>,
+  turn: { attacksMade: number; bonusUsed: boolean },
+  attack: AttackEntry,
+): boolean {
+  const light = (a: AttackEntry) => {
+    const weapon = findWeapon(a.weapon)
+    return Boolean(weapon && weapon.range === 'Melee' && weapon.properties.includes('light'))
+  }
+  return turn.attacksMade > 0 && !turn.bonusUsed && light(attack) && character.attacks.filter(light).length >= 2
+}
+
+/** The off-hand attack: the same to hit, but no ability bonus on the damage (a penalty still counts). */
+export function offhandAttackRoll(
+  character: RollCharacter,
+  attack: AttackEntry,
+  choices: RollChoices = {},
+): RollRequest {
+  const request = attackRoll(character, attack, choices)
+  const weapon = findWeapon(attack.weapon)
+  const ability = weapon ? weaponAbility(weapon, character.scores) : attack.ability
+  const bonus = Math.max(0, abilityModifier(character.scores[ability]))
+  return {
+    ...request,
+    label: `${request.label} (off hand)`,
+    damage: request.damage && { ...request.damage, modifier: request.damage.modifier - bonus },
+  }
+}
+
 /** A spell attack: a d20 plus the spellcasting modifier and proficiency, with the spell's damage. */
 export function spellAttackRoll(
   character: RollCharacter,

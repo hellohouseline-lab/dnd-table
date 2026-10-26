@@ -3,6 +3,16 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Changes after Matt's T1 test (live).**
+  - **Attacks are two clicks again:** click the card, then the target, and it rolls. Spells the same (card, then target or a spot on the map). Features fire on click, with Undo for half a minute.
+  - **Info on hover:** hold the mouse on a card for 3 seconds to see what it does, what it costs and the full rules. It never gets in the way of clicking. The side panel is gone.
+  - **Every action in the rules:** Dash, Disengage and Dodge, plus Hide (rolls Stealth), Help, Search (rolls Perception), Ready and Use an object, all taking the action.
+  - **Bonus-action versions:** a rogue from level 2 (Cunning Action) can Dash, Disengage or Hide as a bonus action; a monk from level 2 can Dash, Disengage or Dodge (ki isn't counted yet). The server refuses them for anyone else.
+  - **Two-weapon fighting:** after attacking, a second light melee weapon attacks with the bonus action, without the ability bonus on damage ("Dagger (off hand)").
+  - **Jumping:** Your turn shows how far you can jump (long: your Strength score in feet; high: 3 + Strength modifier; half from standing). It costs movement.
+  - **Stage picture for players:** the database checks out (the DM can set it and players can read it), so the player's screen now retries loading the picture and re-checks the stage every 20 seconds in case a live update was missed. Not yet confirmed by Matt.
+  - Not done yet: Dodge giving advantage on Dexterity saves, and counting a monk's ki points.
+  - Tests: 379 database (9 new), 330 unit and 18 preview browser tests.
 - **T1, cards that explain themselves and the Party tab (live; plan approved with decisions 22 to 28 as recommended).**
   - **Cards:** clicking any card in the hand (or on the sheet) opens a side panel just right of the plate. It shows:
     - what the card does in plain words: to hit, damage, reach and properties for a weapon; the effect, casting time, range, duration and concentration for a spell; the effect and uses left for a feature;

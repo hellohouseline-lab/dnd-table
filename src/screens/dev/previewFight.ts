@@ -524,17 +524,28 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       )
       return { ...roll, passed: roll.total >= 10, passedByDice: roll.total >= 10 }
     },
+    offhandAttack: async (attacker, target, request): Promise<Roll> => {
+      const me = latest.current.fight?.combatants.find((c) => c.id === attacker.id)
+      if (!me) throw new Error('No fight')
+      if (me.turn.attacksMade === 0) throw new Error('Attack with your main weapon first.')
+      if (me.turn.bonusUsed) throw new Error('You have used your bonus action this turn.')
+      const roll = settle(me, target, request, 'none')
+      setTurn(me.id, (turn) => ({ ...turn, bonusUsed: true }))
+      return roll
+    },
     act: (combatant, what: TurnAction) => {
       const me = latest.current.fight?.combatants.find((c) => c.id === combatant.id)
       if (!me) return
+      const bonus = what === 'bonus' || what.startsWith('bonus_')
+      const move = what.replace(/^bonus_/, '')
       setTurn(me.id, (turn) => ({
         ...turn,
-        actionUsed: turn.actionUsed || ['action', 'dash', 'disengage', 'dodge'].includes(what),
-        bonusUsed: turn.bonusUsed || what === 'bonus',
+        actionUsed: turn.actionUsed || (!bonus && what !== 'reaction'),
+        bonusUsed: turn.bonusUsed || bonus,
         reactionUsed: turn.reactionUsed || what === 'reaction',
-        extraFeet: turn.extraFeet + (what === 'dash' ? speedOf(me) : 0),
-        disengaged: turn.disengaged || what === 'disengage',
-        dodging: turn.dodging || what === 'dodge',
+        extraFeet: turn.extraFeet + (move === 'dash' ? speedOf(me) : 0),
+        disengaged: turn.disengaged || move === 'disengage',
+        dodging: turn.dodging || move === 'dodge',
       }))
       post(
         { kind: 'action', actorId: me.id, targetId: null, rollId: null, shown: { what } },

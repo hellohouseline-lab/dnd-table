@@ -1265,6 +1265,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      offhand_attack: {
+        Args: { p_attacker_id: string; p_roll: Json; p_target_id: string }
+        Returns: Json
+      }
       opportunity_attack: {
         Args: { p_prompt_id: string; p_roll: Json }
         Returns: Json

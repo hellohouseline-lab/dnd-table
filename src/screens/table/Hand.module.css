@@ -67,6 +67,7 @@
 
 /* A caster's two sets of cards, and the slots left above the spells. */
 .wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -126,4 +127,18 @@
   font-size: 12px;
   line-height: 1.15;
   color: var(--text-3);
+}
+
+.slot {
+  display: inline-flex;
+}
+
+/* What a card does, after hovering on it for 3 seconds: above the hand, out of the way of the map's middle. */
+.info {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 14;
+  pointer-events: none;
 }

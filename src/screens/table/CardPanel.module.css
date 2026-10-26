@@ -206,3 +206,18 @@
   color: var(--text);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
+
+.rules {
+  max-height: 220px;
+  overflow-y: auto;
+  border-top: 1px solid var(--chip-border);
+  padding-top: 6px;
+}
+
+.rules p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+  white-space: pre-line;
+}

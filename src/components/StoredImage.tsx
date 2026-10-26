@@ -18,7 +18,15 @@ export function StoredImage({ path, alt, className, fallback }: StoredImageProps
   useEffect(() => {
     if (!path) return
     let live = true
-    void fileUrl('art', path).then((url) => live && setLoaded({ path, url }))
+    let tries = 0
+    // Try again a few times if the picture couldn't be had (it may only just have gone on stage).
+    const load = () =>
+      fileUrl('art', path).then((url) => {
+        if (!live) return
+        setLoaded({ path, url })
+        if (!url && ++tries < 5) setTimeout(load, 1500)
+      })
+    void load()
     return () => {
       live = false
     }

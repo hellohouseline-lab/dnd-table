@@ -137,29 +137,18 @@ test('a player dashes, then ends their turn', async ({ page }) => {
 
 test('a player attacks a goblin by picking it, and their action is spent', async ({ page }) => {
   await page.goto('#/dev/table/fight')
-  await page
-    .getByRole('button', { name: /Longsword/ })
-    .first()
-    .click()
-  const panel = page.getByRole('region', { name: 'Longsword' })
-  await expect(panel).toContainText('+5 to hit')
-  await expect(panel).toContainText('Click who to attack')
+  const hand = page.getByLabel('Your hand')
+  await hand.getByRole('button', { name: /Longsword/ }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Pick a target for Longsword' })).toBeVisible()
   await page
     .getByRole('list', { name: 'Turn order' })
     .getByRole('button', { name: /Goblin A/ })
     .click()
-  await expect(panel).toContainText('Target: Goblin A (5 ft away)')
-  await panel.getByRole('button', { name: 'Attack Goblin A' }).click()
-  await expect(panel).toBeHidden()
   const feed = page.getByRole('region', { name: 'What happened' })
   await expect(feed).toContainText(/You (hit|miss) Goblin A with Longsword/)
-  const turn = page.getByRole('region', { name: 'This turn' })
-  await expect(turn).toContainText(/Action\s*Used/)
-  await page
-    .getByRole('button', { name: /Longsword/ })
-    .first()
-    .click()
-  await expect(page.getByRole('region', { name: 'Longsword' })).toContainText('Your action: used this turn')
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Action\s*Used/)
+  await hand.getByRole('button', { name: /Longsword/ }).click()
+  await expect(page.getByText('You have used your action this turn.')).toBeVisible()
 })
 
 test('a player can only attack what their weapon reaches', async ({ page }) => {
@@ -234,21 +223,16 @@ test('a wizard casts Magic Missile at a goblin, which spends the action', async 
   await page.getByRole('button', { name: 'Spells', exact: true }).click()
   const hand = page.getByLabel('Your hand')
   await hand.getByRole('button', { name: /Magic Missile/ }).click()
-  const panel = page.getByRole('region', { name: 'Magic Missile' })
-  await expect(panel).toContainText('3d4+3 force')
-  await expect(panel).toContainText('Click who it’s for')
+  await expect(page.getByRole('status').filter({ hasText: 'Cast Magic Missile: click who' })).toBeVisible()
   await page
     .getByRole('list', { name: 'Turn order' })
     .getByRole('button', { name: /Goblin A/ })
     .click()
-  await expect(panel).toContainText('For Goblin A')
-  await panel.getByRole('button', { name: 'Cast Magic Missile' }).click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
     /Your Magic Missile hits Goblin A for \d+ force/,
   )
   await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Action\s*Used/)
   await expect(hand.getByRole('button', { name: /Fire Bolt/ })).toBeDisabled()
-  await expect(page.getByRole('region', { name: 'At a glance' })).toContainText('1st')
   await expect(
     page.getByRole('region', { name: 'At a glance' }).getByRole('group', { name: '1st-level slots left: 2 of 4' }),
   ).toBeVisible()
@@ -261,16 +245,14 @@ test('a wizard puts Darkness on the map and concentrates on it', async ({ page }
     .getByLabel('Your hand')
     .getByRole('button', { name: /Darkness/ })
     .click()
-  const panel = page.getByRole('region', { name: 'Darkness' })
-  await expect(panel).toContainText('click where it goes')
-  await expect(panel).toContainText('Uses a 2nd-level slot')
+  await expect(page.getByRole('status').filter({ hasText: 'Cast Darkness: click where it goes' })).toContainText(
+    'Uses a 2nd-level slot',
+  )
   const map = page.locator('canvas').first()
   const box = await map.boundingBox()
   if (!box) throw new Error('No map')
   await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.5)
   await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.5)
-  await expect(panel).toContainText('Placed on the map')
-  await panel.getByRole('button', { name: 'Cast Darkness' }).click()
   await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeVisible()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You cast Darkness.')
   await page.getByRole('button', { name: 'Lost it' }).click()
@@ -299,10 +281,6 @@ test('a fighter uses Second Wind from its card, and takes it back', async ({ pag
     .getByLabel('Your hand')
     .getByRole('button', { name: /Second Wind/ })
     .click()
-  const panel = page.getByRole('region', { name: 'Second Wind' })
-  await expect(panel).toContainText('Regain 1d10 + 2 hit points')
-  await expect(panel).toContainText('Your bonus action: ready')
-  await panel.getByRole('button', { name: 'Roll Second Wind' }).click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You use Second Wind.')
   await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Bonus action\s*Used/)
   await page
@@ -312,6 +290,20 @@ test('a fighter uses Second Wind from its card, and takes it back', async ({ pag
     .click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('(undone)')
   await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Bonus action\s*Ready/)
+})
+
+test('hovering on a card for a few seconds shows what it does', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  await page
+    .getByLabel('Your hand')
+    .getByRole('button', { name: /Longsword/ })
+    .hover()
+  const info = page.getByRole('tooltip', { name: 'About Longsword' })
+  await expect(info).toBeHidden()
+  await expect(info).toBeVisible({ timeout: 5000 })
+  await expect(info).toContainText('+5 to hit')
+  await page.mouse.move(5, 5)
+  await expect(info).toBeHidden()
 })
 
 test('the DM asks the party for a Perception check in one click', async ({ page }) => {
