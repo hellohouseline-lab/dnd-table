@@ -236,8 +236,10 @@ test('a wizard casts Magic Missile at a goblin, which spends the action', async 
   )
   await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Action\s*Used/)
   await expect(hand.getByRole('button', { name: /Fire Bolt/ })).toBeDisabled()
-  await expect(page.getByLabel('Spell slots left')).toContainText('1st')
-  await expect(page.getByRole('group', { name: '1st-level slots left: 2 of 4' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'At a glance' })).toContainText('1st')
+  await expect(
+    page.getByRole('region', { name: 'At a glance' }).getByRole('group', { name: '1st-level slots left: 2 of 4' }),
+  ).toBeVisible()
 })
 
 test('a wizard puts Darkness on the map and concentrates on it', async ({ page }) => {

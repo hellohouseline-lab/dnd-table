@@ -54,6 +54,7 @@ import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/
 import { InitiativePrompt, InitiativeRibbon, InspectCard, TurnBanner, YourTurn } from '../fight/PlayerCombat.tsx'
 import { ConcentrationPrompt, DeathSaves, StrikePrompt } from '../fight/Reactions.tsx'
 import { ConcentrationChip } from '../fight/SpellParts.tsx'
+import { AtAGlance } from '../fight/AtAGlance.tsx'
 import { SlotPicker } from '../fight/SlotPicker.tsx'
 import { useCasting, whyNot } from '../fight/useCasting.ts'
 import type { Area } from '../../live/areas.ts'
@@ -593,6 +594,7 @@ export function TableView({
             onEndTurn={combat.endTurn}
           />
         )}
+        {fight && mine && <AtAGlance character={character} />}
 
         <section className={cx(styles.abilities, fight && styles.hiddenInFight)} aria-label="Abilities and conditions">
           <div className={styles.abilityRow}>

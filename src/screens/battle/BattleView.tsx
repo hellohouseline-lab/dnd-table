@@ -315,13 +315,13 @@ export function BattleView({
             compact
           />
           <ActingNow
+            campaignId={campaignId}
             className={styles.acting}
             row={focus}
             controls={controls}
             monsters={monsters}
             onAttack={aimMonster}
             onCharacterAttack={aimCharacter}
-            onOpenSheet={(character) => window.open(href(`/c/${campaignId}/sheet/${character.id}`), '_blank')}
             onDeathSave={(row) => void table.rollWith(() => controls.deathSave(row.combatant))}
             onUpdate={onUpdate}
             spells={spells}

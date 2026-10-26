@@ -6,9 +6,12 @@ import type { Member } from '../../live/campaigns.ts'
 import type { Character } from '../../rules/character.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
 import { findCondition } from '../../rules/srd/index.ts'
+import { SheetLink } from '../../components/SheetLink.tsx'
+import { ConcentrationChip, SlotPips } from '../fight/SpellParts.tsx'
 import styles from './PartyCards.module.css'
 
 type PartyCardsProps = {
+  campaignId: string
   members: Member[]
   characters: Character[]
   onOpenSheet: (character: Character) => void
@@ -19,7 +22,7 @@ type PartyCardsProps = {
 export type HitPointChange = 'damage' | 'heal' | 'temp'
 
 /** The Party tab from design 07: a card per character with what the DM glances at most. */
-export function PartyCards({ members, characters, onOpenSheet, onAsk, onHitPoints }: PartyCardsProps) {
+export function PartyCards({ campaignId, members, characters, onOpenSheet, onAsk, onHitPoints }: PartyCardsProps) {
   const [hpFor, setHpFor] = useState<string | null>(null)
   const [amount, setAmount] = useState('')
   const value = Math.max(0, Math.trunc(Number(amount)) || 0)
@@ -74,7 +77,15 @@ export function PartyCards({ members, characters, onOpenSheet, onAsk, onHitPoint
                 </span>
               ))}
               {character.exhaustion > 0 && <span className={styles.condition}>Exhaustion {character.exhaustion}</span>}
+              {character.currentHp === 0 && (
+                <span className={styles.condition}>
+                  {character.dead ? 'Dead' : character.stable ? 'Stable' : 'Dying'} · {character.deathSaveSuccesses}{' '}
+                  saved, {character.deathSaveFailures} failed
+                </span>
+              )}
             </div>
+            {slotsMax > 0 && <SlotPips spellcasting={character.spellcasting} />}
+            <ConcentrationChip character={character} />
             {hpFor === character.id && (
               <form
                 className={styles.hpRow}
@@ -122,9 +133,15 @@ export function PartyCards({ members, characters, onOpenSheet, onAsk, onHitPoint
                 >
                   Temp
                 </button>
-                <button type="button" className={styles.linkish} onClick={() => onOpenSheet(character)}>
+                <SheetLink
+                  campaignId={campaignId}
+                  characterId={character.id}
+                  className={styles.linkish}
+                  onOpen={() => onOpenSheet(character)}
+                  title="Cmd or Ctrl click to open it in a new tab"
+                >
                   Sheet
-                </button>
+                </SheetLink>
               </form>
             )}
             <div className={styles.actions}>

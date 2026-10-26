@@ -17,6 +17,8 @@ import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
 import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
+import { AtAGlance } from './AtAGlance.tsx'
+import { SheetLink } from '../../components/SheetLink.tsx'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Aiming } from './useAiming.ts'
 
@@ -102,6 +104,11 @@ export function TurnOrder({
                   title={pickable ? `Attack ${row.name}` : undefined}
                 >
                   <span className={row.combatant.kind === 'monster' ? styles.monsterText : undefined}>{row.name}</span>
+                  {row.character?.concentration && (
+                    <span className={styles.concentrating} title={`Concentrating on ${row.character.concentration}`}>
+                      C
+                    </span>
+                  )}
                   {row.unrevealed && (
                     <span className={styles.hidden}> · players see &ldquo;{row.combatant.shownName}&rdquo;</span>
                   )}
@@ -162,6 +169,7 @@ export function TurnOrder({
 }
 
 type ActingNowProps = {
+  campaignId: string
   row: FightRow | null
   controls: FightControls
   monsters: SrdMonster[] | null
@@ -169,7 +177,8 @@ type ActingNowProps = {
   onAttack: (row: FightRow, action: SrdMonsterAction) => void
   /** Acting for a player: one of their attacks, then its target. */
   onCharacterAttack: (row: FightRow, attack: AttackEntry) => void
-  onOpenSheet: (character: Character) => void
+  /** Opens a sheet in the app on a plain click (Screen 1's panel); otherwise it opens in a new tab. */
+  onOpenSheet?: (character: Character) => void
   /** A character at 0 hit points: roll their death save. */
   onDeathSave?: (row: FightRow) => void
   /** Changes a character's sheet: Stabilise, up with 1 hit point, or Lost it (concentration). */
@@ -188,6 +197,7 @@ type ActingNowProps = {
 
 /** The Acting now card (design 10): what the creature can do this turn, each attack a click away from its target. */
 export function ActingNow({
+  campaignId,
   row,
   controls,
   monsters,
@@ -295,13 +305,16 @@ export function ActingNow({
             onSave={onConcentrationSave && (() => row.character && onConcentrationSave(row.character))}
             rolling={rolling}
           />
-          <button
-            type="button"
+          <AtAGlance character={row.character} />
+          <SheetLink
+            campaignId={campaignId}
+            characterId={row.character.id}
             className={styles.secondary}
-            onClick={() => row.character && onOpenSheet(row.character)}
+            onOpen={onOpenSheet && (() => row.character && onOpenSheet(row.character))}
+            title="Cmd or Ctrl click to open it in a new tab"
           >
             Open their sheet
-          </button>
+          </SheetLink>
         </>
       ) : (
         <>
@@ -401,6 +414,7 @@ export function ActingNow({
 }
 
 type EncounterTabProps = {
+  campaignId: string
   fight: Fight
   controls: FightControls
   characters: Character[]
@@ -418,6 +432,7 @@ type EncounterTabProps = {
 
 /** Screen 1's Encounter tab: the turn order, what just happened, and the Acting now card. */
 export function EncounterTab({
+  campaignId,
   fight,
   controls,
   characters,
@@ -453,6 +468,7 @@ export function EncounterTab({
         <CombatFeed events={controls.events} nameOf={nameOf} onUndo={controls.undo} limit={4} />
       </div>
       <ActingNow
+        campaignId={campaignId}
         row={focus}
         controls={controls}
         monsters={monsters}

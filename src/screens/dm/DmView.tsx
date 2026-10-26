@@ -409,6 +409,7 @@ export function DmView({
           {tab === 'encounter' ? (
             fighting ? (
               <EncounterTab
+                campaignId={campaign.id}
                 fight={fighting}
                 controls={fight}
                 characters={characters}
@@ -433,6 +434,7 @@ export function DmView({
             )
           ) : tab === 'party' ? (
             <PartyCards
+              campaignId={campaign.id}
               members={members}
               characters={characters}
               onAsk={(character) => setAskFor({ only: character.id })}
@@ -510,11 +512,7 @@ export function DmView({
               monsters={monsters}
               onAdd={async (pick) => {
                 const added = await fight.addMonsters(pick.monster, pick.count, true)
-                await place(
-                  mapOnStage,
-                  [],
-                  added?.combatants.map((c) => c.id) ?? [],
-                )
+                await place(mapOnStage, [], added?.combatants.map((c) => c.id) ?? [])
               }}
               onClose={() => setFightDialog(null)}
             />

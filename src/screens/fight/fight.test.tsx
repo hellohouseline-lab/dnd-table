@@ -60,6 +60,7 @@ describe('the Encounter tab', () => {
   const html = text(
     renderToStaticMarkup(
       <EncounterTab
+        campaignId="preview"
         fight={fight}
         controls={controls}
         characters={sampleCharacters}

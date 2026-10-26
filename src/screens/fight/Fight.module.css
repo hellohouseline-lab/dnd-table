@@ -645,3 +645,27 @@ button.action:disabled {
   font-size: 14px;
   color: var(--pass);
 }
+
+/* "C" in the turn order: concentrating on a spell. */
+.concentrating {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--pass);
+  color: var(--pass);
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+a.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}

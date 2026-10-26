@@ -90,7 +90,9 @@ export function Hand({ character, onAttack, onUseFeature, spells = null, disable
         play: () => onUseFeature(feature),
       })),
   ]
-  const cards = (hasSpells && showing === 'spells' ? spellCards : weaponCards).slice(0, MOST_CARDS)
+  // A caster with nothing else to play starts on their spells.
+  const set = hasSpells && (showing === 'spells' || weaponCards.length === 0) ? 'spells' : 'weapons'
+  const cards = (set === 'spells' ? spellCards : weaponCards).slice(0, MOST_CARDS)
 
   if (cards.length === 0 && !hasSpells) return null
   const middle = (cards.length - 1) / 2
@@ -102,22 +104,22 @@ export function Hand({ character, onAttack, onUseFeature, spells = null, disable
           <div className={styles.tabs} role="group" aria-label="Which cards">
             <button
               type="button"
-              className={cx(styles.tab, showing === 'weapons' && styles.tabOn)}
-              aria-pressed={showing === 'weapons'}
+              className={cx(styles.tab, set === 'weapons' && styles.tabOn)}
+              aria-pressed={set === 'weapons'}
               onClick={() => setShowing('weapons')}
             >
               Attacks and features
             </button>
             <button
               type="button"
-              className={cx(styles.tab, showing === 'spells' && styles.tabOn)}
-              aria-pressed={showing === 'spells'}
+              className={cx(styles.tab, set === 'spells' && styles.tabOn)}
+              aria-pressed={set === 'spells'}
               onClick={() => setShowing('spells')}
             >
               Spells
             </button>
           </div>
-          {showing === 'spells' && <SlotPips spellcasting={character.spellcasting} />}
+          {set === 'spells' && <SlotPips spellcasting={character.spellcasting} />}
         </div>
       )}
       <div className={styles.hand} aria-label="Your hand">
