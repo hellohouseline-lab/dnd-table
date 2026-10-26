@@ -57,6 +57,9 @@ export type FightControls = {
   end: () => void
 }
 
+/** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
+const RELOAD_AFTER_MS = 300
+
 function withRow<T extends { id: string }>(list: T[], item: T): T[] {
   return list.some((x) => x.id === item.id) ? list.map((x) => (x.id === item.id ? item : x)) : [...list, item]
 }
@@ -72,13 +75,20 @@ export function useFight(campaignId: string, userId: string): FightControls {
     current.current = fight
   }, [fight])
 
+  // Only the newest load counts, so a slow one can't put back an older fight.
+  const loads = useRef(0)
   const reload = useCallback(() => {
+    loads.current += 1
+    const load = loads.current
     getActiveFight(campaignId).then(
       (loaded) => {
+        if (load !== loads.current) return
+        current.current = loaded
         setFight(loaded)
         setStatus('ready')
       },
       (caught: unknown) => {
+        if (load !== loads.current) return
         setError(messageFor(caught))
         setStatus('ready')
       },
@@ -87,32 +97,55 @@ export function useFight(campaignId: string, userId: string): FightControls {
 
   useEffect(reload, [reload])
 
+  // A fight arrives as a burst of changes: the fight, then everyone in it, then each monster and its
+  // initiative. Rather than piece that together (and drop whatever arrives while a load is under way),
+  // load the whole fight once the burst settles. That also brings the DM's other screen each new
+  // monster's real name, which isn't sent live.
+  const reloadTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const reloadSoon = useCallback(() => {
+    clearTimeout(reloadTimer.current)
+    reloadTimer.current = setTimeout(reload, RELOAD_AFTER_MS)
+  }, [reload])
+  useEffect(() => () => clearTimeout(reloadTimer.current), [])
+
   const onEncounter = useCallback(
     (change: RowChange<'encounters'>) => {
       if (change.type === 'delete') return
       const encounter = rowToEncounter(change.row)
-      const now = current.current
-      if (encounter.status === 'ended') {
-        if (now?.encounter.id === encounter.id) setFight(null)
-      } else if (now?.encounter.id === encounter.id) {
-        setFight({ ...now, encounter })
+      if (current.current?.encounter.id !== encounter.id) {
+        if (encounter.status !== 'ended') reloadSoon()
+      } else if (encounter.status === 'ended') {
+        current.current = null
+        setFight(null)
       } else {
-        reload()
+        setFight((now) => (now && now.encounter.id === encounter.id ? { ...now, encounter } : now))
       }
     },
-    [reload],
+    [reloadSoon],
   )
   useTableChanges(campaignId, userId, 'encounters', onEncounter)
 
-  const onCombatant = useCallback((change: RowChange<'combatants'>) => {
-    setFight((now) => {
-      if (!now) return now
-      if (change.type === 'delete') return { ...now, combatants: now.combatants.filter((c) => c.id !== change.id) }
+  const onCombatant = useCallback(
+    (change: RowChange<'combatants'>) => {
+      if (change.type === 'delete') {
+        setFight((now) => (now ? { ...now, combatants: now.combatants.filter((c) => c.id !== change.id) } : now))
+        return
+      }
       const combatant = rowToCombatant(change.row)
-      if (combatant.encounterId !== now.encounter.id) return now
-      return { ...now, combatants: withRow(now.combatants, combatant) }
-    })
-  }, [])
+      const now = current.current
+      if (!now || now.encounter.id !== combatant.encounterId) {
+        reloadSoon()
+        return
+      }
+      if (combatant.kind === 'monster' && !now.combatants.some((c) => c.id === combatant.id)) reloadSoon()
+      setFight((latest) =>
+        latest && latest.encounter.id === combatant.encounterId
+          ? { ...latest, combatants: withRow(latest.combatants, combatant) }
+          : latest,
+      )
+    },
+    [reloadSoon],
+  )
   useTableChanges(campaignId, userId, 'combatants', onCombatant)
 
   const attempt = useCallback(async <T>(work: () => Promise<T>): Promise<T | null> => {
