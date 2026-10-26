@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTableChanges, type RowChange } from './campaignChannel.ts'
+import { useCatchUp, useTableChanges, type RowChange } from './campaignChannel.ts'
 import { messageFor } from './errors.ts'
 import { addLogEvent, listLogEvents, rowToLogEvent, type LogEvent, type LogKind } from './notebook.ts'
 import { getAsset, listAssets, rowToAsset, type Asset } from './library.ts'
@@ -19,7 +19,7 @@ export function useStage(campaignId: string, userId: string): StageControls {
   // While a change is being saved, older echoes from the live channel are ignored.
   const saving = useRef(0)
 
-  useEffect(() => {
+  const load = useCallback(() => {
     let live = true
     getStage(campaignId).then(
       (loaded) => live && saving.current === 0 && setStage(loaded),
@@ -29,6 +29,8 @@ export function useStage(campaignId: string, userId: string): StageControls {
       live = false
     }
   }, [campaignId])
+  useEffect(load, [load])
+  useCatchUp(campaignId, userId, load)
 
   const onChange = useCallback((change: RowChange<'stage'>) => {
     if (change.type === 'upsert' && saving.current === 0) setStage(rowToStage(change.row))

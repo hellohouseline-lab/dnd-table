@@ -5,6 +5,7 @@ import type { RollRequest } from '../rules/dice.ts'
 import type { SrdMonster } from '../rules/srd/index.ts'
 import {
   broadcastPointer,
+  useCatchUp,
   usePointerBroadcasts,
   useTableChanges,
   type MapPointer,
@@ -96,6 +97,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
   }, [campaignId])
 
   useEffect(reload, [reload])
+  useCatchUp(campaignId, userId, reload)
 
   // A fight arrives as a burst of changes: the fight, then everyone in it, then each monster and its
   // initiative. Rather than piece that together (and drop whatever arrives while a load is under way),
@@ -218,8 +220,12 @@ export function useFight(campaignId: string, userId: string): FightControls {
     void attempt(async () => {
       const encounter = await endTurn(now.encounter.id)
       patchLocal((f) => (f.encounter.id === encounter.id ? { ...f, encounter } : f))
+      return true
+    }).then((ended) => {
+      // Refused (it wasn't your turn after all): show whose turn the server says it is.
+      if (!ended) reload()
     })
-  }, [attempt, patchLocal])
+  }, [attempt, patchLocal, reload])
 
   const setHp = useCallback(
     (secret: CombatantSecret, hp: number) => {
@@ -306,7 +312,7 @@ export function useTokens(campaignId: string, userId: string, mapId: string | nu
   const [error, setError] = useState<string | null>(null)
   const tokens = loaded && loaded.mapId === mapId ? loaded.tokens : []
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!mapId) return
     let live = true
     listTokens(campaignId, mapId).then(
@@ -317,6 +323,8 @@ export function useTokens(campaignId: string, userId: string, mapId: string | nu
       live = false
     }
   }, [campaignId, mapId])
+  useEffect(load, [load])
+  useCatchUp(campaignId, userId, load)
 
   const set = useCallback(
     (change: (tokens: Token[]) => Token[]) =>
