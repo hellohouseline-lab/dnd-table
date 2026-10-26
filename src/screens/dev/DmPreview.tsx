@@ -4,7 +4,7 @@ import type { User } from '@supabase/supabase-js'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { EMPTY_STASH, type GivingControls, type Offer, type PartyStash } from '../../live/giving.ts'
 import type { DmItem } from '../../rules/catalogue.ts'
-import type { Sale, ShopControls } from '../../live/shops.ts'
+import type { Haggle, Sale, ShopControls } from '../../live/shops.ts'
 import type { Shop } from '../../rules/shops.ts'
 import { entryId } from '../../rules/character.ts'
 import { useSrd } from '../../live/useSrd.ts'
@@ -156,7 +156,7 @@ export function DmPreview({ tab }: { tab: string }) {
   const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
   const events = usePreviewEvents()
   const giving = usePreviewGiving(characters, setCharacters)
-  const shops = usePreviewShops()
+  const shops = usePreviewShops(tab === 'haggle')
   const asking = usePreviewAsking(characters, {
     start: start.request,
     startAnswers: start.answers,
@@ -310,7 +310,7 @@ function usePreviewGiving(
 }
 
 /** Shops in the preview: made, changed, opened and closed on the page, with one sale to undo. */
-function usePreviewShops(): ShopControls {
+function usePreviewShops(haggling: boolean): ShopControls {
   const [shops, setShops] = useState<Shop[]>([])
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [addGear, setAddGear] = useState(true)
@@ -327,10 +327,39 @@ function usePreviewShops(): ShopControls {
       createdAt: '2026-11-21T19:00:00Z',
     },
   ])
+  // Wren (well, Elowen) is haggling over a crossbow.
+  const [haggles, setHaggles] = useState<Haggle[]>(() =>
+    haggling
+      ? [
+          {
+            id: 'haggle-1',
+            shopId: 'harl',
+            characterId: sampleCharacters[1].id,
+            stockId: 'x',
+            itemName: 'Crossbow, light',
+            bundles: 1,
+            asking: 2500,
+            offer: 1500,
+            counter: null,
+            status: 'open',
+            createdAt: '2026-11-21T19:05:00Z',
+          },
+        ]
+      : [],
+  )
   return {
     shops,
     notes,
     sales,
+    haggles,
+    answerHaggle: async (id, agree, counter) => {
+      setHaggles((now) =>
+        now.map((h) =>
+          h.id === id ? { ...h, status: counter !== null ? 'countered' : agree ? 'agreed' : 'refused', counter } : h,
+        ),
+      )
+      return null
+    },
     save: async (shop, note) => {
       setShops((now) =>
         now.some((s) => s.id === shop.id) ? now.map((s) => (s.id === shop.id ? shop : s)) : [...now, shop],

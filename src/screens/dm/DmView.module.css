@@ -285,4 +285,15 @@
   top: 56px;
   right: 0;
   z-index: 31;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Players haggling in a shop, above any rolls made for the DM. */
+.haggles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

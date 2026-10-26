@@ -14,6 +14,8 @@ type AskRollDialogProps = {
   hereTonight: Character[]
   /** Start with just this character picked (from a party card's "Ask to roll"). */
   only?: string | null
+  /** Start with this roll picked ("skill:persuasion", for a haggle). */
+  startKey?: string | null
   onSend: (input: AskInput) => Promise<boolean>
   onCancel: () => void
   error?: string | null
@@ -31,12 +33,13 @@ export function AskRollDialog({
   characters,
   hereTonight,
   only,
+  startKey = null,
   onSend,
   onCancel,
   error,
   className,
 }: AskRollDialogProps) {
-  const [key, setKey] = useState<string | null>(null)
+  const [key, setKey] = useState<string | null>(startKey)
   const [picked, setPicked] = useState<string[]>(only ? [only] : [])
   const [dc, setDc] = useState(15)
   const [dcShown, setDcShown] = useState(false)

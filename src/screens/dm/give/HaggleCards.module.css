@@ -1,0 +1,73 @@
+/* A haggle on Screen 1: the offer, the asking price, and the DM's answers. */
+.card {
+  width: 340px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--gold);
+  background: var(--card-fill);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text {
+  margin: 0;
+  font-size: 16px;
+}
+
+.text strong {
+  color: var(--gold-light);
+}
+
+.asking {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.problem {
+  margin: 0;
+  font-size: 14px;
+  color: var(--fail-light);
+}
+
+.buttons,
+.counter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.agree,
+.no {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.agree {
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.no {
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+}
+
+.counter input {
+  width: 90px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+}

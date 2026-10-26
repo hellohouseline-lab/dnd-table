@@ -61,6 +61,7 @@ import { RestDialog } from './RestDialog.tsx'
 import { GiveDialog } from './GiveDialog.tsx'
 import { BoxDialog } from './give/BoxDialog.tsx'
 import { ShopDialog } from './give/ShopDialog.tsx'
+import { HaggleCards } from './give/HaggleCards.tsx'
 import type { ShopControls } from '../../live/shops.ts'
 import type { Shop } from '../../rules/shops.ts'
 import { entryId } from '../../rules/character.ts'
@@ -192,7 +193,7 @@ export function DmView({
   const noteInput = useRef<HTMLInputElement>(null)
   const sessionTime = useSessionClock(campaign.id)
   // The Ask for a roll card, optionally for one character; and a request the DM has tucked away.
-  const [askFor, setAskFor] = useState<{ only: string | null } | null>(null)
+  const [askFor, setAskFor] = useState<{ only: string | null; key?: string } | null>(null)
   const [hiddenFor, setHiddenFor] = useState<string | null>(null)
   const [tab, setTab] = useState<DmTab>(startTab)
   const [sheetFor, setSheetFor] = useState<string | null>(null)
@@ -576,7 +577,19 @@ export function DmView({
           characters={characters}
           onDismiss={table.dismiss}
         />
-        <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
+        <div className={styles.forDm}>
+          <HaggleCards
+            // Out of the way while a window (Give, a box, a roll) is open over the middle.
+            className={styles.haggles}
+            haggles={
+              askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit ? [] : shops.haggles
+            }
+            shops={shops}
+            characters={characters}
+            onPersuade={(id) => setAskFor({ only: id, key: 'skill:persuasion' })}
+          />
+          <RollsForDm rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
+        </div>
       </section>
 
       {(askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit) && (
@@ -660,6 +673,7 @@ export function DmView({
               characters={characters}
               hereTonight={hereTonight}
               only={askFor.only}
+              startKey={askFor.key ?? null}
               onSend={asking.ask}
               onCancel={() => setAskFor(null)}
               error={asking.error}

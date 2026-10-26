@@ -39,6 +39,21 @@ export type Sale = {
   createdAt: string
 }
 
+/** A player's own price for something on the shelves, and the DM's answer. Prices in copper. */
+export type Haggle = {
+  id: string
+  shopId: string
+  characterId: string
+  stockId: string
+  itemName: string
+  bundles: number
+  asking: number
+  offer: number
+  counter: number | null
+  status: 'open' | 'countered' | 'agreed' | 'refused' | 'withdrawn'
+  createdAt: string
+}
+
 /** The DM's side: making and stocking shops, opening and closing them, and undoing sales. */
 export type ShopControls = {
   shops: Shop[]
@@ -49,6 +64,9 @@ export type ShopControls = {
   setOpen: (shopId: string, open: boolean) => Promise<string | null>
   sales: Sale[]
   undo: (saleId: string) => Promise<string | null>
+  /** Players' offers: agree, say no, or name a counter-price (copper). */
+  haggles: Haggle[]
+  answerHaggle: (haggleId: string, agree: boolean, counter: number | null) => Promise<string | null>
   /** Whether players may add gear for free on Change your character. */
   playersAddGear: boolean
   setPlayersAddGear: (value: boolean) => Promise<string | null>
@@ -59,6 +77,16 @@ export type Shopping = {
   shops: Shop[]
   buy: (shopId: string, stockId: string, bundles: number, proficient: boolean | null) => Promise<string | null>
   sell: (shopId: string, itemId: string, quantity: number) => Promise<string | null>
+  /** Your own offers, newest first. */
+  haggles: Haggle[]
+  haggle: (
+    shopId: string,
+    stockId: string,
+    bundles: number,
+    offer: number,
+    proficient: boolean | null,
+  ) => Promise<string | null>
+  takeCounter: (haggleId: string, take: boolean) => Promise<string | null>
 }
 
 export const NO_SHOPS: ShopControls = {
@@ -69,6 +97,8 @@ export const NO_SHOPS: ShopControls = {
   setOpen: async () => null,
   sales: [],
   undo: async () => null,
+  haggles: [],
+  answerHaggle: async () => null,
   playersAddGear: true,
   setPlayersAddGear: async () => null,
 }
@@ -183,10 +213,50 @@ function useSales(campaignId: string, userId: string): Sale[] {
   return sales
 }
 
+function rowToHaggle(row: Tables<'haggles'>): Haggle {
+  return {
+    id: row.id,
+    shopId: row.shop_id,
+    characterId: row.character_id,
+    stockId: row.stock_id,
+    itemName: row.item_name,
+    bundles: row.bundles,
+    asking: row.asking,
+    offer: row.offer,
+    counter: row.counter,
+    status:
+      (['open', 'countered', 'agreed', 'refused', 'withdrawn'] as const).find((s) => s === row.status) ?? 'withdrawn',
+    createdAt: row.created_at,
+  }
+}
+
+/** Haggles you may see (all, for the DM; your own, for a player), newest first, kept up to date. */
+export function useHaggles(campaignId: string, userId: string): Haggle[] {
+  const [haggles, setHaggles] = useState<Haggle[]>([])
+  useEffect(() => {
+    if (!supabase) return
+    void supabase
+      .from('haggles')
+      .select('*')
+      .eq('campaign_id', campaignId)
+      .order('created_at', { ascending: false })
+      .limit(30)
+      .then(({ data }) => data && setHaggles(data.map(rowToHaggle)))
+  }, [campaignId])
+  const onChange = useCallback((change: RowChange<'haggles'>) => {
+    if (change.type !== 'upsert') return
+    const haggle = rowToHaggle(change.row)
+    setHaggles((now) => [haggle, ...now.filter((h) => h.id !== haggle.id)].slice(0, 30))
+  }, [])
+  useTableChanges(campaignId, userId, 'haggles', onChange)
+  return haggles
+}
+
 /** Shops for the DM screen, through the database. */
 export function useShopControls(campaignId: string, userId: string, playersAddGear: boolean): ShopControls {
   const shops = useShops(campaignId, userId)
   const sales = useSales(campaignId, userId)
+  const haggles = useHaggles(campaignId, userId)
   const [notes, setNotes] = useState<Record<string, string>>({})
   // The DM's latest choice, until the campaign row catches up.
   const [chosen, setChosen] = useState<boolean | null>(null)
@@ -248,19 +318,23 @@ export function useShopControls(campaignId: string, userId: string, playersAddGe
       setOpen: (shopId: string, open: boolean) =>
         call(() => db().rpc('set_shop_open', { p_shop_id: shopId, p_open: open })),
       undo: (saleId: string) => call(() => db().rpc('undo_sale', { p_sale_id: saleId })),
+      haggles,
+      answerHaggle: (haggleId: string, agree: boolean, counter: number | null) =>
+        call(() => db().rpc('answer_haggle', { p_haggle_id: haggleId, p_agree: agree, p_counter: counter as number })),
       playersAddGear: addGear,
       setPlayersAddGear: async (value: boolean) => {
         setChosen(value)
         return call(() => db().from('campaigns').update({ players_add_gear: value }).eq('id', campaignId))
       },
     }),
-    [shops, notes, sales, campaignId, addGear],
+    [shops, notes, sales, haggles, campaignId, addGear],
   )
 }
 
 /** Shopping for a player's table screen. */
 export function useShopping(campaignId: string, userId: string, characterId: string | null): Shopping {
   const all = useShops(campaignId, userId)
+  const haggles = useHaggles(campaignId, userId)
   return useMemo(
     () => ({
       shops: all.filter((s) => s.open),
@@ -283,7 +357,21 @@ export function useShopping(campaignId: string, userId: string, characterId: str
             p_quantity: quantity,
           }),
         ),
+      haggles: haggles.filter((h) => h.characterId === characterId),
+      haggle: (shopId: string, stockId: string, bundles: number, offer: number, proficient: boolean | null) =>
+        call(() =>
+          db().rpc('haggle', {
+            p_shop_id: shopId,
+            p_stock_id: stockId,
+            p_bundles: bundles,
+            p_character_id: characterId as string,
+            p_offer: offer,
+            p_proficient: proficient as boolean,
+          }),
+        ),
+      takeCounter: (haggleId: string, take: boolean) =>
+        call(() => db().rpc('take_counter', { p_haggle_id: haggleId, p_take: take })),
     }),
-    [all, characterId],
+    [all, characterId, haggles],
   )
 }

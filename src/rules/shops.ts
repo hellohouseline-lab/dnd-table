@@ -282,3 +282,43 @@ export function sellPrice(item: InventoryItem, shop: Shop, equipment: SrdEquipme
   if (book === undefined || book === 0) return null
   return Math.floor(book / (BUNDLES[item.item] ?? 1) / 2)
 }
+
+/** Tags for a shop's shelves, to narrow them down. */
+export type ShopTag = 'weapons' | 'armour' | 'potions' | 'jewellery' | 'magic' | 'gear' | 'tools' | 'misc'
+
+export const SHOP_TAGS: { key: ShopTag; name: string }[] = [
+  { key: 'weapons', name: 'Weapons' },
+  { key: 'armour', name: 'Armour' },
+  { key: 'potions', name: 'Potions' },
+  { key: 'jewellery', name: 'Jewellery' },
+  { key: 'magic', name: 'Magic' },
+  { key: 'gear', name: 'Gear' },
+  { key: 'tools', name: 'Kits and tools' },
+  { key: 'misc', name: 'Odds and ends' },
+]
+
+const JEWELLERY = /\b(ring|amulet|necklace|periapt|medallion|brooch|scarab|locket|bracelet|pearl|agate|gem|tooth)\b/i
+
+/** What kind of thing a shelf line is, for the tags. */
+export function shopTag(line: StockLine, equipment: SrdEquipment | null): ShopTag {
+  if (line.magic?.startsWith('potion') || /potion|elixir|philter|oil of/i.test(line.name)) return 'potions'
+  // Weapons and armour first: Ring Mail is armour, not jewellery.
+  const srd = line.item && equipment ? equipment.items.find((i) => i.index === line.item) : undefined
+  if (srd?.kind === 'weapon') return 'weapons'
+  if (srd?.kind === 'armor') return 'armour'
+  if (JEWELLERY.test(line.name)) return 'jewellery'
+  if (line.magic) return 'magic'
+  if (srd?.kind === 'tools' || srd?.sub === 'Kits') return 'tools'
+  if (srd) return 'gear'
+  return 'misc'
+}
+
+/** The tags a shop's shelves use, in order, with how many of each. */
+export function shopTags(
+  stock: StockLine[],
+  equipment: SrdEquipment | null,
+): { key: ShopTag; name: string; count: number }[] {
+  const counts = new Map<ShopTag, number>()
+  for (const line of stock) counts.set(shopTag(line, equipment), (counts.get(shopTag(line, equipment)) ?? 0) + 1)
+  return SHOP_TAGS.filter((t) => counts.has(t.key)).map((t) => ({ ...t, count: counts.get(t.key) ?? 0 }))
+}

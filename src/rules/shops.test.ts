@@ -1,7 +1,17 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { BITS } from './bits.ts'
 import { giftItem } from './magic.ts'
-import { boughtItem, linePrice, magicLine, needsPrice, sellPrice, startingStock, type Shop } from './shops.ts'
+import {
+  boughtItem,
+  linePrice,
+  magicLine,
+  needsPrice,
+  sellPrice,
+  shopTag,
+  shopTags,
+  startingStock,
+  type Shop,
+} from './shops.ts'
 import { loadEquipment, loadMagicItems, type SrdEquipment, type SrdMagicItem } from './srd/index.ts'
 
 let equipment: SrdEquipment
@@ -80,5 +90,50 @@ describe('shops', () => {
     expect(sellPrice(potion, shopOf('alchemist'), equipment)).toBe(2500)
     const arrows = giftItem({ kind: 'gear', item: equipment.items.find((i) => i.index === 'arrow')! }, 20)
     expect(sellPrice(arrows, general, equipment)).toBe(2)
+  })
+
+  it('tags the shelves', () => {
+    const smith = shopOf('blacksmith')
+    expect(shopTags(smith.stock, equipment).map((t) => t.key)).toEqual(['weapons', 'armour'])
+    const alchemist = shopOf('alchemist')
+    expect(
+      shopTag(
+        alchemist.stock.find((l) => l.magic === 'potion-of-healing-common')!,
+        equipment,
+      ),
+    ).toBe('potions')
+    expect(
+      shopTag(
+        alchemist.stock.find((l) => l.item === 'herbalism-kit')!,
+        equipment,
+      ),
+    ).toBe('tools')
+    const ring = magicLine(
+      magic.find((m) => m.index === 'ring-of-protection')!,
+      null,
+      1,
+    )
+    expect(shopTag(ring, equipment)).toBe('jewellery')
+    expect(
+      shopTag(
+        magicLine(
+          magic.find((m) => m.index === 'bag-of-holding')!,
+          null,
+          1,
+        ),
+        equipment,
+      ),
+    ).toBe('magic')
+    const general = shopOf('general')
+    expect(
+      shopTag(
+        general.stock.find((l) => l.item === 'rope-hempen-50-feet')!,
+        equipment,
+      ),
+    ).toBe('gear')
+    expect(
+      shopTag({ ...general.stock[0], item: 'bits-silver-ring', name: 'Silver ring', magic: undefined }, equipment),
+    ).toBe('jewellery')
+    expect(shopTag({ ...general.stock[0], item: 'bits-bent-spoon', name: 'Bent spoon' }, equipment)).toBe('misc')
   })
 })
