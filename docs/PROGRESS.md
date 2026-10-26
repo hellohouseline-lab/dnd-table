@@ -3,6 +3,12 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **I1c: shops (live). Items and money (I1) is complete.**
+  - **Make a shop** on the Items and loot tab: pick a general store, blacksmith, alchemist, fletcher or travelling merchant and its shelves fill from the free rules at their real prices (arrows twenty to a bundle; a Potion of Healing at 50 gp). Give it a name, a shopkeeper and your own note on them (only you see it), **Cheap**, **Fair** or **Pricey** (80%, 100% or 125%), and whether it buys from players. Change any price or how many are left, take lines off, or add anything (magic items need a price from you, decision 41).
+  - **Open** a shop and players get a gold "Brenna's Goods is open" button. The shop shows its shelves with prices and how many are left; **Buy** takes the coins with change made and puts it in their pack (a weapon joins their hand). **Sell** offers half the book price for gear and bits and bobs (decision 40), and a magic item only where the shop stocks it. **Close** it and it disappears from their screens.
+  - **Sales** show on the Shops card ("Wren bought Rope for 1 gp") with **Undo**, which puts the thing and the coins back where they came from.
+  - **Players can add gear for free** (decision 46): a tick box on the Shops card, on by default. Untick it and players' Change your character and Items show what everything does but no free Add; they buy instead.
+  - Server: `20261027210000_shops.sql` (the free rules' book prices, `shops`, private shopkeeper notes, `sales`, `buy_item`, `sell_item`, `undo_sale`, the setting) and `20261027213000_shop_open.sql` (`set_shop_open`). Previews: `#/dev/dm/items` (Make a shop), `#/dev/table/gift` (Brenna's Goods is open). Tests: 513 database (22 new), 434 unit (4 new), 48 preview browser tests (2 new).
 - **I1b: opening boxes and the party stash (live).**
   - **Open a box** at the top of the Items and loot tab: pick what it is (a chest, a sack or pack, a body, a desk or cupboard, a hoard), how rich (junk, ordinary, valuable, treasure), and their search roll if there was one (no roll, under 10 for only junk, 10 to 14 for the finds but not the coins, 15 to 19 for everything, 20 or more for something extra). Press **Open it** and the table fills it with bits and bobs, gear, coins and magic items.
   - **Magic items suit the party's level** (decision 53): up to uncommon at levels 1 to 4, rare from 5, very rare from 11, legendary from 17, leaning towards the commoner ones and towards potions and scrolls. A +1 weapon or armour comes as a real one ("Shortsword +1"). The party level is filled in from the characters and can be changed.
@@ -244,7 +250,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **I1c next:** shops (make, stock, price, open and close; players buy and sell; each sale on Screen 1 with Undo; the free-adding setting), then S1 (story mode).
+- **S1 next:** story mode with your campaign on Screen 1, the importer and the player lookups (plan first). Send your starter campaign when you're ready.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -252,6 +258,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try a shop** (refresh first): on Items and loot press **Make a shop**, pick a general store, make it **Pricey**, then **Open** it; as a player buy some rope and sell something back; then **Undo** the sale on Screen 1.
 - **Try opening a box** (refresh first): on Items and loot press **Open a box**, pick a valuable chest, open it, roll one find again, add one of your key items, and **Put it on the table**; then as a player open **Items**, take something from the party stash and split the coins.
 - **Try the new Give** (refresh first): press **Give an item**, tap **Uncommon** and **Rings**, tick two, and give them; under **Make your own** make a key item from your story and give it; on **Items and loot** add 50 gp with one click and **Offer** to buy something from a player.
 - **Try giving** (refresh first): on Screen 1 press **Give an item**, give a player a Longsword +1 and watch the card land on their screen; split some gold across the party; then as the player open **Items** and **Give to…** a friend.
