@@ -346,7 +346,11 @@ export function useTokens(campaignId: string, userId: string, mapId: string | nu
 
   const attempt = (work: () => Promise<unknown>) => {
     setError(null)
-    work().catch((caught: unknown) => setError(messageFor(caught)))
+    work().catch((caught: unknown) => {
+      setError(messageFor(caught))
+      // Refused (too far, or not your turn): put the miniatures back where the server has them.
+      load()
+    })
   }
 
   return {

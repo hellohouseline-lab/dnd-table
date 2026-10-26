@@ -6,7 +6,7 @@ import { healthState, letteredNames, monsterInitiative, unknownNames, type Healt
 import type { RollRequest } from '../rules/dice.ts'
 import type { SrdMonster } from '../rules/srd/index.ts'
 import type { Tables } from './database.types.ts'
-import { fromDatabaseError, NOT_CONNECTED, TableError } from './errors.ts'
+import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './errors.ts'
 import { requestToJson, rowToRoll, type Roll } from './rolls.ts'
 import { supabase } from './supabase.ts'
 
@@ -323,12 +323,17 @@ export async function placeTokens(campaignId: string, mapId: string, tokens: New
   return data.map(rowToToken)
 }
 
+/**
+ * Moves a miniature through the server, which keeps players to their own miniature and, in a
+ * fight, to their turn and their movement left (it counts the feet walked).
+ */
 export async function moveToken(id: string, x: number, y: number): Promise<void> {
-  const { error } = await db()
-    .from('tokens')
-    .update({ x: Math.max(0, Math.round(x)), y: Math.max(0, Math.round(y)) })
-    .eq('id', id)
-  if (error) throw fromDatabaseError(error)
+  const { error } = await db().rpc('move_token', {
+    p_token_id: id,
+    p_x: Math.max(0, Math.round(x)),
+    p_y: Math.max(0, Math.round(y)),
+  })
+  if (error) throw fromServerRule(error)
 }
 
 export async function setTokenHidden(id: string, hidden: boolean): Promise<void> {

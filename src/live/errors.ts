@@ -22,6 +22,19 @@ export function fromDatabaseError(error: { code?: string; message?: string }): T
   return new TableError(SOMETHING_WENT_WRONG)
 }
 
+/**
+ * A refusal from one of the table's own server functions ("Wait for your turn to move") is already
+ * in plain words, so show it as it is; anything else is turned into words as usual.
+ */
+export function fromServerRule(error: { code?: string; message?: string }): TableError {
+  const message = error.message ?? ''
+  const ours =
+    (error.code === '22023' || error.code === '23505' || error.code === '42501') &&
+    /^[A-Z]/.test(message) &&
+    !/permission denied|row-level security|violates/i.test(message)
+  return ours ? new TableError(message.endsWith('.') ? message : `${message}.`) : fromDatabaseError(error)
+}
+
 /** The message to show for anything thrown while loading or saving. */
 export function messageFor(error: unknown): string {
   if (error instanceof TableError) return error.message
