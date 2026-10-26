@@ -12,6 +12,7 @@ import type { Character } from '../../rules/character.ts'
 import { feetBetween } from '../../rules/combat.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import { BattleView } from '../battle/BattleView.tsx'
+import { usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
@@ -28,6 +29,8 @@ export function BattlePreview() {
     setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   const [fightStart] = useState(() => sampleFight(sampleCharacters))
   const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
+  // Made-up players answer a roll the DM asks for a moment after it's sent.
+  const asking = usePreviewAsking(characters, { answerFor: sampleCharacters.map((c) => c.id) })
   // Moving the creature whose turn it is counts its feet, as on the server; the DM is never stopped.
   const tokens = usePreviewTokens(map.id, previewMapTokens(map.id, fightStart), (token, x, y) => {
     const now = fight.fight
@@ -63,6 +66,8 @@ export function BattlePreview() {
         onCharacterHp={(character, by) =>
           update(character.id, { currentHp: Math.max(0, Math.min(character.maxHp, character.currentHp + by)) })
         }
+        onUpdate={update}
+        asking={asking}
         onGrid={() => undefined}
         onShowStage={() => undefined}
         thrower={thrower}

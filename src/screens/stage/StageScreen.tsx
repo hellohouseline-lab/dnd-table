@@ -14,6 +14,7 @@ import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useLibrary, useStage } from '../../live/useStage.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
+import { useRollRequest } from '../../live/useRollRequest.ts'
 import { heal, takeDamage } from '../../rules/maths/hitPoints.ts'
 import type { Character } from '../../rules/character.ts'
 import { BattleView } from '../battle/BattleView.tsx'
@@ -31,6 +32,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const audio = useTableAudio(campaignId, user.id, stage.stage, library.assets)
   const fight = useFight(campaignId, user.id)
   const tokens = useTokens(campaignId, user.id, stage.stage.mapId)
+  const asking = useRollRequest(campaignId, user.id, true)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
   const pointerName = useMemo(() => ({ userId: user.id, name: me ? `${me.display_name} (DM)` : 'DM' }), [user.id, me])
@@ -108,6 +110,8 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
         maps={library.assets.filter((a) => a.kind === 'art' && a.category === 'maps')}
         pointers={pointers}
         onCharacterHp={changeHp}
+        onUpdate={(id, patch) => party.status === 'ready' && party.update(id, patch)}
+        asking={asking}
         onGrid={changeGrid}
         onShowStage={() => setStageDuring(fighting.encounter.id)}
       />

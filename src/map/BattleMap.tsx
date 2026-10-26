@@ -33,8 +33,10 @@ type BattleMapProps = {
   onMove: (id: string, x: number, y: number) => void
   onSelect?: (id: string | null) => void
   selectedId?: string | null
-  /** Your token's reach this turn: a circle of `feet` around it. */
-  reach?: { tokenId: string; feet: number } | null
+  /** Movement left this turn: a circle of `feet` around the token ("You can move" for your own). */
+  reach?: { tokenId: string; feet: number; label?: string } | null
+  /** An attack being aimed from a token: a light band for what it reaches, a dashed ring for long range. */
+  aim?: { tokenId: string; near: number; long: number | null } | null
   /** Picking a target: miniatures glow, and clicking one picks it (through onSelect). */
   targeting?: boolean
   hands?: Pointer[]
@@ -87,6 +89,7 @@ export default function BattleMap({
   onSelect,
   selectedId = null,
   reach = null,
+  aim = null,
   targeting = false,
   hands = [],
   pings = [],
@@ -128,6 +131,16 @@ export default function BattleMap({
   for (let r = 0; r <= rows; r++) lines.push([0, offsetY + r * size, mapWidth, offsetY + r * size])
 
   const reachToken = reach ? tokens.find((t) => t.id === reach.tokenId) : undefined
+  const aimToken = aim ? tokens.find((t) => t.id === aim.tokenId) : undefined
+  const ring = (feet: number) => (feet / 5 + 0.5) * size
+  // While aiming, anything beyond the attack's furthest reach is dimmed and can't be picked.
+  const outOfRange = (token: MapToken) =>
+    Boolean(
+      aim &&
+      aimToken &&
+      token.id !== aimToken.id &&
+      5 * Math.max(Math.abs(token.x - aimToken.x), Math.abs(token.y - aimToken.y)) > Math.max(aim.near, aim.long ?? 0),
+    )
 
   return (
     <div ref={setHolder} className={`${styles.map} ${className ?? ''}`}>
@@ -180,18 +193,18 @@ export default function BattleMap({
                 <Circle
                   x={centre(reachToken.x, offsetX)}
                   y={centre(reachToken.y, offsetY)}
-                  radius={(reach!.feet / 5 + 0.5) * size}
-                  fill="rgba(212, 175, 90, 0.10)"
+                  radius={ring(reach!.feet)}
+                  fill={aim ? undefined : 'rgba(212, 175, 90, 0.10)'}
                   stroke="#d4af5a"
                   strokeWidth={2 / scale}
                   dash={[10 / scale, 8 / scale]}
                 />
                 <Text
                   x={centre(reachToken.x, offsetX) - 150}
-                  y={centre(reachToken.y, offsetY) - (reach!.feet / 5 + 0.5) * size + 8}
+                  y={centre(reachToken.y, offsetY) - ring(reach!.feet) + 8}
                   width={300}
                   align="center"
-                  text={reach!.feet > 0 ? `YOU CAN REACH ${reach!.feet} FT` : 'NO MOVEMENT LEFT'}
+                  text={reach!.feet > 0 ? `${reach!.label ?? 'YOU CAN MOVE'} ${reach!.feet} FT` : 'NO MOVEMENT LEFT'}
                   fontFamily="Cinzel, Georgia, serif"
                   fontStyle="bold"
                   fontSize={Math.max(11, size * 0.2)}
@@ -201,8 +214,41 @@ export default function BattleMap({
               </Group>
             )}
 
+            {aimToken && aim && (
+              <Group listening={false} x={centre(aimToken.x, offsetX)} y={centre(aimToken.y, offsetY)}>
+                {aim.long !== null && aim.long > aim.near && (
+                  <>
+                    <Circle
+                      radius={ring(aim.long)}
+                      stroke="#e07b42"
+                      strokeWidth={2 / scale}
+                      dash={[6 / scale, 8 / scale]}
+                    />
+                    <Text
+                      x={-150}
+                      y={-ring(aim.long) + 6}
+                      width={300}
+                      align="center"
+                      text="DISADVANTAGE OUT HERE"
+                      fontFamily="Cinzel, Georgia, serif"
+                      fontStyle="bold"
+                      fontSize={Math.max(10, size * 0.18)}
+                      fill="#f2a777"
+                    />
+                  </>
+                )}
+                <Circle
+                  radius={ring(aim.near)}
+                  fill="rgba(224, 123, 66, 0.14)"
+                  stroke="#e07b42"
+                  strokeWidth={2 / scale}
+                />
+              </Group>
+            )}
+
             {tokens.map((token) => {
               const tone = TONES[token.tone]
+              const dimmed = outOfRange(token)
               const radius = size * 0.42
               return (
                 <Group
@@ -210,10 +256,10 @@ export default function BattleMap({
                   x={centre(token.x, offsetX)}
                   y={centre(token.y, offsetY)}
                   draggable={token.canMove}
-                  opacity={token.down ? 0.35 : token.hidden ? 0.5 : 1}
+                  opacity={token.down || dimmed ? 0.35 : token.hidden ? 0.5 : 1}
                   onClick={(event) => {
                     event.cancelBubble = true
-                    onSelect?.(token.id)
+                    if (!(targeting && dimmed)) onSelect?.(token.id)
                   }}
                   onTap={() => onSelect?.(token.id)}
                   onDragStart={(event) => {
@@ -235,7 +281,7 @@ export default function BattleMap({
                     if (container) container.style.cursor = ''
                   }}
                 >
-                  {targeting && !token.acting && (
+                  {targeting && !token.acting && !dimmed && (
                     <Circle
                       radius={radius + size * 0.14}
                       stroke="#e07b42"

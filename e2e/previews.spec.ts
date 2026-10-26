@@ -167,3 +167,14 @@ test('the DM runs a goblin\'s turn from the Battle screen in two clicks, and und
   await expect(feed).toContainText('(undone)')
   await expect(page.getByRole('region', { name: 'Turn order' })).toContainText('17/20')
 })
+
+test('the DM asks for a roll in the middle of a fight, from the Battle screen', async ({ page }) => {
+  await page.goto('#/dev/battle')
+  await page.getByRole('button', { name: 'Ask for a roll' }).click()
+  await page.getByRole('button', { name: /Constitution save/ }).click()
+  await page.getByRole('button', { name: 'Send to players' }).click()
+  const results = page.getByRole('region', { name: 'Constitution saving throw' })
+  await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
+  await results.getByRole('button', { name: 'Done, play on' }).click()
+  await expect(results).toBeHidden()
+})

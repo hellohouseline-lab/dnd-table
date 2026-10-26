@@ -293,3 +293,14 @@
   justify-content: center;
   background: rgba(8, 6, 12, 0.72);
 }
+
+/* A roll the DM asked for, tucked away until they look at the results again. */
+.waiting {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--pass);
+  background: rgba(16, 12, 20, 0.85);
+  color: var(--pass);
+  font-size: 15px;
+}

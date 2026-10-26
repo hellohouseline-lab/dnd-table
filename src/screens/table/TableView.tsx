@@ -209,7 +209,10 @@ export function TableView({
       setAiming(null)
       return
     }
-    const target = { conditions: row.character?.conditions ?? row.combatant.conditions, dodging: row.combatant.turn.dodging }
+    const target = {
+      conditions: row.character?.conditions ?? row.combatant.conditions,
+      dodging: row.combatant.turn.dodging,
+    }
     const targetMode = attackMode(mode, target, feet)
     const request = attackRoll(character, aiming, {
       ...choices,
@@ -310,7 +313,9 @@ export function TableView({
                 const token = tokens.find((t) => t.id === id)
                 const row = token
                   ? rows.find((r) =>
-                      token.characterId ? r.combatant.characterId === token.characterId : r.combatant.id === token.combatantId,
+                      token.characterId
+                        ? r.combatant.characterId === token.characterId
+                        : r.combatant.id === token.combatantId,
                     )
                   : undefined
                 if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
@@ -321,6 +326,18 @@ export function TableView({
                 if (token) combat.tokens.move(token, x, y)
               }}
               reach={myTurn && myToken ? { tokenId: myToken.id, feet: feetLeft } : null}
+              aim={
+                aiming && myToken
+                  ? (() => {
+                      const reach = weaponReach(findWeapon(aiming.weapon))
+                      return {
+                        tokenId: myToken.id,
+                        near: Math.max(reach.melee ?? 0, reach.normal ?? 0),
+                        long: reach.long,
+                      }
+                    })()
+                  : null
+              }
               targeting={aiming !== null}
               hands={combat.pointers.hands}
               pings={combat.pointers.pings}

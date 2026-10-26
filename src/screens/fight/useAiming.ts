@@ -19,7 +19,7 @@ type Aim = {
 }
 
 /** While an attack is waiting for its target: what it is, and how to pick one. */
-export type Aiming = { label: string; attackerId: string; onPick: (target: FightRow) => void } | null
+export type Aiming = { label: string; attackerId: string; reach: Reach; onPick: (target: FightRow) => void } | null
 
 function tokenOf(tokens: Token[], combatant: Combatant): Token | undefined {
   return tokens.find((t) => (combatant.characterId ? t.characterId === combatant.characterId : t.combatantId === combatant.id))
@@ -87,7 +87,7 @@ export function useAiming(
     [aim, attack, rollWith, tokens],
   )
 
-  const aiming: Aiming = aim ? { label: aim.label, attackerId: aim.attacker.id, onPick: pick } : null
+  const aiming: Aiming = aim ? { label: aim.label, attackerId: aim.attacker.id, reach: aim.reach, onPick: pick } : null
   return { aiming, aimMonster, aimCharacter, cancel: () => setAim(null) }
 }
 
