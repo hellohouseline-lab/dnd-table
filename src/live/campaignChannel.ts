@@ -39,6 +39,7 @@ type LiveCampaign = {
 export type WatchedTable =
   | 'stage'
   | 'log_events'
+  | 'party_stash'
   | 'assets'
   | 'encounters'
   | 'combatants'
@@ -53,6 +54,7 @@ export type RowChange<T extends WatchedTable> = { type: 'upsert'; row: Tables<T>
 const WATCHED: WatchedTable[] = [
   'stage',
   'log_events',
+  'party_stash',
   'assets',
   'encounters',
   'combatants',

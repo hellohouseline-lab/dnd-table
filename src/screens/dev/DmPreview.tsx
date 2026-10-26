@@ -1,7 +1,13 @@
 // Local development only: the DM screen with made-up people and rolls (#/dev/dm/party, #/dev/dm/log),
 // and every kind of result card side by side (#/dev/dm/moments).
 import type { User } from '@supabase/supabase-js'
-import { useState } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
+import { EMPTY_STASH, type GivingControls, type PartyStash } from '../../live/giving.ts'
+import { useSrd } from '../../live/useSrd.ts'
+import { mergeItems } from '../../rules/magic.ts'
+import { syncAttacks } from '../../rules/manage.ts'
+import { addWallets, coinsFor, coinWords, pay, splitCoins } from '../../rules/money.ts'
+import { loadEquipment } from '../../rules/srd/index.ts'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { RollToast } from '../../dice/RollToasts.tsx'
@@ -145,6 +151,7 @@ export function DmPreview({ tab }: { tab: string }) {
     setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
   const events = usePreviewEvents()
+  const giving = usePreviewGiving(characters, setCharacters)
   const asking = usePreviewAsking(characters, {
     start: start.request,
     startAnswers: start.answers,
@@ -188,10 +195,50 @@ export function DmPreview({ tab }: { tab: string }) {
         events={events}
         sceneName="Arrive at the tavern"
         fight={fight}
-        startTab={tab === 'log' ? 'log' : tab === 'fight' ? 'encounter' : 'party'}
+        startTab={tab === 'log' ? 'log' : tab === 'fight' ? 'encounter' : tab === 'items' ? 'items' : 'party'}
+        giving={giving}
       />
     </AuthContext.Provider>
   )
+}
+
+/** Giving in the preview: the same sums as the server, on the made-up party. */
+function usePreviewGiving(
+  characters: Character[],
+  setCharacters: Dispatch<SetStateAction<Character[]>>,
+): GivingControls {
+  const equipment = useSrd(loadEquipment)
+  const [stash, setStash] = useState<PartyStash>(EMPTY_STASH)
+  const change = (id: string, edit: (c: Character) => Character) =>
+    setCharacters((list) => list.map((c) => (c.id === id ? edit(c) : c)))
+  return {
+    stash,
+    give: async (id, items, _weapons, copper) => {
+      change(id, (c) => {
+        const inventory = mergeItems(c.inventory, items)
+        return {
+          ...c,
+          inventory,
+          attacks: equipment ? syncAttacks(c.attacks, inventory, equipment, c.otherProficiencies) : c.attacks,
+          wallet: addWallets(c.wallet, coinsFor(copper)),
+        }
+      })
+      return null
+    },
+    take: async (id, copper) => {
+      const who = characters.find((c) => c.id === id)
+      const after = who ? pay(who.wallet, copper) : null
+      if (!who || !after) return `${who?.name ?? 'They'} only has ${coinWords(who?.wallet ?? EMPTY_STASH.wallet)}`
+      change(id, (c) => ({ ...c, wallet: after }))
+      return null
+    },
+    split: async (ids, copper) => {
+      const { each, left } = splitCoins(copper, ids.length)
+      ids.forEach((id) => change(id, (c) => ({ ...c, wallet: addWallets(c.wallet, coinsFor(each)) })))
+      if (left > 0) setStash((s) => ({ ...s, wallet: addWallets(s.wallet, coinsFor(left)) }))
+      return null
+    },
+  }
 }
 
 /** Every kind of result card, to check the natural 20 burst and the natural 1 crack. */

@@ -682,3 +682,49 @@ test('levelling up: a wizard adds to the book and prepares more', async ({ page 
   await expect(saved).toContainText('Sleep, Burning Hands')
   await expect(saved).toContainText('Web, Blur (in the book)')
 })
+
+test('the DM gives a Longsword +1, splits gold and takes a fine', async ({ page }) => {
+  await page.goto('#/dev/dm/party')
+  await page.getByRole('button', { name: 'Give an item' }).click()
+  const give = page.getByRole('dialog', { name: 'Give' })
+  await give.getByPlaceholder(/Potion, longsword/).fill('weapon, +1')
+  await give.getByRole('button', { name: /Weapon, \+1/ }).click()
+  await give.getByRole('combobox').selectOption('longsword')
+  await give.getByRole('button', { name: 'Give to Thorin Ironfist' }).click()
+  await expect(give.getByRole('status')).toHaveText('Thorin Ironfist got Longsword +1.')
+
+  await give.getByRole('tab', { name: 'Coins' }).click()
+  await give.getByRole('radio', { name: 'Split across the party' }).click()
+  await give.getByPlaceholder(/47/).fill('47')
+  await expect(give.getByText('23 gp 5 sp each.')).toBeVisible()
+  await give.getByRole('button', { name: 'Split 47 gp' }).click()
+  await expect(give.getByRole('status')).toHaveText('Shared out: 23 gp 5 sp each.')
+
+  await give.getByRole('radio', { name: 'Take from one' }).click()
+  await give.getByRole('radio', { name: 'Elowen' }).click()
+  await give.getByPlaceholder(/47/).fill('500')
+  await give.getByRole('button', { name: 'Take 500 gp' }).click()
+  await expect(give.getByRole('status')).toContainText('Elowen only has')
+  await give.getByRole('button', { name: 'Done' }).click()
+
+  await page.getByRole('tab', { name: 'Items and loot' }).click()
+  const thorin = page.getByRole('article', { name: "Thorin Ironfist's things" })
+  await expect(thorin).toContainText('Longsword +1')
+  await expect(thorin).toContainText('38 gp')
+})
+
+test('a player hands a potion to a friend, a gift lands with a card, and a cloak is attuned', async ({ page }) => {
+  await page.goto('#/dev/table/gift')
+  await expect(page.getByRole('button', { name: 'You got Longsword +1 and 5 gp' })).toBeVisible()
+  await page.getByRole('button', { name: 'You got Longsword +1 and 5 gp' }).click()
+  const potion = page.getByRole('row').filter({ hasText: 'Potion of Healing' })
+  await potion.getByRole('button', { name: 'Give to…' }).click()
+  await potion.getByRole('button', { name: 'Hand over' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'You gave Elowen' })).toHaveText(
+    'You gave Elowen a Potion of Healing.',
+  )
+  const cloak = page.getByRole('row').filter({ hasText: 'Cloak of Protection' })
+  await cloak.getByRole('button', { name: 'Attune' }).click()
+  await expect(cloak.getByRole('button', { name: 'Attuned' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByText('Attuned to 1 of 3.')).toBeVisible()
+})

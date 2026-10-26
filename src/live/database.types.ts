@@ -761,6 +761,7 @@ export type Database = {
           author_id: string | null
           campaign_id: string
           created_at: string
+          data: Json
           id: string
           kind: string
           text: string
@@ -770,6 +771,7 @@ export type Database = {
           author_id?: string | null
           campaign_id: string
           created_at?: string
+          data?: Json
           id?: string
           kind: string
           text: string
@@ -779,6 +781,7 @@ export type Database = {
           author_id?: string | null
           campaign_id?: string
           created_at?: string
+          data?: Json
           id?: string
           kind?: string
           text?: string
@@ -789,6 +792,35 @@ export type Database = {
             foreignKeyName: "log_events_campaign_id_fkey"
             columns: ["campaign_id"]
             isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      party_stash: {
+        Row: {
+          campaign_id: string
+          items: Json
+          updated_at: string
+          wallet: Json
+        }
+        Insert: {
+          campaign_id: string
+          items?: Json
+          updated_at?: string
+          wallet?: Json
+        }
+        Update: {
+          campaign_id?: string
+          items?: Json
+          updated_at?: string
+          wallet?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_stash_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: true
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
@@ -1302,6 +1334,74 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      give_items: {
+        Args: {
+          p_character_id: string
+          p_copper: number
+          p_items: Json
+          p_weapons: Json
+        }
+        Returns: {
+          armour_class: number
+          attacks: Json
+          background: string
+          campaign_id: string
+          charisma: number
+          class: string
+          concentration: string | null
+          concentration_dc: number | null
+          concentration_queue: number[]
+          conditions: string[]
+          constitution: number
+          created_at: string
+          current_hp: number
+          dead: boolean
+          death_save_failures: number
+          death_save_successes: number
+          dexterity: number
+          effects: Json
+          exhaustion: number
+          features: Json
+          hit_dice_used: number
+          hit_die: number
+          id: string
+          immunities: string[]
+          inspiration: boolean
+          intelligence: number
+          inventory: Json
+          languages: string
+          level: number
+          level_up_to: number | null
+          max_hp: number
+          name: string
+          other_proficiencies: string
+          owner_id: string
+          portrait_path: string | null
+          race: string
+          resistances: string[]
+          save_proficiencies: string[]
+          skill_expertise: string[]
+          skill_proficiencies: string[]
+          speed: number
+          spellcasting: Json
+          stable: boolean
+          story: Json
+          strength: number
+          subclass: string
+          subrace: string
+          temp_hp: number
+          updated_at: string
+          vulnerabilities: string[]
+          wallet: Json
+          wisdom: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "characters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       grant_level_up: {
         Args: { p_character_ids: string[] }
         Returns: {
@@ -1363,6 +1463,76 @@ export type Database = {
           to: "characters"
           isOneToOne: false
           isSetofReturn: true
+        }
+      }
+      hand_over: {
+        Args: {
+          p_coins: Json
+          p_from: string
+          p_item_id: string
+          p_proficient: boolean
+          p_quantity: number
+          p_to: string
+        }
+        Returns: {
+          armour_class: number
+          attacks: Json
+          background: string
+          campaign_id: string
+          charisma: number
+          class: string
+          concentration: string | null
+          concentration_dc: number | null
+          concentration_queue: number[]
+          conditions: string[]
+          constitution: number
+          created_at: string
+          current_hp: number
+          dead: boolean
+          death_save_failures: number
+          death_save_successes: number
+          dexterity: number
+          effects: Json
+          exhaustion: number
+          features: Json
+          hit_dice_used: number
+          hit_die: number
+          id: string
+          immunities: string[]
+          inspiration: boolean
+          intelligence: number
+          inventory: Json
+          languages: string
+          level: number
+          level_up_to: number | null
+          max_hp: number
+          name: string
+          other_proficiencies: string
+          owner_id: string
+          portrait_path: string | null
+          race: string
+          resistances: string[]
+          save_proficiencies: string[]
+          skill_expertise: string[]
+          skill_proficiencies: string[]
+          speed: number
+          spellcasting: Json
+          stable: boolean
+          story: Json
+          strength: number
+          subclass: string
+          subrace: string
+          temp_hp: number
+          updated_at: string
+          vulnerabilities: string[]
+          wallet: Json
+          wisdom: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "characters"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
       join_campaign: {
@@ -1565,6 +1735,14 @@ export type Database = {
         }
       }
       server_time: { Args: never; Returns: string }
+      split_coins: {
+        Args: {
+          p_campaign_id: string
+          p_character_ids: string[]
+          p_copper: number
+        }
+        Returns: number
+      }
       start_fight: {
         Args: {
           p_campaign_id: string
@@ -1583,6 +1761,69 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "encounters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      take_coins: {
+        Args: { p_character_id: string; p_copper: number }
+        Returns: {
+          armour_class: number
+          attacks: Json
+          background: string
+          campaign_id: string
+          charisma: number
+          class: string
+          concentration: string | null
+          concentration_dc: number | null
+          concentration_queue: number[]
+          conditions: string[]
+          constitution: number
+          created_at: string
+          current_hp: number
+          dead: boolean
+          death_save_failures: number
+          death_save_successes: number
+          dexterity: number
+          effects: Json
+          exhaustion: number
+          features: Json
+          hit_dice_used: number
+          hit_die: number
+          id: string
+          immunities: string[]
+          inspiration: boolean
+          intelligence: number
+          inventory: Json
+          languages: string
+          level: number
+          level_up_to: number | null
+          max_hp: number
+          name: string
+          other_proficiencies: string
+          owner_id: string
+          portrait_path: string | null
+          race: string
+          resistances: string[]
+          save_proficiencies: string[]
+          skill_expertise: string[]
+          skill_proficiencies: string[]
+          speed: number
+          spellcasting: Json
+          stable: boolean
+          story: Json
+          strength: number
+          subclass: string
+          subrace: string
+          temp_hp: number
+          updated_at: string
+          vulnerabilities: string[]
+          wallet: Json
+          wisdom: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "characters"
           isOneToOne: true
           isSetofReturn: false
         }

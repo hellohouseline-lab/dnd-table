@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { EMPTY_STASH } from '../../live/giving.ts'
 import { describe, expect, it } from 'vitest'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { FightControls } from '../../live/useFight.ts'
@@ -83,6 +84,7 @@ function render(startTab: 'party' | 'log') {
         characters={sampleCharacters}
         online={new Set(['dm'])}
         onUpdate={noop}
+        giving={{ give: async () => null, take: async () => null, split: async () => null, stash: EMPTY_STASH }}
         log={{ status: 'ready', rolls: [secretRoll] }}
         diceStyle={DEFAULT_DICE_STYLE}
         onDiceStyleChange={noop}
@@ -111,6 +113,7 @@ describe('the DM screen', () => {
           characters={down}
           online={new Set(['dm'])}
           onUpdate={noop}
+          giving={{ give: async () => null, take: async () => null, split: async () => null, stash: EMPTY_STASH }}
           log={{ status: 'ready', rolls: [] }}
           diceStyle={DEFAULT_DICE_STYLE}
           onDiceStyleChange={noop}

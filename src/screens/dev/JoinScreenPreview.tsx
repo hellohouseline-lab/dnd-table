@@ -14,7 +14,10 @@ import { CampaignView } from '../campaign/CampaignScreen.tsx'
 import { CharacterForm } from '../character/CharacterForm.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
-import { TableView } from '../table/TableView.tsx'
+import { TableView, type Arrival } from '../table/TableView.tsx'
+import type { HandOver } from '../../live/giving.ts'
+import { mergeItems } from '../../rules/magic.ts'
+import { addWallets, subtractCoins } from '../../rules/money.ts'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
@@ -66,7 +69,7 @@ export function TablePreview({
 }: {
   asked?: boolean
   fighting?: boolean
-  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | null
+  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | null
 }) {
   const caster = variant === 'caster'
   const [characters, setCharacters] = useState<Character[]>(() =>
@@ -86,7 +89,30 @@ export function TablePreview({
                 }
               : c,
           )
-        : sampleCharacters,
+        : variant === 'gift'
+          ? sampleCharacters.map((c, i) =>
+              i === 0
+                ? {
+                    ...c,
+                    inventory: [
+                      ...c.inventory,
+                      {
+                        id: 'cloak',
+                        item: 'cloak-of-protection',
+                        name: 'Cloak of Protection',
+                        quantity: 1,
+                        weight: 0,
+                        worn: false,
+                        uses: null,
+                        magic: 'cloak-of-protection',
+                        attune: true,
+                        attuned: false,
+                      },
+                    ],
+                  }
+                : c,
+            )
+          : sampleCharacters,
   )
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(() => parseDiceStyle(sampleMembers[1].dice_style))
   const [start] = useState(() => {
@@ -172,6 +198,39 @@ export function TablePreview({
       judgePreview(localRoll(request, { campaignId: 'preview', rollerId: 'p1', style: diceStyle }), request, 15),
     [diceStyle],
   )
+  // #/dev/table/gift opens with something just given to Thorin.
+  const [arrivals, setArrivals] = useState<Arrival[]>(() =>
+    variant === 'gift' ? [{ id: 1, text: 'You got Longsword +1 and 5 gp' }] : [],
+  )
+  // Handing things over, as the server does it (outside a fight).
+  const handOver: HandOver = async (to, what) => {
+    const from = characters[caster ? 1 : 0]
+    const item = from.inventory.find((i) => i.id === what.itemId)
+    if (item?.worn) return 'Take it off first'
+    if (fighting) return 'Hand things over when the fight is over'
+    const moved = item ? [{ ...item, quantity: Math.min(what.quantity || 1, item.quantity) }] : []
+    setCharacters((list) =>
+      list.map((c) => {
+        if (c.id === from.id) {
+          return {
+            ...c,
+            inventory: c.inventory.flatMap((i) =>
+              i.id !== item?.id
+                ? [i]
+                : i.quantity > moved[0].quantity
+                  ? [{ ...i, quantity: i.quantity - moved[0].quantity }]
+                  : [],
+            ),
+            wallet: subtractCoins(c.wallet, what.coins),
+          }
+        }
+        if (c.id === to)
+          return { ...c, inventory: mergeItems(c.inventory, moved), wallet: addWallets(c.wallet, what.coins) }
+        return c
+      }),
+    )
+    return null
+  }
   return (
     <SignedInAs userId={caster ? 'p2' : 'p1'}>
       <TableView
@@ -187,6 +246,9 @@ export function TablePreview({
         onDiceStyleChange={setDiceStyle}
         thrower={thrower}
         asking={asking}
+        handOver={handOver}
+        arrivals={arrivals}
+        onArrivalSeen={(id) => setArrivals((now) => now.filter((a) => a.id !== id))}
         combat={
           fighting
             ? {

@@ -3,6 +3,14 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **I1a: giving items and gold (live).** The plan is in `docs/I1_PLAN.md`, approved with decisions 38 to 50 as recommended.
+  - **Magic items:** the free rules' 341 magic items are in (rarity, whether they need attuning, what they do), loaded only when needed.
+  - **Give an item** (the bottom button on Screen 1, and **Give item** on each Party card): search gear, weapons, armour and magic items, or type in something of your own; pick who and how many; **Give**. A +1, +2 or +3 weapon or armour asks which weapon or armour ("Longsword +1"); its bonus goes on the attack card and the AC by itself.
+  - **Coins** (the same window): **Give to one**, **Split across the party** (even shares with change in silver and copper; odd coins go to the party stash) or **Take from one** (change made for them; the table says if they can't pay).
+  - **Items and loot tab** on Screen 1: every character's pack, coins and weight side by side, with Give on each, and the party stash.
+  - **Players:** the **Items** button on the table screen now opens their pack. **Give to…** on any item hands it (or some of a stack) to a friend, and coins can be handed over too, outside a fight (decision 45; worn armour comes off first). **Attune** on a magic item that needs it, three at most.
+  - **A gift lands** on the player's screen as a gold card with a soft chime ("You got Longsword +1 and 5 gp", "Mira gave you a Rope"); click it to open your Items. The log says who got what.
+  - Server: `20261027180000_giving.sql` (`give_items`, `take_coins`, `split_coins`, `hand_over`, the party stash). Previews: `#/dev/dm/party`, `#/dev/dm/items`, `#/dev/table/gift`. Tests: 466 database (23 new), 422 unit (8 new), 40 preview browser tests (2 new).
 - **Levelling up the builder's way (live).** The Level up! walk-through now shows spells as cards (what each does, with **All of it** for the full text, and a level filter that opens on any newly reached spell level), not just names.
   - **Swap a spell:** a bard, sorcerer, ranger or warlock can forget one spell they know and pick another in its place, as the 2014 rules allow each level.
   - **Prepare more:** when a cleric, druid, paladin or wizard can prepare more (a new level, or a better score from an ability increase), they pick the extra ones there and then. A wizard's two new spellbook spells can be prepared straight away.
@@ -223,7 +231,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **I1 next:** items, money and loot: shops at SRD prices, giving items and gold, searching and loot, then S1 (story mode).
+- **I1b next:** searching and loot (the Search button with a roll, our loot tables and their editor, checking finds before Give, the party stash), then **I1c** shops, then S1 (story mode).
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -231,6 +239,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try giving** (refresh first): on Screen 1 press **Give an item**, give a player a Longsword +1 and watch the card land on their screen; split some gold across the party; then as the player open **Items** and **Give to…** a friend.
 - **Try levelling up a caster:** as the DM press **Level up** on a spellcaster's card, then as that player take the level and try **Swap a spell** or **Prepare more today**.
 - **Try Change your character** (refresh first): open your sheet and press **Edit character**. Learn or prepare a spell, add a weapon and some armour and press **Wear**, then **Save changes** and check the hand of cards and AC on the table.
 - **Try the builder and levelling up** (refresh first):

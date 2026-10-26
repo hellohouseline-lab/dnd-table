@@ -97,6 +97,9 @@ export function parseInventory(value: Json): InventoryItem[] {
         weight: Math.max(0, num(i.weight)),
         worn: bool(i.worn),
         uses: typeof i.uses === 'number' && i.uses >= 0 ? Math.round(i.uses) : null,
+        ...(typeof i.magic === 'string' ? { magic: i.magic } : {}),
+        ...(typeof i.bonus === 'number' && i.bonus > 0 ? { bonus: Math.min(3, Math.round(i.bonus)) } : {}),
+        ...(bool(i.attune) ? { attune: true, attuned: bool(i.attuned) } : {}),
       },
     ]
   })

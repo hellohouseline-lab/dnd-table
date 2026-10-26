@@ -23,6 +23,7 @@ import callStyles from '../../call/Call.module.css'
 import { isMuted, useTableCall } from '../../call/callContext.ts'
 import { CameraFeed } from '../../call/CameraFeed.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
+import type { HandOver } from '../../live/giving.ts'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
 import { abilityModifier } from '../../rules/maths/core.ts'
@@ -119,6 +120,28 @@ type TableViewProps = {
   audio?: TableAudio
   /** Fights and the battle map (left out in the tests). */
   combat?: PlayerCombatProps
+  /** Handing things to someone else in the party. */
+  handOver?: HandOver
+  /** Things just given to you, shown as cards until seen. */
+  arrivals?: Arrival[]
+  onArrivalSeen?: (id: number) => void
+}
+
+/** Something just given to you: "You got a Longsword +1". */
+export type Arrival = { id: number; text: string }
+
+/** A gift landing: a card that flies in, then fades after a few seconds unless opened. */
+function ArrivalCard({ arrival, onSeen, onOpen }: { arrival: Arrival; onSeen: () => void; onOpen: () => void }) {
+  useEffect(() => {
+    const timer = window.setTimeout(onSeen, 7000)
+    return () => window.clearTimeout(timer)
+  }, [onSeen])
+  return (
+    <button type="button" className={styles.arrival} onClick={onOpen} title="Open your Items">
+      <Icon name="items" size={28} />
+      <span>{arrival.text}</span>
+    </button>
+  )
 }
 
 const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
@@ -166,7 +189,7 @@ export type PlayerCombatProps = {
 
 const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; title: string }[] = [
   { label: 'Sheet', icon: 'sheet', tab: 'sheet', title: 'Character sheet' },
-  { label: 'Items', icon: 'items', title: 'Inventory arrives in Phase 2' },
+  { label: 'Items', icon: 'items', tab: 'inventory', title: 'What you carry and your coins' },
   { label: 'Powers', icon: 'powers', tab: 'powers', title: 'Features and spells' },
   { label: 'Journal', icon: 'journal', title: 'Journal arrives in Phase 2' },
   { label: 'Lore', icon: 'lore', title: 'Handouts arrive in Phase 2' },
@@ -193,6 +216,9 @@ export function TableView({
   campaignName,
   audio,
   combat,
+  handOver,
+  arrivals = [],
+  onArrivalSeen,
 }: TableViewProps) {
   const [inspected, setInspected] = useState<string | null>(null)
   // The attack you're about to make, while you pick its target.
@@ -937,6 +963,21 @@ export function TableView({
           <CombatFeed className={styles.feed} events={combat.events} nameOf={nameOf} youId={mine?.id} limit={3} />
         )}
         {audio && <NowPlaying audio={audio} />}
+        {arrivals.length > 0 && (
+          <div className={styles.arrivals} role="status" aria-label="Just given to you">
+            {arrivals.map((a) => (
+              <ArrivalCard
+                key={a.id}
+                arrival={a}
+                onSeen={() => onArrivalSeen?.(a.id)}
+                onOpen={() => {
+                  setSheetTab('inventory')
+                  onArrivalSeen?.(a.id)
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
       {inspectedRow && (
         <div className={styles.inspect}>
@@ -1235,6 +1276,7 @@ export function TableView({
             closeLabel="Back to the table"
             onUpdate={update}
             rolls={rolls}
+            handing={handOver ? { party: characters, handOver } : undefined}
           />
         </>
       )}

@@ -49,7 +49,7 @@ import { monsterInitiative } from '../../rules/combat.ts'
 import { placeFighters } from '../../live/combat.ts'
 import { messageFor } from '../../live/errors.ts'
 import type { Asset } from '../../live/library.ts'
-import { loadMonsters, loadSpells } from '../../rules/srd/index.ts'
+import { loadEquipment, loadMagicItems, loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog, StartFightDialog, type FightSetting } from '../fight/FightDialogs.tsx'
 import { useAiming } from '../fight/useAiming.ts'
@@ -58,22 +58,25 @@ import type { MonsterPick } from '../fight/MonsterPicker.tsx'
 import { NotebookPanel } from './NotebookPanel.tsx'
 import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
+import { GiveDialog } from './GiveDialog.tsx'
+import { ItemsTab } from './ItemsTab.tsx'
+import type { GivingControls } from '../../live/giving.ts'
 import { useSessionClock } from './useSessionClock.ts'
 import { useRollsForDm } from '../../live/useRollsForDm.ts'
 import { RollsForDm } from '../rolls/RollsForDm.tsx'
 import styles from './DmView.module.css'
 
-type DmTab = 'party' | 'encounter' | 'log'
+type DmTab = 'party' | 'encounter' | 'items' | 'log'
 
 const TABS: { label: string; tab?: DmTab; title?: string }[] = [
   { label: 'Party', tab: 'party' },
   { label: 'Encounter', tab: 'encounter' },
   { label: 'NPCs', title: 'NPCs arrive in Phase 2' },
-  { label: 'Items and loot', title: 'Items arrive in Phase 2' },
+  { label: 'Items and loot', tab: 'items' },
   { label: 'Log', tab: 'log' },
 ]
 
-type Verb = 'ask' | 'rest' | 'note' | 'fight' | 'next' | 'monster' | 'end'
+type Verb = 'ask' | 'rest' | 'note' | 'fight' | 'next' | 'monster' | 'end' | 'give'
 
 type VerbButton = { label: string; icon: IconName; title: string; verb?: Verb; primary?: boolean }
 
@@ -81,7 +84,7 @@ const VERBS: VerbButton[] = [
   { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', verb: 'ask' },
   { label: 'Start combat', icon: 'sword', title: 'Start a fight: who, which monsters, then initiative', verb: 'fight' },
   { label: 'Show an NPC', icon: 'journal', title: 'Arrives in Phase 2' },
-  { label: 'Give an item', icon: 'items', title: 'Arrives in Phase 2' },
+  { label: 'Give an item', icon: 'items', title: 'Give an item or coins to someone', verb: 'give' },
   { label: 'Rest', icon: 'moon', title: 'A short or long rest for the party', verb: 'rest' },
   { label: 'Add a note', icon: 'log', title: 'Write a quick note into the log', verb: 'note' },
 ]
@@ -132,6 +135,8 @@ type DmViewProps = {
   maps?: Asset[]
   mapOnStage?: string | null
   startTab?: DmTab
+  /** Giving items and coins, and the party stash. */
+  giving: GivingControls
 }
 
 /**
@@ -161,6 +166,7 @@ export function DmView({
   maps = [],
   mapOnStage = null,
   startTab = 'party',
+  giving,
 }: DmViewProps) {
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
   const [selectedCombatant, setSelectedCombatant] = useState<string | null>(null)
@@ -168,6 +174,10 @@ export function DmView({
   const spells = useSrd(loadSpells)
   const fighting = fight.fight
   const [resting, setResting] = useState(false)
+  // The Give card, optionally for one character.
+  const [giveTo, setGiveTo] = useState<{ only: string | null } | null>(null)
+  const equipment = useSrd(loadEquipment)
+  const magicItems = useSrd(loadMagicItems)
   const noteInput = useRef<HTMLInputElement>(null)
   const sessionTime = useSessionClock(campaign.id)
   // The Ask for a roll card, optionally for one character; and a request the DM has tucked away.
@@ -262,6 +272,7 @@ export function DmView({
   function runVerb(verb: Verb) {
     if (verb === 'ask') setAskFor({ only: null })
     if (verb === 'rest') setResting(true)
+    if (verb === 'give') setGiveTo({ only: null })
     if (verb === 'note') noteInput.current?.focus()
     if (verb === 'fight') setFightDialog('start')
     if (verb === 'monster') setFightDialog('monster')
@@ -463,8 +474,15 @@ export function DmView({
                 No fight going on. Press <strong>Start combat</strong> below to choose who fights and which monsters.
               </p>
             )
+          ) : tab === 'items' ? (
+            <ItemsTab
+              characters={characters}
+              stash={giving.stash}
+              onGive={(character) => setGiveTo({ only: character?.id ?? null })}
+            />
           ) : tab === 'party' ? (
             <PartyCards
+              onGive={(character) => setGiveTo({ only: character.id })}
               onLevelUp={onLevelUp}
               onDeathSave={(character) => void rollDeathSaveFor(character)}
               onUpdate={onUpdate}
@@ -535,11 +553,12 @@ export function DmView({
         <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
       </section>
 
-      {(askFor || showResults || resting || fightDialog) && (
+      {(askFor || showResults || resting || fightDialog || giveTo) && (
         <Backdrop
           className={styles.overlay}
           onClose={() => {
             if (fightDialog) setFightDialog(null)
+            else if (giveTo) setGiveTo(null)
             else if (resting) setResting(false)
             else if (askFor) setAskFor(null)
             else if (request) setHiddenFor(request.id)
@@ -564,6 +583,17 @@ export function DmView({
               }}
               onClose={() => setFightDialog(null)}
             />
+          ) : giveTo ? (
+            equipment && magicItems ? (
+              <GiveDialog
+                characters={characters}
+                only={giveTo.only}
+                equipment={equipment}
+                magicItems={magicItems}
+                giving={giving}
+                onClose={() => setGiveTo(null)}
+              />
+            ) : null
           ) : resting ? (
             <RestDialog
               characters={characters}

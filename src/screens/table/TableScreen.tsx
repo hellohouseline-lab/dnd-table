@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
 import { LoadingScreen } from '../../components/LoadingScreen.tsx'
@@ -17,7 +17,11 @@ import { useLibrary, useStage, useStageImage } from '../../live/useStage.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { useAreas } from '../../live/areas.ts'
-import { TableView } from './TableView.tsx'
+import { TableView, type Arrival } from './TableView.tsx'
+import { handOver, useGiftArrivals } from '../../live/giving.ts'
+import type { Gift } from '../../live/notebook.ts'
+import { giftWords } from '../../rules/money.ts'
+import { playChime } from '../../audio/chime.ts'
 
 /** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
 export function TableScreen({ campaignId }: { campaignId: string }) {
@@ -46,6 +50,16 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
     [user.id, character?.name],
   )
   const pointers = useMapPointers(campaignId, pointerName)
+  // Something given to you lands with a card and a chime.
+  const [gifts, setGifts] = useState<{ id: number; gift: Gift }[]>([])
+  const onGift = useCallback(
+    (gift: Gift) => {
+      setGifts((now) => [...now, { id: Date.now() + Math.random(), gift }])
+      playChime()
+    },
+    [setGifts],
+  )
+  useGiftArrivals(campaignId, user.id, character?.id ?? null, onGift)
   const ready = members.status === 'ready' && party.status === 'ready'
 
   useEffect(() => {
@@ -70,6 +84,8 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
     )
   }
   if (!ready || !me || !character || party.status !== 'ready') return <LoadingScreen />
+  const nameOf = (id: string | null) => (id ? (party.characters.find((c) => c.id === id)?.name ?? null) : null)
+  const arrivals: Arrival[] = gifts.map(({ id, gift }) => ({ id, text: giftWords(gift, nameOf(gift.from)) }))
 
   const diceStyle = chosenStyle ?? parseDiceStyle(me.dice_style)
   function changeDiceStyle(style: DiceStyle) {
@@ -94,6 +110,9 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       stageImage={stageImage}
       campaignName={campaign.status === 'ready' ? campaign.data?.name : undefined}
       audio={audio}
+      handOver={handOver(character.id)}
+      arrivals={arrivals}
+      onArrivalSeen={(id) => setGifts((now) => now.filter((a) => a.id !== id))}
       combat={{
         fight: fight.fight,
         rollInitiative: fight.rollInitiative,

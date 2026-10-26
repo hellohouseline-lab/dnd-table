@@ -4,6 +4,7 @@ import { cx } from '../../components/cx.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Character } from '../../rules/character.ts'
 import { characterText, sheetFileName } from '../../rules/sheetText.ts'
+import type { HandOver } from '../../live/giving.ts'
 import { InventoryTab } from './InventoryTab.tsx'
 import { SheetExport } from './SheetExport.tsx'
 import { PathTab } from './PathTab.tsx'
@@ -34,6 +35,8 @@ type SheetPanelProps = {
   onUpdate: (patch: TrackerPatch) => void
   /** Click a skill, save or attack to roll it. */
   rolls?: SheetRolls
+  /** Handing things to someone else in the party, from the Inventory tab. */
+  handing?: { party: Character[]; handOver: HandOver }
   className?: string
 }
 
@@ -48,6 +51,7 @@ export function SheetPanel({
   closeLabel,
   onUpdate,
   rolls,
+  handing,
   className,
 }: SheetPanelProps) {
   useEffect(() => {
@@ -91,7 +95,7 @@ export function SheetPanel({
         {tab === 'sheet' ? (
           <SheetTab character={character} canEdit={canEdit} onUpdate={onUpdate} rolls={rolls} />
         ) : tab === 'inventory' ? (
-          <InventoryTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
+          <InventoryTab character={character} canEdit={canEdit} onUpdate={onUpdate} handing={handing} />
         ) : tab === 'path' ? (
           <PathTab character={character} />
         ) : (

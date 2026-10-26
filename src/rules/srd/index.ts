@@ -132,6 +132,20 @@ export type SrdItem = {
 }
 export type SrdEquipment = { items: SrdItem[]; categories: Record<string, string[]> }
 
+export type SrdMagicItem = {
+  index: string
+  name: string
+  /** 'potion', 'ring', 'wondrous-items', 'weapon', 'armor', 'wand'… */
+  kind: string
+  rarity: string
+  attune: boolean
+  /** A +1, +2 or +3 weapon, armour or ammunition. */
+  bonus?: number
+  /** "Wondrous item, uncommon (requires attunement)". */
+  line: string
+  desc: string
+}
+
 export type SrdSpell = {
   index: string
   name: string
@@ -229,6 +243,9 @@ export const loadFeatures = once(
   async () => (await import('./features.json')).default.features as unknown as Record<string, SrdFeature>,
 )
 export const loadEquipment = once(async () => (await import('./equipment.json')).default as unknown as SrdEquipment)
+export const loadMagicItems = once(
+  async () => (await import('./magic-items.json')).default.items as unknown as SrdMagicItem[],
+)
 export const loadSpells = once(async () => (await import('./spells.json')).default.spells as unknown as SrdSpell[])
 /** Monsters are only loaded on the DM's screens. */
 export const loadMonsters = once(
