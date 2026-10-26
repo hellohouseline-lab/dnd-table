@@ -72,7 +72,8 @@ export function TablePreview({ asked = false, fighting = false }: { asked?: bool
   const tokens = usePreviewTokens(map?.id ?? null, map ? previewMapTokens(map.id, fightStart) : [], (token, x, y) => {
     const now = fight.fight
     const who = now?.combatants.find((c) => c.characterId === token.characterId)
-    if (!now || !who) return true
+    // Before the first turn, everyone places their miniature freely.
+    if (!now || !who || now.encounter.currentId === null) return true
     if (now.encounter.currentId !== who.id) return false
     const character = characters.find((c) => c.id === who.characterId)
     const feet = feetBetween(token, { x, y })

@@ -10,10 +10,12 @@ type MonsterPickerProps = {
   monsters: SrdMonster[] | null
   onPick: (pick: MonsterPick) => void
   pickLabel?: string
+  /** Start combat: clicking a monster adds one at once (click again for another). */
+  quick?: boolean
 }
 
 /** Search the SRD monsters by name, pick how many, and add them. */
-export function MonsterPicker({ monsters, onPick, pickLabel = 'Add' }: MonsterPickerProps) {
+export function MonsterPicker({ monsters, onPick, pickLabel = 'Add', quick = false }: MonsterPickerProps) {
   const [search, setSearch] = useState('')
   const [chosen, setChosen] = useState<SrdMonster | null>(null)
   const [count, setCount] = useState(1)
@@ -39,9 +41,10 @@ export function MonsterPicker({ monsters, onPick, pickLabel = 'Add' }: MonsterPi
           <li key={monster.index}>
             <button
               type="button"
-              aria-pressed={chosen?.index === monster.index}
-              className={cx(styles.monster, chosen?.index === monster.index && styles.monsterOn)}
-              onClick={() => setChosen(monster)}
+              aria-pressed={quick ? undefined : chosen?.index === monster.index}
+              className={cx(styles.monster, !quick && chosen?.index === monster.index && styles.monsterOn)}
+              title={quick ? `Add a ${monster.name} to the fight` : undefined}
+              onClick={() => (quick ? onPick({ monster, count: 1 }) : setChosen(monster))}
             >
               <span className={styles.monsterName}>{monster.name}</span>
               <span className={styles.monsterMeta}>
@@ -52,40 +55,42 @@ export function MonsterPicker({ monsters, onPick, pickLabel = 'Add' }: MonsterPi
         ))}
         {monsters && found.length === 0 && <li className={styles.hint}>No monster by that name in the SRD.</li>}
       </ul>
-      <div className={styles.pickRow}>
-        <span className={styles.pickName}>{chosen ? chosen.name : 'Pick a monster'}</span>
-        <button
-          type="button"
-          className={styles.step}
-          aria-label="One fewer"
-          disabled={count <= 1}
-          onClick={() => setCount(count - 1)}
-        >
-          −
-        </button>
-        <span className={styles.count}>{count}</span>
-        <button
-          type="button"
-          className={styles.step}
-          aria-label="One more"
-          disabled={count >= 8}
-          onClick={() => setCount(count + 1)}
-        >
-          +
-        </button>
-        <button
-          type="button"
-          className={styles.primarySmall}
-          disabled={!chosen}
-          onClick={() => {
-            if (!chosen) return
-            onPick({ monster: chosen, count })
-            setCount(1)
-          }}
-        >
-          {pickLabel}
-        </button>
-      </div>
+      {!quick && (
+        <div className={styles.pickRow}>
+          <span className={styles.pickName}>{chosen ? chosen.name : 'Pick a monster'}</span>
+          <button
+            type="button"
+            className={styles.step}
+            aria-label="One fewer"
+            disabled={count <= 1}
+            onClick={() => setCount(count - 1)}
+          >
+            −
+          </button>
+          <span className={styles.count}>{count}</span>
+          <button
+            type="button"
+            className={styles.step}
+            aria-label="One more"
+            disabled={count >= 8}
+            onClick={() => setCount(count + 1)}
+          >
+            +
+          </button>
+          <button
+            type="button"
+            className={styles.primarySmall}
+            disabled={!chosen}
+            onClick={() => {
+              if (!chosen) return
+              onPick({ monster: chosen, count })
+              setCount(1)
+            }}
+          >
+            {pickLabel}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

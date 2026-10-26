@@ -52,6 +52,16 @@ export function StartFightDialog({
   const [starting, setStarting] = useState(false)
   useEscape(onClose)
 
+  // One more or one fewer of a monster; at none, it leaves the list.
+  function change(pick: MonsterPick, by: number) {
+    setFoes((now) => {
+      const there = now.find((f) => f.monster.index === pick.monster.index)
+      if (!there) return by > 0 ? [...now, { monster: pick.monster, count: 1 }] : now
+      const count = Math.min(8, there.count + by)
+      return count <= 0 ? now.filter((f) => f !== there) : now.map((f) => (f === there ? { ...f, count } : f))
+    })
+  }
+
   async function start() {
     setStarting(true)
     await onStart(
@@ -86,24 +96,35 @@ export function StartFightDialog({
       </fieldset>
       <div>
         <div className={styles.legend}>Monsters</div>
-        {foes.length > 0 && (
-          <ul className={styles.foes}>
-            {foes.map((foe, i) => (
-              <li key={`${foe.monster.index}-${i}`}>
+        {foes.length > 0 ? (
+          <ul className={styles.foes} aria-label="Monsters in this fight">
+            {foes.map((foe) => (
+              <li key={foe.monster.index}>
+                <button
+                  type="button"
+                  className={styles.step}
+                  aria-label={`One fewer ${foe.monster.name}`}
+                  onClick={() => change(foe, -1)}
+                >
+                  −
+                </button>
                 {foe.count} × {foe.monster.name}
                 <button
                   type="button"
-                  className={styles.removeSmall}
-                  aria-label={`Remove ${foe.monster.name}`}
-                  onClick={() => setFoes((now) => now.filter((_, j) => j !== i))}
+                  className={styles.step}
+                  aria-label={`One more ${foe.monster.name}`}
+                  disabled={foe.count >= 8}
+                  onClick={() => change(foe, 1)}
                 >
-                  ×
+                  +
                 </button>
               </li>
             ))}
           </ul>
+        ) : (
+          <p className={styles.hint}>Click a monster to add it; click again for another.</p>
         )}
-        <MonsterPicker monsters={monsters} onPick={(pick) => setFoes((now) => [...now, pick])} />
+        <MonsterPicker monsters={monsters} quick onPick={(pick) => change(pick, 1)} />
         <label className={styles.person}>
           <input type="checkbox" checked={known} onChange={(event) => setKnown(event.target.checked)} />
           Players know what these are
@@ -141,8 +162,8 @@ export function StartFightDialog({
       <p className={styles.hint}>
         {mapId ? 'The map goes on stage with everyone’s miniature on it. ' : ''}
         Monsters roll initiative behind the screen
-        {known ? '' : ' and players see them as “Unknown creature” until you reveal them'}. Each player gets a prompt
-        to roll their own initiative, and the first turn starts once everyone has.
+        {known ? '' : ' and players see them as “Unknown creature” until you reveal them'}. Each player gets a prompt to
+        roll their own initiative, and the first turn starts once everyone has.
       </p>
       <div className={styles.buttons}>
         <button type="button" className={styles.secondary} onClick={onClose}>

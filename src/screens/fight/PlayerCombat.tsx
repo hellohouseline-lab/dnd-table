@@ -112,6 +112,7 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, onAct, onEnd
   return (
     <section className={styles.thisTurn} aria-label="This turn">
       <div className={styles.thisTurnTitle}>{title}</div>
+      {!started && <p className={styles.placing}>Put your miniature where your character is standing.</p>}
       <ul className={styles.turnRows}>
         <li className={styles.turnRow}>
           <span className={cx(styles.dot, styles.gold, turn.actionUsed && attacks === 0 && styles.dotUsed)} />

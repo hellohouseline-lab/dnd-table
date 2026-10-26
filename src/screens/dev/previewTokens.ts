@@ -46,7 +46,8 @@ export function previewMapTokens(mapId: string, fight: FightControls['fight']): 
     { ...base, id: 'pt-2', characterId: 'wizard', combatantId: null, x: 4, y: 7 },
     ...(fight?.combatants ?? [])
       .filter((c) => c.kind === 'monster')
-      .map((c, i) => ({ ...base, id: `mt-${i}`, characterId: null, combatantId: c.id, x: 11 + i, y: 4 + i * 2 })),
+      // Goblin A stands next to Thorin, in sword's reach; the other is across the room.
+      .map((c, i) => ({ ...base, id: `mt-${i}`, characterId: null, combatantId: c.id, x: i === 0 ? 7 : 11 + i, y: 4 + i * 2 })),
   ]
 }
 

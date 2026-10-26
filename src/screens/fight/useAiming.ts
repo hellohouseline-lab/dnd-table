@@ -4,15 +4,16 @@ import type { FightControls } from '../../live/useFight.ts'
 import type { Roll } from '../../live/rolls.ts'
 import type { AttackEntry } from '../../rules/character.ts'
 import { feetBetween, monsterAttack } from '../../rules/combat.ts'
-import type { RollRequest } from '../../rules/dice.ts'
 import { attackRoll } from '../../rules/rolls.ts'
-import type { SrdMonsterAction } from '../../rules/srd/index.ts'
-import { attackMode } from '../../rules/turn.ts'
+import { combineModes, type RollRequest } from '../../rules/dice.ts'
+import { findWeapon, type SrdMonsterAction } from '../../rules/srd/index.ts'
+import { actionReach, attackMode, inReach, weaponReach, type Reach } from '../../rules/turn.ts'
 import type { FightRow } from './fightRows.ts'
 
 type Aim = {
   label: string
   attacker: Combatant
+  reach: Reach
   /** The attack roll against this target, with advantage or disadvantage from the target's state. */
   build: (target: FightRow, feet: number | null) => RollRequest
 }
@@ -47,6 +48,7 @@ export function useAiming(
     setAim({
       label: `${row.name}: ${action.name}`,
       attacker: row.combatant,
+      reach: actionReach(action.desc),
       build: (target, feet) => {
         const request = monsterAttack(row.name, action)
         return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
@@ -60,6 +62,7 @@ export function useAiming(
     setAim({
       label: `${character.name}: ${weapon.name || 'Attack'}`,
       attacker: row.combatant,
+      reach: weaponReach(findWeapon(weapon.weapon)),
       build: (target, feet) => {
         const request = attackRoll(character, weapon)
         return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
@@ -73,7 +76,10 @@ export function useAiming(
       const from = tokenOf(tokens, aim.attacker)
       const to = tokenOf(tokens, target.combatant)
       const feet = from && to ? feetBetween(from, to) : null
-      const request = aim.build(target, feet)
+      const range = feet === null ? null : inReach(aim.reach, feet)
+      if (range && !range.allowed && !window.confirm(`${range.why}. Attack anyway?`)) return
+      const built = aim.build(target, feet)
+      const request = range?.disadvantage ? { ...built, mode: combineModes([built.mode, 'disadvantage']) } : built
       const attacker = aim.attacker
       setAim(null)
       void rollWith(() => attack(attacker, target.combatant, request))
