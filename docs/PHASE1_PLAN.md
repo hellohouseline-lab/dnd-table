@@ -90,7 +90,7 @@ These rules live in the database, not just in the screens, so a curious player c
 3. Players cannot read: `combatant_secrets`, `roll_request_secrets`, `dm_notebook`, hidden tokens, maps and art not currently on stage, and DM secret rolls.
 4. Players can change only their own character, their own member row, their own token (when you allow it) and their own rolls.
 5. The DM can read and change everything in their campaign.
-6. **Secret DC.** When the number is hidden, the player's browser sends the dice values and bonus to a server function, which reads the secret DC, decides pass or fail, saves the roll and returns only the verdict. When you show the number, the browser judges instantly with the same tested maths.
+6. **Secret DC.** The player's browser sends the bonus to a server function, which throws the d20 itself (since milestone 3 the server throws every die), reads the DC from the DM-only table, decides pass or fail, saves the roll and returns only the verdict. The DC never reaches a player's browser unless you show the number.
 7. **Overlay links.** The OBS link carries a secret code. The app makes a throwaway guest login (Supabase anonymous sign-in), hands over the code, and the database lets that guest watch the campaign read-only, with player-level limits. No real login inside OBS.
 
 ### Live updates: what is broadcast and what is saved

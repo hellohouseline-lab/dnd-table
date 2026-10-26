@@ -27,13 +27,15 @@ type Options = {
   throwDice: (dice: TrayThrow) => Promise<void>
   /** How to throw: the server unless given another way (the dev previews throw in the browser). */
   thrower?: (request: RollRequest) => Promise<Roll>
+  /** Called once a roll's dice have landed, as its result card shows. */
+  onLanded?: (roll: Roll) => void
 }
 
 /**
  * Everyone's rolls at this table, as they happen: your own the moment the server answers, everyone
  * else's as they arrive. Each one is thrown in the dice tray, then its result card shows.
  */
-export function useTableRolls({ campaignId, userId, throwDice, thrower }: Options): TableRolls {
+export function useTableRolls({ campaignId, userId, throwDice, thrower, onLanded }: Options): TableRolls {
   const [shown, setShown] = useState<Roll[]>([])
   const [rolling, setRolling] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -49,9 +51,10 @@ export function useTableRolls({ campaignId, userId, throwDice, thrower }: Option
       void throwDice({ dice: [...roll.dice, ...(roll.damage?.dice ?? [])], style: roll.style }).then(() => {
         setShown((list) => [...list.filter((r) => r.id !== roll.id), roll].slice(-MAX_SHOWN))
         setTimeout(() => dismiss(roll.id), SHOWN_MS)
+        onLanded?.(roll)
       })
     },
-    [throwDice, dismiss],
+    [throwDice, dismiss, onLanded],
   )
 
   useRollInserts(campaignId, userId, present)

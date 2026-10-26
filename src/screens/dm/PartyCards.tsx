@@ -10,10 +10,11 @@ type PartyCardsProps = {
   members: Member[]
   characters: Character[]
   onOpenSheet: (character: Character) => void
+  onAsk: (character: Character) => void
 }
 
 /** The Party tab from design 07: a card per character with what the DM glances at most. */
-export function PartyCards({ members, characters, onOpenSheet }: PartyCardsProps) {
+export function PartyCards({ members, characters, onOpenSheet, onAsk }: PartyCardsProps) {
   const players = members.filter((member) => member.role === 'player')
   const cards = players.flatMap((member) => {
     const character = characters.find((c) => c.ownerId === member.user_id)
@@ -70,7 +71,7 @@ export function PartyCards({ members, characters, onOpenSheet }: PartyCardsProps
               <button type="button" className={styles.action} onClick={() => onOpenSheet(character)}>
                 Damage or heal
               </button>
-              <button type="button" className={styles.action} disabled title="Asking for rolls arrives in milestone 4">
+              <button type="button" className={styles.action} onClick={() => onAsk(character)}>
                 Ask to roll
               </button>
               <button type="button" className={styles.action} disabled title="Giving items arrives in Phase 2">

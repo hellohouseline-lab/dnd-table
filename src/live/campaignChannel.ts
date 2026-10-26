@@ -1,12 +1,14 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import type { CharacterChange, CharacterRow } from './characterRows.ts'
+import { rowToAsked, type AskedRoll, type RollRequestRow } from './rollRequests.ts'
 import { rowToRoll, type Roll, type RollRow } from './rolls.ts'
 import { supabase } from './supabase.ts'
 
 // Each campaign has one private live channel, 'campaign:<id>'. The database only lets people at
-// that table use it. It carries who is online (presence), changes to the party's characters and
-// new rolls (secret ones reach only the roller and the DM, by the database's rules).
+// that table use it. It carries who is online (presence), changes to the party's characters, new
+// and changed rolls (secret ones reach only the roller and the DM, by the database's rules) and the
+// DM's requests for a roll.
 // Everything on screen shares the one connection, which closes a moment after the last user
 // lets go, so React reopening a screen doesn't reconnect.
 
@@ -16,6 +18,8 @@ type LiveCampaign = {
   presenceListeners: Set<() => void>
   characterListeners: Set<(change: CharacterChange) => void>
   rollListeners: Set<(roll: Roll) => void>
+  rollChangeListeners: Set<(roll: Roll) => void>
+  requestListeners: Set<(request: AskedRoll) => void>
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
@@ -42,6 +46,8 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     presenceListeners: new Set(),
     characterListeners: new Set(),
     rollListeners: new Set(),
+    rollChangeListeners: new Set(),
+    requestListeners: new Set(),
     users: 1,
   }
 
@@ -71,6 +77,25 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     (payload) => {
       const roll = rowToRoll(payload.new)
       live.rollListeners.forEach((listener) => listener(roll))
+    },
+  )
+
+  channel.on<RollRow>(
+    'postgres_changes',
+    { event: 'UPDATE', schema: 'public', table: 'rolls', filter: `campaign_id=eq.${campaignId}` },
+    (payload) => {
+      const roll = rowToRoll(payload.new)
+      live.rollChangeListeners.forEach((listener) => listener(roll))
+    },
+  )
+
+  channel.on<RollRequestRow>(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'roll_requests', filter: `campaign_id=eq.${campaignId}` },
+    (payload) => {
+      if (payload.eventType === 'DELETE') return
+      const request = rowToAsked(payload.new)
+      live.requestListeners.forEach((listener) => listener(request))
     },
   )
 
@@ -139,4 +164,30 @@ export function useRollInserts(campaignId: string, userId: string, onRoll: (roll
       release(campaignId)
     }
   }, [campaignId, userId, onRoll])
+}
+
+/** Calls `onChange` when a roll at this table changes, such as the DM turning a fail into a pass. */
+export function useRollChanges(campaignId: string, userId: string, onChange: (roll: Roll) => void): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.rollChangeListeners.add(onChange)
+    return () => {
+      live.rollChangeListeners.delete(onChange)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onChange])
+}
+
+/** Calls `onRequest` when the DM asks for a roll, or closes one. */
+export function useRequestChanges(campaignId: string, userId: string, onRequest: (request: AskedRoll) => void): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.requestListeners.add(onRequest)
+    return () => {
+      live.requestListeners.delete(onRequest)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onRequest])
 }

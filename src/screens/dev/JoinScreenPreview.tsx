@@ -13,6 +13,7 @@ import { CharacterForm } from '../character/CharacterForm.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { TableView } from '../table/TableView.tsx'
+import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { loadBackgrounds, loadClasses, loadRaces } from '../../rules/srd/index.ts'
@@ -44,13 +45,23 @@ export function JoinScreenPreview({ as }: { as: string }) {
   )
 }
 
-/** #/dev/table: the table screen. Trackers change on screen but aren't saved. */
-export function TablePreview() {
+/**
+ * #/dev/table: the table screen. Trackers change on screen but aren't saved. #/dev/table/asked opens
+ * with the DM asking for a Constitution save (DC 15, secret), which Elowen has already rolled.
+ */
+export function TablePreview({ asked = false }: { asked?: boolean }) {
   const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(() => parseDiceStyle(sampleMembers[1].dice_style))
+  const [start] = useState(() => {
+    if (!asked) return { request: null, answers: [] }
+    const request = previewRequest(sampleCharacters.map((c) => c.id))
+    return { request, answers: [previewAnswer(sampleCharacters[1], request, 15)] }
+  })
+  const asking = usePreviewAsking(sampleCharacters, { start: start.request, startAnswers: start.answers })
   // The preview throws dice in the browser; there's no database to ask.
   const thrower = useCallback(
-    async (request: RollRequest) => localRoll(request, { campaignId: 'preview', rollerId: 'p1', style: diceStyle }),
+    async (request: RollRequest) =>
+      judgePreview(localRoll(request, { campaignId: 'preview', rollerId: 'p1', style: diceStyle }), request, 15),
     [diceStyle],
   )
   const update = (id: string, patch: TrackerPatch) =>
@@ -68,6 +79,7 @@ export function TablePreview() {
         diceStyle={diceStyle}
         onDiceStyleChange={setDiceStyle}
         thrower={thrower}
+        asking={asking}
       />
     </SignedInAs>
   )

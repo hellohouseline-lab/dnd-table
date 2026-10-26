@@ -13,6 +13,7 @@ import { saveDiceStyle } from '../../live/rolls.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useRollLog } from '../../live/useRollLog.ts'
+import { useRollRequest } from '../../live/useRollRequest.ts'
 import { DmView } from './DmView.tsx'
 
 /** The DM's screen. Players who open it are sent to their own table screen. */
@@ -23,6 +24,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   const party = useParty(campaignId, user.id)
   const online = useOnlineIds(campaignId, user.id)
   const log = useRollLog(campaignId, user.id)
+  const asking = useRollRequest(campaignId, user.id, true)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
@@ -84,6 +86,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       log={log}
       diceStyle={diceStyle}
       onDiceStyleChange={changeDiceStyle}
+      asking={asking}
     />
   )
 }

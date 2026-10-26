@@ -95,7 +95,12 @@ describe('reading the JSON columns safely', () => {
 
 describe('buildToRow', () => {
   it('drops expertise in skills the character isn’t proficient in', () => {
-    const build = { ...newBuild(), name: ' Sam ', skillProficiencies: ['stealth'], skillExpertise: ['stealth', 'arcana'] }
+    const build = {
+      ...newBuild(),
+      name: ' Sam ',
+      skillProficiencies: ['stealth'],
+      skillExpertise: ['stealth', 'arcana'],
+    }
     expect(buildToRow(build)).toMatchObject({ name: 'Sam', skill_expertise: ['stealth'] })
   })
 })

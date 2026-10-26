@@ -64,6 +64,26 @@
   color: var(--text-3);
 }
 
+.verdict {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+
+.verdictPass {
+  border: 1px solid var(--pass);
+  color: var(--pass);
+}
+
+.verdictFail {
+  border: 1px solid var(--fail);
+  color: var(--fail);
+}
+
 .close {
   width: 24px;
   height: 24px;

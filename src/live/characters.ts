@@ -28,7 +28,13 @@ export async function getCharacter(characterId: string): Promise<Character | nul
 export async function createCharacter(campaignId: string, ownerId: string, build: CharacterBuild): Promise<Character> {
   const { data, error } = await db()
     .from('characters')
-    .insert({ ...buildToRow(build), name: build.name.trim(), campaign_id: campaignId, owner_id: ownerId, current_hp: build.maxHp })
+    .insert({
+      ...buildToRow(build),
+      name: build.name.trim(),
+      campaign_id: campaignId,
+      owner_id: ownerId,
+      current_hp: build.maxHp,
+    })
     .select('*')
     .single()
   if (error) throw characterError(error)

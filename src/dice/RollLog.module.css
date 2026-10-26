@@ -147,3 +147,13 @@
   font-size: 26px;
   color: var(--gold-light);
 }
+
+.passed {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.failed {
+  border-color: var(--fail);
+  color: var(--fail);
+}

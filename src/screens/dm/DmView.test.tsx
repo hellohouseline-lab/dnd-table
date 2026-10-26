@@ -1,11 +1,22 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import type { RequestControls } from '../../live/useRollRequest.ts'
 import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
 import type { Roll } from '../../live/rolls.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from '../dev/sampleData.ts'
 import { DmView } from './DmView.tsx'
 
 const noop = () => {}
+const nobodyAsked: RequestControls = {
+  request: null,
+  answers: [],
+  dc: null,
+  error: null,
+  ask: async () => true,
+  override: noop,
+  close: noop,
+  putAnswer: noop,
+}
 const text = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')
 
 const secretRoll: Roll = {
@@ -25,6 +36,9 @@ const secretRoll: Roll = {
   secret: true,
   style: DEFAULT_DICE_STYLE,
   createdAt: '2026-10-25T20:00:00Z',
+  requestId: null,
+  passed: null,
+  passedByDice: null,
 }
 
 function render(startTab: 'party' | 'log') {
@@ -40,6 +54,7 @@ function render(startTab: 'party' | 'log') {
         log={{ status: 'ready', rolls: [secretRoll] }}
         diceStyle={DEFAULT_DICE_STYLE}
         onDiceStyleChange={noop}
+        asking={nobodyAsked}
         startTab={startTab}
       />,
     ),

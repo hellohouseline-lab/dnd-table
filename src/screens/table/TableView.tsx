@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { aOrAn } from '../../components/words.ts'
@@ -15,15 +15,26 @@ import { useTableRolls } from '../../dice/useTableRolls.ts'
 import type { Member } from '../../live/campaigns.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Roll } from '../../live/rolls.ts'
+import type { RequestControls } from '../../live/useRollRequest.ts'
 import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
 import type { Character, FeatureEntry } from '../../rules/character.ts'
 import { isSingleD20, type RollMode, type RollRequest } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
-import { abilityCheck, attackRoll, freeRoll, initiativeRoll, savingThrow, skillCheck } from '../../rules/rolls.ts'
+import {
+  abilityCheck,
+  answerRoll,
+  attackRoll,
+  freeRoll,
+  initiativeRoll,
+  savingThrow,
+  skillCheck,
+} from '../../rules/rolls.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
 import { findCondition } from '../../rules/srd/index.ts'
 import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
+import { requestChips, type CameraChip } from '../rolls/requestStatus.ts'
+import { RollPrompt, RollResult } from '../rolls/RollPrompt.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
 import styles from './TableView.module.css'
@@ -41,6 +52,8 @@ type TableViewProps = {
   onDiceStyleChange: (style: DiceStyle) => void
   /** Throws in the browser instead of on the server (the design preview, which has no database). */
   thrower?: (request: RollRequest) => Promise<Roll>
+  /** The DM's open request for a roll, if any, and the answers so far. */
+  asking: Pick<RequestControls, 'request' | 'answers' | 'putAnswer'>
 }
 
 const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; title: string }[] = [
@@ -67,12 +80,28 @@ export function TableView({
   diceStyle,
   onDiceStyleChange,
   thrower,
+  asking,
 }: TableViewProps) {
   const [sheetTab, setSheetTab] = useState<SheetTabName | null>(null)
   const [mode, setMode] = useState<RollMode>('normal')
   const [secret, setSecret] = useState(false)
+  // Your answer to the DM's request shows as the big result card once its dice land, until you close it.
+  const [landed, setLanded] = useState<string | null>(null)
+  const [closedResult, setClosedResult] = useState<string | null>(null)
+  const characterId = character.id
+  const onLanded = useCallback(
+    (thrown: Roll) => {
+      if (thrown.requestId && thrown.characterId === characterId) setLanded(thrown.id)
+    },
+    [characterId],
+  )
   const { attach: attachTray, throwDice } = useDiceTray()
-  const table = useTableRolls({ campaignId, userId: me.user_id, throwDice, thrower })
+  const table = useTableRolls({ campaignId, userId: me.user_id, throwDice, thrower, onLanded })
+  const { request } = asking
+  const askedMe = request?.characterIds.includes(character.id) ?? false
+  const myAnswer = asking.answers.find((answer) => answer.characterId === character.id)
+  const showResult = myAnswer && landed === myAnswer.id && closedResult !== myAnswer.id
+  const chips = requestChips({ request, answers: asking.answers, members, characters, viewerId: me.user_id })
   const sheet = deriveSheet(character)
   const update = (patch: TrackerPatch) => onUpdate(character.id, patch)
   const conditions = character.conditions.map((c) => findCondition(c)?.name ?? c)
@@ -91,6 +120,13 @@ export function TableView({
     initiative: () => roll(initiativeRoll(character, choices)),
     attack: (attack) => roll(attackRoll(character, attack, choices)),
     disabled: table.rolling,
+  }
+
+  async function answer() {
+    if (!request) return
+    setMode('normal')
+    const thrown = await table.roll(answerRoll(character, request, { mode }))
+    if (thrown) asking.putAnswer(thrown)
   }
 
   function spendFeature(feature: FeatureEntry) {
@@ -225,7 +261,7 @@ export function TableView({
         {table.error && <Notice tone="error">{table.error}</Notice>}
       </div>
 
-      <CameraColumn members={members} characters={characters} online={online} myId={me.user_id} />
+      <CameraColumn members={members} characters={characters} online={online} myId={me.user_id} chips={chips} />
 
       {sheetTab && (
         <>
@@ -245,13 +281,32 @@ export function TableView({
         </>
       )}
 
+      {request && askedMe && !myAnswer && (
+        <div className={styles.asked}>
+          <RollPrompt
+            request={request}
+            character={character}
+            mode={mode}
+            onModeChange={setMode}
+            onRoll={() => void answer()}
+            rolling={table.rolling}
+          />
+        </div>
+      )}
+      {request && myAnswer && showResult && (
+        <div className={styles.asked}>
+          <RollResult roll={myAnswer} shownDc={request.shownDc} onClose={() => setClosedResult(myAnswer.id)} />
+        </div>
+      )}
+
       <div ref={attachTray} className={styles.tray} aria-hidden="true" />
       <RollToasts
         className={styles.toasts}
-        rolls={table.shown}
+        rolls={table.shown.filter((shown) => !(shown.requestId && shown.characterId === character.id))}
         members={members}
         characters={characters}
         onDismiss={table.dismiss}
+        showVerdicts={!askedMe || Boolean(myAnswer)}
       />
     </main>
   )
@@ -262,11 +317,13 @@ type CameraColumnProps = {
   characters: Character[]
   online: ReadonlySet<string>
   myId: string
+  /** A status chip per user id, such as "Your roll" or "Passed" while the DM's roll request is open. */
+  chips?: Record<string, CameraChip>
   className?: string
 }
 
 /** The camera column from the designs. Until cameras arrive (milestone 7) each tile shows who's here. */
-export function CameraColumn({ members, characters, online, myId, className }: CameraColumnProps) {
+export function CameraColumn({ members, characters, online, myId, chips = {}, className }: CameraColumnProps) {
   const ordered = [...members.filter((m) => m.role === 'dm'), ...members.filter((m) => m.role === 'player')]
   return (
     <div className={cx(styles.cameras, className)} aria-label="The table">
@@ -276,6 +333,11 @@ export function CameraColumn({ members, characters, online, myId, className }: C
         const you = member.user_id === myId
         return (
           <div key={member.user_id} className={cx(styles.tile, you && styles.you)}>
+            {chips[member.user_id] && (
+              <span className={cx(styles.chip, styles[`chip_${chips[member.user_id].tone}`])}>
+                {chips[member.user_id].label}
+              </span>
+            )}
             <div className={cx(styles.feed, here && styles.feedHere)}>
               <Icon name="camera" size={14} />
               <span>{here ? 'Here' : 'Not here yet'}</span>

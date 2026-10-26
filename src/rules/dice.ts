@@ -33,6 +33,8 @@ export type RollRequest = {
   damage: DamageRequest | null
   /** Seen only by whoever rolled it and the DM. */
   secret: boolean
+  /** Set when this answers the DM's request for a roll. */
+  requestId: string | null
 }
 
 export type RolledDie = { sides: DieSides; value: number; dropped: boolean }
