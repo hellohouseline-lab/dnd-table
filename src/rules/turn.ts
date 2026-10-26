@@ -99,3 +99,49 @@ export function targetEffects(target: TargetState, feet: number | null): { mode:
 export function attackMode(attacker: RollMode, target: TargetState, feet: number | null): RollMode {
   return combineModes([attacker, ...targetEffects(target, feet).map((e) => e.mode)])
 }
+
+/**
+ * How far an attack reaches, in feet: in melee (5, or 10 with the reach property), and when thrown
+ * or shot (normal and long range). Null where it can't be used that way.
+ */
+export type Reach = { melee: number | null; normal: number | null; long: number | null }
+
+type WeaponLike = { range: 'Melee' | 'Ranged'; properties: string[]; normalRange?: number; longRange?: number }
+
+/** A weapon's reach from its SRD entry; an attack typed in by hand counts as a melee attack. */
+export function weaponReach(weapon: WeaponLike | undefined): Reach {
+  if (!weapon) return { melee: 5, normal: null, long: null }
+  const melee = weapon.range === 'Melee' ? (weapon.properties.includes('reach') ? 10 : 5) : null
+  const shot = weapon.range === 'Ranged' || weapon.properties.includes('thrown')
+  return {
+    melee,
+    normal: shot ? (weapon.normalRange ?? null) : null,
+    long: shot ? (weapon.longRange ?? weapon.normalRange ?? null) : null,
+  }
+}
+
+/** A monster's reach from its action's text: "reach 5 ft." and "range 80/320 ft.". */
+export function actionReach(desc: string): Reach {
+  const reach = /reach (\d+) ?ft/i.exec(desc)
+  const range = /range (\d+)(?:\/(\d+))? ?ft/i.exec(desc)
+  if (!reach && !range) return { melee: 5, normal: null, long: null }
+  return {
+    melee: reach ? Number(reach[1]) : null,
+    normal: range ? Number(range[1]) : null,
+    long: range ? Number(range[2] ?? range[1]) : null,
+  }
+}
+
+/**
+ * Can the attack reach a target this far away? Within melee reach, or normal range, it can; beyond
+ * normal range but within long range, at disadvantage; any further, not at all.
+ */
+export function inReach(reach: Reach, feet: number): { allowed: boolean; disadvantage: boolean; why: string | null } {
+  if (reach.melee !== null && feet <= reach.melee) return { allowed: true, disadvantage: false, why: null }
+  if (reach.normal !== null && feet <= reach.normal) return { allowed: true, disadvantage: false, why: null }
+  if (reach.long !== null && feet <= reach.long) {
+    return { allowed: true, disadvantage: true, why: `Beyond normal range (${reach.normal} ft)` }
+  }
+  const limit = Math.max(reach.melee ?? 0, reach.long ?? 0)
+  return { allowed: false, disadvantage: false, why: `That's ${feet} ft away, and it only reaches ${limit} ft` }
+}

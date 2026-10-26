@@ -299,10 +299,7 @@ export async function rollInitiative(combatantId: string, request: RollRequest):
 /** Ends the turn: the next in the order goes (the server works it out). The DM, or whoever's turn it is. */
 export async function endTurn(encounterId: string): Promise<Encounter> {
   const { data, error } = await db().rpc('end_turn', { p_encounter_id: encounterId })
-  if (error) {
-    if ((error.code === '22023' || error.code === '42501') && error.message) throw new TableError(`${error.message}.`)
-    throw fromDatabaseError(error)
-  }
+  if (error) throw fromServerRule(error)
   return rowToEncounter(data)
 }
 

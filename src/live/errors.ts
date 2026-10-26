@@ -19,7 +19,13 @@ export function fromDatabaseError(error: { code?: string; message?: string }): T
     return new TableError("Couldn't reach the table. Check your internet connection and try again.")
   }
   console.error(error)
-  return new TableError(SOMETHING_WENT_WRONG)
+  return new TableError(withDetail(error))
+}
+
+/** The plain message, with the technical reason after it so a report to Claude can be precise. */
+function withDetail(error: { code?: string; message?: string }): string {
+  const detail = [error.code, error.message].filter(Boolean).join(': ').slice(0, 160)
+  return detail ? `${SOMETHING_WENT_WRONG} (Details: ${detail})` : SOMETHING_WENT_WRONG
 }
 
 /**
@@ -39,5 +45,5 @@ export function fromServerRule(error: { code?: string; message?: string }): Tabl
 export function messageFor(error: unknown): string {
   if (error instanceof TableError) return error.message
   console.error(error)
-  return SOMETHING_WENT_WRONG
+  return error instanceof Error ? withDetail({ message: error.message }) : SOMETHING_WENT_WRONG
 }

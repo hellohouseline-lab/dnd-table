@@ -27,7 +27,7 @@ import { hitDieHealing } from '../../rules/rest.ts'
 import { abilityModifier } from '../../rules/maths/core.ts'
 import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
 import type { AttackEntry, Character, FeatureEntry } from '../../rules/character.ts'
-import { isSingleD20, type RollMode, type RollRequest } from '../../rules/dice.ts'
+import { combineModes, isSingleD20, type RollMode, type RollRequest } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import {
   abilityCheck,
@@ -39,14 +39,14 @@ import {
   skillCheck,
 } from '../../rules/rolls.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
-import { findCondition } from '../../rules/srd/index.ts'
+import { findCondition, findWeapon } from '../../rules/srd/index.ts'
 import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { requestChips, type CameraChip } from '../rolls/requestStatus.ts'
 import { RollPrompt, RollResult } from '../rolls/RollPrompt.tsx'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
 import type { CombatEvent } from '../../live/combat.ts'
-import { attackMode, attacksLeft, attacksPerAction, movementLeft } from '../../rules/turn.ts'
+import { attackMode, attacksLeft, attacksPerAction, inReach, movementLeft, weaponReach } from '../../rules/turn.ts'
 import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
 import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/fightRows.ts'
@@ -177,7 +177,13 @@ export function TableView({
     ? mapTokens(
         tokens,
         { characters, combatants: fight?.combatants ?? [], secrets: [], currentId: fight?.encounter.currentId ?? null },
-        { userId: me.user_id, isDm: false, playersMove: combat.playersMove, moveNow: !mine || myTurn },
+        {
+          userId: me.user_id,
+          isDm: false,
+          playersMove: combat.playersMove,
+          // Before the first turn everyone places their miniature; after that, on your own turn.
+          moveNow: !mine || myTurn || fight?.encounter.currentId === null,
+        },
       )
     : []
   const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
@@ -197,8 +203,19 @@ export function TableView({
       row.combatant.characterId ? t.characterId === row.combatant.characterId : t.combatantId === row.combatant.id,
     )
     const feet = myToken && targetToken ? feetBetween(myToken, targetToken) : null
+    const range = feet === null ? null : inReach(weaponReach(findWeapon(aiming.weapon)), feet)
+    if (range && !range.allowed) {
+      setFightProblem(`${range.why}. Move closer, or pick another attack.`)
+      setAiming(null)
+      return
+    }
     const target = { conditions: row.character?.conditions ?? row.combatant.conditions, dodging: row.combatant.turn.dodging }
-    const request = attackRoll(character, aiming, { ...choices, mode: attackMode(mode, target, feet), secret: false })
+    const targetMode = attackMode(mode, target, feet)
+    const request = attackRoll(character, aiming, {
+      ...choices,
+      mode: range?.disadvantage ? combineModes([targetMode, 'disadvantage']) : targetMode,
+      secret: false,
+    })
     setAiming(null)
     setMode('normal')
     void table.rollWith(() => combat.attack(mine, row.combatant, request))

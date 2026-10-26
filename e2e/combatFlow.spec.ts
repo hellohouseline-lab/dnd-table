@@ -171,12 +171,22 @@ test('a fight on a battle map, from Start combat to attacks, turns and Undo', as
   const dialog = dmPage.getByRole('dialog', { name: 'Start combat' })
   await dialog.getByLabel('Find a monster').fill('goblin')
   await dialog.getByRole('button', { name: /^Goblin CR 1\/4/ }).click()
-  await dialog.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect(dialog).toContainText('1 × Goblin')
   await expect(dialog.getByRole('button', { name: /Test map/ })).toHaveAttribute('aria-pressed', 'true')
   await dialog.getByRole('button', { name: 'Start the fight' }).click()
 
-  // The player sees the map with miniatures, and rolls initiative.
+  // The player sees the map with miniatures, puts theirs next to the goblin (anywhere is fine
+  // before the first turn, and it costs no movement), and rolls initiative.
   await expect(playerPage.getByText('Drag to move around')).toBeVisible({ timeout: 20_000 })
+  const tokens = await api<{ id: string; x: number; y: number; character_id: string | null }[]>(
+    player,
+    `tokens?campaign_id=eq.${campaignId}&select=id,x,y,character_id`,
+    { method: 'GET' },
+  )
+  const goblinToken = tokens.find((t) => !t.character_id)
+  const token = tokens.find((t) => t.character_id)
+  if (!goblinToken || !token) throw new Error('Both miniatures should be on the map')
+  await api(player, 'rpc/move_token', { body: { p_token_id: token.id, p_x: goblinToken.x - 1, p_y: goblinToken.y } })
   const prompt = playerPage.getByRole('dialog', { name: 'Roll initiative' })
   await prompt.getByRole('button', { name: 'Roll the d20' }).click()
 
@@ -211,15 +221,12 @@ test('a fight on a battle map, from Start combat to attacks, turns and Undo', as
   const turn = playerPage.getByRole('region', { name: 'This turn' })
   await expect(turn).toContainText(/Action\s*Ready/)
   await expect(turn).toContainText('30 of 30 ft')
-  const [token] = await api<{ id: string; x: number; y: number }[]>(
-    player,
-    `tokens?campaign_id=eq.${campaignId}&character_id=not.is.null&select=id,x,y`,
-    { method: 'GET' },
-  )
-  await api(player, 'rpc/move_token', { body: { p_token_id: token.id, p_x: token.x + 1, p_y: token.y } })
+  // One square, still beside the goblin: 5 feet of movement gone, and no further than what's left.
+  const here = { x: goblinToken.x - 1, y: goblinToken.y + 1 }
+  await api(player, 'rpc/move_token', { body: { p_token_id: token.id, p_x: here.x, p_y: here.y } })
   await expect(turn).toContainText('25 of 30 ft')
   await expect(
-    api(player, 'rpc/move_token', { body: { p_token_id: token.id, p_x: token.x + 20, p_y: token.y } }),
+    api(player, 'rpc/move_token', { body: { p_token_id: token.id, p_x: here.x, p_y: here.y + 20 } }),
   ).rejects.toThrow(/You can move 25 more feet this turn/)
 
   await playerPage.getByRole('button', { name: /Longsword/ }).first().click()

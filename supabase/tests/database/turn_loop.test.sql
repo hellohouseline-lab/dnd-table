@@ -5,7 +5,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(53);
+select plan(55);
 
 insert into auth.users (id, email) values
   ('dddddddd-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -74,6 +74,19 @@ insert into public.tokens (campaign_id, map_id, combatant_id, x, y)
   values (current_setting('test.campaign')::uuid, current_setting('test.map')::uuid, current_setting('test.goblin')::uuid, 3, 2);
 select set_config('test.thorin_token', (select id::text from public.tokens where character_id is not null), true);
 select set_config('test.goblin_token', (select id::text from public.tokens where combatant_id is not null), true);
+
+-- Before the first turn, players put their miniature where they think their character is.
+set local request.jwt.claims = '{"sub": "dddddddd-0000-4000-8000-000000000002", "role": "authenticated"}';
+select lives_ok(
+  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 9, 9) $$,
+  'Before the first turn, a player places their miniature anywhere'
+);
+select is(
+  (select feet_moved::int from public.combatants where kind = 'character'), 0,
+  '...without using up any movement'
+);
+select public.move_token(current_setting('test.thorin_token')::uuid, 2, 2);
+set local request.jwt.claims = '{"sub": "dddddddd-0000-4000-8000-000000000001", "role": "authenticated"}';
 
 -- ---------------------------------------------------------------------------------------------
 -- Initiative: the first turn starts by itself once everyone has rolled

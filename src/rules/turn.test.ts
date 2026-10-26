@@ -7,7 +7,10 @@ import {
   attacksPerAction,
   FRESH_TURN,
   movementLeft,
+  actionReach,
+  inReach,
   targetEffects,
+  weaponReach,
 } from './turn.ts'
 
 describe('Extra Attack', () => {
@@ -70,5 +73,35 @@ describe('advantage from the target', () => {
     }
     expect(attackMode('disadvantage', { conditions: ['stunned'], dodging: false }, 5)).toBe('normal')
     expect(attackMode('advantage', { conditions: [], dodging: true }, 5)).toBe('normal')
+  })
+})
+
+describe('reach and range', () => {
+  const longsword = { range: 'Melee' as const, properties: ['versatile'] }
+  const glaive = { range: 'Melee' as const, properties: ['heavy', 'reach', 'two-handed'] }
+  const dagger = { range: 'Melee' as const, properties: ['finesse', 'light', 'thrown'], normalRange: 20, longRange: 60 }
+  const longbow = { range: 'Ranged' as const, properties: ['ammunition'], normalRange: 150, longRange: 600 }
+
+  it('reads a weapon: 5 feet in melee, 10 with reach, and thrown or shot ranges', () => {
+    expect(weaponReach(longsword)).toEqual({ melee: 5, normal: null, long: null })
+    expect(weaponReach(glaive)).toEqual({ melee: 10, normal: null, long: null })
+    expect(weaponReach(dagger)).toEqual({ melee: 5, normal: 20, long: 60 })
+    expect(weaponReach(longbow)).toEqual({ melee: null, normal: 150, long: 600 })
+    expect(weaponReach(undefined)).toEqual({ melee: 5, normal: null, long: null })
+  })
+
+  it('reads a monster action’s text', () => {
+    expect(actionReach('Melee Weapon Attack: +4 to hit, reach 5 ft., one target.')).toEqual({ melee: 5, normal: null, long: null })
+    expect(actionReach('Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target.')).toEqual({ melee: null, normal: 80, long: 320 })
+    expect(actionReach('Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft.')).toEqual({ melee: 5, normal: 20, long: 60 })
+  })
+
+  it('allows what reaches, gives disadvantage beyond normal range, and refuses anything further', () => {
+    expect(inReach(weaponReach(longsword), 5)).toEqual({ allowed: true, disadvantage: false, why: null })
+    expect(inReach(weaponReach(longsword), 10).allowed).toBe(false)
+    expect(inReach(weaponReach(longsword), 25).why).toBe("That's 25 ft away, and it only reaches 5 ft")
+    expect(inReach(weaponReach(glaive), 10).allowed).toBe(true)
+    expect(inReach(weaponReach(dagger), 40)).toEqual({ allowed: true, disadvantage: true, why: 'Beyond normal range (20 ft)' })
+    expect(inReach(weaponReach(longbow), 700).allowed).toBe(false)
   })
 })

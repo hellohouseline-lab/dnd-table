@@ -162,10 +162,9 @@ select ok(private.can_see_art(current_setting('test.campaign') || '/map.webp'), 
 select is((select name from public.assets where kind = 'art'), 'Tavern map', 'Players see the map''s details, for its grid');
 update public.tokens set x = 5 where character_id = current_setting('test.fighter')::uuid;
 select is((select x from public.tokens where character_id is not null), 3::smallint, 'Players don''t change a token directly');
-select throws_ok(
+select lives_ok(
   $$ select public.move_token((select id from public.tokens where character_id is not null), 5, 3) $$,
-  '42501', 'Wait for your turn to move',
-  'In a fight, a player moves their miniature only on their turn'
+  'Before the first turn, a player puts their miniature where they like'
 );
 update public.tokens set x = 1 where combatant_id = current_setting('test.goblin')::uuid;
 select is(

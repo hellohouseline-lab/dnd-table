@@ -94,8 +94,8 @@ test('the DM starts a fight with two goblins, runs a turn and reveals one', asyn
   const dialog = page.getByRole('dialog', { name: 'Start combat' })
   await dialog.getByLabel('Find a monster').fill('goblin')
   await dialog.getByRole('button', { name: /^Goblin CR 1\/4/ }).click()
-  await dialog.getByRole('button', { name: 'One more' }).click()
-  await dialog.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect(dialog).toContainText('1 × Goblin')
+  await dialog.getByRole('button', { name: 'One more Goblin' }).click()
   await expect(dialog).toContainText('2 × Goblin')
   // A mystery: players see "Unknown creature" until the DM reveals them.
   await dialog.getByLabel('Players know what these are').uncheck()
@@ -143,6 +143,14 @@ test('a player attacks a goblin by picking it, and their action is spent', async
   await expect(turn).toContainText(/Action\s*Used/)
   await page.getByRole('button', { name: /Longsword/ }).first().click()
   await expect(page.getByText('You have used your action this turn.')).toBeVisible()
+})
+
+test('a player can only attack what their weapon reaches', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  await page.getByRole('button', { name: /Longsword/ }).first().click()
+  await page.getByRole('list', { name: 'Turn order' }).getByRole('button', { name: /Unknown creature 2/ }).click()
+  await expect(page.getByText(/That's \d+ ft away, and it only reaches 5 ft\. Move closer/)).toBeVisible()
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Action\s*Ready/)
 })
 
 test('the DM runs a goblin\'s turn from the Battle screen in two clicks, and undoes it', async ({ page }) => {
