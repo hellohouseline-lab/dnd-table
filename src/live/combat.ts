@@ -1,9 +1,18 @@
 // Fights and battle-map tokens. The database decides who may do what: only the DM runs a fight and
-// reads a monster's secrets; initiative is thrown by the server; players move only their own token.
+// reads a monster's secrets; initiative and attacks are thrown by the server; players move only their
+// own token, on their turn, as far as their movement left.
 
 import type { Character } from '../rules/character.ts'
-import { healthState, letteredNames, monsterInitiative, unknownNames, type HealthState } from '../rules/combat.ts'
+import {
+  healthState,
+  letteredNames,
+  monsterInitiative,
+  startingSquares,
+  unknownNames,
+  type HealthState,
+} from '../rules/combat.ts'
 import type { RollRequest } from '../rules/dice.ts'
+import type { TurnRecord } from '../rules/turn.ts'
 import type { SrdMonster } from '../rules/srd/index.ts'
 import type { Tables } from './database.types.ts'
 import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './errors.ts'
@@ -32,6 +41,37 @@ export type Combatant = {
   tiebreak: number
   health: HealthState
   conditions: string[]
+  /** Walking speed in feet: a monster's own; a character's sheet has the one that counts. */
+  speed: number
+  /** What's used of this creature's turn, kept by the server and reset when its turn starts. */
+  turn: TurnRecord
+  createdAt: string
+}
+
+/** Something that happened in the fight, as everyone may see it (names are looked up on each screen). */
+export type CombatEvent = {
+  id: string
+  encounterId: string
+  round: number
+  actorId: string | null
+  targetId: string | null
+  kind: 'attack' | 'action'
+  rollId: string | null
+  shown: {
+    label?: string
+    hit?: boolean
+    critical?: boolean
+    damage?: number
+    damageType?: string
+    /** A player's own attack total; null for a monster's, which stays behind the screen. */
+    total?: number | null
+    /** The target dropped to 0 hit points. */
+    down?: boolean
+    /** For actions: 'dash', 'disengage', 'dodge', 'action', 'bonus' or 'reaction'. */
+    what?: string
+  }
+  undone: boolean
+  seq: number
   createdAt: string
 }
 
@@ -87,6 +127,34 @@ export function rowToCombatant(row: Tables<'combatants'>): Combatant {
     tiebreak: row.tiebreak,
     health: HEALTH.find((h) => h === row.health) ?? 'healthy',
     conditions: row.conditions,
+    speed: row.speed,
+    turn: {
+      actionUsed: row.action_used,
+      attacksMade: row.attacks_made,
+      bonusUsed: row.bonus_used,
+      reactionUsed: row.reaction_used,
+      feetMoved: row.feet_moved,
+      extraFeet: row.extra_feet,
+      disengaged: row.disengaged,
+      dodging: row.dodging,
+    },
+    createdAt: row.created_at,
+  }
+}
+
+export function rowToEvent(row: Tables<'combat_events'>): CombatEvent {
+  const shown = row.shown && typeof row.shown === 'object' && !Array.isArray(row.shown) ? row.shown : {}
+  return {
+    id: row.id,
+    encounterId: row.encounter_id,
+    round: row.round,
+    actorId: row.actor_id,
+    targetId: row.target_id,
+    kind: row.kind === 'attack' ? 'attack' : 'action',
+    rollId: row.roll_id,
+    shown: shown as CombatEvent['shown'],
+    undone: row.undone,
+    seq: Number(row.seq),
     createdAt: row.created_at,
   }
 }
@@ -141,42 +209,31 @@ export async function getActiveFight(campaignId: string): Promise<FightState> {
   }
 }
 
-/** The DM starts a fight with these characters; everyone is then asked for initiative. */
-export async function startFight(campaignId: string, characters: Character[]): Promise<FightState> {
-  const { data, error } = await db().from('encounters').insert({ campaign_id: campaignId }).select('*').single()
-  if (error) throw error.code === '23505' ? new TableError('A fight is already going on.') : fromDatabaseError(error)
-  const encounter = rowToEncounter(data)
-  let combatants: Combatant[] = []
-  if (characters.length > 0) {
-    const added = await db()
-      .from('combatants')
-      .insert(
-        characters.map((c) => ({
-          encounter_id: encounter.id,
-          campaign_id: campaignId,
-          kind: 'character',
-          character_id: c.id,
-          shown_name: c.name.slice(0, 60),
-          revealed: true,
-          tiebreak: c.scores.dexterity,
-        })),
-      )
-      .select('*')
-    if (added.error) throw fromDatabaseError(added.error)
-    combatants = added.data.map(rowToCombatant)
-  }
-  return { encounter, combatants, secrets: [] }
+/**
+ * The DM starts a fight with these characters, and puts this battle map on stage (or none), in one
+ * go on the server; everyone is then asked for initiative. Returns the whole fight as it now stands.
+ */
+export async function startFight(campaignId: string, characters: Character[], mapId: string | null): Promise<FightState> {
+  const { error } = await db().rpc('start_fight', {
+    p_campaign_id: campaignId,
+    p_character_ids: characters.map((c) => c.id),
+    // No map leaves the stage as it is. (The generated types don't know the server takes null here.)
+    p_map_id: mapId as string,
+  })
+  if (error) throw fromServerRule(error)
+  return getActiveFight(campaignId)
 }
 
 /**
- * The DM adds monsters of one kind: hidden as "Unknown creature" for players, lettered for the DM
- * ("Goblin A"), on their average hit points, each rolling initiative behind the screen.
+ * The DM adds monsters of one kind, lettered ("Goblin A"), on their average hit points, each rolling
+ * initiative behind the screen. Unless `known`, players see each as "Unknown creature" until revealed.
  */
 export async function addMonsters(
   encounter: Encounter,
   monster: SrdMonster,
   count: number,
   existing: { combatants: Combatant[]; secrets: CombatantSecret[] },
+  known = false,
 ): Promise<{ combatants: Combatant[]; secrets: CombatantSecret[]; rolls: Roll[] }> {
   const shown = unknownNames(
     existing.combatants.map((c) => c.shownName),
@@ -190,12 +247,14 @@ export async function addMonsters(
   const added = await db()
     .from('combatants')
     .insert(
-      shown.map((shownName) => ({
+      shown.map((shownName, i) => ({
         encounter_id: encounter.id,
         campaign_id: encounter.campaignId,
         kind: 'monster',
-        shown_name: shownName,
+        shown_name: known ? (names[i] ?? monster.name).slice(0, 60) : shownName,
+        revealed: known,
         tiebreak: monster.scores.dexterity,
+        speed: Math.max(0, Math.min(200, monster.speed)),
       })),
     )
     .select('*')
@@ -290,6 +349,56 @@ export async function endFight(encounter: Encounter, combatants: Combatant[]): P
 }
 
 // ---------------------------------------------------------------------------------------------
+// The turn: attacks, actions and the feed
+// ---------------------------------------------------------------------------------------------
+
+/**
+ * Settles an attack on the server: throws it, checks it against the target's armour class, takes
+ * the damage off and posts it to the feed. `request` is the attack roll as built for the sheet.
+ */
+export async function resolveAttack(
+  attackerId: string,
+  targetId: string,
+  request: RollRequest,
+): Promise<{ roll: Roll; event: CombatEvent }> {
+  const { data, error } = await db().rpc('resolve_attack', {
+    p_attacker_id: attackerId,
+    p_target_id: targetId,
+    p_roll: requestToJson(request),
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }
+}
+
+export type TurnAction = 'action' | 'dash' | 'disengage' | 'dodge' | 'bonus' | 'reaction'
+
+/** Spends part of a turn: Dash, Disengage, Dodge, or the action, bonus action or reaction for something else. */
+export async function spendAction(combatantId: string, what: TurnAction): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('use_action', { p_combatant_id: combatantId, p_what: what })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
+}
+
+/** DM: takes back the newest thing that happened. */
+export async function undoEvent(eventId: string): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('undo_event', { p_event_id: eventId })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
+}
+
+/** What has happened in a fight, oldest first. */
+export async function listEvents(encounterId: string): Promise<CombatEvent[]> {
+  const { data, error } = await db()
+    .from('combat_events')
+    .select('*')
+    .eq('encounter_id', encounterId)
+    .order('seq', { ascending: true })
+  if (error) throw fromDatabaseError(error)
+  return data.map(rowToEvent)
+}
+
+// ---------------------------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------------------------
 
@@ -321,6 +430,26 @@ export async function placeTokens(campaignId: string, mapId: string, tokens: New
     .select('*')
   if (error) throw fromDatabaseError(error)
   return data.map(rowToToken)
+}
+
+/**
+ * The DM puts everyone in a fight on the map: the party down the left (those not on it already)
+ * and these monsters a few squares away.
+ */
+export async function placeFighters(
+  campaignId: string,
+  mapId: string,
+  fighters: { characterIds: string[]; combatantIds: string[] },
+): Promise<Token[]> {
+  const onMap = await listTokens(campaignId, mapId)
+  const party = fighters.characterIds.filter((id) => !onMap.some((t) => t.characterId === id))
+  const foes = fighters.combatantIds.filter((id) => !onMap.some((t) => t.combatantId === id))
+  const partySquares = startingSquares(onMap, party.length, 1)
+  const foeSquares = startingSquares([...onMap, ...partySquares], foes.length, 7)
+  return placeTokens(campaignId, mapId, [
+    ...party.map((characterId, i) => ({ characterId, ...partySquares[i] })),
+    ...foes.map((combatantId, i) => ({ combatantId, ...foeSquares[i] })),
+  ])
 }
 
 /**

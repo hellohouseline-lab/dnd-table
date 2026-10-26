@@ -12,6 +12,8 @@ const MAX_SHOWN = 3
 export type TableRolls = {
   /** Throws the dice on the server. Resolves with the roll, or null if it failed (see `error`). */
   roll: (request: RollRequest) => Promise<Roll | null>
+  /** Throws some other way, such as an attack settled on the server, and shows it like any roll. */
+  rollWith: (work: () => Promise<Roll>) => Promise<Roll | null>
   /** Throws and shows a roll made in this browser only, such as a practice throw. */
   showLocal: (roll: Roll) => void
   /** The result cards showing now, oldest first. */
@@ -59,12 +61,12 @@ export function useTableRolls({ campaignId, userId, throwDice, thrower, onLanded
 
   useRollInserts(campaignId, userId, present)
 
-  const roll = useCallback(
-    async (request: RollRequest) => {
+  const rollWith = useCallback(
+    async (work: () => Promise<Roll>) => {
       setError(null)
       setRolling(true)
       try {
-        const result = await (thrower ? thrower(request) : throwOnServer(campaignId, request))
+        const result = await work()
         present(result)
         return result
       } catch (caught) {
@@ -74,8 +76,13 @@ export function useTableRolls({ campaignId, userId, throwDice, thrower, onLanded
         setRolling(false)
       }
     },
-    [campaignId, thrower, present],
+    [present],
   )
 
-  return { roll, showLocal: present, shown, dismiss, rolling, error }
+  const roll = useCallback(
+    (request: RollRequest) => rollWith(() => (thrower ? thrower(request) : throwOnServer(campaignId, request))),
+    [campaignId, thrower, rollWith],
+  )
+
+  return { roll, rollWith, showLocal: present, shown, dismiss, rolling, error }
 }

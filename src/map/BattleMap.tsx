@@ -23,6 +23,8 @@ export type MapToken = {
   hidden: boolean
   acting: boolean
   canMove: boolean
+  /** At 0 hit points: drawn faded. */
+  down?: boolean
 }
 
 type BattleMapProps = {
@@ -33,6 +35,8 @@ type BattleMapProps = {
   selectedId?: string | null
   /** Your token's reach this turn: a circle of `feet` around it. */
   reach?: { tokenId: string; feet: number } | null
+  /** Picking a target: miniatures glow, and clicking one picks it (through onSelect). */
+  targeting?: boolean
   hands?: Pointer[]
   pings?: (Pointer & { id: number })[]
   onHand?: (x: number, y: number) => void
@@ -83,6 +87,7 @@ export default function BattleMap({
   onSelect,
   selectedId = null,
   reach = null,
+  targeting = false,
   hands = [],
   pings = [],
   onHand,
@@ -205,7 +210,7 @@ export default function BattleMap({
                   x={centre(token.x, offsetX)}
                   y={centre(token.y, offsetY)}
                   draggable={token.canMove}
-                  opacity={token.hidden ? 0.5 : 1}
+                  opacity={token.down ? 0.35 : token.hidden ? 0.5 : 1}
                   onClick={(event) => {
                     event.cancelBubble = true
                     onSelect?.(token.id)
@@ -223,13 +228,23 @@ export default function BattleMap({
                   }}
                   onMouseEnter={(event) => {
                     const container = event.target.getStage()?.container()
-                    if (container) container.style.cursor = token.canMove ? 'grab' : 'pointer'
+                    if (container) container.style.cursor = targeting ? 'crosshair' : token.canMove ? 'grab' : 'pointer'
                   }}
                   onMouseLeave={(event) => {
                     const container = event.target.getStage()?.container()
                     if (container) container.style.cursor = ''
                   }}
                 >
+                  {targeting && !token.acting && (
+                    <Circle
+                      radius={radius + size * 0.14}
+                      stroke="#e07b42"
+                      strokeWidth={2 / scale}
+                      dash={[6 / scale, 4 / scale]}
+                      shadowColor="#e07b42"
+                      shadowBlur={10}
+                    />
+                  )}
                   {(token.acting || token.id === selectedId) && (
                     <Circle
                       radius={radius + size * 0.08}

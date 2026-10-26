@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Combatant, Token } from '../live/combat.ts'
+import { FRESH_TURN } from '../rules/turn.ts'
 import { sampleFighter, sampleWizard } from '../screens/dev/sampleData.ts'
 import { freeSquares, mapTokens } from './mapTokens.ts'
 
@@ -15,6 +16,8 @@ const goblin: Combatant = {
   tiebreak: 14,
   health: 'healthy',
   conditions: [],
+  speed: 30,
+  turn: FRESH_TURN,
   createdAt: '2026-10-26T20:00:00Z',
 }
 const token = (id: string, patch: Partial<Token>): Token => ({

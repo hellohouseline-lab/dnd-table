@@ -1,5 +1,7 @@
 # Combat and characters rework: the plan
 
+**C1 built on 26 October**, overnight: see `PROGRESS.md` for what's in it and how to try it. C2 and C3 are next.
+
 Written 26 October 2026, after Matt's first combat test, and revised the same day so the whole fight runs from one DM screen. The UX was planned with Fable (including research into how D&D Beyond and other online tables split the DM's controls, in the appendix) and checked against the code and the SRD data. Nothing here is built yet; it waits for Matt's approval. Sections 1 to 4 are plain words; section 5 is technical; sections 6 and 7 are the order of work and the decisions.
 
 ## In plain words

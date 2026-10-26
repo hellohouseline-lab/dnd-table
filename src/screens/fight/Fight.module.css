@@ -63,6 +63,54 @@
   accent-color: var(--gold);
 }
 
+.where {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.mapChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mapChoice {
+  width: 120px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: rgba(16, 12, 20, 0.6);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.mapChoiceOn {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.mapThumb,
+.noMap {
+  width: 100%;
+  height: 64px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: #120e17;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
 .foes {
   list-style: none;
   margin: 0 0 10px;
@@ -254,6 +302,60 @@
   gap: 14px;
 }
 
+.encounterLeft {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.encounterLeft > .order {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Picking a target: the names that can be picked. */
+.aimHint {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(42, 20, 12, 0.9);
+  border: 1px solid var(--fail-light);
+  font-size: 15px;
+}
+
+.pickable {
+  border-color: var(--fail-light);
+  box-shadow: 0 0 8px rgba(224, 123, 66, 0.35);
+}
+
+.pickable .rowName {
+  cursor: crosshair;
+}
+
+.rowPips {
+  display: block;
+  margin-top: 2px;
+}
+
+.actingPips {
+  margin-top: 4px;
+}
+
+/* The number key that fires an attack on the Battle screen. */
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  border-radius: 3px;
+  border: 1px solid var(--chip-border);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
 .order,
 .actingCard {
   min-height: 0;
@@ -311,6 +413,12 @@
   border-radius: 6px;
   background: rgba(31, 26, 39, 0.7);
   border: 1px solid transparent;
+}
+
+.rowCompact {
+  grid-template-columns: 26px minmax(0, 1fr) 44px 60px 26px 26px;
+  gap: 6px;
+  padding: 4px 6px;
 }
 
 .acting {

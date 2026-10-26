@@ -52,7 +52,12 @@ export function previewMapTokens(mapId: string, fight: FightControls['fight']): 
 
 let made = 0
 
-export function usePreviewTokens(mapId: string | null, start: Token[] = []): TokenControls {
+/** `onMove` can refuse a move, as the server does (too far, or not your turn). */
+export function usePreviewTokens(
+  mapId: string | null,
+  start: Token[] = [],
+  onMove?: (token: Token, x: number, y: number) => boolean,
+): TokenControls {
   const [tokens, setTokens] = useState<Token[]>(start)
   const onMap = tokens.filter((t) => t.mapId === mapId)
   const change = (id: string, patch: Partial<Token>) =>
@@ -60,7 +65,15 @@ export function usePreviewTokens(mapId: string | null, start: Token[] = []): Tok
   return {
     tokens: onMap,
     error: null,
-    move: (token, x, y) => change(token.id, { x, y }),
+    move: (token, x, y) => {
+      if (onMove && !onMove(token, x, y)) {
+        // Refused: show it moving, then put it back, as the real screen does.
+        change(token.id, { x, y })
+        setTimeout(() => change(token.id, { x: token.x, y: token.y }), 0)
+        return
+      }
+      change(token.id, { x, y })
+    },
     place: async (list) => {
       if (!mapId) return
       setTokens((now) => [

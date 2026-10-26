@@ -83,6 +83,20 @@ export function feetBetween(a: Square, b: Square): number {
   return 5 * squaresBetween(a, b)
 }
 
+/**
+ * Where miniatures start a fight: free squares filling columns of six from `firstColumn`, so the
+ * party lines up down one side and the monsters a few squares away. The DM can drag them anywhere.
+ */
+export function startingSquares(taken: Square[], count: number, firstColumn: number): Square[] {
+  const squares: Square[] = []
+  for (let x = firstColumn; squares.length < count && x < firstColumn + 20; x++) {
+    for (let y = 1; squares.length < count && y <= 6; y++) {
+      if (!taken.some((t) => t.x === x && t.y === y)) squares.push({ x, y })
+    }
+  }
+  return squares
+}
+
 /** "DF" for Dwarf Fighter, "E" for Elowen; "?2" for an unknown creature number 2. */
 export function initials(name: string): string {
   const unknown = /^Unknown creature (\d+)$/.exec(name)

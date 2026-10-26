@@ -102,6 +102,8 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       sceneName={stage.sceneName}
       audio={audio}
       fight={fight}
+      maps={library.assets.filter((a) => a.kind === 'art' && a.category === 'maps')}
+      mapOnStage={stage.mode === 'map' ? stage.mapId : null}
     />
   )
 }

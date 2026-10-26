@@ -5,6 +5,7 @@ import { CampaignScreen } from '../screens/campaign/CampaignScreen.tsx'
 import { NewCampaignScreen } from '../screens/campaign/NewCampaignScreen.tsx'
 import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
 import { CharacterEditorScreen } from '../screens/character/CharacterEditorScreen.tsx'
+import { BattlePreview } from '../screens/dev/BattlePreview.tsx'
 import { CallPreview } from '../screens/dev/CallPreview.tsx'
 import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
 import { DmPreview } from '../screens/dev/DmPreview.tsx'
@@ -116,6 +117,7 @@ const ROUTES: Route[] = [
           render: () => <TablePreview key="asked" asked />,
         },
         { pattern: '/dev/stage', title: `Stage preview · ${APP_NAME}`, render: () => <StagePreview /> },
+        { pattern: '/dev/battle', title: `Battle preview · ${APP_NAME}`, render: () => <BattlePreview /> },
         {
           pattern: '/dev/call/:who/:run',
           title: `Call preview · ${APP_NAME}`,

@@ -140,7 +140,9 @@ export function DmPreview({ tab }: { tab: string }) {
   const notebook = usePreviewNotebook()
   // #/dev/dm/fight opens with a fight going on.
   const [fightStart] = useState(() => (tab === 'fight' ? sampleFight(sampleCharacters) : null))
-  const fight = usePreviewFight(fightStart)
+  const update = (id: string, patch: TrackerPatch) =>
+    setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
+  const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
   const events = usePreviewEvents()
   const asking = usePreviewAsking(characters, {
     start: start.request,
@@ -150,8 +152,6 @@ export function DmPreview({ tab }: { tab: string }) {
 
   if (tab === 'moments') return <Moments />
 
-  const update = (id: string, patch: TrackerPatch) =>
-    setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   const thrower = async (request: RollRequest) => {
     const roll = judgePreview(
       localRoll(request, { campaignId: 'preview', rollerId: 'dm', style: diceStyle }),

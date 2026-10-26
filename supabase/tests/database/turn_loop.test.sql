@@ -5,7 +5,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(52);
+select plan(53);
 
 insert into auth.users (id, email) values
   ('dddddddd-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -283,6 +283,10 @@ select ok(
 select ok(
   (current_setting('test.bite')::jsonb -> 'event' -> 'shown' ->> 'total') is null,
   '...and its total stays out of the feed'
+);
+select is(
+  current_setting('test.bite')::jsonb -> 'event' -> 'shown' ->> 'label', 'Scimitar',
+  'The feed names the monster''s attack but not the monster'
 );
 select lives_ok(
   $$ select public.undo_event((current_setting('test.bite')::jsonb -> 'event' ->> 'id')::uuid) $$,

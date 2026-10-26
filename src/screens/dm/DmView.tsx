@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
@@ -43,10 +43,14 @@ import { DiceControls } from '../table/DiceControls.tsx'
 import type { Combatant } from '../../live/combat.ts'
 import type { FightControls } from '../../live/useFight.ts'
 import { useSrd } from '../../live/useSrd.ts'
-import { monsterAttack, monsterInitiative } from '../../rules/combat.ts'
+import { monsterInitiative } from '../../rules/combat.ts'
+import { placeFighters } from '../../live/combat.ts'
+import { messageFor } from '../../live/errors.ts'
+import type { Asset } from '../../live/library.ts'
 import { loadMonsters } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
-import { AddMonsterDialog, StartFightDialog } from '../fight/FightDialogs.tsx'
+import { AddMonsterDialog, StartFightDialog, type FightSetting } from '../fight/FightDialogs.tsx'
+import { useAiming } from '../fight/useAiming.ts'
 import { cameraTurn, fightRows, type FightRow } from '../fight/fightRows.ts'
 import type { MonsterPick } from '../fight/MonsterPicker.tsx'
 import { NotebookPanel } from './NotebookPanel.tsx'
@@ -118,6 +122,9 @@ type DmViewProps = {
   audio?: TableAudio
   /** The fight going on, if any, and what the DM can do about it. */
   fight: FightControls
+  /** Battle maps in the library, and the one on stage now (if any), for Start combat. */
+  maps?: Asset[]
+  mapOnStage?: string | null
   startTab?: DmTab
 }
 
@@ -144,6 +151,8 @@ export function DmView({
   sceneName,
   audio,
   fight,
+  maps = [],
+  mapOnStage = null,
   startTab = 'party',
 }: DmViewProps) {
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
@@ -163,6 +172,22 @@ export function DmView({
   const [secret, setSecret] = useState(false)
   const { attach: attachTray, throwDice } = useDiceTray()
   const table = useTableRolls({ campaignId: campaign.id, userId: me.user_id, throwDice, thrower })
+  const { aiming, aimMonster, aimCharacter } = useAiming(fight.attack, table.rollWith)
+  const [placeProblem, setPlaceProblem] = useState<string | null>(null)
+
+  // U takes back the last thing that happened in a fight, unless you're typing.
+  const undo = fight.undo
+  useEffect(() => {
+    if (!fighting) return
+    const press = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      if (event.key.toLowerCase() !== 'u' || event.metaKey || event.ctrlKey || event.altKey) return
+      if (target?.closest('input, textarea, select')) return
+      undo()
+    }
+    window.addEventListener('keydown', press)
+    return () => window.removeEventListener('keydown', press)
+  }, [fighting, undo])
   const open = characters.find((c) => c.id === sheetFor)
   const choices = { mode, secret }
   const { request } = asking
@@ -237,10 +262,30 @@ export function DmView({
     }
   }
 
-  async function startFight(party: Character[], foes: MonsterPick[]) {
-    const started = await fight.start(party)
+  // Everyone in the fight gets a miniature on the map (the party down one side, monsters across).
+  async function place(mapId: string | null, characterIds: string[], combatantIds: string[]) {
+    if (!mapId) return
+    setPlaceProblem(null)
+    try {
+      await placeFighters(campaign.id, mapId, { characterIds, combatantIds })
+    } catch (caught) {
+      setPlaceProblem(messageFor(caught))
+    }
+  }
+
+  async function startFight(party: Character[], foes: MonsterPick[], setting: FightSetting) {
+    const started = await fight.start(party, setting.mapId)
     if (!started) return
-    for (const foe of foes) await fight.addMonsters(foe.monster, foe.count)
+    const monsterIds: string[] = []
+    for (const foe of foes) {
+      const added = await fight.addMonsters(foe.monster, foe.count, setting.known)
+      monsterIds.push(...(added?.combatants.map((c) => c.id) ?? []))
+    }
+    await place(
+      setting.mapId,
+      party.map((c) => c.id),
+      monsterIds,
+    )
     events.add(
       'note',
       `A fight began: ${[...party.map((c) => c.name), ...foes.map((f) => `${f.count} × ${f.monster.name}`)].join(', ')}.`,
@@ -316,6 +361,7 @@ export function DmView({
         />
         {saveError && <Notice tone="error">{saveError}</Notice>}
         {table.error && <Notice tone="error">{table.error}</Notice>}
+        {placeProblem && <Notice tone="error">{placeProblem}</Notice>}
         {events.error && <Notice tone="error">{events.error}</Notice>}
         {fight.error && <Notice tone="error">{fight.error}</Notice>}
       </aside>
@@ -370,7 +416,9 @@ export function DmView({
                 selectedId={selectedCombatant}
                 onSelect={setSelectedCombatant}
                 onCharacterHp={nudgeHp}
-                onRollAttack={(name, action) => void table.roll(monsterAttack(name, action))}
+                onAttack={aimMonster}
+                onCharacterAttack={aimCharacter}
+                aiming={aiming}
                 onRollInitiative={rollInitiativeFor}
                 onOpenSheet={(character) => {
                   setSheetTab('sheet')
@@ -452,6 +500,8 @@ export function DmView({
               characters={characters}
               hereTonight={hereTonight}
               monsters={monsters}
+              maps={maps}
+              mapOnStage={mapOnStage}
               onStart={startFight}
               onClose={() => setFightDialog(null)}
             />
@@ -459,7 +509,12 @@ export function DmView({
             <AddMonsterDialog
               monsters={monsters}
               onAdd={async (pick) => {
-                await fight.addMonsters(pick.monster, pick.count)
+                const added = await fight.addMonsters(pick.monster, pick.count, true)
+                await place(
+                  mapOnStage,
+                  [],
+                  added?.combatants.map((c) => c.id) ?? [],
+                )
               }}
               onClose={() => setFightDialog(null)}
             />

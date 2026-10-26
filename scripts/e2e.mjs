@@ -1,4 +1,5 @@
-// Runs the Playwright roll-flow test (e2e/rollFlow.spec.ts) with two test logins.
+// Runs the Playwright tests with two test logins: the roll flow (e2e/rollFlow.spec.ts) and a fight
+// (e2e/combatFlow.spec.ts) in two browsers against the real project.
 //
 // The test signs in as a DM and a player with email and password, so it needs two test users made
 // in the Supabase dashboard (see docs/PROGRESS.md). This script asks for their emails and passwords
@@ -46,7 +47,7 @@ if (!env.VITE_SUPABASE_URL || !env.VITE_SUPABASE_ANON_KEY) {
   process.exit(1)
 }
 
-console.log('The roll-flow test signs in as your two test users (see "Test logins" in docs/PROGRESS.md).')
+console.log('The two-browser tests sign in as your two test users (see "Test logins" in docs/PROGRESS.md).')
 env.E2E_DM_EMAIL ||= await ask('Test DM email: ')
 env.E2E_DM_PASSWORD ||= await ask('Test DM password (hidden): ', true)
 env.E2E_PLAYER_EMAIL ||= await ask('Test player email: ')
