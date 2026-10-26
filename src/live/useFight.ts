@@ -371,7 +371,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
     const now = current.current
     if (!now) return
     setFight(null)
-    void attempt(() => endFight(now.encounter, now.combatants))
+    void attempt(() => endFight(now.encounter))
   }, [attempt])
 
   const attack = useCallback(

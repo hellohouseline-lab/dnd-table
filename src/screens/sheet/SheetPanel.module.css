@@ -61,7 +61,10 @@
 
 .close {
   height: 40px;
-  padding: 0 16px;
+  padding: 0 16px 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border-radius: 6px;
   background: none;
   border: 1px solid var(--chip-border);
@@ -78,4 +81,11 @@
   min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
+}
+
+/* The ✕ that says this closes. */
+.x {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--gold-light);
 }

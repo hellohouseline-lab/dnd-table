@@ -22,6 +22,38 @@ export function deathSave(natural: number, before: DeathSaves): DeathSaves & { r
   return { successes, failures, stable, dead, result }
 }
 
+/**
+ * The sheet's changes after a death save rolled outside a fight (in one, the server does this):
+ * the count, stable or dead, or back up with 1 hit point and awake on a 20.
+ */
+export function deathSavePatch(
+  character: { deathSaveSuccesses: number; deathSaveFailures: number; conditions: string[] },
+  natural: number,
+): {
+  deathSaveSuccesses: number
+  deathSaveFailures: number
+  stable: boolean
+  dead: boolean
+  currentHp?: number
+  conditions?: string[]
+} {
+  const after = deathSave(natural, {
+    successes: character.deathSaveSuccesses,
+    failures: character.deathSaveFailures,
+    stable: false,
+    dead: false,
+  })
+  const patch = {
+    deathSaveSuccesses: after.successes,
+    deathSaveFailures: after.failures,
+    stable: after.stable,
+    dead: after.dead,
+  }
+  return after.result === 'awake'
+    ? { ...patch, currentHp: 1, conditions: character.conditions.filter((c) => c !== 'unconscious') }
+    : patch
+}
+
 /** Taking damage while at 0 hit points: a death save failure, or two from a critical hit. */
 export function hitWhileDown(before: DeathSaves, critical: boolean): DeathSaves {
   const failures = Math.min(3, before.failures + (critical ? 2 : 1))

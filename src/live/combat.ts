@@ -406,18 +406,10 @@ export async function removeCombatant(id: string): Promise<void> {
   if (error) throw fromDatabaseError(error)
 }
 
-/** Ends the fight: the turn order goes, and the monsters' tokens leave the map. */
-export async function endFight(encounter: Encounter, combatants: Combatant[]): Promise<void> {
-  const monsters = combatants.filter((c) => c.kind === 'monster').map((c) => c.id)
-  if (monsters.length > 0) {
-    const { error: tokenError } = await db().from('tokens').delete().in('combatant_id', monsters)
-    if (tokenError) throw fromDatabaseError(tokenError)
-  }
-  const { error } = await db()
-    .from('encounters')
-    .update({ status: 'ended', ended_at: new Date().toISOString(), current_id: null })
-    .eq('id', encounter.id)
-  if (error) throw fromDatabaseError(error)
+/** Ends the fight: the turn order goes, every miniature leaves the map, and the map stays up as a picture. */
+export async function endFight(encounter: Encounter): Promise<void> {
+  const { error } = await db().rpc('end_fight', { p_encounter_id: encounter.id })
+  if (error) throw fromServerRule(error)
 }
 
 // ---------------------------------------------------------------------------------------------

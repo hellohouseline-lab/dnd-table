@@ -100,6 +100,8 @@ export async function uploadPortrait(character: Character, file: File): Promise<
 
 /** A temporary link to show a private portrait, shared across the screen. */
 export function portraitUrl(path: string): Promise<string | null> {
+  // The design previews keep their made-up portraits in the page already.
+  if (path.startsWith('data:') || path.startsWith('blob:')) return Promise.resolve(path)
   let url = portraitUrls.get(path)
   if (!url) {
     url = db()

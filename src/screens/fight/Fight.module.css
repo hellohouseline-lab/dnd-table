@@ -669,3 +669,30 @@ a.secondary {
   justify-content: center;
   text-decoration: none;
 }
+
+/* A monster's other choices on its turn: Dash, Disengage, Dodge, its bonus action and reaction. */
+.turnButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.turnButton {
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: rgba(31, 26, 39, 0.6);
+  color: var(--text);
+  font-size: 14px;
+  text-align: left;
+}
+
+.turnButton:hover:not(:disabled) {
+  border-color: var(--gold);
+}
+
+.turnButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

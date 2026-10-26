@@ -61,7 +61,7 @@ import type { Area } from '../../live/areas.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { slotChoices, spellEffect, spellModifier } from '../../rules/spells.ts'
 import { strikesFor, type Strike } from '../fight/strikes.ts'
-import { isDying } from '../../rules/dying.ts'
+import { deathSavePatch, isDying } from '../../rules/dying.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
@@ -336,7 +336,22 @@ export function TableView({
     initiative: () => roll(initiativeRoll(character, choices)),
     attack: attackWith,
     hitDie: () => void spendHitDie(),
+    deathSave: () => void rollDeathSave(),
     disabled: table.rolling,
+  }
+
+  // In a fight the server rolls it and keeps count; outside one, the pips are ticked here.
+  async function rollDeathSave() {
+    if (fight && mine && combat) {
+      void table.rollWith(() => combat.deathSave(mine))
+      return
+    }
+    const thrown = await table.roll({
+      ...freeRoll([{ sides: 20, count: 1 }], { characterId: character.id }),
+      kind: 'save',
+      label: 'Death saving throw',
+    })
+    if (thrown) update(deathSavePatch(character, thrown.natural ?? thrown.total))
   }
 
   async function spendHitDie() {

@@ -16,14 +16,17 @@ import { BattleView } from '../battle/BattleView.tsx'
 import { usePreviewAsking } from './previewAsking.ts'
 import { usePreviewAreas } from './previewAreas.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
-import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
+import { previewMap, previewMapTokens, previewPortrait, usePreviewTokens } from './previewTokens.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 
 const online = new Set(['dm', 'p1'])
 const signedIn: AuthState = { status: 'signedIn', user: { id: 'dm' } as User }
 
 export function BattlePreview() {
-  const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
+  // Thorin has a portrait, to see it in his token.
+  const [characters, setCharacters] = useState<Character[]>(() =>
+    sampleCharacters.map((c, i) => (i === 0 ? { ...c, portraitPath: previewPortrait() } : c)),
+  )
   const [map] = useState(previewMap)
   const [stage, setStage] = useState<Stage>(() => ({ ...emptyStage('preview'), mapId: map.id, mode: 'map' }))
   const change = useCallback((patch: StagePatch) => setStage((now) => ({ ...now, ...patch })), [])

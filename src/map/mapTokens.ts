@@ -35,6 +35,7 @@ export function mapTokens(tokens: Token[], people: People, viewer: Viewer): MapT
           y: token.y,
           label: initials(character.name),
           name: character.name,
+          portrait: character.portraitPath,
           tone: mine ? 'you' : 'party',
           hidden: token.hidden,
           acting: Boolean(combatant && combatant.id === people.currentId),

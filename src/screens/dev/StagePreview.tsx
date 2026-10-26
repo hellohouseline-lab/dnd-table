@@ -5,7 +5,7 @@ import type { User } from '@supabase/supabase-js'
 import { useCallback, useState } from 'react'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
-import { nameFromFile, type Asset } from '../../live/library.ts'
+import { nameFromFile, starterMapUrl, type Asset } from '../../live/library.ts'
 import { emptyStage, type Stage, type StagePatch } from '../../live/stage.ts'
 import type { LibraryControls } from '../../live/useStage.ts'
 import { StageView, type LibraryActions } from '../stage/StageView.tsx'
@@ -68,6 +68,12 @@ export function StagePreview() {
       }),
     update: async (id, patch) => ({ ...(assets.find((a) => a.id === id) as Asset), ...patch }),
     remove: async () => undefined,
+    // The real thing turns the drawing into a picture first; the preview shows the drawing itself.
+    addStarter: async (starter) => {
+      const drawing = await (await fetch(starterMapUrl(starter))).blob()
+      const file = new File([drawing], `${starter.name}.svg`, { type: 'image/svg+xml' })
+      return { ...previewAsset(file, { kind: 'art', category: 'maps' }), name: starter.name }
+    },
   }
 
   return (

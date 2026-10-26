@@ -2,7 +2,14 @@ import { useRef, useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon } from '../../components/Icon.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
-import { ART_CATEGORIES, type ArtCategory, type Asset } from '../../live/library.ts'
+import {
+  ART_CATEGORIES,
+  STARTER_MAPS,
+  starterMapUrl,
+  type ArtCategory,
+  type Asset,
+  type StarterMap,
+} from '../../live/library.ts'
 import styles from './StageView.module.css'
 
 type ArtLibraryProps = {
@@ -11,10 +18,12 @@ type ArtLibraryProps = {
   onShow: (asset: Asset) => void
   onUpload: (files: File[], category: ArtCategory) => Promise<void>
   onDelete: (asset: Asset) => void
+  /** Adds one of the maps that come with the table. */
+  onAddStarter?: (starter: StarterMap) => Promise<void>
 }
 
 /** The art library from design 11: your pictures by kind; click one to put it on stage. */
-export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete }: ArtLibraryProps) {
+export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStarter }: ArtLibraryProps) {
   const [category, setCategory] = useState<ArtCategory>('places')
   const [busy, setBusy] = useState(false)
   const input = useRef<HTMLInputElement>(null)
@@ -63,6 +72,27 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete }: ArtLibr
           />
         </label>
       </div>
+      {category === 'maps' && onAddStarter && (
+        <div className={styles.starters} aria-label="Starter maps">
+          <span className={styles.startersTitle}>Maps that come with the table:</span>
+          {STARTER_MAPS.filter((s) => !art.some((a) => a.category === 'maps' && a.name === s.name)).map((starter) => (
+            <button
+              key={starter.file}
+              type="button"
+              className={styles.starter}
+              title={starter.hint}
+              disabled={busy}
+              onClick={() => {
+                setBusy(true)
+                void onAddStarter(starter).finally(() => setBusy(false))
+              }}
+            >
+              <img src={starterMapUrl(starter)} alt="" />
+              <span>Add {starter.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
       {shown.length === 0 ? (
         <p className={styles.emptyNote}>
           No {about?.name.toLowerCase()} yet ({about?.hint.toLowerCase()}). Add pictures you&rsquo;ve bought or made:

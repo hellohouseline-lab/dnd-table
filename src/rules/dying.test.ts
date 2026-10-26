@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { deathSave, hitWhileDown, isDying, opportunityThreats, type Threat } from './dying.ts'
-import { threatReach } from './turn.ts'
+import { deathSave, deathSavePatch, hitWhileDown, isDying, opportunityThreats, type Threat } from './dying.ts'
+import { monsterAttacksPerAction, threatReach } from './turn.ts'
 
 const fresh = { successes: 0, failures: 0, stable: false, dead: false }
 
@@ -28,6 +28,17 @@ describe('death saves', () => {
     expect(hitWhileDown(fresh, false)).toMatchObject({ failures: 1, dead: false })
     expect(hitWhileDown({ ...fresh, failures: 1 }, true)).toMatchObject({ failures: 3, dead: true })
     expect(hitWhileDown({ ...fresh, successes: 3, stable: true }, false)).toMatchObject({ stable: false })
+  })
+
+  it('ticks the sheet after a death save rolled outside a fight', () => {
+    const down = { deathSaveSuccesses: 1, deathSaveFailures: 0, conditions: ['unconscious', 'prone'] }
+    expect(deathSavePatch(down, 12)).toEqual({
+      deathSaveSuccesses: 2,
+      deathSaveFailures: 0,
+      stable: false,
+      dead: false,
+    })
+    expect(deathSavePatch(down, 20)).toMatchObject({ currentHp: 1, conditions: ['prone'], deathSaveSuccesses: 0 })
   })
 
   it('knows who is dying', () => {
@@ -85,5 +96,24 @@ describe('opportunity attacks', () => {
       ]),
     ).toBe(10)
     expect(threatReach([])).toBe(5)
+  })
+
+  it("counts a monster's attacks from its Multiattack", () => {
+    const multi = (desc: string) => [{ name: 'Multiattack', desc }]
+    expect(monsterAttacksPerAction([{ name: 'Scimitar', desc: 'Melee Weapon Attack' }])).toBe(1)
+    expect(monsterAttacksPerAction(multi('The aboleth makes three tentacle attacks.'))).toBe(3)
+    expect(
+      monsterAttacksPerAction(
+        multi(
+          'The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.',
+        ),
+      ),
+    ).toBe(3)
+    expect(
+      monsterAttacksPerAction(
+        multi('The mummy can use its Dreadful Glare and makes one attack with its rotting fist.'),
+      ),
+    ).toBe(1)
+    expect(monsterAttacksPerAction(multi('The hydra makes as many bite attacks as it has heads.'))).toBe(2)
   })
 })

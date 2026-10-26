@@ -211,3 +211,36 @@ export async function deleteAsset(asset: Asset): Promise<void> {
   await db().storage.from(bucket).remove(paths)
   paths.forEach((path) => forgetFile(bucket, path))
 }
+
+/** Battle maps that come with the table (drawn for it, free to use), at 70 pixels a square. */
+export const STARTER_MAPS = [
+  { file: 'tavern.svg', name: 'Tavern', hint: 'A bar, a fireplace, a back kitchen and a cellar trapdoor' },
+  { file: 'forest-road.svg', name: 'Forest road', hint: 'A road through the trees, a stream with a bridge, a camp' },
+  { file: 'old-crypt.svg', name: 'Old crypt', hint: 'Sarcophagi, an altar, a pit trap and a collapsed room' },
+] as const
+
+export type StarterMap = (typeof STARTER_MAPS)[number]
+
+/** Where a starter map's drawing is served from. */
+export function starterMapUrl(starter: StarterMap): string {
+  return `${import.meta.env.BASE_URL}maps/${starter.file}`
+}
+
+/**
+ * Adds a starter map to this table's library, like any uploaded map: the drawing is turned into a
+ * picture in the browser first. Its squares are 70 pixels, the grid's default, so they line up.
+ */
+export async function addStarterMap(campaignId: string, starter: StarterMap): Promise<Asset> {
+  const image = new Image()
+  image.src = starterMapUrl(starter)
+  await image.decode()
+  const canvas = document.createElement('canvas')
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  const context = canvas.getContext('2d')
+  if (!context) throw new TableError("Your browser couldn't prepare the map.")
+  context.drawImage(image, 0, 0)
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
+  if (!blob) throw new TableError("Your browser couldn't prepare the map.")
+  return uploadArt(campaignId, new File([blob], `${starter.name}.png`, { type: 'image/png' }), 'maps')
+}

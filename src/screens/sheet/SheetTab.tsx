@@ -26,6 +26,8 @@ export type SheetRolls = {
   attack: (attack: AttackEntry) => void
   /** Spends one hit die on a short rest: rolls it and heals. */
   hitDie?: () => void
+  /** At 0 hit points: rolls a death save and ticks the pips. */
+  deathSave?: () => void
   disabled?: boolean
 }
 
@@ -173,6 +175,25 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
                 onChange={edit && ((n) => edit({ deathSaveFailures: n }))}
               />
             </div>
+            {character.currentHp === 0 && (
+              <p className={styles.muted}>
+                {character.dead
+                  ? 'Dead.'
+                  : character.stable
+                    ? 'Stable: unconscious, but no longer dying.'
+                    : 'Dying: roll a death save at the start of each turn. 10 or more succeeds; a 20 brings you back with 1 hit point.'}
+              </p>
+            )}
+            {rolls?.deathSave && character.currentHp === 0 && !character.stable && !character.dead && (
+              <button
+                type="button"
+                className={buttonClassName('quiet')}
+                disabled={rolls.disabled}
+                onClick={rolls.deathSave}
+              >
+                Roll a death save
+              </button>
+            )}
           </Section>
         </div>
 
@@ -441,7 +462,12 @@ function Conditions({ character, onUpdate }: { character: Character; onUpdate?: 
 const DEFENCE_KINDS = [
   { key: 'resistances', label: 'Resists', add: 'Add a resistance…', hint: 'Takes half damage of these types' },
   { key: 'immunities', label: 'Immune to', add: 'Add an immunity…', hint: 'Takes no damage of these types' },
-  { key: 'vulnerabilities', label: 'Vulnerable to', add: 'Add a vulnerability…', hint: 'Takes double damage of these types' },
+  {
+    key: 'vulnerabilities',
+    label: 'Vulnerable to',
+    add: 'Add a vulnerability…',
+    hint: 'Takes double damage of these types',
+  },
 ] as const
 
 /** Damage types the character resists, is immune to or vulnerable to, such as a tiefling's fire or a raging barbarian's. */

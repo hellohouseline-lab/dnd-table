@@ -72,7 +72,7 @@
   min-height: 0;
   padding: 16px;
   display: grid;
-  grid-template-columns: 360px minmax(0, 1fr) 248px;
+  grid-template-columns: 360px minmax(0, 1fr) 320px;
   gap: 16px;
 }
 
@@ -253,7 +253,7 @@
 /* Cameras sit in their own column here, below the header. */
 .cameras {
   position: static;
-  width: 248px;
+  width: 320px;
   min-height: 0;
 }
 
@@ -262,7 +262,7 @@
   top: 56px;
   bottom: 0;
   left: 376px;
-  right: 280px;
+  right: 352px;
   z-index: 20;
   pointer-events: none;
   transition: opacity 0.5s ease-out;
@@ -276,7 +276,7 @@
   position: absolute;
   top: 72px;
   left: 376px;
-  right: 280px;
+  right: 352px;
   z-index: 30;
 }
 

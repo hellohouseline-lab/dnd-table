@@ -36,7 +36,7 @@
   position: absolute;
   top: 16px;
   left: 352px;
-  right: 280px;
+  right: 352px;
   z-index: 6;
   display: flex;
   flex-direction: column;
@@ -116,7 +116,7 @@
 .scene {
   position: absolute;
   inset: 0;
-  padding: 0 280px 0 352px;
+  padding: 0 352px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -367,23 +367,26 @@
   font-size: 15px;
 }
 
+/* As wide as the character plate on the left: the faces are the heart of the table. */
 .cameras {
   position: absolute;
   top: 16px;
   right: 16px;
   bottom: 16px;
-  width: 248px;
+  width: 320px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
 }
 
+/* 16:9 at 320 wide, shrinking a little so five fit down a 900-pixel screen. */
 .tile {
   position: relative;
-  flex: 0 0 auto;
-  width: 248px;
-  height: 140px;
+  flex: 1 1 180px;
+  width: 100%;
+  min-height: 132px;
+  max-height: 180px;
   border-radius: 6px;
   background: #120e17;
   border: 1px solid var(--chip-border);
@@ -480,7 +483,7 @@
 .hand {
   position: absolute;
   left: 352px;
-  right: 280px;
+  right: 352px;
   bottom: 18px;
 }
 
@@ -497,7 +500,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  right: 280px;
+  right: 352px;
   background: rgba(8, 6, 12, 0.6);
 }
 
@@ -507,7 +510,7 @@
   top: 16px;
   bottom: 16px;
   left: 16px;
-  right: 280px;
+  right: 352px;
 }
 
 /* The DM's request for a roll, and your result, over the scene (the cameras stay in view). */
@@ -516,7 +519,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  right: 280px;
+  right: 352px;
   z-index: 15;
   padding: 60px 24px 24px;
   display: flex;
@@ -532,7 +535,7 @@
   top: 0;
   bottom: 170px;
   left: 352px;
-  right: 280px;
+  right: 352px;
   z-index: 20;
   pointer-events: none;
   transition: opacity 0.5s ease-out;
@@ -546,6 +549,6 @@
   position: absolute;
   top: 72px;
   left: 352px;
-  right: 280px;
+  right: 352px;
   z-index: 30;
 }

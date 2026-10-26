@@ -3,6 +3,7 @@ import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import { Notice } from '../../components/Notice.tsx'
+import { Backdrop } from '../../components/Backdrop.tsx'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
 import { localRoll, PRACTICE_SET } from '../../dice/localRoll.ts'
@@ -21,6 +22,7 @@ import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { Character } from '../../rules/character.ts'
 import { isSingleD20, type DiceGroup, type RollMode, type RollRequest } from '../../rules/dice.ts'
 import { gainTempHp, heal, takeDamage } from '../../rules/maths/hitPoints.ts'
+import { deathSavePatch } from '../../rules/dying.ts'
 import type { RestPatch } from '../../rules/rest.ts'
 import { namesText } from '../../rules/askable.ts'
 import { findCondition } from '../../rules/srd/index.ts'
@@ -172,7 +174,7 @@ export function DmView({
   const [secret, setSecret] = useState(false)
   const { attach: attachTray, throwDice } = useDiceTray()
   const table = useTableRolls({ campaignId: campaign.id, userId: me.user_id, throwDice, thrower })
-  const { aiming, aimMonster, aimCharacter } = useAiming(fight.attack, table.rollWith)
+  const { aiming, aimMonster, aimCharacter } = useAiming(fight.attack, table.rollWith, [], monsters)
   const [placeProblem, setPlaceProblem] = useState<string | null>(null)
 
   // U takes back the last thing that happened in a fight, unless you're typing.
@@ -256,7 +258,11 @@ export function DmView({
     if (verb === 'fight') setFightDialog('start')
     if (verb === 'monster') setFightDialog('monster')
     if (verb === 'next') fight.next()
-    if (verb === 'end' && fighting && window.confirm('End the fight? The monsters leave the turn order and the map.')) {
+    if (
+      verb === 'end' &&
+      fighting &&
+      window.confirm('End the fight? Every miniature leaves the map, and the map stays up as a picture.')
+    ) {
       events.add('note', `The fight ended in round ${fighting.encounter.round}.`)
       fight.end()
     }
@@ -326,8 +332,24 @@ export function DmView({
     skill: (index) => roll(skillCheck(character, index, choices)),
     initiative: () => roll(initiativeRoll(character, choices)),
     attack: (attack) => roll(attackRoll(character, attack, choices)),
+    deathSave: () => void rollDeathSaveFor(character),
     disabled: table.rolling,
   })
+
+  // In a fight the server rolls it and keeps count; outside one, the pips are ticked here.
+  async function rollDeathSaveFor(character: Character) {
+    const combatant = fighting?.combatants.find((c) => c.characterId === character.id)
+    if (combatant) {
+      void table.rollWith(() => fight.deathSave(combatant))
+      return
+    }
+    const thrown = await table.roll({
+      ...freeRoll([{ sides: 20, count: 1 }], { characterId: character.id }),
+      kind: 'save',
+      label: 'Death saving throw',
+    })
+    if (thrown) onUpdate(character.id, deathSavePatch(character, thrown.natural ?? thrown.total))
+  }
 
   return (
     <main className={styles.screen}>
@@ -496,7 +518,15 @@ export function DmView({
       </section>
 
       {(askFor || showResults || resting || fightDialog) && (
-        <div className={styles.overlay}>
+        <Backdrop
+          className={styles.overlay}
+          onClose={() => {
+            if (fightDialog) setFightDialog(null)
+            else if (resting) setResting(false)
+            else if (askFor) setAskFor(null)
+            else if (request) setHiddenFor(request.id)
+          }}
+        >
           {fightDialog === 'start' ? (
             <StartFightDialog
               characters={characters}
@@ -553,7 +583,7 @@ export function DmView({
               />
             )
           )}
-        </div>
+        </Backdrop>
       )}
 
       <CameraColumn
