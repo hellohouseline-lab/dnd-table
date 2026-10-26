@@ -47,6 +47,26 @@ export type Spellcasting = {
   spells: SpellEntry[]
 }
 
+/** Something carried: an SRD item (by index) or one typed in. */
+export type InventoryItem = {
+  id: string
+  /** The SRD index ('potion-of-healing', 'chain-mail'), or null for one typed in. */
+  item: string | null
+  name: string
+  quantity: number
+  /** Pounds, for one. */
+  weight: number
+  /** Armour and shields being worn count towards AC. */
+  worn: boolean
+  /** Uses left, for a kit (a healer's kit has 10). */
+  uses: number | null
+}
+
+/** Coins: copper, silver, electrum, gold and platinum pieces. */
+export type Wallet = { cp: number; sp: number; ep: number; gp: number; pp: number }
+
+export const EMPTY_WALLET: Wallet = { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 }
+
 export type Character = {
   id: string
   campaignId: string
@@ -74,6 +94,8 @@ export type Character = {
   attacks: AttackEntry[]
   features: FeatureEntry[]
   spellcasting: Spellcasting
+  inventory: InventoryItem[]
+  wallet: Wallet
   deathSaveSuccesses: number
   deathSaveFailures: number
   /** At 0 hit points but no longer rolling death saves (three successes, or the DM stabilised them). */
@@ -151,6 +173,8 @@ export function newBuild(): CharacterBuild {
     attacks: [],
     features: [],
     spellcasting: NO_SPELLCASTING,
+    inventory: [],
+    wallet: EMPTY_WALLET,
   }
 }
 

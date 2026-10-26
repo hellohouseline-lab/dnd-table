@@ -679,3 +679,62 @@
   border-color: var(--fail);
   color: var(--fail-light);
 }
+
+/* Drink a potion, or give it: just above the hand. */
+.itemChoice {
+  width: 400px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(16, 12, 20, 0.96);
+  border: 1px solid var(--gold-rule);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemChoiceTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.itemChoiceText {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.itemChoiceButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.itemChoiceMain,
+.itemChoiceOther {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.itemChoiceMain {
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-weight: 600;
+}
+
+.itemChoiceOther {
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-2);
+}
+
+.itemChoiceOther:hover {
+  border-color: var(--gold-rule);
+}

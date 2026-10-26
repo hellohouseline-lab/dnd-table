@@ -33,6 +33,20 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
   const actor = you ? 'You' : nameOf(event.actorId)
   const verb = (they: string, yourself: string) => (you ? yourself : they)
 
+  if (event.kind === 'action' && event.shown.what === 'item') {
+    const item = event.shown.item ?? 'an item'
+    const other = event.targetId !== null && event.targetId !== event.actorId
+    const target = other ? (event.targetId === youId ? 'you' : nameOf(event.targetId)) : null
+    if (typeof event.shown.heal === 'number') {
+      return other
+        ? `${actor} ${verb('gives', 'give')} ${target} a ${item}: ${event.shown.heal} hit points back.`
+        : `${actor} ${verb('drinks', 'drink')} a ${item}: ${event.shown.heal} hit points back.`
+    }
+    if (event.shown.stabilised) return `${actor} ${verb('steadies', 'steady')} ${target ?? 'someone'} with a ${item}.`
+    if (event.shown.scattered) return `${actor} ${verb('scatters', 'scatter')} ${item.toLowerCase()}.`
+    return `${actor} ${verb('uses', 'use')} ${item}.`
+  }
+
   if (event.kind === 'action' && event.shown.feature) {
     return `${actor} ${verb('uses', 'use')} ${event.shown.feature}.`
   }

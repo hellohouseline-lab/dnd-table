@@ -3,6 +3,7 @@
 
 import type { Ability } from '../abilities.ts'
 import type { SrdRace, SrdRaces, SrdTrait } from '../srd/index.ts'
+import type { GearPick } from './gear.ts'
 import type { Scores } from './scores.ts'
 
 /** The languages of the SRD: standard first, then exotic. */
@@ -60,6 +61,10 @@ export type BuilderDraft = {
   baseScores: Scores | null
   /** Six rolls of 4d6 (each die), thrown once. */
   rolled: number[][] | null
+
+  /** Step 6. The option picked for each of the class's gear choices, and the background's. */
+  gearPicks: (GearPick | null)[]
+  backgroundGearPicks: (GearPick | null)[]
 }
 
 export type ScoreMethod = 'standard' | 'pointbuy' | 'roll' | 'random'
@@ -84,6 +89,8 @@ export function emptyDraft(): BuilderDraft {
     scoreMethod: null,
     baseScores: null,
     rolled: null,
+    gearPicks: [],
+    backgroundGearPicks: [],
   }
 }
 

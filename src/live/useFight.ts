@@ -52,6 +52,7 @@ import {
   type TurnAction,
   type NewToken,
   type Token,
+  itemInFight,
 } from './combat.ts'
 import { messageFor } from './errors.ts'
 import type { Roll } from './rolls.ts'
@@ -119,6 +120,13 @@ export type FightControls = {
   concentrationSave: (characterId: string) => Promise<Roll>
   /** Uses a feature (Rage): spends its part of the turn, named in the feed. Throws in plain words if refused. */
   applyFeature: (combatant: Combatant, name: string, cost: FeatureCost) => Promise<CombatEvent>
+  /** Uses an item from the pack (a potion, a kit, a flask): the action, and one out of the inventory. */
+  applyItem: (
+    combatant: Combatant,
+    itemId: string,
+    target: Combatant | null,
+    request: RollRequest | null,
+  ) => Promise<Roll | null>
   /** Takes back one thing that happened: a player their own newest action, the DM anything newest first. */
   takeBack: (event: CombatEvent) => Promise<void>
 }
@@ -485,6 +493,17 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reload],
   )
 
+  const applyItem = useCallback(
+    async (combatant: Combatant, itemId: string, target: Combatant | null, request: RollRequest | null) => {
+      setError(null)
+      const { event, roll } = await itemInFight(combatant.id, itemId, target?.id ?? null, request)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
   const takeBack = useCallback(
     async (event: CombatEvent) => {
       setError(null)
@@ -516,6 +535,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
     cast,
     concentrationSave,
     applyFeature,
+    applyItem,
     takeBack,
     start,
     addMonsters: addMonstersTo,

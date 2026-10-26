@@ -113,7 +113,7 @@ export function classSummary(
 /** Picking a different class clears what belonged to the old one. */
 export function withClassPicked(draft: BuilderDraft, className: string): BuilderDraft {
   if (draft.className === className) return draft
-  return { ...draft, className, subclass: null, classSkillPicks: [], featurePicks: {} }
+  return { ...draft, className, subclass: null, classSkillPicks: [], featurePicks: {}, gearPicks: [] }
 }
 
 export type BackgroundSummary = {

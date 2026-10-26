@@ -196,6 +196,7 @@ export function TablePreview({
                 events: fight.events,
                 attack: fight.attack,
                 offhandAttack: fight.offhandAttack,
+                applyItem: fight.applyItem,
                 act: fight.act,
                 prompts: fight.prompts,
                 strike: fight.strike,

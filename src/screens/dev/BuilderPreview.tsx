@@ -1,5 +1,12 @@
 import { useSrd } from '../../live/useSrd.ts'
-import { loadBackgrounds, loadClasses, loadFeatures, loadRaces, loadSpells } from '../../rules/srd/index.ts'
+import {
+  loadBackgrounds,
+  loadClasses,
+  loadEquipment,
+  loadFeatures,
+  loadRaces,
+  loadSpells,
+} from '../../rules/srd/index.ts'
 import { BuilderView } from '../builder/BuilderView.tsx'
 import { useDraft } from '../builder/useDraft.ts'
 
@@ -9,6 +16,7 @@ export function BuilderPreview() {
   const classes = useSrd(loadClasses)
   const features = useSrd(loadFeatures)
   const backgrounds = useSrd(loadBackgrounds)
+  const equipment = useSrd(loadEquipment)
   const spells = useSrd(loadSpells)
   const [draft, setDraft] = useDraft(null)
   return (
@@ -19,6 +27,7 @@ export function BuilderPreview() {
       classes={classes}
       features={features}
       backgrounds={backgrounds}
+      equipment={equipment}
       spells={spells}
       // In the preview the dice are thrown in the browser.
       onRoll={async () =>
