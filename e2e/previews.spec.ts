@@ -379,3 +379,17 @@ test("the DM uses a goblin's Nimble Escape from its card", async ({ page }) => {
   await expect(bonus).toContainText('used this turn')
   await expect(bonus.getByRole('button', { name: /Hide/ })).toBeDisabled()
 })
+
+test('the builder: a player picks a half-elf and its choices', async ({ page }) => {
+  await page.goto('#/dev/builder')
+  await page.getByRole('button', { name: /Half-Elf/ }).click()
+  const summary = page.getByRole('complementary', { name: 'Your character so far' })
+  await expect(summary).toContainText('Level 1 Half-Elf')
+  await expect(page.getByText(/Still to pick: Pick 2 abilities/)).toBeVisible()
+  await page.getByRole('button', { name: '+1 Dexterity' }).click()
+  await page.getByRole('button', { name: '+1 Wisdom' }).click()
+  await page.getByRole('button', { name: 'Dwarvish' }).click()
+  await expect(page.getByText('Race done. The class step comes next.')).toBeVisible()
+  await expect(summary).toContainText('Common, Elvish, Dwarvish')
+  await expect(page.getByRole('navigation', { name: 'Steps' })).toContainText('✓')
+})

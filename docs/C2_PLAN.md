@@ -63,6 +63,12 @@ Starting gear needs somewhere to go, so C2 adds the simple parts of I1:
 - **A wallet:** copper, silver, electrum, gold and platinum, shown on the sheet and the party card.
 - **An inventory:** each item with how many, its weight, and whether it's worn or held. Armour worn sets the AC; a weapon held is in the hand of cards. Items typed in by hand work too.
 
+**Potions and usable items in a fight** (added 27 October at Matt's request):
+
+- An **Items** set in the hand of cards for anything usable: **Potions of Healing** (Healing 2d4+2, Greater 4d4+4, Superior 8d4+8, Supreme 10d4+20) roll and heal by themselves; a **healer's kit** steadies a dying friend (one of its 10 uses); **alchemist's fire** and **holy water** are thrown attacks; **caltrops** and **ball bearings** cover a 5-foot square on the map; an **antitoxin** gives advantage on saves against poison for an hour.
+- **Drinking a potion takes your action**, as the 2014 rules say, and so does giving one to someone within reach (**Give a potion**, then pick who). Decided by Matt (decision 36).
+- Using one takes it out of the inventory (or a use off a kit), and the feed says what happened. The DM can use items for a monster or for a player who has stepped away.
+
 Shops, loot, giving items and the DM's **Give gold** stay in I1.
 
 ## The DM's side
@@ -90,7 +96,7 @@ Nine races, twelve classes with one subclass each, one background (Acolyte), and
 |---|---|---|
 | 27 to 28 Oct | **C2a.** Data import (gear, starting kits, class numbers, feature choices) and the rules functions, with tests | Nothing to see; the numbers are checked |
 | 29 to 31 Oct | **C2b.** Steps 1 to 4 (race, class, background, scores) and the live summary | Build the start of a character |
-| 1 to 3 Nov | **C2c.** Gear, wallet and inventory; AC from armour | Pick a kit and see the AC and hand change |
+| 1 to 3 Nov | **C2c.** Gear, wallet and inventory; AC from armour; potions and usable items in a fight | Pick a kit and see the AC and hand change; drink a potion |
 | 4 to 6 Nov | **C2d.** Level up (DM grants, the player's walk-through, every choice), spells, who they are, review and save | Make a level 3 wizard; level a fighter to 4 |
 | 7 to 9 Nov | **C2e.** Your path (looking ahead, a druid's beasts), ready-made characters, the DM's starting level and gold | Plan a druid's Wild Shapes; give a character to a player |
 
@@ -105,3 +111,4 @@ That leaves twelve days before the one-shot for I1, S1 and fixes, as in `TABLE_T
 33. **Ready-made characters** the DM can give to a player. *Recommended* for first-time players. Or players always build their own.
 34. **The one-shot's level:** the builder handles levels 1 to 5 (one subclass, one ability score increase). *Recommended.* Or level 1 only for now.
 35. **A mock-up first?** There's no screen design for the builder. I can build step 1 in the table's look for you to react to before the rest. *Recommended.* Or build it all and adjust after.
+36. **Potions in a fight** take an action to drink or to give, as the 2014 rules say. *Decided by Matt on 27 October.*

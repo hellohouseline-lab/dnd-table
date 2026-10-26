@@ -1,0 +1,603 @@
+/* The character builder: steps on the left, choices in the middle, the character on the right. */
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(212, 175, 90, 0.08), transparent 60%),
+    var(--bg-page);
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 28px;
+  border-bottom: 1px solid rgba(168, 132, 60, 0.35);
+}
+
+.eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.title {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--gold-light);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.headerLink {
+  color: var(--gold);
+  font-size: 16px;
+}
+
+.headerButton {
+  height: 40px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  color: var(--gold-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 320px;
+  gap: 24px;
+  padding: 24px 28px;
+  align-items: start;
+}
+
+/* The steps. */
+.rail ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 24px;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+.stepNumber {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--chip-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.stepName {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.stepHint {
+  display: block;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.stepHere {
+  background: rgba(212, 175, 90, 0.1);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+
+.stepHere .stepNumber {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.stepHere .stepName {
+  color: var(--gold-light);
+}
+
+.stepDone .stepNumber {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+
+.stepLater {
+  opacity: 0.5;
+}
+
+/* The middle. */
+.centre {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.loading {
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stepTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--text);
+}
+
+.stepLead {
+  margin: 6px 0 0;
+  max-width: 720px;
+  font-size: 18px;
+  color: var(--text-2);
+}
+
+.raceGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.raceCard {
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  padding: 16px 14px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-rule);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(212, 175, 90, 0.1), transparent 70%),
+    var(--card-fill);
+  box-shadow:
+    inset 0 0 0 3px var(--card-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.25);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out;
+}
+
+.raceCard:hover {
+  transform: translateY(-2px);
+}
+
+.raceOther {
+  border-style: dashed;
+}
+
+.crest {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, #b8893f, #6d4a1c);
+  box-shadow:
+    inset 0 0 0 2px #f0d58f,
+    0 2px 6px rgba(0, 0, 0, 0.5);
+  color: #fbe9b8;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.raceName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--gold-light);
+}
+
+.raceLine {
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--text-2);
+}
+
+.raceFacts {
+  margin-top: auto;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.picked {
+  border-color: var(--gold) !important;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(212, 175, 90, 0.22), transparent 75%),
+    var(--card-fill) !important;
+  box-shadow:
+    inset 0 0 0 3px var(--card-fill),
+    inset 0 0 0 4px var(--gold),
+    0 0 0 1px var(--gold),
+    0 8px 24px rgba(212, 175, 90, 0.18) !important;
+}
+
+/* What the picked race gives, and what it asks you to choose. */
+.detail {
+  padding: 18px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-rule);
+  background: var(--panel-fill);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choiceTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.optionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ancestryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.option {
+  min-width: 180px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+}
+
+.option:hover,
+.chip:hover {
+  border-color: var(--gold-rule);
+}
+
+.optionName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold-light);
+}
+
+.optionLine {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.chip {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 16px;
+}
+
+.chip.picked {
+  color: var(--gold-light);
+}
+
+.note {
+  margin: 0;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 360px;
+}
+
+.fieldLabel {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.field input {
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  color: var(--text);
+  font-size: 17px;
+}
+
+.traitList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.traitList li {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(58, 47, 56, 0.8);
+}
+
+.traitList summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.traitList summary::-webkit-details-marker {
+  display: none;
+}
+
+.traitList p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text-2);
+  white-space: pre-line;
+}
+
+.traitName {
+  font-weight: 600;
+  margin-right: 8px;
+  color: var(--gold-light);
+}
+
+.traitLine {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(transparent, var(--bg-page) 30%);
+}
+
+.footerNote {
+  flex: 1;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.next {
+  height: 46px;
+  padding: 0 24px;
+  border-radius: 4px;
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.next:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* The character so far. */
+.summary {
+  position: sticky;
+  top: 24px;
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-rule);
+  background: var(--panel-fill);
+  box-shadow:
+    inset 0 0 0 3px var(--panel-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.portrait {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-rule);
+  background: var(--card-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--text-3);
+}
+
+.summaryName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--gold-light);
+}
+
+.summaryLine {
+  font-size: 16px;
+  color: var(--text-2);
+}
+
+.summaryLater {
+  color: var(--text-3);
+  font-style: italic;
+}
+
+.summaryLabel {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.scoreBox {
+  padding: 6px 4px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scoreShort {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--label);
+}
+
+.scoreValue {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-3);
+}
+
+.scoreBonus {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-light);
+}
+
+.scoreNone {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.summaryNote {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.summaryFacts {
+  display: flex;
+  gap: 24px;
+}
+
+.fact {
+  font-size: 18px;
+  color: var(--text);
+}
+
+.summaryText {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.summaryTraits {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 15px;
+  color: var(--text);
+}
