@@ -3,6 +3,11 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Levelling up the builder's way (live).** The Level up! walk-through now shows spells as cards (what each does, with **All of it** for the full text, and a level filter that opens on any newly reached spell level), not just names.
+  - **Swap a spell:** a bard, sorcerer, ranger or warlock can forget one spell they know and pick another in its place, as the 2014 rules allow each level.
+  - **Prepare more:** when a cleric, druid, paladin or wizard can prepare more (a new level, or a better score from an ability increase), they pick the extra ones there and then. A wizard's two new spellbook spells can be prepared straight away.
+  - A subclass's always-ready spells now arrive when the level brings them (a Life cleric's Lesser Restoration and Spiritual Weapon at level 3).
+  - Previews: `#/dev/level-up/bard` and `#/dev/level-up/wizard`. Tests: 414 unit (2 new), 38 preview browser tests (2 new).
 - **Change your character, the builder's way (live).** **Edit character** (on the sheet, the table and the DM's Party tab) now opens a builder-style screen instead of the plain form, so nobody needs to know the book to find spells and gear for their level.
   - **Spells:** the class's whole list up to the highest spell level the character's slots reach, as cards with what each does (open **All of it** for the full text), filtered by level or **Only mine**. Buttons follow how the class keeps spells: **Learn** and **Forget** (bard, sorcerer, warlock, ranger: up to their spells known), **Prepare** and **Unprepare** (cleric, druid, paladin: up to level plus modifier), or **Add to spellbook** (showing the 50 gp and 2 hours a level that copying costs) and **Prepare** (wizard). Counts sit at the top ("Cantrips: 2 of 3 · Prepared today: 4 of 6"); a subclass's spells say **Always ready**; spells from a race or an item stay under **Your other spells**.
   - **Gear:** every weapon, armour, piece of gear, kit and potion in the free rules on shelves, with a search. Each card says what it does in plain words ("1d8 slashing · versatile (1d10)", "AC 16 · needs Strength 13 · noisy"), what it costs and weighs, and whether the character is trained with it (and what happens if not). **Add** puts it in the pack (packs open into their contents); a weapon joins the hand of cards by itself and leaves it when dropped; **Wear** on armour sets the AC. Coins can be changed beside it. Adding is free for now: shops come with I1.
@@ -218,8 +223,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Milestone 2 of the levelling-up fix:** level up the builder's way: spell cards (not just names), swapping one known spell for another (bard, sorcerer, ranger, warlock), and preparing more when the number goes up.
-- **Then I1:** items, money and loot: shops at SRD prices, giving items and gold, searching and loot, then S1 (story mode).
+- **I1 next:** items, money and loot: shops at SRD prices, giving items and gold, searching and loot, then S1 (story mode).
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -227,6 +231,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try levelling up a caster:** as the DM press **Level up** on a spellcaster's card, then as that player take the level and try **Swap a spell** or **Prepare more today**.
 - **Try Change your character** (refresh first): open your sheet and press **Edit character**. Learn or prepare a spell, add a weapon and some armour and press **Wear**, then **Save changes** and check the hand of cards and AC on the table.
 - **Try the builder and levelling up** (refresh first):
   1. With a player account that has no character yet, open the table: the builder opens. Make a character all the way through and press **Save and go to the table**.

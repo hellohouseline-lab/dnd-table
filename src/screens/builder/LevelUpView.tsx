@@ -7,7 +7,9 @@ import {
   levelUpMissing,
   levelUpSpells,
   NO_PICKS,
+  prepareChoices,
   subclassIndex,
+  swapChoices,
   type LevelUpPicks,
 } from '../../rules/build/applyLevelUp.ts'
 import { togglePick } from '../../rules/build/draft.ts'
@@ -15,6 +17,7 @@ import { levelPlan, subclassLevel } from '../../rules/build/levelUp.ts'
 import { modifierText } from '../../rules/build/steps.ts'
 import type { Character, CharacterBuild } from '../../rules/character.ts'
 import type { SrdClass, SrdFeature, SrdSpell } from '../../rules/srd/index.ts'
+import { SpellPick } from '../manage/SpellCard.tsx'
 import styles from './Builder.module.css'
 import { skillName } from './classWords.ts'
 
@@ -55,6 +58,10 @@ export function LevelUpView({ character, cls, features, spells, onRollHp, onSave
   // The path card stays up once one is picked, so it can be changed.
   const choosingPath = level === subclassLevel(cls) && !subclassIndex(cls, character, null)
   const options = levelUpSpells(cls, character, level, spells)
+  const swap = swapChoices(cls, character, level, spells, picks)
+  const more = prepareChoices(cls, character, level, spells, picks)
+  // Prepared picks still on offer (a wizard may have unpicked a book spell), within the room.
+  const prepared = more ? picks.prepare.filter((i) => more.options.some((s) => s.index === i)).slice(0, more.room) : []
   const gain = hpGain(character, cls, picks)
   const points = Object.values(picks.increase).reduce((n, v) => n + (v ?? 0), 0)
 
@@ -68,7 +75,10 @@ export function LevelUpView({ character, cls, features, spells, onRollHp, onSave
   async function save() {
     setSaving(true)
     setProblem(null)
-    const result = await onSave(applyLevelUp(character, cls, plan, picks, { features, spells }), gain)
+    const result = await onSave(
+      applyLevelUp(character, cls, plan, { ...picks, prepare: prepared }, { features, spells }),
+      gain,
+    )
     setSaving(false)
     setProblem(result)
   }
@@ -278,57 +288,85 @@ export function LevelUpView({ character, cls, features, spells, onRollHp, onSave
             )
           })}
 
-          {(plan.cantrips > 0 || plan.spells > 0) && (
+          {(plan.cantrips > 0 || plan.spells > 0 || swap || more) && (
             <div className={styles.detail}>
               {plan.newSpellLevel && (
                 <p className={styles.plays}>
-                  <strong>New:</strong> level {plan.newSpellLevel} spell slots.
+                  <strong>New:</strong> level {plan.newSpellLevel} spell slots, so level {plan.newSpellLevel} spells are
+                  open to you.
                 </p>
               )}
               {plan.cantrips > 0 && (
-                <>
-                  <h3 className={styles.choiceTitle}>
-                    New cantrips: pick {plan.cantrips} ({picks.cantrips.length} of {plan.cantrips})
-                  </h3>
-                  <div className={styles.optionRow}>
-                    {options.cantrips.map((s) => (
-                      <button
-                        key={s.index}
-                        type="button"
-                        className={cx(styles.chip, picks.cantrips.includes(s.index) && styles.picked)}
-                        aria-pressed={picks.cantrips.includes(s.index)}
-                        title={s.desc}
-                        onClick={() =>
-                          setPicks({ ...picks, cantrips: togglePick(picks.cantrips, s.index, plan.cantrips) })
-                        }
-                      >
-                        {s.name}
-                      </button>
-                    ))}
-                  </div>
-                </>
+                <SpellPick
+                  title={`New cantrips: pick ${plan.cantrips}`}
+                  spells={options.cantrips}
+                  picked={picks.cantrips}
+                  choose={plan.cantrips}
+                  onChange={(cantrips) => setPicks({ ...picks, cantrips })}
+                />
               )}
               {plan.spells > 0 && (
-                <>
-                  <h3 className={styles.choiceTitle}>
-                    {cls.index === 'wizard' ? 'For your spellbook' : 'New spells'}: pick {plan.spells} (
-                    {picks.spells.length} of {plan.spells})
-                  </h3>
-                  <div className={styles.optionRow}>
-                    {options.spells.map((s) => (
+                <SpellPick
+                  title={`${cls.index === 'wizard' ? 'For your spellbook' : 'New spells'}: pick ${plan.spells}`}
+                  spells={options.spells.filter((s) => s.index !== picks.swapIn)}
+                  picked={picks.spells}
+                  choose={plan.spells}
+                  startLevel={plan.newSpellLevel}
+                  note={
+                    cls.index === 'wizard'
+                      ? 'Wizards add two spells to their book each level, free. Prepare them below.'
+                      : undefined
+                  }
+                  onChange={(spells) => setPicks({ ...picks, spells })}
+                />
+              )}
+              {swap && (
+                <div className={styles.choice}>
+                  <h3 className={styles.choiceTitle}>Swap a spell (if you like)</h3>
+                  <p className={styles.note}>
+                    Each level you can forget one spell you know and learn another in its place.
+                  </p>
+                  <div className={styles.optionRow} role="group" aria-label="Spell to forget">
+                    {swap.out.map((s) => (
                       <button
-                        key={s.index}
+                        key={s.id}
                         type="button"
-                        className={cx(styles.chip, picks.spells.includes(s.index) && styles.picked)}
-                        aria-pressed={picks.spells.includes(s.index)}
-                        title={s.desc}
-                        onClick={() => setPicks({ ...picks, spells: togglePick(picks.spells, s.index, plan.spells) })}
+                        className={cx(styles.chip, picks.swapOut === s.index && styles.picked)}
+                        aria-pressed={picks.swapOut === s.index}
+                        onClick={() =>
+                          setPicks({
+                            ...picks,
+                            swapOut: picks.swapOut === s.index ? null : s.index,
+                            swapIn: picks.swapOut === s.index ? null : picks.swapIn,
+                          })
+                        }
                       >
-                        {s.name} <span className={styles.spellMeta}>level {s.level}</span>
+                        Forget {s.name}
                       </button>
                     ))}
                   </div>
-                </>
+                  {picks.swapOut && (
+                    <SpellPick
+                      title="Learn in its place"
+                      spells={swap.in}
+                      picked={picks.swapIn ? [picks.swapIn] : []}
+                      choose={1}
+                      startLevel={plan.newSpellLevel}
+                      onChange={(chosen) => setPicks({ ...picks, swapIn: chosen[0] ?? null })}
+                    />
+                  )}
+                </div>
+              )}
+              {more && (
+                <SpellPick
+                  title={`Prepare more today: up to ${more.room}`}
+                  spells={more.options}
+                  picked={prepared}
+                  choose={more.room}
+                  startLevel={plan.newSpellLevel}
+                  note={`Your new level lets you prepare ${more.room} more. You can change what's prepared after any long rest.`}
+                  onChange={(prepare) => setPicks({ ...picks, prepare })}
+                />
               )}
             </div>
           )}

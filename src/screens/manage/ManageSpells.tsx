@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import { subclassIndex } from '../../rules/build/applyLevelUp.ts'
 import { entryId, type CharacterBuild, type SpellEntry } from '../../rules/character.ts'
-import { copyCost, spellChoices, spellLimits, type SpellLimits } from '../../rules/manage.ts'
+import { copyCost, levelWord, spellChoices, spellLimits, type SpellLimits } from '../../rules/manage.ts'
 import type { SrdClass, SrdSpell } from '../../rules/srd/index.ts'
 import styles from '../builder/Builder.module.css'
 import own from './Manage.module.css'
+import { LevelFilter, SpellCard } from './SpellCard.tsx'
 
 type ManageSpellsProps = {
   build: CharacterBuild
@@ -13,9 +14,6 @@ type ManageSpellsProps = {
   cls: SrdClass
   spells: SrdSpell[]
 }
-
-const first = (text: string) => text.split(/(?<=\.)\s/)[0] ?? text
-const levelWord = (level: number) => (level === 0 ? 'Cantrip' : `Level ${level}`)
 
 /** The counts at the top, in the words of how the class keeps its spells. */
 function countWords(limits: SpellLimits, cantrips: number, spells: number, prepared: number): string {
@@ -167,17 +165,11 @@ export function ManageSpells({ build, onBuild, cls, spells }: ManageSpellsProps)
         </p>
         <p className={styles.note}>{HOW[limits.way]}</p>
         <div className={styles.optionRow} role="group" aria-label="Which spells">
-          {(['all', ...Array.from({ length: limits.maxLevel + 1 }, (_, i) => i)] as const).map((l) => (
-            <button
-              key={l}
-              type="button"
-              className={cx(styles.chip, level === l && styles.picked)}
-              aria-pressed={level === l}
-              onClick={() => setLevel(l)}
-            >
-              {l === 'all' ? 'All' : levelWord(l)}
-            </button>
-          ))}
+          <LevelFilter
+            levels={Array.from({ length: limits.maxLevel + 1 }, (_, i) => i)}
+            value={level}
+            onChange={setLevel}
+          />
           <button
             type="button"
             className={cx(styles.chip, mine && styles.picked)}
@@ -196,32 +188,9 @@ export function ManageSpells({ build, onBuild, cls, spells }: ManageSpellsProps)
             Boolean(entry && (spell.level === 0 || limits.way !== 'spellbook' || entry.prepared)) ||
             always.has(spell.index)
           return (
-            <li
-              key={spell.index}
-              className={cx(styles.option, own.card, on && styles.picked, entry && !on && own.inBook)}
-            >
-              <span className={styles.optionName}>
-                {spell.name}
-                {spell.concentration && (
-                  <span className={styles.concMark} title="Concentration">
-                    {' '}
-                    C
-                  </span>
-                )}
-              </span>
-              <span className={styles.spellMeta}>
-                {levelWord(spell.level)} · {spell.school} · {spell.castingTime} · {spell.range}
-              </span>
-              <span className={styles.optionLine} title={spell.desc}>
-                {first(spell.desc)}
-              </span>
-              <details className={own.more}>
-                <summary>All of it</summary>
-                <p>{spell.desc}</p>
-                {spell.higherLevel && <p>{spell.higherLevel}</p>}
-              </details>
-              <span className={own.cardActions}>{actions(spell)}</span>
-            </li>
+            <SpellCard key={spell.index} spell={spell} on={on} inBook={Boolean(entry && !on)}>
+              {actions(spell)}
+            </SpellCard>
           )
         })}
       </ul>
