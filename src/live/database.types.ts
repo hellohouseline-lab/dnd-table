@@ -934,6 +934,7 @@ export type Database = {
           created_at: string
           damage: Json | null
           dice: Json
+          for_dm: boolean
           id: string
           kind: string
           label: string
@@ -955,6 +956,7 @@ export type Database = {
           created_at?: string
           damage?: Json | null
           dice: Json
+          for_dm: boolean
           id?: string
           kind: string
           label: string
@@ -976,6 +978,7 @@ export type Database = {
           created_at?: string
           damage?: Json | null
           dice?: Json
+          for_dm?: boolean
           id?: string
           kind?: string
           label?: string
@@ -1170,6 +1173,7 @@ export type Database = {
           created_at: string
           damage: Json | null
           dice: Json
+          for_dm: boolean
           id: string
           kind: string
           label: string
@@ -1315,6 +1319,45 @@ export type Database = {
         Args: { p_prompt_id: string; p_roll: Json }
         Returns: Json
       }
+      name_roll: {
+        Args: {
+          p_dc: number
+          p_kind: string
+          p_label: string
+          p_modifier: number
+          p_parts: Json
+          p_passed: boolean
+          p_roll_id: string
+        }
+        Returns: {
+          campaign_id: string
+          character_id: string | null
+          created_at: string
+          damage: Json | null
+          dice: Json
+          for_dm: boolean
+          id: string
+          kind: string
+          label: string
+          mode: string
+          modifier: number
+          natural_d20: number | null
+          parts: Json
+          passed: boolean | null
+          passed_by_dice: boolean | null
+          request_id: string | null
+          roller_id: string
+          secret: boolean
+          style: Json
+          total: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rolls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       override_roll: {
         Args: { p_passed: boolean; p_roll_id: string }
         Returns: {
@@ -1323,6 +1366,38 @@ export type Database = {
           created_at: string
           damage: Json | null
           dice: Json
+          for_dm: boolean
+          id: string
+          kind: string
+          label: string
+          mode: string
+          modifier: number
+          natural_d20: number | null
+          parts: Json
+          passed: boolean | null
+          passed_by_dice: boolean | null
+          request_id: string | null
+          roller_id: string
+          secret: boolean
+          style: Json
+          total: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rolls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      roll_for_dm: {
+        Args: { p_campaign_id: string; p_character_id: string; p_mode: string }
+        Returns: {
+          campaign_id: string
+          character_id: string | null
+          created_at: string
+          damage: Json | null
+          dice: Json
+          for_dm: boolean
           id: string
           kind: string
           label: string
@@ -1388,6 +1463,7 @@ export type Database = {
           created_at: string
           damage: Json | null
           dice: Json
+          for_dm: boolean
           id: string
           kind: string
           label: string
@@ -1441,6 +1517,7 @@ export type Database = {
           created_at: string
           damage: Json | null
           dice: Json
+          for_dm: boolean
           id: string
           kind: string
           label: string

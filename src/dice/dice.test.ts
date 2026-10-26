@@ -90,6 +90,7 @@ const baseRoll: Roll = {
   requestId: null,
   passed: null,
   passedByDice: null,
+  forDm: false,
 }
 
 describe('roll words', () => {

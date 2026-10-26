@@ -30,6 +30,7 @@ export function localRoll(
     requestId: request.requestId,
     passed: null,
     passedByDice: null,
+    forDm: false,
   }
 }
 

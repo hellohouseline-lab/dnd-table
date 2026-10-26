@@ -443,20 +443,15 @@ test('the builder: a hill dwarf fighter, acolyte, with the standard set, in four
   await expect(page.getByText(/Points left: 26/)).toBeVisible()
 })
 
-test('outside a fight, a player rolls any check from the hand, with advantage', async ({ page }) => {
+test('outside a fight, a player rolls a d20 for the DM, with advantage', async ({ page }) => {
   await page.goto('#/dev/table')
   await page.getByRole('button', { name: 'Checks', exact: true }).click()
-  const panel = page.getByRole('region', { name: 'Roll a check' })
+  const panel = page.getByRole('region', { name: 'Roll for the DM' })
   await panel.getByRole('button', { name: 'Advantage', exact: true }).click()
-  await expect(panel).toContainText('Your next roll is with advantage.')
-  await panel.getByText('Saving throws').click()
-  await expect(panel.getByRole('button', { name: /^Charisma/ })).toBeVisible()
-  await panel
-    .getByRole('button', { name: /^Perception/ })
-    .first()
-    .click()
-  // The advantage is spent on that roll.
+  await panel.getByRole('button', { name: 'Roll a d20 with advantage' }).click()
+  // The advantage is spent on that roll, and the dice land for everyone.
   await expect(panel.getByRole('button', { name: 'Normal', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('status').filter({ hasText: 'A roll for the DM' })).toBeVisible({ timeout: 10_000 })
 
   // In a fight the hand is for fighting: no Checks set.
   await page.goto('#/dev/table/fight')

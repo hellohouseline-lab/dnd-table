@@ -28,6 +28,9 @@ import { heal, takeDamage } from '../../rules/maths/hitPoints.ts'
 import type { Character } from '../../rules/character.ts'
 import { BattleView } from '../battle/BattleView.tsx'
 import { StageView, type LibraryActions } from './StageView.tsx'
+import { useRollsForDm } from '../../live/useRollsForDm.ts'
+import { RollsForDm } from '../rolls/RollsForDm.tsx'
+import styles from './StageScreen.module.css'
 
 /** The DM's second screen, the stage. Players who open it are sent to their own table screen. */
 export function StageScreen({ campaignId }: { campaignId: string }) {
@@ -43,6 +46,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const tokens = useTokens(campaignId, user.id, stage.stage.mapId)
   const areas = useAreas(campaignId, user.id, stage.stage.mode === 'map' ? stage.stage.mapId : null)
   const asking = useRollRequest(campaignId, user.id, true)
+  const forDm = useRollsForDm(campaignId, user.id)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
   const pointerName = useMemo(() => ({ userId: user.id, name: me ? `${me.display_name} (DM)` : 'DM' }), [user.id, me])
@@ -136,19 +140,22 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   }
 
   return (
-    <StageView
-      campaign={campaign.data}
-      me={me}
-      members={members.data}
-      characters={party.characters}
-      online={online}
-      stage={stage}
-      library={library}
-      actions={actions}
-      audio={audio}
-      now={serverNow}
-      map={{ tokens, fight: fight.fight, pointers }}
-      onBattle={fighting ? () => setStageDuring(null) : undefined}
-    />
+    <>
+      <StageView
+        campaign={campaign.data}
+        me={me}
+        members={members.data}
+        characters={party.characters}
+        online={online}
+        stage={stage}
+        library={library}
+        actions={actions}
+        audio={audio}
+        now={serverNow}
+        map={{ tokens, fight: fight.fight, pointers }}
+        onBattle={fighting ? () => setStageDuring(null) : undefined}
+      />
+      <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={party.characters} onSettle={forDm.settle} />
+    </>
   )
 }
