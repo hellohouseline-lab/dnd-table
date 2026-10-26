@@ -3,6 +3,10 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C2a, the builder's data and rules (merged; nothing to see on screen yet).** Plan approved on 26 October with decisions 29 to 35 as recommended, and levelling up and Your path added at Matt's request (`docs/C2_PLAN.md`).
+  - **Data** from the same 2014 SRD source: all 237 items of equipment with weight and cost (armour with its AC, Dexterity cap, Strength needed and stealth), packs and what's in them; every class's starting gear choices; the Acolyte's kit, 15 gp and its personality, ideal, bond and flaw ideas; each class's numbers by level (rages, ki, sneak attack, invocations and metamagic known, Wild Shape limits); every feature that asks for a choice (fighting styles, expertise, metamagic, invocations with prerequisites, pact boons, favoured enemies and terrains, dragon ancestors, land circles); subclass spells (a Life cleric's, a Land druid's); a half-elf's two +1s, extra languages, a high elf's cantrip and a dragonborn's ancestry.
+  - **Rules with tests** (`src/rules/build/`): point buy (27 points), the standard array, 4d6 drop lowest, "Suggest for a class", racial bonuses and ability score increases (never past 20); AC from armour, shields and Unarmoured Defence, with heavy armour's Strength and stealth; hit points at level 1 and per level (average or rolled); starting gear into an inventory with packs opened, armour worn and weapons as attacks (with the right proficiency); and **the level-up plan**: what each level brings, the subclass level, ability score increases, every choice with what's allowed and why not, the class numbers that grow, new cantrips and spells, new spell levels, prepared spell counts, the whole path to level 20, and a druid's Wild Shape beasts now and next.
+  - Tests: 357 unit (17 new), all database and preview tests unchanged.
 - **Concentration, fully tracked, and quicker hover cards (live).**
   - Hover cards open after 2 seconds instead of 3.
   - Concentration spells carry a gold **C** seal on their card, a **Concentration** tag on the hover card, and "Concentration, up to 1 minute" as their duration. If you're already concentrating, the card says which spell casting it would end.
@@ -153,7 +157,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C2 plan written** (`docs/C2_PLAN.md`), waiting for Matt's answers to decisions 29 to 35.
+- **C2b next:** the builder's first steps (race, class, background, scores) and the live summary, starting with step 1 for Matt to react to (decision 35).
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets

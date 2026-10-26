@@ -15,6 +15,7 @@
       },
       "languages": ["Common", "Dwarvish"],
       "traits": ["darkvision", "dwarven-resilience", "stonecunning", "dwarven-combat-training", "tool-proficiency"],
+      "languageChoices": 0,
       "subraces": [
         {
           "index": "hill-dwarf",
@@ -36,6 +37,7 @@
       },
       "languages": ["Common", "Elvish"],
       "traits": ["darkvision", "fey-ancestry", "trance", "keen-senses"],
+      "languageChoices": 0,
       "subraces": [
         {
           "index": "high-elf",
@@ -57,6 +59,7 @@
       },
       "languages": ["Common", "Halfling"],
       "traits": ["brave", "halfling-nimbleness", "lucky"],
+      "languageChoices": 0,
       "subraces": [
         {
           "index": "lightfoot-halfling",
@@ -83,6 +86,7 @@
       },
       "languages": ["Common"],
       "traits": [],
+      "languageChoices": 1,
       "subraces": []
     },
     {
@@ -96,6 +100,7 @@
       },
       "languages": ["Common", "Draconic"],
       "traits": ["draconic-ancestry", "breath-weapon", "damage-resistance"],
+      "languageChoices": 0,
       "subraces": []
     },
     {
@@ -108,6 +113,7 @@
       },
       "languages": ["Common", "Gnomish"],
       "traits": ["darkvision", "gnome-cunning"],
+      "languageChoices": 0,
       "subraces": [
         {
           "index": "rock-gnome",
@@ -129,6 +135,11 @@
       },
       "languages": ["Common", "Elvish"],
       "traits": ["darkvision", "fey-ancestry", "skill-versatility"],
+      "abilityBonusChoice": {
+        "choose": 2,
+        "from": ["strength", "dexterity", "constitution", "intelligence", "wisdom"]
+      },
+      "languageChoices": 1,
       "subraces": []
     },
     {
@@ -142,6 +153,7 @@
       },
       "languages": ["Common", "Orc"],
       "traits": ["darkvision", "savage-attacks", "relentless-endurance", "menacing"],
+      "languageChoices": 0,
       "subraces": []
     },
     {
@@ -155,6 +167,7 @@
       },
       "languages": ["Common", "Infernal"],
       "traits": ["darkvision", "hellish-resistance", "infernal-legacy"],
+      "languageChoices": 0,
       "subraces": []
     }
   ],
@@ -201,7 +214,27 @@
     },
     "high-elf-cantrip": {
       "name": "High Elf Cantrip",
-      "desc": "You know one cantrip of your choice form the wizard spell list. Intelligence is your spellcasting ability for it."
+      "desc": "You know one cantrip of your choice form the wizard spell list. Intelligence is your spellcasting ability for it.",
+      "choice": {
+        "kind": "spell",
+        "choose": 1,
+        "from": [
+          "light",
+          "mage-hand",
+          "mending",
+          "message",
+          "minor-illusion",
+          "acid-splash",
+          "prestidigitation",
+          "ray-of-frost",
+          "shocking-grasp",
+          "true-strike",
+          "chill-touch",
+          "dancing-lights",
+          "fire-bolt",
+          "poison-spray"
+        ]
+      }
     },
     "extra-language": {
       "name": "Extra Language",
@@ -225,47 +258,143 @@
     },
     "draconic-ancestry": {
       "name": "Draconic Ancestry",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "choice": {
+        "kind": "trait",
+        "choose": 1,
+        "from": [
+          "draconic-ancestry-black",
+          "draconic-ancestry-blue",
+          "draconic-ancestry-brass",
+          "draconic-ancestry-bronze",
+          "draconic-ancestry-copper",
+          "draconic-ancestry-gold",
+          "draconic-ancestry-green",
+          "draconic-ancestry-red",
+          "draconic-ancestry-silver",
+          "draconic-ancestry-white"
+        ]
+      }
     },
     "draconic-ancestry-black": {
       "name": "Draconic Ancestry (Black)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "acid",
+      "breath": {
+        "area": {
+          "size": 30,
+          "type": "line"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-blue": {
       "name": "Draconic Ancestry (Blue)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "lightning",
+      "breath": {
+        "area": {
+          "size": 30,
+          "type": "line"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-brass": {
       "name": "Draconic Ancestry (Brass)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "fire",
+      "breath": {
+        "area": {
+          "size": 30,
+          "type": "line"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-bronze": {
       "name": "Draconic Ancestry (Bronze)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "lightning",
+      "breath": {
+        "area": {
+          "size": 30,
+          "type": "line"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-copper": {
       "name": "Draconic Ancestry (Copper)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "acid",
+      "breath": {
+        "area": {
+          "size": 30,
+          "type": "line"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-gold": {
       "name": "Draconic Ancestry (Gold)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "fire",
+      "breath": {
+        "area": {
+          "size": 15,
+          "type": "cone"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-green": {
       "name": "Draconic Ancestry (Green)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "poison",
+      "breath": {
+        "area": {
+          "size": 15,
+          "type": "cone"
+        },
+        "save": "constitution"
+      }
     },
     "draconic-ancestry-red": {
       "name": "Draconic Ancestry (Red)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "fire",
+      "breath": {
+        "area": {
+          "size": 15,
+          "type": "cone"
+        },
+        "save": "dexterity"
+      }
     },
     "draconic-ancestry-silver": {
       "name": "Draconic Ancestry (Silver)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "cold",
+      "breath": {
+        "area": {
+          "size": 15,
+          "type": "cone"
+        },
+        "save": "constitution"
+      }
     },
     "draconic-ancestry-white": {
       "name": "Draconic Ancestry (White)",
-      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."
+      "desc": "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table.",
+      "damageType": "cold",
+      "breath": {
+        "area": {
+          "size": 15,
+          "type": "cone"
+        },
+        "save": "constitution"
+      }
     },
     "breath-weapon": {
       "name": "Breath Weapon",

@@ -20,6 +20,7 @@ import {
   findWeapon,
   loadBackgrounds,
   loadClasses,
+  loadEquipment,
   loadFeatures,
   loadRaces,
   loadSpells,
@@ -161,5 +162,23 @@ describe('defaults from the SRD', () => {
     const dwarf = byName(races.races, 'Dwarf')!
     const names = raceTraits(races, dwarf, 'hill-dwarf').map((t) => t.name)
     expect(names).toEqual(expect.arrayContaining(['Darkvision', 'Dwarven Resilience', 'Dwarven Toughness']))
+  })
+
+  it('has the gear, starting kits and level-up choices the builder needs', async () => {
+    const equipment = await loadEquipment()
+    expect(equipment.items.filter((i) => i.kind === 'armor')).toHaveLength(13)
+    expect(equipment.categories['martial-weapons'].length).toBeGreaterThan(10)
+    const classes = await loadClasses()
+    expect(classes.every((c) => c.startingChoices.length > 0)).toBe(true)
+    expect(classes.find((c) => c.index === 'barbarian')?.levels[3].extras.rage_count).toBe(3)
+    const backgrounds = await loadBackgrounds()
+    expect(backgrounds[0]).toMatchObject({ gold: 15, languageChoices: 2 })
+    expect(backgrounds[0].ideals.length).toBeGreaterThan(0)
+    const features = await loadFeatures()
+    expect(features['metamagic-1'].choice).toMatchObject({ kind: 'feature', choose: 2 })
+    expect(features['favored-enemy-1-type'].choice?.from).toContain('undead')
+    const races = await loadRaces()
+    expect(races.races.find((r) => r.index === 'half-elf')?.abilityBonusChoice?.choose).toBe(2)
+    expect(races.traits['draconic-ancestry-red']).toMatchObject({ damageType: 'fire' })
   })
 })

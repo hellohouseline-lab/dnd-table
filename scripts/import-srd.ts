@@ -49,6 +49,52 @@ const text = (lines: string[] | string | undefined): string =>
 const bonuses = (list: Raw[] = []): Record<string, number> =>
   Object.fromEntries(list.map((b) => [ABILITY[b.ability_score.index], b.bonus]))
 
+/** A cost in copper pieces: 1 gp is 100 cp, 1 sp 10, 1 ep 50, 1 pp 1000. */
+const COPPER: Record<string, number> = { cp: 1, sp: 10, ep: 50, gp: 100, pp: 1000 }
+const copper = (cost: Raw | undefined): number => (cost ? cost.quantity * (COPPER[cost.unit] ?? 0) : 0)
+
+/**
+ * A starting-gear choice, made plain: each option is a list of parts, a part being an item (with how
+ * many) or a pick from a category ("a martial weapon").
+ */
+type GearPart = { item: string; quantity: number } | { category: string; choose: number; desc: string }
+function gearOption(option: Raw): GearPart[] {
+  if (option.option_type === 'counted_reference') return [{ item: option.of.index, quantity: option.count }]
+  if (option.option_type === 'reference') return [{ item: option.item.index, quantity: 1 }]
+  if (option.option_type === 'multiple') return (option.items as Raw[]).flatMap(gearOption)
+  if (option.option_type === 'choice') {
+    const choice = option.choice
+    if (choice.from.option_set_type === 'equipment_category') {
+      return [{ category: choice.from.equipment_category.index, choose: choice.choose, desc: choice.desc ?? '' }]
+    }
+    // A choice inside a choice: offer its first option (rare in the SRD).
+    return gearOption((choice.from.options as Raw[])[0])
+  }
+  return []
+}
+function gearChoice(choice: Raw): { desc: string; choose: number; options: GearPart[][] } {
+  if (choice.from.option_set_type === 'equipment_category') {
+    return {
+      desc: choice.desc ?? '',
+      choose: 1,
+      options: [[{ category: choice.from.equipment_category.index, choose: choice.choose, desc: choice.desc ?? '' }]],
+    }
+  }
+  return { desc: choice.desc ?? '', choose: choice.choose, options: (choice.from.options as Raw[]).map(gearOption) }
+}
+
+/** A string or reference option set, as plain values. */
+const optionValues = (from: Raw): string[] =>
+  ((from?.options ?? []) as Raw[]).map((o) =>
+    typeof o === 'string'
+      ? o
+      : o.option_type === 'string'
+        ? o.string
+        : o.option_type === 'ideal'
+          ? o.desc
+          : (o.item?.index ?? ''),
+  )
+
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true })
   const [
@@ -64,6 +110,8 @@ async function main(): Promise<void> {
     features,
     spells,
     monsters,
+    categories,
+    subclassRows,
   ] = await Promise.all(
     [
       'Skills',
@@ -78,6 +126,8 @@ async function main(): Promise<void> {
       'Features',
       'Spells',
       'Monsters',
+      'Equipment-Categories',
+      'Subclasses',
     ].map(load),
   )
 
@@ -138,8 +188,35 @@ async function main(): Promise<void> {
                 slots: Array.from({ length: 9 }, (_, i) => l.spellcasting?.[`spell_slots_level_${i + 1}`] ?? 0),
                 cantripsKnown: l.spellcasting?.cantrips_known,
                 spellsKnown: l.spellcasting?.spells_known,
+                // The class's own numbers at this level: rages, ki points, sneak attack, Wild Shape limits.
+                extras: l.class_specific ?? {},
+                abilityScoreIncreases: l.ability_score_bonuses ?? 0,
               },
             ]),
+        ),
+        startingGear: ((c.starting_equipment ?? []) as Raw[]).map((e) => ({
+          item: e.equipment.index,
+          quantity: e.quantity,
+        })),
+        startingChoices: ((c.starting_equipment_options ?? []) as Raw[]).map(gearChoice),
+        // Spells a subclass always has prepared (a Life cleric's, a Land druid's by terrain).
+        subclassSpells: Object.fromEntries(
+          (c.subclasses as Ref[]).map((s) => {
+            const row = subclassRows.find((r) => r.index === s.index)
+            return [
+              s.index,
+              ((row?.spells ?? []) as Raw[]).map((sp) => ({
+                spell: sp.spell.index,
+                level: (sp.prerequisites as Raw[]).find((p) => p.type === 'level')?.index?.match(/(\d+)$/)?.[1]
+                  ? Number((sp.prerequisites as Raw[]).find((p) => p.type === 'level').index.match(/(\d+)$/)[1])
+                  : 1,
+                terrain:
+                  (sp.prerequisites as Raw[])
+                    .find((p) => p.type === 'feature')
+                    ?.index?.replace(/^circle-of-the-land-/, '') ?? null,
+              })),
+            ]
+          }),
         ),
         subclassFeatures: Object.fromEntries(
           (c.subclasses as Ref[]).map((s) => [
@@ -164,6 +241,14 @@ async function main(): Promise<void> {
       abilityBonuses: bonuses(r.ability_bonuses),
       languages: (r.languages as Ref[]).map((l) => l.name),
       traits: (r.traits as Ref[]).map((t) => t.index),
+      // Half-elves pick two abilities for +1 each; humans and half-elves pick extra languages.
+      abilityBonusChoice: r.ability_bonus_options
+        ? {
+            choose: r.ability_bonus_options.choose,
+            from: (r.ability_bonus_options.from.options as Raw[]).map((o) => ABILITY[o.ability_score.index]),
+          }
+        : undefined,
+      languageChoices: r.language_options?.choose ?? 0,
       subraces: subraces
         .filter((s) => s.race.index === r.index)
         .map((s) => ({
@@ -173,7 +258,36 @@ async function main(): Promise<void> {
           traits: (s.racial_traits as Ref[]).map((t) => t.index),
         })),
     })),
-    traits: Object.fromEntries(traits.map((t) => [t.index, { name: t.name, desc: text(t.desc) }])),
+    traits: Object.fromEntries(
+      traits.map((t) => [
+        t.index,
+        {
+          name: t.name,
+          desc: text(t.desc),
+          // A choice the trait brings: a high elf's cantrip, a dragonborn's ancestry.
+          choice: t.trait_specific?.spell_options
+            ? {
+                kind: 'spell',
+                choose: t.trait_specific.spell_options.choose,
+                from: optionValues(t.trait_specific.spell_options.from),
+              }
+            : t.trait_specific?.subtrait_options
+              ? {
+                  kind: 'trait',
+                  choose: t.trait_specific.subtrait_options.choose,
+                  from: optionValues(t.trait_specific.subtrait_options.from),
+                }
+              : undefined,
+          damageType: t.trait_specific?.damage_type?.name?.toLowerCase(),
+          breath: t.trait_specific?.breath_weapon
+            ? {
+                area: t.trait_specific.breath_weapon.area_of_effect,
+                save: ABILITY[t.trait_specific.breath_weapon.dc?.dc_type?.index] ?? null,
+              }
+            : undefined,
+        },
+      ]),
+    ),
   })
 
   write('backgrounds.json', {
@@ -184,6 +298,15 @@ async function main(): Promise<void> {
         .filter((p) => p.index.startsWith('skill-'))
         .map((p) => p.index.replace(/^skill-/, '')),
       feature: b.feature ? { name: b.feature.name, desc: text(b.feature.desc) } : null,
+      languageChoices: b.language_options?.choose ?? 0,
+      gear: ((b.starting_equipment ?? []) as Raw[]).map((e) => ({ item: e.equipment.index, quantity: e.quantity })),
+      gearChoices: ((b.starting_equipment_options ?? []) as Raw[]).map(gearChoice),
+      gold: b.starting_gold ? copper(b.starting_gold) / 100 : 0,
+      // Ideas for who the character is, to pick from or write your own.
+      personality: optionValues(b.personality_traits?.from),
+      ideals: optionValues(b.ideals?.from),
+      bonds: optionValues(b.bonds?.from),
+      flaws: optionValues(b.flaws?.from),
     })),
   })
 
@@ -197,8 +320,91 @@ async function main(): Promise<void> {
           subclass: f.subclass?.index ?? null,
           level: f.level,
           desc: text(f.desc),
+          // What the feature asks you to choose: a fighting style, two skills for expertise, invocations.
+          choice: (() => {
+            const fs = f.feature_specific
+            if (!fs) return undefined
+            if (fs.subfeature_options) {
+              return {
+                kind: 'feature',
+                choose: fs.subfeature_options.choose,
+                from: optionValues(fs.subfeature_options.from),
+              }
+            }
+            if (fs.expertise_options) {
+              // A rogue's "two skills, or one skill and thieves' tools" is two picks from the skills and the tools.
+              const nested = (fs.expertise_options.from.options as Raw[]).filter((o) => o.option_type === 'choice')
+              const flat = (o: Raw): string[] =>
+                o.option_type === 'choice'
+                  ? (o.choice.from.options as Raw[]).flatMap(flat)
+                  : o.item
+                    ? [o.item.index]
+                    : []
+              return {
+                kind: 'skill',
+                choose: nested.length > 0 ? nested[0].choice.choose : fs.expertise_options.choose,
+                from: [...new Set((fs.expertise_options.from.options as Raw[]).flatMap(flat))].map((o) =>
+                  o.replace(/^skill-/, ''),
+                ),
+              }
+            }
+            if (fs.invocations) {
+              return { kind: 'feature', choose: 0, from: (fs.invocations as Ref[]).map((i) => i.index) }
+            }
+            const strings = fs.enemy_type_options ?? fs.terrain_type_options
+            if (strings) return { kind: 'text', choose: strings.choose, from: optionValues(strings.from) }
+            return undefined
+          })(),
+          parent: f.parent?.index ?? undefined,
+          prerequisites: ((f.prerequisites ?? []) as Raw[]).map((p) =>
+            p.type === 'level'
+              ? { level: p.level as number }
+              : p.type === 'spell'
+                ? { spell: String(p.spell).split('/').pop() }
+                : { feature: String(p.feature).split('/').pop() },
+          ),
         },
       ]),
+    ),
+  })
+
+  // Armour and gear, for starting kits, AC and the shop. Costs are in copper pieces.
+  const categoryItems = (index: string): string[] =>
+    ((categories.find((c) => c.index === index)?.equipment ?? []) as Ref[]).map((e) => e.index)
+  write('equipment.json', {
+    items: equipment.map((e) => ({
+      index: e.index,
+      name: e.name,
+      kind: e.equipment_category.index,
+      sub:
+        e.armor_category ?? e.weapon_category ?? e.gear_category?.name ?? e.tool_category ?? e.vehicle_category ?? null,
+      weight: e.weight ?? 0,
+      cost: copper(e.cost),
+      contents: e.contents
+        ? (e.contents as Raw[]).map((c) => ({ item: c.item.index, quantity: c.quantity }))
+        : undefined,
+      armour: e.armor_class
+        ? {
+            base: e.armor_class.base,
+            dexBonus: e.armor_class.dex_bonus,
+            maxDex: e.armor_class.max_bonus ?? null,
+            strength: e.str_minimum ?? 0,
+            stealthDisadvantage: e.stealth_disadvantage ?? false,
+          }
+        : undefined,
+    })),
+    // The categories a starting-gear choice can ask for ("a martial weapon", "a musical instrument").
+    categories: Object.fromEntries(
+      [
+        ...new Set(
+          [
+            ...classes.flatMap((c) => c.starting_equipment_options ?? []),
+            ...backgrounds.flatMap((b) => b.starting_equipment_options ?? []),
+          ]
+            .flatMap((choice: Raw) => JSON.stringify(choice).match(/equipment-categories\/([a-z-]+)/g) ?? [])
+            .map((m: string) => m.split('/').pop() as string),
+        ),
+      ].map((index) => [index, categoryItems(index)]),
     ),
   })
 
