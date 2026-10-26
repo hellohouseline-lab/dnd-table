@@ -38,6 +38,8 @@ import {
   savingThrow,
   skillCheck,
   spellAttackRoll,
+  canAttackOffhand,
+  offhandAttackRoll,
 } from '../../rules/rolls.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
 import { findCondition, findWeapon, loadSpells, type SrdSpell } from '../../rules/srd/index.ts'
@@ -51,6 +53,7 @@ import {
   attackMode,
   attacksLeft,
   attacksPerAction,
+  bonusMoves,
   inReach,
   movementLeft,
   weaponReach,
@@ -115,6 +118,7 @@ export type PlayerCombatProps = {
   /** What has happened in the fight. */
   events: CombatEvent[]
   attack: FightControls['attack']
+  offhandAttack: FightControls['offhandAttack']
   act: FightControls['act']
   /** Spells: casting one, and the save to keep concentrating after taking damage. */
   cast: FightControls['cast']
@@ -256,8 +260,7 @@ export function TableView({
 
   // A second attack with a light weapon in the other hand, for the bonus action (two-weapon fighting).
   function offhandReady(attack: AttackEntry): boolean {
-    // Two-weapon fighting comes next; until then there's no off-hand attack.
-    return Boolean(mine && myTurn && attack && false)
+    return Boolean(mine && myTurn && canAttackOffhand(character, mine.turn, attack))
   }
 
   // How far a target is, whether the attack reaches, and what changes the roll.
@@ -272,12 +275,15 @@ export function TableView({
       dodging: row.combatant.turn.dodging,
     }
     const targetMode = attackMode(mode, target, feet)
-    const request = attackRoll(character, attack, {
+    const rollChoices = {
       ...choices,
       mode: range?.disadvantage ? combineModes([targetMode, 'disadvantage']) : targetMode,
       secret: false,
-    })
-    return { feet, range, request: offhand ? request : request }
+    }
+    const request = offhand
+      ? offhandAttackRoll(character, attack, rollChoices)
+      : attackRoll(character, attack, rollChoices)
+    return { feet, range, request }
   }
 
   function pickTarget(row: FightRow) {
@@ -292,7 +298,7 @@ export function TableView({
     setAiming(null)
     setMode('normal')
     void table.rollWith(() =>
-      combat.attack(mine, row.combatant, request),
+      offhand ? combat.offhandAttack(mine, row.combatant, request) : combat.attack(mine, row.combatant, request),
     )
   }
 
@@ -723,7 +729,14 @@ export function TableView({
             myTurn={myTurn}
             started={fight.encounter.currentId !== null}
             canAct={!dyingNow}
-            onAct={(what) => combat.act(mine, what)}
+            bonusMoves={bonusMoves(character.className, character.level)}
+            strength={character.scores.strength}
+            onAct={(what) => {
+              combat.act(mine, what)
+              // Hiding and searching come with a roll.
+              if (what === 'hide' || what === 'bonus_hide') roll(skillCheck(character, 'stealth', choices))
+              if (what === 'search') roll(skillCheck(character, 'perception', choices))
+            }}
             onEndTurn={combat.endTurn}
           />
         )}

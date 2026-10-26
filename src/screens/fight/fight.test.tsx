@@ -36,6 +36,7 @@ const controls: FightControls = {
   cast: () => Promise.reject(new Error('No fight')),
   concentrationSave: () => Promise.reject(new Error('No fight')),
   applyFeature: () => Promise.reject(new Error('No fight')),
+  offhandAttack: () => Promise.reject(new Error('No fight')),
   takeBack: () => Promise.reject(new Error('No fight')),
 }
 
@@ -116,7 +117,7 @@ describe('the player in a fight', () => {
       ),
     )
     expect(html).toMatch(
-      /Your turn Action Ready Bonus action Ready Reaction Ready Movement 10 of 25 ft Dash Disengage Dodge End turn/,
+      /Your turn Action Ready Bonus action Ready Reaction Ready Movement 10 of 25 ft Dash Disengage Dodge Hide Help Search Ready Use an object End turn/,
     )
   })
 

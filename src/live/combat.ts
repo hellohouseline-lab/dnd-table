@@ -528,7 +528,38 @@ export async function rollDeathSave(combatantId: string): Promise<{ roll: Roll; 
   return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }
 }
 
-export type TurnAction = 'action' | 'dash' | 'disengage' | 'dodge' | 'bonus' | 'reaction'
+export type TurnAction =
+  | 'action'
+  | 'dash'
+  | 'disengage'
+  | 'dodge'
+  | 'hide'
+  | 'help'
+  | 'search'
+  | 'ready'
+  | 'object'
+  | 'bonus'
+  | 'reaction'
+  | 'bonus_dash'
+  | 'bonus_disengage'
+  | 'bonus_hide'
+  | 'bonus_dodge'
+
+/** Two-weapon fighting: a second attack with a light weapon, for the bonus action. */
+export async function offhandAttack(
+  attackerId: string,
+  targetId: string,
+  request: RollRequest,
+): Promise<{ roll: Roll; event: CombatEvent }> {
+  const { data, error } = await db().rpc('offhand_attack', {
+    p_attacker_id: attackerId,
+    p_target_id: targetId,
+    p_roll: requestToJson(request),
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }
+}
 
 /** Spends part of a turn: Dash, Disengage, Dodge, or the action, bonus action or reaction for something else. */
 export async function spendAction(combatantId: string, what: TurnAction): Promise<CombatEvent> {

@@ -177,6 +177,7 @@ export function TablePreview({
                 endTurn: fight.next,
                 events: fight.events,
                 attack: fight.attack,
+                offhandAttack: fight.offhandAttack,
                 act: fight.act,
                 prompts: fight.prompts,
                 strike: fight.strike,

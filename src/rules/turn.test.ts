@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  bonusMoves,
+  jumps,
   actionFree,
   attackHits,
   attackMode,
@@ -91,9 +93,21 @@ describe('reach and range', () => {
   })
 
   it('reads a monster action’s text', () => {
-    expect(actionReach('Melee Weapon Attack: +4 to hit, reach 5 ft., one target.')).toEqual({ melee: 5, normal: null, long: null })
-    expect(actionReach('Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target.')).toEqual({ melee: null, normal: 80, long: 320 })
-    expect(actionReach('Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft.')).toEqual({ melee: 5, normal: 20, long: 60 })
+    expect(actionReach('Melee Weapon Attack: +4 to hit, reach 5 ft., one target.')).toEqual({
+      melee: 5,
+      normal: null,
+      long: null,
+    })
+    expect(actionReach('Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target.')).toEqual({
+      melee: null,
+      normal: 80,
+      long: 320,
+    })
+    expect(actionReach('Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft.')).toEqual({
+      melee: 5,
+      normal: 20,
+      long: 60,
+    })
   })
 
   it('allows what reaches, gives disadvantage beyond normal range, and refuses anything further', () => {
@@ -101,7 +115,25 @@ describe('reach and range', () => {
     expect(inReach(weaponReach(longsword), 10).allowed).toBe(false)
     expect(inReach(weaponReach(longsword), 25).why).toBe("That's 25 ft away, and it only reaches 5 ft")
     expect(inReach(weaponReach(glaive), 10).allowed).toBe(true)
-    expect(inReach(weaponReach(dagger), 40)).toEqual({ allowed: true, disadvantage: true, why: 'Beyond normal range (20 ft)' })
+    expect(inReach(weaponReach(dagger), 40)).toEqual({
+      allowed: true,
+      disadvantage: true,
+      why: 'Beyond normal range (20 ft)',
+    })
     expect(inReach(weaponReach(longbow), 700).allowed).toBe(false)
+  })
+})
+
+describe('bonus actions and jumping', () => {
+  it('lets rogues and monks from level 2 do some things as a bonus action', () => {
+    expect(bonusMoves('Rogue', 2)).toEqual(['dash', 'disengage', 'hide'])
+    expect(bonusMoves('Rogue', 1)).toEqual([])
+    expect(bonusMoves('Monk', 3)).toEqual(['dash', 'disengage', 'dodge'])
+    expect(bonusMoves('Fighter', 5)).toEqual([])
+  })
+
+  it('works out jumps from Strength', () => {
+    expect(jumps(16)).toEqual({ long: 16, standingLong: 8, high: 6, standingHigh: 3 })
+    expect(jumps(8)).toEqual({ long: 8, standingLong: 4, high: 2, standingHigh: 1 })
   })
 })

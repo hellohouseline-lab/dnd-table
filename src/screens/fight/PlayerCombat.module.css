@@ -360,3 +360,31 @@
   font-style: italic;
   color: var(--text-3);
 }
+
+.moves {
+  flex-wrap: wrap;
+}
+
+.moveSmall {
+  flex: 1 1 auto;
+  height: 28px;
+  font-size: 11px;
+}
+
+/* The bonus-action version of a move (Cunning Action). */
+.moveBonus {
+  border-color: rgba(134, 212, 232, 0.5);
+  color: var(--pass);
+}
+
+.bonusLabel {
+  align-self: center;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.jump {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-3);
+}

@@ -17,6 +17,15 @@ const ACTIONS: Record<string, [string, string]> = {
   action: ['uses their action', 'use your action'],
   bonus: ['uses their bonus action', 'use your bonus action'],
   reaction: ['uses their reaction', 'use your reaction'],
+  hide: ['tries to hide', 'try to hide'],
+  help: ['helps an ally', 'help an ally'],
+  search: ['searches', 'search'],
+  ready: ['readies an action', 'ready an action'],
+  object: ['uses an object', 'use an object'],
+  bonus_dash: ['dashes (bonus action)', 'dash (bonus action)'],
+  bonus_disengage: ['disengages (bonus action)', 'disengage (bonus action)'],
+  bonus_hide: ['tries to hide (bonus action)', 'try to hide (bonus action)'],
+  bonus_dodge: ['takes the Dodge action (bonus action)', 'take the Dodge action (bonus action)'],
 }
 
 export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names): string {

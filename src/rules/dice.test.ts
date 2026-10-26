@@ -15,6 +15,8 @@ import {
 } from './dice.ts'
 import {
   abilityCheck,
+  canAttackOffhand,
+  offhandAttackRoll,
   attackRoll,
   conditionEffects,
   freeRoll,
@@ -341,5 +343,28 @@ describe('conditions', () => {
     expect(conditionEffects({ conditions: ['invisible'], exhaustion: 0 }, 'attack', null)).toEqual([
       { mode: 'advantage', reason: 'Invisible' },
     ])
+  })
+
+  it('allows an off-hand attack with a second light weapon, without the ability bonus on damage', () => {
+    const shortsword: AttackEntry = {
+      id: 's',
+      name: 'Shortsword',
+      weapon: 'shortsword',
+      proficient: true,
+      magicBonus: 0,
+      ability: 'dexterity',
+      damageDice: '',
+      damageType: '',
+    }
+    const dagger: AttackEntry = { ...shortsword, id: 'd', name: 'Dagger', weapon: 'dagger' }
+    const dual = { ...character, attacks: [shortsword, dagger] }
+    expect(canAttackOffhand(dual, { attacksMade: 1, bonusUsed: false }, dagger)).toBe(true)
+    expect(canAttackOffhand(dual, { attacksMade: 0, bonusUsed: false }, dagger)).toBe(false)
+    expect(canAttackOffhand({ ...character, attacks: [dagger] }, { attacksMade: 1, bonusUsed: false }, dagger)).toBe(
+      false,
+    )
+    const off = offhandAttackRoll(dual, dagger)
+    expect(off.label).toBe('Dagger (off hand)')
+    expect(off.damage?.modifier).toBe(0)
   })
 })

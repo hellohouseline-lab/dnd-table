@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon } from '../../components/Icon.tsx'
 import type { AttackEntry, Character, FeatureEntry } from '../../rules/character.ts'
@@ -8,6 +8,8 @@ import type { SrdSpell } from '../../rules/srd/index.ts'
 import { spellSummary } from '../../rules/spells.ts'
 import { SlotPips } from '../fight/SpellParts.tsx'
 import { levelWords, srdSpellFor } from '../fight/useCasting.ts'
+import { CardInfo } from './CardPanel.tsx'
+import { attackDetails, featureDetails, spellDetails } from './cardDetails.ts'
 import styles from './Hand.module.css'
 
 /** A caster's spells for the hand: the SRD list, why one can't be cast now (or null), and casting one. */
@@ -37,6 +39,15 @@ const MOST_CARDS = 9
 export function Hand({ character, onAttack, onUseFeature, spells = null, disabled, className }: HandProps) {
   const sheet = deriveSheet(character)
   const [showing, setShowing] = useState<'weapons' | 'spells'>('weapons')
+  // Hovering on a card for 3 seconds shows what it does.
+  const [about, setAbout] = useState<string | null>(null)
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  useEffect(() => () => clearTimeout(timer.current), [])
+  const hover = (key: string | null) => {
+    clearTimeout(timer.current)
+    setAbout(null)
+    if (key) timer.current = setTimeout(() => setAbout(key), 3000)
+  }
   const castable = character.spellcasting.spells
     .filter((entry) => entry.prepared || entry.level === 0)
     .flatMap((entry) => {
@@ -54,9 +65,8 @@ export function Hand({ character, onAttack, onUseFeature, spells = null, disable
       icon: 'star' as const,
       name: spell.name,
       detail: spellSummary(spell, character) || spell.castingTime,
-      title:
-        why ??
-        `Cast ${spell.name}: ${spell.castingTime}, ${spell.range}${spell.concentration ? ', concentration' : ''}`,
+      why,
+      info: spellDetails(character, spell),
       spent: why !== null,
       play: () => spells?.onCast(spell),
     }
@@ -69,7 +79,8 @@ export function Hand({ character, onAttack, onUseFeature, spells = null, disable
       icon: 'sword' as const,
       name: entry.name || 'Attack',
       detail: `${formatBonus(result.toHit)} · ${result.damage}`,
-      title: `Roll ${entry.name}: ${formatBonus(result.toHit)} to hit, ${result.damage} ${result.damageType.toLowerCase()} damage`,
+      why: null,
+      info: attackDetails(character, entry),
       spent: false,
       play: () => onAttack(entry),
     })),
@@ -82,10 +93,11 @@ export function Hand({ character, onAttack, onUseFeature, spells = null, disable
         icon: 'powers' as const,
         name: feature.name,
         detail: feature.usesLeft === 1 ? '1 use left' : `${feature.usesLeft} uses left`,
-        title:
+        why:
           feature.usesLeft > 0
-            ? `Use ${feature.name}: spends one use`
-            : `No uses of ${feature.name} left until a ${feature.recharge === 'short' ? 'short or long' : 'long'} rest`,
+            ? null
+            : `no uses left until a ${feature.recharge === 'short' ? 'short or long' : 'long'} rest`,
+        info: featureDetails(character, feature),
         spent: feature.usesLeft <= 0,
         play: () => onUseFeature(feature),
       })),
@@ -126,25 +138,41 @@ export function Hand({ character, onAttack, onUseFeature, spells = null, disable
         {cards.map((card, i) => {
           const offset = i - middle
           return (
-            <button
+            // The wrapper hears the mouse even when the card is greyed out.
+            <span
               key={card.key}
-              type="button"
-              className={cx(styles.card, card.spent && styles.spent)}
-              style={{ '--rot': `${offset * 3}deg`, '--lift': `${offset * offset * 1.5}px` } as CSSProperties}
-              title={card.title}
-              disabled={disabled || card.spent}
-              onClick={card.play}
+              className={styles.slot}
+              onMouseEnter={() => hover(card.key)}
+              onMouseLeave={() => hover(null)}
             >
-              <span className={cx(styles.tag, styles[card.tone])}>{card.tag}</span>
-              <span className={styles.art}>
-                <Icon name={card.icon} size={26} />
-              </span>
-              <span className={styles.name}>{card.name}</span>
-              <span className={styles.detail}>{card.detail}</span>
-            </button>
+              <button
+                type="button"
+                className={cx(styles.card, card.spent && styles.spent)}
+                style={{ '--rot': `${offset * 3}deg`, '--lift': `${offset * offset * 1.5}px` } as CSSProperties}
+                disabled={disabled || card.spent}
+                onClick={() => {
+                  hover(null)
+                  card.play()
+                }}
+              >
+                <span className={cx(styles.tag, styles[card.tone])}>{card.tag}</span>
+                <span className={styles.art}>
+                  <Icon name={card.icon} size={26} />
+                </span>
+                <span className={styles.name}>{card.name}</span>
+                <span className={styles.detail}>{card.detail}</span>
+              </button>
+            </span>
           )
         })}
       </div>
+      {cards
+        .filter((card) => card.key === about)
+        .map((card) => (
+          <div key={card.key} className={styles.info}>
+            <CardInfo details={card.info} why={card.why} />
+          </div>
+        ))}
     </div>
   )
 }
