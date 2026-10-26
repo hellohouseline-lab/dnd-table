@@ -1,0 +1,185 @@
+/* A shop on a player's screen: over the scene, like the character sheet. */
+.panel {
+  position: fixed;
+  inset: 32px 380px 32px 32px;
+  z-index: 60;
+  padding: 20px 24px;
+  border-radius: 10px;
+  border: 1px solid var(--gold-rule);
+  background: var(--card-fill);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.head > div {
+  flex: 1;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--gold-light);
+}
+
+.keeper,
+.muted {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.purse {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.close {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  background: none;
+  color: var(--gold-light);
+  font-size: 15px;
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.tab {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 16px;
+}
+
+.tab:disabled {
+  opacity: 0.45;
+}
+
+.tabOn {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.ok {
+  margin: 0;
+  color: var(--pass);
+}
+
+.problem {
+  margin: 0;
+  color: var(--fail-light);
+}
+
+.grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-auto-rows: min-content;
+  gap: 8px;
+}
+
+.card {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold-light);
+}
+
+.words {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.price {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.buyRow {
+  margin-top: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.buyRow input {
+  width: 56px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  color: var(--text);
+}
+
+.buy {
+  height: 30px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.buy:disabled {
+  opacity: 0.45;
+}
+
+.sellList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.sellList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 640px;
+}

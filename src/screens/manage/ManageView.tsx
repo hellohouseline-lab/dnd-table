@@ -28,6 +28,8 @@ type ManageViewProps = {
   exitHref: string
   /** The plain form, for typing anything in by hand. */
   formHref: string
+  /** Whether gear can be added for free here (the DM always; players unless the DM has turned it off). */
+  canAddGear?: boolean
 }
 
 type Panel = 'spells' | 'gear' | 'choices' | 'who'
@@ -37,7 +39,7 @@ type Panel = 'spells' | 'gear' | 'choices' | 'who'
  * level allows), gear off the shelves (weapons join the hand, armour sets the AC), the choices the
  * class has made, and who they are. Anything else can still be typed in on the plain form.
  */
-export function ManageView({ character, data, onSave, exitHref, formHref }: ManageViewProps) {
+export function ManageView({ character, data, onSave, exitHref, formHref, canAddGear = true }: ManageViewProps) {
   const [build, setBuild] = useState<CharacterBuild>(() => toBuild(character))
   const [saved, setSaved] = useState<CharacterBuild>(build)
   const cls = data.classes.find((c) => c.name.toLowerCase() === build.className.trim().toLowerCase()) ?? null
@@ -119,7 +121,9 @@ export function ManageView({ character, data, onSave, exitHref, formHref }: Mana
           {panel === 'spells' && cls && (
             <ManageSpells build={build} onBuild={setBuild} cls={cls} spells={data.spells} />
           )}
-          {panel === 'gear' && <ManageGear build={build} onBuild={setBuild} equipment={data.equipment} />}
+          {panel === 'gear' && (
+            <ManageGear build={build} onBuild={setBuild} equipment={data.equipment} canAdd={canAddGear} />
+          )}
           {panel === 'choices' && cls && (
             <ManageChoices build={build} onBuild={setBuild} cls={cls} features={data.features} />
           )}

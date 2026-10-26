@@ -23,6 +23,8 @@ type TabProps = {
   handing?: { party: Character[]; handOver: HandOver }
   /** The party stash: take things for yourself, and share out its coins. */
   stash?: StashControls
+  /** Whether the Add box shows (the DM can stop players adding gear for free). */
+  canAddGear?: boolean
 }
 
 const COINS: { key: keyof Wallet; name: string }[] = [
@@ -38,7 +40,7 @@ const COINS: { key: keyof Wallet; name: string }[] = [
  * weighs against what they can carry, and their coins. Usable things, such as potions, show what
  * they do; in a fight they're in the hand's Items set.
  */
-export function InventoryTab({ character, canEdit, onUpdate, handing, stash }: TabProps) {
+export function InventoryTab({ character, canEdit, onUpdate, handing, stash, canAddGear = true }: TabProps) {
   const equipment = useSrd(loadEquipment)
   const [adding, setAdding] = useState('')
   const [givingId, setGivingId] = useState<string | null>(null)
@@ -256,7 +258,10 @@ export function InventoryTab({ character, canEdit, onUpdate, handing, stash }: T
             Attuned to {attuned} of {ATTUNE_LIMIT}.
           </p>
         )}
-        {canEdit && (
+        {canEdit && !canAddGear && (
+          <p className={styles.sectionNoteBlock}>Your DM adds things for now. Buy them in a shop when one is open.</p>
+        )}
+        {canEdit && canAddGear && (
           <div className={styles.inline}>
             <input
               className={styles.addInput}

@@ -202,6 +202,7 @@ export type Database = {
           join_code: string
           name: string
           party_size: number
+          players_add_gear: boolean
           starting_gold: number
           starting_level: number
         }
@@ -213,6 +214,7 @@ export type Database = {
           join_code: string
           name: string
           party_size?: number
+          players_add_gear?: boolean
           starting_gold?: number
           starting_level?: number
         }
@@ -224,6 +226,7 @@ export type Database = {
           join_code?: string
           name?: string
           party_size?: number
+          players_add_gear?: boolean
           starting_gold?: number
           starting_level?: number
         }
@@ -1163,6 +1166,171 @@ export type Database = {
           },
         ]
       }
+      sales: {
+        Row: {
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item: Json
+          kind: string
+          quantity: number
+          shop_id: string | null
+          stock_id: string | null
+          undone: boolean
+        }
+        Insert: {
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at?: string
+          id?: string
+          item: Json
+          kind: string
+          quantity: number
+          shop_id?: string | null
+          stock_id?: string | null
+          undone?: boolean
+        }
+        Update: {
+          campaign_id?: string
+          character_id?: string
+          copper?: number
+          created_at?: string
+          id?: string
+          item?: Json
+          kind?: string
+          quantity?: number
+          shop_id?: string | null
+          stock_id?: string | null
+          undone?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_notes: {
+        Row: {
+          campaign_id: string
+          note: string
+          shop_id: string
+        }
+        Insert: {
+          campaign_id: string
+          note?: string
+          shop_id: string
+        }
+        Update: {
+          campaign_id?: string
+          note?: string
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_notes_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_notes_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          buys: boolean
+          campaign_id: string
+          created_at: string
+          id: string
+          keeper: string
+          kind: string
+          markup: number
+          name: string
+          open: boolean
+          stock: Json
+          updated_at: string
+        }
+        Insert: {
+          buys?: boolean
+          campaign_id: string
+          created_at?: string
+          id?: string
+          keeper?: string
+          kind: string
+          markup?: number
+          name: string
+          open?: boolean
+          stock?: Json
+          updated_at?: string
+        }
+        Update: {
+          buys?: boolean
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          keeper?: string
+          kind?: string
+          markup?: number
+          name?: string
+          open?: boolean
+          stock?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shops_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      srd_prices: {
+        Row: {
+          bundle: number
+          cost: number
+          index: string
+        }
+        Insert: {
+          bundle?: number
+          cost: number
+          index: string
+        }
+        Update: {
+          bundle?: number
+          cost?: number
+          index?: string
+        }
+        Relationships: []
+      }
       stage: {
         Row: {
           ambience: Json
@@ -1393,6 +1561,34 @@ export type Database = {
           p_target_id: string
         }
         Returns: Json
+      }
+      buy_item: {
+        Args: {
+          p_bundles: number
+          p_character_id: string
+          p_proficient: boolean
+          p_shop_id: string
+          p_stock_id: string
+        }
+        Returns: {
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item: Json
+          kind: string
+          quantity: number
+          shop_id: string | null
+          stock_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "sales"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       cast_spell: {
         Args: {
@@ -1894,7 +2090,56 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      sell_item: {
+        Args: {
+          p_character_id: string
+          p_item_id: string
+          p_quantity: number
+          p_shop_id: string
+        }
+        Returns: {
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item: Json
+          kind: string
+          quantity: number
+          shop_id: string | null
+          stock_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "sales"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       server_time: { Args: never; Returns: string }
+      set_shop_open: {
+        Args: { p_open: boolean; p_shop_id: string }
+        Returns: {
+          buys: boolean
+          campaign_id: string
+          created_at: string
+          id: string
+          keeper: string
+          kind: string
+          markup: number
+          name: string
+          open: boolean
+          stock: Json
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "shops"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       split_coins: {
         Args: {
           p_campaign_id: string
@@ -2107,6 +2352,28 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "combat_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      undo_sale: {
+        Args: { p_sale_id: string }
+        Returns: {
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item: Json
+          kind: string
+          quantity: number
+          shop_id: string | null
+          stock_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "sales"
           isOneToOne: true
           isSetofReturn: false
         }

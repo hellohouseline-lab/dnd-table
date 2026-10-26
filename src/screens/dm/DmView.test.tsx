@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { NO_GIVING } from '../../live/giving.ts'
+import { NO_SHOPS } from '../../live/shops.ts'
 import { describe, expect, it } from 'vitest'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { FightControls } from '../../live/useFight.ts'
@@ -85,6 +86,7 @@ function render(startTab: 'party' | 'log') {
         online={new Set(['dm'])}
         onUpdate={noop}
         giving={NO_GIVING}
+        shops={NO_SHOPS}
         log={{ status: 'ready', rolls: [secretRoll] }}
         diceStyle={DEFAULT_DICE_STYLE}
         onDiceStyleChange={noop}
@@ -114,6 +116,7 @@ describe('the DM screen', () => {
           online={new Set(['dm'])}
           onUpdate={noop}
           giving={NO_GIVING}
+          shops={NO_SHOPS}
           log={{ status: 'ready', rolls: [] }}
           diceStyle={DEFAULT_DICE_STYLE}
           onDiceStyleChange={noop}

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import type { GivingControls, Offer } from '../../live/giving.ts'
+import type { ShopControls } from '../../live/shops.ts'
+import type { Shop } from '../../rules/shops.ts'
 import type { Character, InventoryItem, Wallet } from '../../rules/character.ts'
 import { attunedCount, ATTUNE_LIMIT } from '../../rules/magic.ts'
 import { coinsFor, coinWords, readCoins } from '../../rules/money.ts'
@@ -12,6 +14,9 @@ type ItemsTabProps = {
   giving: GivingControls
   onGive: (character: Character | null) => void
   onOpenBox: () => void
+  shops: ShopControls
+  /** Opens the shop editor: a shop to change, or null to make one. */
+  onShop: (shop: Shop | null) => void
 }
 
 const QUICK = [1, 5, 10, 50, 100]
@@ -20,7 +25,7 @@ const QUICK = [1, 5, 10, 50, 100]
  * Items and loot on Screen 1: every character's purse as coins, with one-click gold to add or take,
  * their pack with Offer to buy anything from them, and Give; then the party stash.
  */
-export function ItemsTab({ characters, giving, onGive, onOpenBox }: ItemsTabProps) {
+export function ItemsTab({ characters, giving, onGive, onOpenBox, shops, onShop }: ItemsTabProps) {
   const { stash } = giving
   const stashEmpty = stash.items.length === 0 && coinWords(stash.wallet) === 'nothing'
   return (
@@ -31,6 +36,81 @@ export function ItemsTab({ characters, giving, onGive, onOpenBox }: ItemsTabProp
         </button>
         <span className={styles.topNote}>A chest, a sack, a body, a desk or a hoard: the table fills it for you.</span>
       </div>
+
+      <section className={cx(party.card, styles.stash)} aria-label="Shops">
+        <div className={party.head}>
+          <div className={party.who}>
+            <div className={party.name}>Shops</div>
+            <div className={party.player}>Open one and players can buy and sell on their own screens.</div>
+          </div>
+          <button type="button" className={party.action} onClick={() => onShop(null)}>
+            Make a shop
+          </button>
+        </div>
+        {shops.shops.length === 0 ? (
+          <p className={styles.nothing}>No shops yet.</p>
+        ) : (
+          <ul className={styles.shopList}>
+            {shops.shops.map((shop) => (
+              <li key={shop.id}>
+                <span>
+                  <strong>{shop.name}</strong>
+                  {shop.keeper && <span className={styles.count}> · {shop.keeper}</span>}
+                  <span className={styles.count}> · {shop.stock.length} things</span>
+                </span>
+                <span className={styles.shopButtons}>
+                  <button
+                    type="button"
+                    className={cx(styles.way, shop.open && styles.wayOn)}
+                    aria-pressed={shop.open}
+                    aria-label={`${shop.open ? 'Close' : 'Open'} ${shop.name}`}
+                    onClick={() => void shops.setOpen(shop.id, !shop.open)}
+                  >
+                    {shop.open ? 'Open' : 'Closed'}
+                  </button>
+                  <button type="button" className={styles.offer} onClick={() => onShop(shop)}>
+                    Change
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {shops.sales.length > 0 && (
+          <ul className={styles.sales} aria-label="Sales">
+            {shops.sales.slice(0, 8).map((sale) => {
+              const who = characters.find((c) => c.id === sale.characterId)?.name ?? 'Someone'
+              const what = sale.item
+                ? `${sale.item.quantity > 1 ? `${sale.item.quantity} × ` : ''}${sale.item.name}`
+                : 'something'
+              return (
+                <li key={sale.id} className={sale.undone ? styles.undone : undefined}>
+                  {who} {sale.kind === 'buy' ? 'bought' : 'sold'} {what} for {coinWords(coinsFor(sale.copper))}
+                  {sale.undone ? (
+                    <span className={styles.tag}>undone</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.link}
+                      onClick={() => void shops.undo(sale.id).then((problem) => problem && window.alert(problem))}
+                    >
+                      Undo
+                    </button>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        )}
+        <label className={styles.setting}>
+          <input
+            type="checkbox"
+            checked={shops.playersAddGear}
+            onChange={(e) => void shops.setPlayersAddGear(e.target.checked)}
+          />
+          Players can add gear for free on Change your character
+        </label>
+      </section>
       <div className={party.grid}>
         {characters.map((character) => (
           <CharacterThings

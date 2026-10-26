@@ -1,7 +1,7 @@
 // Local development only (the routes exist only under `npm run dev`): screens with made-up people,
 // so their look can be checked without signing in. Buttons that save won't work here.
 import type { User } from '@supabase/supabase-js'
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
@@ -17,7 +17,7 @@ import { PageHeader } from '../../components/PageHeader.tsx'
 import { TableView, type Arrival } from '../table/TableView.tsx'
 import { EMPTY_STASH, type HandOver, type Offer, type PartyStash, type StashControls } from '../../live/giving.ts'
 import { mergeItems } from '../../rules/magic.ts'
-import { addWallets, coinsFor, splitCoins, subtractCoins, walletCopper } from '../../rules/money.ts'
+import { addWallets, coinsFor, coinWords, pay, splitCoins, subtractCoins, walletCopper } from '../../rules/money.ts'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
@@ -25,7 +25,9 @@ import { blockedMove } from '../../map/mapTokens.ts'
 import { usePreviewAreas } from './previewAreas.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import { useSrd } from '../../live/useSrd.ts'
-import { loadBackgrounds, loadClasses, loadRaces } from '../../rules/srd/index.ts'
+import { loadBackgrounds, loadClasses, loadEquipment, loadMagicItems, loadRaces } from '../../rules/srd/index.ts'
+import type { Shopping } from '../../live/shops.ts'
+import { boughtItem, linePrice, sellPrice, startingStock, type Shop } from '../../rules/shops.ts'
 
 const online = new Set(['dm', 'p1'])
 const noop = () => {}
@@ -286,6 +288,69 @@ export function TablePreview({
       return null
     },
   }
+  // ...and Brenna's general store, open, at the book price.
+  const equipment = useSrd(loadEquipment)
+  const magicItems = useSrd(loadMagicItems)
+  const baseShop = useMemo<Shop | null>(
+    () =>
+      variant === 'gift' && equipment && magicItems
+        ? {
+            id: 'brenna',
+            name: 'Brenna’s Goods',
+            keeper: 'Brenna',
+            kind: 'general',
+            markup: 100,
+            buys: true,
+            open: true,
+            stock: startingStock('general', equipment, magicItems),
+          }
+        : null,
+    [variant, equipment, magicItems],
+  )
+  const [changedShop, setShop] = useState<Shop | null>(null)
+  const shop = changedShop ?? baseShop
+  const me = characters[caster ? 1 : 0]
+  const shopping: Shopping = {
+    shops: shop ? [shop] : [],
+    buy: async (_shopId, stockId, bundles) => {
+      const line = shop?.stock.find((l) => l.id === stockId)
+      if (!shop || !line) return 'That’s not on the shelves any more'
+      const total = linePrice(line, shop.markup) * bundles
+      const after = pay(me.wallet, total)
+      if (!after) return `That costs ${coinWords(coinsFor(total))}, and you have ${coinWords(me.wallet)}`
+      setCharacters((list) =>
+        list.map((c) =>
+          c.id === me.id ? { ...c, wallet: after, inventory: mergeItems(c.inventory, [boughtItem(line, bundles)]) } : c,
+        ),
+      )
+      setShop({
+        ...shop,
+        stock: shop.stock.map((l) =>
+          l.id === stockId && l.quantity !== null ? { ...l, quantity: l.quantity - bundles } : l,
+        ),
+      })
+      return null
+    },
+    sell: async (_shopId, itemId, quantity) => {
+      const item = me.inventory.find((i) => i.id === itemId)
+      const each = item && shop && equipment ? sellPrice(item, shop, equipment) : null
+      if (!item || each === null) return 'This shop doesn’t buy that'
+      setCharacters((list) =>
+        list.map((c) =>
+          c.id === me.id
+            ? {
+                ...c,
+                wallet: addWallets(c.wallet, coinsFor(each * quantity)),
+                inventory: c.inventory.flatMap((i) =>
+                  i.id !== itemId ? [i] : i.quantity > quantity ? [{ ...i, quantity: i.quantity - quantity }] : [],
+                ),
+              }
+            : c,
+        ),
+      )
+      return null
+    },
+  }
   // Handing things over, as the server does it (outside a fight).
   const handOver: HandOver = async (to, what) => {
     const from = characters[caster ? 1 : 0]
@@ -336,6 +401,7 @@ export function TablePreview({
         offers={offers}
         onAnswerOffer={answerOffer}
         stash={stashControls}
+        shopping={shopping}
         combat={
           fighting
             ? {

@@ -40,7 +40,8 @@ export function giftName(gift: Gift): string {
 export function giftItem(gift: Gift, quantity: number): InventoryItem {
   const base = { id: entryId(), name: giftName(gift), quantity, worn: false }
   if (gift.kind === 'typed') return { ...base, item: null, weight: 0, uses: null }
-  if (gift.kind === 'bit') return { ...base, item: null, weight: gift.bit.weight, uses: null, note: gift.bit.note }
+  if (gift.kind === 'bit')
+    return { ...base, item: gift.bit.index, weight: gift.bit.weight, uses: null, note: gift.bit.note }
   if (gift.kind === 'yours') {
     return {
       ...base,

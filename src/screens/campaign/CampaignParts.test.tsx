@@ -14,6 +14,7 @@ const campaign: Campaign = {
   party_size: 4,
   starting_level: 1,
   starting_gold: 0,
+  players_add_gear: true,
   join_code: 'K7QM2P',
   camera_key: 'abcdef0123456789abcdef01',
   created_at: '2026-10-25T20:00:00Z',

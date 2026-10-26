@@ -237,3 +237,52 @@
   font-style: italic;
   color: var(--text-3);
 }
+
+.shopList,
+.sales {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.shopList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.shopButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.sales {
+  padding-top: 8px;
+  border-top: 1px solid rgba(168, 132, 60, 0.2);
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.sales li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.undone {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-2);
+}

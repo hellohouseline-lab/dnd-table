@@ -50,7 +50,7 @@ describe('the Give catalogue', () => {
   it('gives bits and your own items with what they are', () => {
     const spoon = all.find((e) => e.name === 'Bent spoon')!
     expect(giftItem(spoon.gift, 1)).toMatchObject({
-      item: null,
+      item: 'bits-bent-spoon',
       name: 'Bent spoon',
       note: expect.stringContaining('Pewter'),
     })

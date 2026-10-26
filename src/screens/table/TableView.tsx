@@ -24,6 +24,8 @@ import { isMuted, useTableCall } from '../../call/callContext.ts'
 import { CameraFeed } from '../../call/CameraFeed.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
 import type { HandOver, Offer, StashControls } from '../../live/giving.ts'
+import type { Shopping } from '../../live/shops.ts'
+import { ShopPanel } from './ShopPanel.tsx'
 import { coinsFor, coinWords } from '../../rules/money.ts'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
@@ -131,6 +133,10 @@ type TableViewProps = {
   onAnswerOffer?: (offerId: string, sell: boolean) => Promise<string | null>
   /** The party stash, on the Items panel. */
   stash?: StashControls
+  /** Shops the DM has opened. */
+  shopping?: Shopping
+  /** Whether you may add gear for free (the DM's table setting). */
+  canAddGear?: boolean
 }
 
 /** Something just given to you: "You got a Longsword +1". */
@@ -257,7 +263,10 @@ export function TableView({
   offers = [],
   onAnswerOffer,
   stash,
+  shopping,
+  canAddGear = true,
 }: TableViewProps) {
+  const [shopOpen, setShopOpen] = useState(false)
   const [inspected, setInspected] = useState<string | null>(null)
   // The attack you're about to make, while you pick its target.
   const [aiming, setAiming] = useState<AttackEntry | null>(null)
@@ -1001,6 +1010,14 @@ export function TableView({
           <CombatFeed className={styles.feed} events={combat.events} nameOf={nameOf} youId={mine?.id} limit={3} />
         )}
         {audio && <NowPlaying audio={audio} />}
+        {shopping && shopping.shops.length > 0 && !shopOpen && (
+          <button type="button" className={styles.shopButton} onClick={() => setShopOpen(true)}>
+            <Icon name="items" size={22} />
+            {shopping.shops.length === 1
+              ? `${shopping.shops[0].name} is open`
+              : `${shopping.shops.length} shops are open`}
+          </button>
+        )}
         {offers.length > 0 && onAnswerOffer && (
           <div className={styles.offers} aria-label="Offers for your things">
             {offers.map((offer) => (
@@ -1323,8 +1340,13 @@ export function TableView({
             rolls={rolls}
             handing={handOver ? { party: characters, handOver } : undefined}
             stash={stash}
+            canAddGear={canAddGear}
           />
         </>
+      )}
+
+      {shopping && shopOpen && (
+        <ShopPanel character={character} shopping={shopping} onClose={() => setShopOpen(false)} />
       )}
 
       {fight && mine && mine.initiative === null && !(request && askedMe && !myAnswer) && (
