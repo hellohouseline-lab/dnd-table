@@ -4,6 +4,7 @@
 // effects play once. Each listener's own volume sits on top of the DM's mix.
 
 import { Howl, Howler } from 'howler'
+import { musicOffset } from './musicOffset.ts'
 
 export type Sound = { id: string; url: string; format: 'mp3' | 'ogg' }
 
@@ -23,15 +24,18 @@ type Listener = () => void
 const CROSSFADE_MS = 2500
 const FADE_MS = 400
 
-/** Where a looping track should be now, in seconds. */
-export function musicOffset(
-  want: Pick<MusicWanted, 'playing' | 'startedAt' | 'position'>,
-  duration: number,
-  now: number,
-): number {
-  if (!want.playing || want.startedAt === null || !(duration > 0)) return Math.max(0, want.position)
-  const elapsed = Math.max(0, (now - want.startedAt) / 1000)
-  return elapsed % duration
+/**
+ * Starts a sound and fades it in. Howler can't fade a streamed sound until it has actually started
+ * (the fade would wait in its queue for good), so the fade begins on its 'play' event.
+ */
+function playAndFadeIn(howl: Howl, to: () => number) {
+  const fade = () => howl.fade(howl.volume(), to(), CROSSFADE_MS)
+  if (howl.playing()) {
+    fade()
+    return
+  }
+  howl.once('play', fade)
+  howl.play()
 }
 
 function fadeOutAndUnload(howl: Howl, ms = CROSSFADE_MS) {
@@ -112,8 +116,7 @@ class Mixer {
   private startMusic(entry: { want: MusicWanted; howl: Howl }) {
     const { howl, want } = entry
     howl.seek(musicOffset(want, howl.duration(), this.now()))
-    if (!howl.playing()) howl.play()
-    howl.fade(howl.volume(), want.volume, CROSSFADE_MS)
+    playAndFadeIn(howl, () => entry.want.volume)
   }
 
   setAmbience(wanted: AmbienceWanted[]) {
@@ -131,10 +134,7 @@ class Mixer {
         continue
       }
       const howl = new Howl({ src: [want.url], format: [want.format], html5: true, loop: true, volume: 0 })
-      const start = () => {
-        if (!howl.playing()) howl.play()
-        howl.fade(0, this.ambience.get(want.id)?.level ?? want.level, CROSSFADE_MS)
-      }
+      const start = () => playAndFadeIn(howl, () => this.ambience.get(want.id)?.level ?? want.level)
       this.watch(howl, start)
       howl.once('load', start)
       this.ambience.set(want.id, { howl, level: want.level })

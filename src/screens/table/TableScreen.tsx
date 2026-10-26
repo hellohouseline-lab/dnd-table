@@ -13,6 +13,8 @@ import { saveDiceStyle } from '../../live/rolls.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useRollRequest } from '../../live/useRollRequest.ts'
+import { useLibrary, useStage, useStageImage } from '../../live/useStage.ts'
+import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { TableView } from './TableView.tsx'
 
 /** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
@@ -22,6 +24,10 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
   const party = useParty(campaignId, user.id)
   const online = useOnlineIds(campaignId, user.id)
   const asking = useRollRequest(campaignId, user.id, false)
+  const { stage } = useStage(campaignId, user.id)
+  const library = useLibrary(campaignId, user.id)
+  const stageImage = useStageImage(stage.imageId, library.assets)
+  const audio = useTableAudio(campaignId, user.id, stage, library.assets)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
@@ -72,6 +78,8 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       diceStyle={diceStyle}
       onDiceStyleChange={changeDiceStyle}
       asking={asking}
+      stageImage={stageImage}
+      audio={audio}
     />
   )
 }

@@ -6,9 +6,11 @@ import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
 import { CharacterEditorScreen } from '../screens/character/CharacterEditorScreen.tsx'
 import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
 import { DmPreview } from '../screens/dev/DmPreview.tsx'
+import { StagePreview } from '../screens/dev/StagePreview.tsx'
 import { CharacterFormPreview, JoinScreenPreview, TablePreview } from '../screens/dev/JoinScreenPreview.tsx'
 import { SheetScreen } from '../screens/sheet/SheetScreen.tsx'
 import { DmScreen } from '../screens/dm/DmScreen.tsx'
+import { StageScreen } from '../screens/stage/StageScreen.tsx'
 import { TableScreen } from '../screens/table/TableScreen.tsx'
 import { JoinByCodeScreen } from '../screens/join/JoinByCodeScreen.tsx'
 import { NotConnectedScreen } from '../screens/NotConnectedScreen.tsx'
@@ -50,6 +52,12 @@ const ROUTES: Route[] = [
     title: `DM screen · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <DmScreen key={campaignId} campaignId={campaignId} />,
+  },
+  {
+    pattern: '/c/:campaignId/stage',
+    title: `The Stage · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId }) => <StageScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/play',
@@ -100,6 +108,7 @@ const ROUTES: Route[] = [
           title: `Table preview · ${APP_NAME}`,
           render: () => <TablePreview key="asked" asked />,
         },
+        { pattern: '/dev/stage', title: `Stage preview · ${APP_NAME}`, render: () => <StagePreview /> },
         {
           pattern: '/dev/dm/:tab',
           title: `DM screen preview · ${APP_NAME}`,

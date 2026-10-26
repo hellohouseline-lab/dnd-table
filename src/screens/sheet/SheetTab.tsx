@@ -23,6 +23,8 @@ export type SheetRolls = {
   skill: (index: string) => void
   initiative: () => void
   attack: (attack: AttackEntry) => void
+  /** Spends one hit die on a short rest: rolls it and heals. */
+  hitDie?: () => void
   disabled?: boolean
 }
 
@@ -138,6 +140,17 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
               <span className={styles.muted}>
                 d{sheet.hitDice.die}, {sheet.hitDice.left} of {sheet.hitDice.total} left
               </span>
+              {rolls?.hitDie && (
+                <button
+                  type="button"
+                  className={buttonClassName('quiet')}
+                  disabled={rolls.disabled || sheet.hitDice.left === 0 || character.currentHp >= character.maxHp}
+                  title="On a short rest: roll one hit die and heal that much plus your Constitution modifier"
+                  onClick={rolls.hitDie}
+                >
+                  Spend one
+                </button>
+              )}
             </div>
           </Section>
           <Section title="Death saves">

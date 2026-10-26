@@ -16,6 +16,12 @@ import type { Member } from '../../live/campaigns.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Roll } from '../../live/rolls.ts'
 import type { RequestControls } from '../../live/useRollRequest.ts'
+import type { Asset } from '../../live/library.ts'
+import { NowPlaying } from '../../audio/SoundControls.tsx'
+import type { TableAudio } from '../../audio/useTableAudio.ts'
+import { StoredImage } from '../../components/StoredImage.tsx'
+import { hitDieHealing } from '../../rules/rest.ts'
+import { abilityModifier } from '../../rules/maths/core.ts'
 import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
 import type { Character, FeatureEntry } from '../../rules/character.ts'
 import { isSingleD20, type RollMode, type RollRequest } from '../../rules/dice.ts'
@@ -54,6 +60,10 @@ type TableViewProps = {
   thrower?: (request: RollRequest) => Promise<Roll>
   /** The DM's open request for a roll, if any, and the answers so far. */
   asking: Pick<RequestControls, 'request' | 'answers' | 'putAnswer'>
+  /** The picture the DM has put on stage. */
+  stageImage?: Asset | null
+  /** The table's sound in this tab (left out in the previews). */
+  audio?: TableAudio
 }
 
 const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; title: string }[] = [
@@ -81,6 +91,8 @@ export function TableView({
   onDiceStyleChange,
   thrower,
   asking,
+  stageImage = null,
+  audio,
 }: TableViewProps) {
   const [sheetTab, setSheetTab] = useState<SheetTabName | null>(null)
   const [mode, setMode] = useState<RollMode>('normal')
@@ -119,7 +131,26 @@ export function TableView({
     skill: (index) => roll(skillCheck(character, index, choices)),
     initiative: () => roll(initiativeRoll(character, choices)),
     attack: (attack) => roll(attackRoll(character, attack, choices)),
+    hitDie: () => void spendHitDie(),
     disabled: table.rolling,
+  }
+
+  async function spendHitDie() {
+    const con = abilityModifier(character.scores.constitution)
+    const thrown = await table.roll({
+      ...freeRoll([{ sides: character.hitDie as 6 | 8 | 10 | 12, count: 1 }], {
+        characterId: character.id,
+        modifier: con,
+      }),
+      label: 'Hit die',
+      parts: [{ label: 'Constitution', value: con }],
+    })
+    if (!thrown) return
+    const healing = hitDieHealing(thrown.total - con, con)
+    update({
+      currentHp: Math.min(character.maxHp, character.currentHp + healing),
+      hitDiceUsed: character.hitDiceUsed + 1,
+    })
   }
 
   async function answer() {
@@ -140,10 +171,23 @@ export function TableView({
   return (
     <main className={styles.screen}>
       <div className={styles.floor} aria-hidden="true" />
-      <div className={styles.scene}>
-        <div className={styles.sceneTitle}>The DM&rsquo;s scene appears here</div>
-        <div className={styles.sceneNote}>Scene art and battle maps arrive in the next milestones. Dice land here.</div>
-      </div>
+      {stageImage ? (
+        <div className={styles.stageImage}>
+          <StoredImage path={stageImage.path} alt={`The scene: ${stageImage.name}`} />
+        </div>
+      ) : (
+        <div className={styles.scene}>
+          <div className={styles.sceneTitle}>The DM&rsquo;s scene appears here</div>
+          <div className={styles.sceneNote}>
+            When the DM puts a picture on stage, it fills this space. Dice land here.
+          </div>
+        </div>
+      )}
+      {audio && (
+        <div className={styles.topChips}>
+          <NowPlaying audio={audio} />
+        </div>
+      )}
 
       <Hand
         className={styles.hand}

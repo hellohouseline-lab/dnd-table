@@ -37,6 +37,8 @@ async function load(bucket: Bucket, path: string): Promise<string | null> {
 
 /** A local address for a file, downloading it the first time. Null if it can't be had. */
 export function fileUrl(bucket: Bucket, path: string): Promise<string | null> {
+  // The design previews keep their made-up files in the browser already.
+  if (path.startsWith('blob:') || path.startsWith('data:')) return Promise.resolve(path)
   const key = `${bucket}/${path}`
   let url = urls.get(key)
   if (!url) {

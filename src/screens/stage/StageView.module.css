@@ -1,0 +1,627 @@
+.screen {
+  position: relative;
+  height: 100vh;
+  min-height: 720px;
+  overflow: hidden;
+  background: var(--bg-page);
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 66px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid #2e2533;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  color: var(--text-2);
+}
+
+.liveDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--fail);
+  box-shadow: 0 0 8px var(--fail);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.screenButton {
+  padding: 9px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--gold-rule);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.screenButton:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.body {
+  position: absolute;
+  top: 82px;
+  bottom: 16px;
+  left: 16px;
+  right: 280px;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) 290px;
+  gap: 16px;
+}
+
+.screen > .cameras {
+  top: 82px;
+}
+
+.column,
+.centre {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel {
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--panel-fill);
+  border: 1px solid var(--gold-rule);
+  box-shadow:
+    inset 0 0 0 3px var(--panel-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.later {
+  border-style: dashed;
+  border-color: var(--chip-border);
+  box-shadow: none;
+}
+
+.panelTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--label);
+}
+
+.sceneInput {
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold);
+}
+
+/* What everyone sees */
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.previewBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.screenPreview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-scene);
+  border: 1px solid var(--gold-rule);
+}
+
+.nothing {
+  position: absolute;
+  inset: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  font-style: italic;
+  color: #8f8780;
+}
+
+.nothingTitle {
+  font-family: var(--font-heading);
+  font-style: normal;
+  font-size: 24px;
+  letter-spacing: 0.08em;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.control {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.control:hover:not(:disabled) {
+  border-color: var(--gold-rule);
+}
+
+.control:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* The art library */
+
+.library {
+  flex: 1 0 auto;
+}
+
+.libraryBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.artTabs {
+  display: flex;
+  gap: 6px;
+}
+
+.artTab {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.artTabOn {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+
+.uploadButton,
+.uploadSmall {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  border: 1px dashed var(--gold-rule);
+  color: var(--gold-light);
+  cursor: pointer;
+}
+
+.uploadButton {
+  height: 34px;
+  padding: 0 12px;
+  font-size: 15px;
+}
+
+.uploadSmall {
+  align-self: flex-start;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.uploadButton:hover,
+.uploadSmall:hover {
+  border-style: solid;
+}
+
+.uploadButton input,
+.uploadSmall input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.busy {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.emptyNote {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--label);
+  list-style: none;
+}
+
+.artGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.artTile {
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  overflow: hidden;
+}
+
+.artOnStage {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.artButton {
+  width: 100%;
+  padding: 6px 6px 8px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.artThumb {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #2a2333;
+}
+
+.artName {
+  font-size: 15px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.liveTag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(13, 10, 18, 0.88);
+  border: 1px solid var(--gold-light);
+  color: var(--gold-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.remove {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--label);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.remove:hover {
+  color: var(--fail);
+}
+
+.artTile .remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(13, 10, 18, 0.8);
+  opacity: 0;
+}
+
+.artTile:hover .remove,
+.artTile .remove:focus-visible {
+  opacity: 1;
+}
+
+/* Music, ambience and effects */
+
+.nowRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.playButton {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playButton:disabled {
+  opacity: 0.4;
+}
+
+.nowText {
+  flex: 1;
+  min-width: 0;
+}
+
+.trackName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trackMeta {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.textButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.slider {
+  width: 100%;
+  accent-color: var(--gold);
+}
+
+.moods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mood {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.moodOn {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+
+.tracks,
+.levels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.trackOn {
+  background: rgba(212, 175, 90, 0.12);
+}
+
+.trackPlay {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: 15px;
+  text-align: left;
+}
+
+.trackPlay span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trackPlay svg {
+  color: var(--gold);
+  flex: 0 0 auto;
+}
+
+.safe {
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 1px solid var(--pass);
+  background: none;
+  color: var(--pass);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.unsafe {
+  border-color: var(--fail);
+  color: var(--fail);
+}
+
+.level {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 8px;
+}
+
+.levelName {
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.padSlot {
+  position: relative;
+}
+
+.padButton {
+  width: 100%;
+  height: 52px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-size: 14px;
+}
+
+button.padButton:hover {
+  border-color: var(--gold-rule);
+}
+
+button.padButton:active {
+  background: rgba(212, 175, 90, 0.18);
+}
+
+.padEmpty {
+  border-style: dashed;
+  color: var(--label);
+}
+
+.padName {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.padKey {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  color: var(--label);
+}
+
+.padRemove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+}
+
+.padSlot:hover .padRemove,
+.padRemove:focus-visible {
+  opacity: 1;
+}
