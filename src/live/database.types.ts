@@ -290,6 +290,126 @@ export type Database = {
           },
         ]
       }
+      combat_event_secrets: {
+        Row: {
+          ac: number | null
+          actor_before: Json | null
+          campaign_id: string
+          event_id: string
+          target_before: Json | null
+        }
+        Insert: {
+          ac?: number | null
+          actor_before?: Json | null
+          campaign_id: string
+          event_id: string
+          target_before?: Json | null
+        }
+        Update: {
+          ac?: number | null
+          actor_before?: Json | null
+          campaign_id?: string
+          event_id?: string
+          target_before?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combat_event_secrets_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combat_event_secrets_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "combat_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      combat_events: {
+        Row: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        Insert: {
+          actor_id?: string | null
+          campaign_id: string
+          created_at?: string
+          encounter_id: string
+          id?: string
+          kind: string
+          roll_id?: string | null
+          round: number
+          seq?: never
+          shown?: Json
+          target_id?: string | null
+          undone?: boolean
+        }
+        Update: {
+          actor_id?: string | null
+          campaign_id?: string
+          created_at?: string
+          encounter_id?: string
+          id?: string
+          kind?: string
+          roll_id?: string | null
+          round?: number
+          seq?: never
+          shown?: Json
+          target_id?: string | null
+          undone?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combat_events_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "combatants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combat_events_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combat_events_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combat_events_roll_id_fkey"
+            columns: ["roll_id"]
+            isOneToOne: false
+            referencedRelation: "rolls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combat_events_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "combatants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       combatant_secrets: {
         Row: {
           ac: number
@@ -337,45 +457,72 @@ export type Database = {
       }
       combatants: {
         Row: {
+          action_used: boolean
+          attacks_made: number
+          bonus_used: boolean
           campaign_id: string
           character_id: string | null
           conditions: string[]
           created_at: string
+          disengaged: boolean
+          dodging: boolean
           encounter_id: string
+          extra_feet: number
+          feet_moved: number
           health: string
           id: string
           initiative: number | null
           kind: string
+          reaction_used: boolean
           revealed: boolean
           shown_name: string
+          speed: number
           tiebreak: number
         }
         Insert: {
+          action_used?: boolean
+          attacks_made?: number
+          bonus_used?: boolean
           campaign_id: string
           character_id?: string | null
           conditions?: string[]
           created_at?: string
+          disengaged?: boolean
+          dodging?: boolean
           encounter_id: string
+          extra_feet?: number
+          feet_moved?: number
           health?: string
           id?: string
           initiative?: number | null
           kind: string
+          reaction_used?: boolean
           revealed?: boolean
           shown_name: string
+          speed?: number
           tiebreak?: number
         }
         Update: {
+          action_used?: boolean
+          attacks_made?: number
+          bonus_used?: boolean
           campaign_id?: string
           character_id?: string | null
           conditions?: string[]
           created_at?: string
+          disengaged?: boolean
+          dodging?: boolean
           encounter_id?: string
+          extra_feet?: number
+          feet_moved?: number
           health?: string
           id?: string
           initiative?: number | null
           kind?: string
+          reaction_used?: boolean
           revealed?: boolean
           shown_name?: string
+          speed?: number
           tiebreak?: number
         }
         Relationships: [
@@ -893,6 +1040,26 @@ export type Database = {
         Args: { p_code: string; p_display_name: string }
         Returns: string
       }
+      move_token: {
+        Args: { p_token_id: string; p_x: number; p_y: number }
+        Returns: {
+          campaign_id: string
+          character_id: string | null
+          combatant_id: string | null
+          created_at: string
+          hidden: boolean
+          id: string
+          map_id: string
+          x: number
+          y: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "tokens"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       override_roll: {
         Args: { p_passed: boolean; p_roll_id: string }
         Returns: {
@@ -935,6 +1102,10 @@ export type Database = {
       }
       renew_camera_key: { Args: { p_campaign_id: string }; Returns: undefined }
       renew_join_code: { Args: { p_campaign_id: string }; Returns: string }
+      resolve_attack: {
+        Args: { p_attacker_id: string; p_roll: Json; p_target_id: string }
+        Returns: Json
+      }
       roll_initiative: {
         Args: { p_combatant_id: string; p_roll: Json }
         Returns: {
@@ -966,6 +1137,28 @@ export type Database = {
         }
       }
       server_time: { Args: never; Returns: string }
+      start_fight: {
+        Args: {
+          p_campaign_id: string
+          p_character_ids: string[]
+          p_map_id: string
+        }
+        Returns: {
+          campaign_id: string
+          current_id: string | null
+          ended_at: string | null
+          id: string
+          round: number
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "encounters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       throw_dice: {
         Args: { p_campaign_id: string; p_roll: Json }
         Returns: {
@@ -992,6 +1185,52 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "rolls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      undo_event: {
+        Args: { p_event_id: string }
+        Returns: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combat_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      use_action: {
+        Args: { p_combatant_id: string; p_what: string }
+        Returns: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combat_events"
           isOneToOne: true
           isSetofReturn: false
         }

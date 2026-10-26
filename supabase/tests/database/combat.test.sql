@@ -4,7 +4,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(37);
+select plan(38);
 
 insert into auth.users (id, email) values
   ('ffffffff-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -161,24 +161,32 @@ select is((select count(*)::int from public.tokens), 2, 'With the map on stage, 
 select ok(private.can_see_art(current_setting('test.campaign') || '/map.webp'), 'Players can open the map on stage');
 select is((select name from public.assets where kind = 'art'), 'Tavern map', 'Players see the map''s details, for its grid');
 update public.tokens set x = 5 where character_id = current_setting('test.fighter')::uuid;
-select is((select x from public.tokens where character_id is not null), 5::smallint, 'A player moves their own token');
+select is((select x from public.tokens where character_id is not null), 3::smallint, 'Players don''t change a token directly');
+select throws_ok(
+  $$ select public.move_token((select id from public.tokens where character_id is not null), 5, 3) $$,
+  '42501', 'Wait for your turn to move',
+  'In a fight, a player moves their miniature only on their turn'
+);
 update public.tokens set x = 1 where combatant_id = current_setting('test.goblin')::uuid;
 select is(
   (select x from public.tokens where combatant_id = current_setting('test.goblin')::uuid),
   8::smallint,
   'A player cannot move a monster'
 );
-select throws_ok(
-  $$ update public.tokens set hidden = true where character_id = current_setting('test.fighter')::uuid $$,
-  '42501', null,
+update public.tokens set hidden = true where character_id = current_setting('test.fighter')::uuid;
+select is(
+  (select hidden from public.tokens where character_id = current_setting('test.fighter')::uuid), false,
   'A player cannot hide their token'
 );
 
 set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000001", "role": "authenticated"}';
 update public.stage set players_move_tokens = false where campaign_id = current_setting('test.campaign')::uuid;
 set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000002", "role": "authenticated"}';
-update public.tokens set x = 6 where character_id = current_setting('test.fighter')::uuid;
-select is((select x from public.tokens where character_id is not null), 5::smallint, 'Players can''t move tokens when the DM says not to');
+select throws_ok(
+  $$ select public.move_token((select id from public.tokens where character_id is not null), 6, 3) $$,
+  '42501', 'The DM is moving the miniatures for now',
+  'Players can''t move tokens when the DM says not to'
+);
 
 -- ---------------------------------------------------------------------------------------------
 -- Turns: fighter 18, Goblin A 15, Goblin B 9
