@@ -19,6 +19,7 @@ import {
   listEvents,
   listPrompts,
   rollConcentrationSave,
+  featureInFight,
   opportunityAttack,
   passReaction,
   resolveAttack,
@@ -53,6 +54,7 @@ import {
 } from './combat.ts'
 import { messageFor } from './errors.ts'
 import type { Roll } from './rolls.ts'
+import type { FeatureCost } from '../rules/features.ts'
 
 type Fight = NonNullable<FightState>
 
@@ -110,6 +112,10 @@ export type FightControls = {
   ) => Promise<Roll | null>
   /** The Constitution save to keep concentrating after taking damage. Throws in plain words if refused. */
   concentrationSave: (characterId: string) => Promise<Roll>
+  /** Uses a feature (Rage): spends its part of the turn, named in the feed. Throws in plain words if refused. */
+  applyFeature: (combatant: Combatant, name: string, cost: FeatureCost) => Promise<CombatEvent>
+  /** Takes back one thing that happened: a player their own newest action, the DM anything newest first. */
+  takeBack: (event: CombatEvent) => Promise<void>
 }
 
 /** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
@@ -452,6 +458,26 @@ export function useFight(campaignId: string, userId: string): FightControls {
     return roll
   }, [])
 
+  const applyFeature = useCallback(
+    async (combatant: Combatant, name: string, cost: FeatureCost) => {
+      setError(null)
+      const event = await featureInFight(combatant.id, name, cost)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return event
+    },
+    [reload],
+  )
+
+  const takeBack = useCallback(
+    async (event: CombatEvent) => {
+      setError(null)
+      await undoEvent(event.id)
+      reload()
+    },
+    [reload],
+  )
+
   const undo = useCallback(() => {
     const newest = [...events].reverse().find((e) => !e.undone)
     if (!newest) return
@@ -472,6 +498,8 @@ export function useFight(campaignId: string, userId: string): FightControls {
     deathSave,
     cast,
     concentrationSave,
+    applyFeature,
+    takeBack,
     start,
     addMonsters: addMonstersTo,
     rollInitiative: rollFor,

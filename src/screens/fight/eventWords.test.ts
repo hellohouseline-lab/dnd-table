@@ -81,6 +81,12 @@ describe('the feed in plain words', () => {
     ).toBe('Thorin hits Goblin A with Glaive as they move away for 7 slashing (rolled 15).')
   })
 
+  it('names a feature used in a fight', () => {
+    const used = { ...attack({ what: 'bonus', feature: 'Rage' }), kind: 'action' as const }
+    expect(eventWords(used, { nameOf })).toBe('Thorin uses Rage.')
+    expect(eventWords(used, { nameOf, youId: 'thorin' })).toBe('You use Rage.')
+  })
+
   it('says how death saves went', () => {
     const save = (shown: CombatEvent['shown']) => ({
       ...attack(shown, 'thorin', 'thorin'),

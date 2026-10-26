@@ -24,6 +24,10 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
   const actor = you ? 'You' : nameOf(event.actorId)
   const verb = (they: string, yourself: string) => (you ? yourself : they)
 
+  if (event.kind === 'action' && event.shown.feature) {
+    return `${actor} ${verb('uses', 'use')} ${event.shown.feature}.`
+  }
+
   if (event.kind === 'action') {
     const [they, yourself] = ACTIONS[event.shown.what ?? 'action'] ?? ACTIONS.action
     return `${actor} ${verb(they, yourself)}.`

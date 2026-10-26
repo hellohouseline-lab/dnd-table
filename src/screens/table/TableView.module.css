@@ -552,3 +552,13 @@
   right: 352px;
   z-index: 30;
 }
+
+/* A card's side panel, and the Undo after using a feature: right of the plate, above the hand. */
+.cardPanel {
+  position: absolute;
+  left: 352px;
+  bottom: 200px;
+  z-index: 13;
+  max-height: calc(100% - 320px);
+  display: flex;
+}

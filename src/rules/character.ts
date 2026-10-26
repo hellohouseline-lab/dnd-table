@@ -1,6 +1,7 @@
 // A character as the app works with it. Everything here is typed in by the player (Phase 1 has no
 // creation wizard); every bonus is worked out from it by deriveSheet in sheet.ts.
 
+import type { Effect } from './features.ts'
 import type { Ability, AbilityScores } from './abilities.ts'
 
 /** A weapon from the SRD list (`weapon` set), or one typed in by hand (`weapon` null). */
@@ -89,6 +90,8 @@ export type Character = {
   concentration: string | null
   /** The Constitution save owed after taking damage while concentrating (set by the server). */
   concentrationDc: number | null
+  /** Things running on the character, such as Raging. */
+  effects: Effect[]
   portraitPath: string | null
   updatedAt: string
 }
@@ -114,6 +117,7 @@ export type CharacterBuild = Omit<
   | 'inspiration'
   | 'concentration'
   | 'concentrationDc'
+  | 'effects'
   | 'portraitPath'
   | 'updatedAt'
 >

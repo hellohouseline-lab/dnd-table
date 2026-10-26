@@ -56,3 +56,44 @@
   font-style: italic;
   color: var(--text-3);
 }
+
+.option {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--pass);
+  background: rgba(134, 212, 232, 0.08);
+  color: var(--pass);
+  font-size: 14px;
+}
+
+.option:hover {
+  background: rgba(134, 212, 232, 0.18);
+}
+
+.optionText {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+/* Something running now, such as Raging. */
+.effect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 4px 1px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  font-size: 14px;
+}
+
+.end {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-3);
+  font-size: 12px;
+}

@@ -307,6 +307,30 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
     return { ...roll, passed: hit, passedByDice: hit }
   }
 
+  // Undo, as undo_event: the newest thing that happened, put back.
+  function undoNewest() {
+    const newest = [...latest.current.events].reverse().find((e) => !e.undone)
+    const saved = newest ? undos.current.get(newest.id) : undefined
+    if (!newest || !saved) return
+    if (saved.target && 'characterId' in saved.target) onCharacter?.(saved.target.characterId, saved.target.before)
+    else if (saved.target) {
+      const { secret, health } = saved.target
+      set((f) => ({
+        ...f,
+        secrets: f.secrets.map((s) => (s.combatantId === secret.combatantId ? secret : s)),
+        combatants: f.combatants.map((c) => (c.id === secret.combatantId ? { ...c, health } : c)),
+      }))
+    }
+    const actor = saved.actor
+    if (actor) setTurn(actor.id, (turn) => ({ ...actor.turn, feetMoved: turn.feetMoved }))
+    if (saved.caster) {
+      const { spellcasting, concentration } = saved.caster.before
+      onCharacter?.(saved.caster.characterId, { spellcasting, concentration })
+    }
+    latest.current.events = latest.current.events.map((e) => (e.id === newest.id ? { ...e, undone: true } : e))
+    setEvents(latest.current.events)
+  }
+
   return {
     fight,
     status: 'ready',
@@ -517,28 +541,33 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         { target: null, actor: { id: me.id, turn: me.turn } },
       )
     },
-    undo: () => {
-      const newest = [...latest.current.events].reverse().find((e) => !e.undone)
-      const saved = newest ? undos.current.get(newest.id) : undefined
-      if (!newest || !saved) return
-      if (saved.target && 'characterId' in saved.target) onCharacter?.(saved.target.characterId, saved.target.before)
-      else if (saved.target) {
-        const { secret, health } = saved.target
-        set((f) => ({
-          ...f,
-          secrets: f.secrets.map((s) => (s.combatantId === secret.combatantId ? secret : s)),
-          combatants: f.combatants.map((c) => (c.id === secret.combatantId ? { ...c, health } : c)),
-        }))
+    applyFeature: async (combatant, name, cost) => {
+      const me = latest.current.fight?.combatants.find((c) => c.id === combatant.id)
+      if (!me) throw new Error('No fight')
+      if (cost === 'bonus' && me.turn.bonusUsed) throw new Error('You have used your bonus action this turn.')
+      if (cost === 'action' && (me.turn.actionUsed || me.turn.attacksMade > 0)) {
+        throw new Error('You have used your action this turn.')
       }
-      const actor = saved.actor
-      if (actor) setTurn(actor.id, (turn) => ({ ...actor.turn, feetMoved: turn.feetMoved }))
-      if (saved.caster) {
-        const { spellcasting, concentration } = saved.caster.before
-        onCharacter?.(saved.caster.characterId, { spellcasting, concentration })
-      }
-      latest.current.events = latest.current.events.map((e) => (e.id === newest.id ? { ...e, undone: true } : e))
-      setEvents(latest.current.events)
+      if (cost === 'reaction' && me.turn.reactionUsed) throw new Error('You have used your reaction.')
+      setTurn(me.id, (turn) => ({
+        ...turn,
+        actionUsed: cost === 'surge' ? false : turn.actionUsed || cost === 'action',
+        attacksMade: cost === 'surge' ? 0 : turn.attacksMade,
+        bonusUsed: turn.bonusUsed || cost === 'bonus',
+        reactionUsed: turn.reactionUsed || cost === 'reaction',
+      }))
+      post(
+        { kind: 'action', actorId: me.id, targetId: null, rollId: null, shown: { what: cost, feature: name } },
+        { target: null, actor: { id: me.id, turn: me.turn } },
+      )
+      return latest.current.events[latest.current.events.length - 1]
     },
+    takeBack: async (event) => {
+      const newest = [...latest.current.events].reverse().find((e) => !e.undone)
+      if (newest?.id !== event.id) throw new Error('Undo the newer things first.')
+      undoNewest()
+    },
+    undo: () => undoNewest(),
     cast: async (caster, spell, slot, targetIds, roll, area) => {
       const f = latest.current.fight
       const me = f?.combatants.find((c) => c.id === caster.id)

@@ -313,7 +313,7 @@ export function ActingNow({
             onSave={onConcentrationSave && (() => row.character && onConcentrationSave(row.character))}
             rolling={rolling}
           />
-          <AtAGlance character={row.character} />
+          <AtAGlance character={row.character} spells={spells} />
           <SheetLink
             campaignId={campaignId}
             characterId={row.character.id}

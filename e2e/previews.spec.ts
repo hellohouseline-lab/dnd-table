@@ -7,7 +7,10 @@ import { expect, test } from '@playwright/test'
 test('the DM asks for a save, sees the answers come in, changes one and plays on', async ({ page }) => {
   await page.goto('#/dev/dm/party')
   await page.getByRole('button', { name: 'Ask for a roll' }).click()
-  await page.getByRole('button', { name: /Constitution save/ }).click()
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: /Constitution save/ })
+    .click()
   await expect(page.getByText('Everyone makes a Constitution saving throw. 15 or more passes.')).toBeVisible()
   await page.getByRole('button', { name: 'Send to players' }).click()
 
@@ -138,11 +141,16 @@ test('a player attacks a goblin by picking it, and their action is spent', async
     .getByRole('button', { name: /Longsword/ })
     .first()
     .click()
-  await expect(page.getByRole('status').filter({ hasText: 'Pick a target for Longsword' })).toBeVisible()
+  const panel = page.getByRole('region', { name: 'Longsword' })
+  await expect(panel).toContainText('+5 to hit')
+  await expect(panel).toContainText('Click who to attack')
   await page
     .getByRole('list', { name: 'Turn order' })
     .getByRole('button', { name: /Goblin A/ })
     .click()
+  await expect(panel).toContainText('Target: Goblin A (5 ft away)')
+  await panel.getByRole('button', { name: 'Attack Goblin A' }).click()
+  await expect(panel).toBeHidden()
   const feed = page.getByRole('region', { name: 'What happened' })
   await expect(feed).toContainText(/You (hit|miss) Goblin A with Longsword/)
   const turn = page.getByRole('region', { name: 'This turn' })
@@ -151,7 +159,7 @@ test('a player attacks a goblin by picking it, and their action is spent', async
     .getByRole('button', { name: /Longsword/ })
     .first()
     .click()
-  await expect(page.getByText('You have used your action this turn.')).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Longsword' })).toContainText('Your action: used this turn')
 })
 
 test('a player can only attack what their weapon reaches', async ({ page }) => {
@@ -226,11 +234,15 @@ test('a wizard casts Magic Missile at a goblin, which spends the action', async 
   await page.getByRole('button', { name: 'Spells', exact: true }).click()
   const hand = page.getByLabel('Your hand')
   await hand.getByRole('button', { name: /Magic Missile/ }).click()
-  await expect(page.getByRole('status').filter({ hasText: 'Cast Magic Missile: click who' })).toBeVisible()
+  const panel = page.getByRole('region', { name: 'Magic Missile' })
+  await expect(panel).toContainText('3d4+3 force')
+  await expect(panel).toContainText('Click who it’s for')
   await page
     .getByRole('list', { name: 'Turn order' })
     .getByRole('button', { name: /Goblin A/ })
     .click()
+  await expect(panel).toContainText('For Goblin A')
+  await panel.getByRole('button', { name: 'Cast Magic Missile' }).click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
     /Your Magic Missile hits Goblin A for \d+ force/,
   )
@@ -249,14 +261,16 @@ test('a wizard puts Darkness on the map and concentrates on it', async ({ page }
     .getByLabel('Your hand')
     .getByRole('button', { name: /Darkness/ })
     .click()
-  await expect(page.getByRole('status').filter({ hasText: 'Cast Darkness: click where it goes' })).toContainText(
-    'Uses a 2nd-level slot',
-  )
+  const panel = page.getByRole('region', { name: 'Darkness' })
+  await expect(panel).toContainText('click where it goes')
+  await expect(panel).toContainText('Uses a 2nd-level slot')
   const map = page.locator('canvas').first()
   const box = await map.boundingBox()
   if (!box) throw new Error('No map')
   await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.5)
   await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.5)
+  await expect(panel).toContainText('Placed on the map')
+  await panel.getByRole('button', { name: 'Cast Darkness' }).click()
   await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeVisible()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You cast Darkness.')
   await page.getByRole('button', { name: 'Lost it' }).click()
@@ -277,4 +291,37 @@ test('a pop-up closes with its ✕, Escape, or a click outside it', async ({ pag
   await ask.click()
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
+})
+
+test('a fighter uses Second Wind from its card, and takes it back', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  await page
+    .getByLabel('Your hand')
+    .getByRole('button', { name: /Second Wind/ })
+    .click()
+  const panel = page.getByRole('region', { name: 'Second Wind' })
+  await expect(panel).toContainText('Regain 1d10 + 2 hit points')
+  await expect(panel).toContainText('Your bonus action: ready')
+  await panel.getByRole('button', { name: 'Roll Second Wind' }).click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You use Second Wind.')
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Bonus action\s*Used/)
+  await page
+    .getByRole('status')
+    .filter({ hasText: 'You used Second Wind.' })
+    .getByRole('button', { name: 'Undo' })
+    .click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText('(undone)')
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Bonus action\s*Ready/)
+})
+
+test('the DM asks the party for a Perception check in one click', async ({ page }) => {
+  await page.goto('#/dev/dm/party')
+  const quick = page.getByRole('region', { name: 'Quick checks' })
+  await quick.getByRole('button', { name: 'Perception', exact: true }).click()
+  await quick.getByRole('button', { name: 'Hard 20' }).click()
+  await page.getByRole('checkbox', { name: 'Elowen rolls the quick check' }).check()
+  await quick.getByRole('button', { name: 'Perception: ask 2 players' }).click()
+  const results = page.getByRole('region', { name: 'Perception check' })
+  await expect(results).toContainText('Needed 20 or more')
+  await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
 })

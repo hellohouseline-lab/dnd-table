@@ -17,6 +17,7 @@ import { threatReach, type TurnRecord } from '../rules/turn.ts'
 import type { AreaTemplate } from '../rules/areas.ts'
 import type { DiceGroup } from '../rules/dice.ts'
 import type { SpellKind } from '../rules/spells.ts'
+import type { FeatureCost } from '../rules/features.ts'
 import { areaToJson, type AreaTone } from './areas.ts'
 import type { Json } from './database.types.ts'
 import type { Defences } from '../rules/damage.ts'
@@ -101,6 +102,8 @@ export type CombatEvent = {
     heal?: number | null
     /** For a concentration save: whether the spell held. */
     kept?: boolean
+    /** For a feature used in a fight: its name ("Rage"). */
+    feature?: string
   }
   undone: boolean
   seq: number
@@ -534,7 +537,14 @@ export async function spendAction(combatantId: string, what: TurnAction): Promis
   return rowToEvent(data)
 }
 
-/** DM: takes back the newest thing that happened. */
+/** Uses a feature in a fight: spends its part of the turn and names it in the feed. */
+export async function featureInFight(combatantId: string, name: string, cost: FeatureCost): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('use_feature', { p_combatant_id: combatantId, p_name: name, p_cost: cost })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
+}
+
+/** Takes back the newest thing that happened (a player only their own action). */
 export async function undoEvent(eventId: string): Promise<CombatEvent> {
   const { data, error } = await db().rpc('undo_event', { p_event_id: eventId })
   if (error) throw fromServerRule(error)

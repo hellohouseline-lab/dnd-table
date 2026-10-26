@@ -150,3 +150,68 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Rolls the quick check. */
+.tick {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--gold);
+  flex: none;
+}
+
+.effect {
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  font-size: 14px;
+}
+
+.turn {
+  font-size: 14px;
+}
+
+.more summary {
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--label);
+}
+
+.moreSection {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.moreTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.moreLine {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.moreLine strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.later {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-3);
+}

@@ -47,7 +47,16 @@ import { requestChips, type CameraChip } from '../rolls/requestStatus.ts'
 import { RollPrompt, RollResult } from '../rolls/RollPrompt.tsx'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
 import type { CombatEvent } from '../../live/combat.ts'
-import { attackMode, attacksLeft, attacksPerAction, inReach, movementLeft, weaponReach } from '../../rules/turn.ts'
+import {
+  actionFree,
+  attackMode,
+  attacksLeft,
+  attacksPerAction,
+  inReach,
+  movementLeft,
+  targetEffects,
+  weaponReach,
+} from '../../rules/turn.ts'
 import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
 import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/fightRows.ts'
@@ -63,6 +72,10 @@ import { slotChoices, spellEffect, spellModifier } from '../../rules/spells.ts'
 import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { deathSavePatch, isDying } from '../../rules/dying.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
+import { CardPanel, UndoChip } from './CardPanel.tsx'
+import { attackDetails, featureDetails, spellDetails } from './cardDetails.ts'
+import { featureCost, featureRule, isRaging, RAGE } from '../../rules/features.ts'
+import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
 import styles from './TableView.module.css'
@@ -94,6 +107,15 @@ const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
 
 const NO_CAST = () => Promise.reject(new Error('There’s no fight going on.'))
 
+/** The card whose side panel is open. */
+type Card =
+  | { kind: 'attack'; attack: AttackEntry; target: FightRow | null }
+  | { kind: 'spell'; spell: SrdSpell }
+  | { kind: 'feature'; feature: FeatureEntry }
+
+/** A feature just used: what to put back, and its event in the fight (for its part of the turn). */
+type LastUse = { text: string; revert: TrackerPatch; event: CombatEvent | null }
+
 /** A fight and the battle map, as a player sees them. */
 export type PlayerCombatProps = {
   fight: FightControls['fight']
@@ -106,6 +128,9 @@ export type PlayerCombatProps = {
   /** Spells: casting one, and the save to keep concentrating after taking damage. */
   cast: FightControls['cast']
   concentrationSave: FightControls['concentrationSave']
+  /** Features used in a fight (Rage), and taking your own newest action back. */
+  applyFeature: FightControls['applyFeature']
+  takeBack: FightControls['takeBack']
   /** Areas on the battle map (Darkness, a dragon's breath). */
   areas: Area[]
   /** Chances to strike someone moving out of your reach (opportunity attacks). */
@@ -157,6 +182,10 @@ export function TableView({
   const [inspected, setInspected] = useState<string | null>(null)
   // The attack you're about to make, while you pick its target.
   const [aiming, setAiming] = useState<AttackEntry | null>(null)
+  // The card whose panel is open: an attack (and its target), a spell or a feature.
+  const [card, setCard] = useState<Card | null>(null)
+  // The last feature used, for a while, so it can be undone.
+  const [lastUse, setLastUse] = useState<LastUse | null>(null)
   const [fightProblem, setFightProblem] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName | null>(null)
   const [mode, setMode] = useState<RollMode>('normal')
@@ -224,41 +253,90 @@ export function TableView({
   }
   const dyingNow = Boolean(fight && mine && character.currentHp === 0)
 
-  // Attacking in a fight: pick the attack, then its target; the server does the rest.
+  // Attacking: the card's panel opens; in a fight, pick the target, then press the panel's button.
+  // The server does the rest.
   function attackWith(attack: AttackEntry) {
     setFightProblem(null)
-    if (!fight || !mine) return roll(attackRoll(character, attack, choices))
-    if (!myTurn) return setFightProblem('Wait for your turn to attack.')
-    if (attacksLeft(mine.turn, perAction) === 0) return setFightProblem('You have used your action this turn.')
-    setAiming(attack)
+    casting.cancel()
+    setCard({ kind: 'attack', attack, target: null })
+    setAiming(fight && mine && myTurn && attacksLeft(mine.turn, perAction) > 0 ? attack : null)
   }
 
-  function pickTarget(row: FightRow) {
-    if (!aiming || !mine || !combat) return
+  // How far a target is, whether the attack reaches, and what changes the roll.
+  function attackPlan(attack: AttackEntry, row: FightRow) {
     const targetToken = tokens.find((t) =>
       row.combatant.characterId ? t.characterId === row.combatant.characterId : t.combatantId === row.combatant.id,
     )
     const feet = myToken && targetToken ? feetBetween(myToken, targetToken) : null
-    const range = feet === null ? null : inReach(weaponReach(findWeapon(aiming.weapon)), feet)
-    if (range && !range.allowed) {
-      setFightProblem(`${range.why}. Move closer, or pick another attack.`)
-      setAiming(null)
-      return
-    }
+    const range = feet === null ? null : inReach(weaponReach(findWeapon(attack.weapon)), feet)
     const target = {
       conditions: row.character?.conditions ?? row.combatant.conditions,
       dodging: row.combatant.turn.dodging,
     }
+    const reasons = [
+      ...targetEffects(target, feet),
+      ...(range?.disadvantage ? [{ mode: 'disadvantage' as const, reason: range.why ?? 'Long range' }] : []),
+    ]
     const targetMode = attackMode(mode, target, feet)
-    const request = attackRoll(character, aiming, {
+    const request = attackRoll(character, attack, {
       ...choices,
       mode: range?.disadvantage ? combineModes([targetMode, 'disadvantage']) : targetMode,
       secret: false,
     })
+    return { feet, range, reasons, request }
+  }
+
+  function pickTarget(row: FightRow) {
+    if (!aiming) return
+    const { range } = attackPlan(aiming, row)
+    if (range && !range.allowed) {
+      setFightProblem(`${range.why}. Move closer, or pick another attack.`)
+      return
+    }
+    setFightProblem(null)
+    setCard({ kind: 'attack', attack: aiming, target: row })
     setAiming(null)
+  }
+
+  function rollAttack(attack: AttackEntry, row: FightRow | null) {
+    setCard(null)
+    setAiming(null)
+    if (!fight || !mine || !combat) return roll(attackRoll(character, attack, choices))
+    if (!row) return
+    const { request } = attackPlan(attack, row)
     setMode('normal')
     void table.rollWith(() => combat.attack(mine, row.combatant, request))
   }
+
+  function openFeature(feature: FeatureEntry) {
+    closeCard()
+    setCard({ kind: 'feature', feature })
+  }
+
+  function closeCard() {
+    setCard(null)
+    setAiming(null)
+    casting.cancel()
+  }
+
+  // Escape closes the card's panel.
+  useEffect(() => {
+    if (!card) return
+    const press = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setCard(null)
+      setAiming(null)
+    }
+    window.addEventListener('keydown', press)
+    return () => window.removeEventListener('keydown', press)
+  }, [card])
+
+  // Undo stays on offer for half a minute.
+  useEffect(() => {
+    if (!lastUse) return
+    const timer = setTimeout(() => setLastUse(null), 30_000)
+    return () => clearTimeout(timer)
+  }, [lastUse])
 
   // Escape puts the attack away again.
   useEffect(() => {
@@ -289,16 +367,21 @@ export function TableView({
   // Spells from the hand: in a fight, a target or where it goes next (the server settles it);
   // outside one, the slot is spent and the dice rolled here.
   const spellList = useSrd(loadSpells)
-  const casting = useCasting(combat?.cast ?? NO_CAST, table.rollWith, tokens, rows)
+  const casting = useCasting(combat?.cast ?? NO_CAST, table.rollWith, tokens, rows, true)
   const aimingSpell = casting.casting
   function castSpell(spell: SrdSpell) {
     setFightProblem(null)
     casting.clearProblem()
+    setAiming(null)
+    setCard({ kind: 'spell', spell })
     if (fight && mine && myRow) {
-      setAiming(null)
-      casting.begin(myRow, spell)
-      return
+      if (whyNot(spell, character, mine, myTurn) === null) casting.begin(myRow, spell)
+      else casting.cancel()
     }
+  }
+
+  // Outside a fight: spend the slot, start concentrating, and roll what it does.
+  function castOutside(spell: SrdSpell) {
     const slot = slotChoices(character.spellcasting, spell.level)[0]
     if (slot === undefined) return setFightProblem(`No slots left for ${spell.name}.`)
     const patch: TrackerPatch = {}
@@ -379,12 +462,203 @@ export function TableView({
     if (thrown) asking.putAnswer(thrown)
   }
 
-  function spendFeature(feature: FeatureEntry) {
-    update({
+  // Using a feature: its part of the turn (in a fight), a use, and what it does to the sheet,
+  // with Undo for a while. The fight part goes first, so a refusal changes nothing.
+  async function playFeature(feature: FeatureEntry) {
+    setFightProblem(null)
+    const rule = featureRule(feature.name)
+    const cost = featureCost(feature.name, feature.description)
+    let event: CombatEvent | null = null
+    if (fight && mine && combat && cost !== 'free') {
+      try {
+        event = await combat.applyFeature(mine, feature.name, cost)
+      } catch (caught) {
+        setFightProblem(messageFor(caught))
+        return
+      }
+    }
+    const before: TrackerPatch = { features: character.features }
+    const patch: TrackerPatch = {
       features: character.features.map((f) =>
-        f.id === feature.id ? { ...f, usesLeft: Math.max(0, f.usesLeft - 1) } : f,
+        f.id === feature.id && f.usesMax !== null ? { ...f, usesLeft: Math.max(0, f.usesLeft - 1) } : f,
       ),
-    })
+    }
+    if (rule === 'rage') {
+      before.effects = character.effects
+      patch.effects = [...character.effects.filter((e) => e.key !== RAGE.key), RAGE]
+    }
+    if (rule === 'secondWind') {
+      const thrown = await table.roll({
+        ...freeRoll([{ sides: 10, count: 1 }], { characterId: character.id, modifier: character.level }),
+        label: 'Second Wind',
+      })
+      if (thrown) {
+        before.currentHp = character.currentHp
+        patch.currentHp = Math.min(character.maxHp, character.currentHp + thrown.total)
+      }
+    }
+    update(patch)
+    setCard(null)
+    setLastUse({ text: `You used ${feature.name}.`, revert: before, event })
+  }
+
+  function undoLastUse() {
+    if (!lastUse) return
+    update(lastUse.revert)
+    if (lastUse.event && combat)
+      combat.takeBack(lastUse.event).catch((caught: unknown) => setFightProblem(messageFor(caught)))
+    setLastUse(null)
+  }
+
+  function endRage() {
+    update({ effects: character.effects.filter((e) => e.key !== RAGE.key) })
+    setCard(null)
+  }
+
+  // The open card's panel: what it does, whether it's free now, what to do next, and its button.
+  function renderCard(open: Card) {
+    const inFight = Boolean(fight && mine)
+    const close = closeCard
+    if (open.kind === 'attack') {
+      const plan = open.target ? attackPlan(open.attack, open.target) : null
+      const ready =
+        !inFight || !mine
+          ? true
+          : !myTurn
+            ? 'wait for your turn'
+            : attacksLeft(mine.turn, perAction) > 0
+              ? true
+              : 'used this turn'
+      return (
+        <CardPanel
+          details={attackDetails(character, open.attack)}
+          ready={ready}
+          step={
+            inFight && ready === true
+              ? 'Click who to attack: a miniature on the map, or a name in the turn order.'
+              : null
+          }
+          chosen={
+            open.target ? `Target: ${open.target.name}${plan?.feet != null ? ` (${plan.feet} ft away)` : ''}` : null
+          }
+          note={plan && plan.reasons.length > 0 ? plan.reasons.map((r) => `${r.reason}: ${r.mode}`).join(' · ') : null}
+          action={{
+            label: open.target ? `Attack ${open.target.name}` : 'Roll the attack',
+            onClick: () => rollAttack(open.attack, open.target),
+            disabled: inFight && (!open.target || ready !== true),
+          }}
+          onAgain={
+            open.target
+              ? () => {
+                  setCard({ ...open, target: null })
+                  setAiming(open.attack)
+                }
+              : null
+          }
+          onClose={close}
+          rolling={table.rolling}
+        />
+      )
+    }
+    if (open.kind === 'spell') {
+      const why = whyNot(open.spell, character, mine, myTurn)
+      const chosen = aimingSpell?.chosen
+      return (
+        <CardPanel
+          details={spellDetails(character, open.spell)}
+          ready={why ?? true}
+          step={
+            inFight && aimingSpell && !chosen
+              ? aimingSpell.mode === 'target'
+                ? 'Click who it’s for: a miniature on the map, or a name in the turn order.'
+                : aimingSpell.area?.fromCaster
+                  ? 'Point it with the mouse from your miniature, then click.'
+                  : 'Move the mouse over the map and click where it goes.'
+              : null
+          }
+          chosen={
+            chosen
+              ? chosen.names.length > 0
+                ? `For ${chosen.names.join(', ')}`
+                : chosen.template
+                  ? 'Placed on the map'
+                  : 'Ready to cast'
+              : null
+          }
+          action={{
+            label: `Cast ${open.spell.name}`,
+            onClick: () => {
+              if (inFight) aimingSpell?.fire()
+              else castOutside(open.spell)
+              setCard(null)
+            },
+            disabled: why !== null || (inFight && !chosen),
+          }}
+          onAgain={
+            chosen && aimingSpell && (aimingSpell.mode === 'target' || aimingSpell.area) ? aimingSpell.again : null
+          }
+          onClose={close}
+          rolling={table.rolling}
+        >
+          {aimingSpell && <SlotPicker casting={aimingSpell} />}
+        </CardPanel>
+      )
+    }
+    const { feature } = open
+    const details = featureDetails(character, feature)
+    const rule = featureRule(feature.name)
+    const spent = feature.usesMax !== null && feature.usesLeft <= 0
+    const turn = mine?.turn
+    const ready: true | string =
+      !inFight || !turn
+        ? true
+        : details.cost === 'bonus'
+          ? turn.bonusUsed
+            ? 'used this turn'
+            : myTurn
+              ? true
+              : 'wait for your turn'
+          : details.cost === 'action'
+            ? !myTurn
+              ? 'wait for your turn'
+              : actionFree(turn)
+                ? true
+                : 'used this turn'
+            : details.cost === 'reaction'
+              ? turn.reactionUsed
+                ? 'used this round'
+                : true
+              : details.cost === 'surge'
+                ? myTurn
+                  ? true
+                  : 'wait for your turn'
+                : true
+    const raging = rule === 'rage' && isRaging(character)
+    return (
+      <CardPanel
+        details={details}
+        ready={raging ? true : ready}
+        note={raging ? 'You’re raging now.' : spent ? 'No uses left until you rest.' : null}
+        action={
+          raging
+            ? { label: 'End rage', onClick: endRage }
+            : {
+                label:
+                  rule === 'rage'
+                    ? 'Rage!'
+                    : rule === 'secondWind'
+                      ? 'Roll Second Wind'
+                      : rule === 'actionSurge'
+                        ? 'Take another action'
+                        : `Use ${feature.name}`,
+                onClick: () => void playFeature(feature),
+                disabled: spent || ready !== true,
+              }
+        }
+        onClose={close}
+        rolling={table.rolling}
+      />
+    )
   }
 
   return (
@@ -406,7 +680,7 @@ export function TableView({
                         : r.combatant.id === token.combatantId,
                     )
                   : undefined
-                if (aimingSpell?.mode === 'target' && row) aimingSpell.onPick(row)
+                if (aimingSpell?.mode === 'target' && !aimingSpell.chosen && row) aimingSpell.onPick(row)
                 else if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
                 else setInspected(id)
               }}
@@ -425,14 +699,28 @@ export function TableView({
                         long: reach.long,
                       }
                     })()
-                  : aimingSpell?.mode === 'target' && aimingSpell.rangeFt !== null && myToken
+                  : aimingSpell?.mode === 'target' && !aimingSpell.chosen && aimingSpell.rangeFt !== null && myToken
                     ? { tokenId: myToken.id, near: aimingSpell.rangeFt, long: null }
                     : null
               }
-              targeting={aiming !== null || aimingSpell?.mode === 'target'}
-              areas={combat.areas}
+              targeting={aiming !== null || (aimingSpell?.mode === 'target' && !aimingSpell.chosen)}
+              areas={
+                // An area placed but not yet cast shows where it went.
+                aimingSpell?.chosen?.template && aimingSpell.area
+                  ? [
+                      ...combat.areas,
+                      {
+                        ...aimingSpell.chosen.template,
+                        id: 'placed',
+                        label: aimingSpell.label,
+                        tone: aimingSpell.area.tone,
+                        hidden: false,
+                      },
+                    ]
+                  : combat.areas
+              }
               placing={
-                aimingSpell?.mode === 'area' && aimingSpell.area
+                aimingSpell?.mode === 'area' && aimingSpell.area && !aimingSpell.chosen
                   ? {
                       shape: aimingSpell.area.shape,
                       sizeFt: aimingSpell.area.sizeFt,
@@ -470,32 +758,13 @@ export function TableView({
           <InitiativeRibbon
             rows={rows}
             picking={
-              aimingSpell?.mode === 'target'
+              aimingSpell?.mode === 'target' && !aimingSpell.chosen
                 ? { canPick: () => true, onPick: aimingSpell.onPick }
                 : aiming
                   ? { canPick: (row) => row.combatant.id !== mine?.id, onPick: (row) => pickTarget(row) }
                   : null
             }
           />
-        )}
-        {aiming && (
-          <div className={styles.aiming} role="status">
-            Pick a target for {aiming.name || 'your attack'}: click a miniature or a name above.
-            <button type="button" className={styles.aimingCancel} onClick={() => setAiming(null)}>
-              Cancel
-            </button>
-          </div>
-        )}
-        {aimingSpell && (
-          <div className={styles.aiming} role="status">
-            {aimingSpell.mode === 'target'
-              ? `Cast ${aimingSpell.label}: click who it's for, on the map or above.`
-              : `Cast ${aimingSpell.label}: ${aimingSpell.area?.fromCaster ? 'point it with the mouse and click' : 'click where it goes'}.`}
-            <SlotPicker casting={aimingSpell} />
-            <button type="button" className={styles.aimingCancel} onClick={casting.cancel}>
-              Cancel
-            </button>
-          </div>
         )}
         {fight && combat && combat.events.length > 0 && (
           <CombatFeed className={styles.feed} events={combat.events} nameOf={nameOf} youId={mine?.id} limit={3} />
@@ -508,11 +777,18 @@ export function TableView({
         </div>
       )}
 
+      {card && <div className={styles.cardPanel}>{renderCard(card)}</div>}
+      {!card && lastUse && (
+        <div className={styles.cardPanel}>
+          <UndoChip text={lastUse.text} onUndo={undoLastUse} onClose={() => setLastUse(null)} />
+        </div>
+      )}
+
       <Hand
         className={styles.hand}
         character={character}
         onAttack={attackWith}
-        onUseFeature={spendFeature}
+        onUseFeature={openFeature}
         spells={
           character.spellcasting.spells.length > 0
             ? { list: spellList, whyNot: (spell) => whyNot(spell, character, mine, myTurn), onCast: castSpell }
@@ -609,7 +885,14 @@ export function TableView({
             onEndTurn={combat.endTurn}
           />
         )}
-        {fight && mine && <AtAGlance character={character} />}
+        {fight && mine && (
+          <AtAGlance
+            character={character}
+            spells={spellList}
+            onOpen={(open) => (open.kind === 'feature' ? openFeature(open.feature) : castSpell(open.spell))}
+            onEndEffect={(key) => update({ effects: character.effects.filter((e) => e.key !== key) })}
+          />
+        )}
 
         <section className={cx(styles.abilities, fight && styles.hiddenInFight)} aria-label="Abilities and conditions">
           <div className={styles.abilityRow}>
