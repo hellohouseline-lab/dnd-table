@@ -1,4 +1,14 @@
+import { useState } from 'react'
 import { cx } from '../../components/cx.ts'
+import {
+  CM_PER_INCH,
+  heightText,
+  KG_PER_POUND,
+  parseHeight,
+  parseWeight,
+  typicalWords,
+  weightText,
+} from '../../rules/build/measures.ts'
 import type { BuilderDraft } from '../../rules/build/draft.ts'
 import type { Story } from '../../rules/character.ts'
 import type { SrdBackground } from '../../rules/srd/index.ts'
@@ -8,6 +18,8 @@ type WhoStepProps = {
   draft: BuilderDraft
   onDraft: (draft: BuilderDraft) => void
   background: SrdBackground | null
+  /** The race, for a guide to the usual height and weight. */
+  race: { index: string | null; name: string } | null
 }
 
 const ALIGNMENTS: [string, string][] = [
@@ -24,8 +36,6 @@ const ALIGNMENTS: [string, string][] = [
 
 const LOOKS: { key: keyof Story; label: string; placeholder: string }[] = [
   { key: 'age', label: 'Age', placeholder: '27' },
-  { key: 'height', label: 'Height', placeholder: '4 ft 6' },
-  { key: 'weight', label: 'Weight', placeholder: '12 stone' },
   { key: 'eyes', label: 'Eyes', placeholder: 'Grey' },
   { key: 'skin', label: 'Skin', placeholder: 'Weathered, tanned' },
   { key: 'hair', label: 'Hair', placeholder: 'Red, braided beard' },
@@ -47,9 +57,13 @@ const NATURE: {
  * ideas from the background to pick or change, then goals and a backstory. All shown on the party
  * cards for the DM.
  */
-export function WhoStep({ draft, onDraft, background }: WhoStepProps) {
+export function WhoStep({ draft, onDraft, background, race }: WhoStepProps) {
   const story = draft.story
   const set = (key: keyof Story, value: string) => onDraft({ ...draft, story: { ...story, [key]: value } })
+  const [metric, setMetric] = useState(true)
+  const typical = race ? typicalWords(race.index, race.name) : null
+  const inches = parseHeight(story.height)
+  const pounds = parseWeight(story.weight)
 
   return (
     <div className={styles.step}>
@@ -91,6 +105,106 @@ export function WhoStep({ draft, onDraft, background }: WhoStepProps) {
 
         <div className={styles.choice}>
           <h3 className={styles.choiceTitle}>How they look</h3>
+          <div className={styles.unitRow} role="group" aria-label="Units">
+            <button
+              type="button"
+              className={cx(styles.chip, metric && styles.picked)}
+              aria-pressed={metric}
+              onClick={() => setMetric(true)}
+            >
+              Centimetres and kilograms
+            </button>
+            <button
+              type="button"
+              className={cx(styles.chip, !metric && styles.picked)}
+              aria-pressed={!metric}
+              onClick={() => setMetric(false)}
+            >
+              Feet and pounds
+            </button>
+          </div>
+          <div className={styles.measureGrid}>
+            <div className={styles.smallField}>
+              <span className={styles.fieldLabel}>Height</span>
+              {metric ? (
+                <select
+                  className={styles.scoreSelect}
+                  aria-label="Height in centimetres"
+                  value={inches === null ? '' : Math.round(inches * CM_PER_INCH)}
+                  onChange={(event) =>
+                    set('height', event.target.value ? heightText(Number(event.target.value) / CM_PER_INCH) : '')
+                  }
+                >
+                  <option value="">Pick…</option>
+                  {range(60, 250).map((cm) => (
+                    <option key={cm} value={cm}>
+                      {cm} cm
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className={styles.inline}>
+                  <select
+                    className={styles.scoreSelect}
+                    aria-label="Height in feet"
+                    value={inches === null ? '' : Math.floor(inches / 12)}
+                    onChange={(event) =>
+                      set(
+                        'height',
+                        event.target.value ? heightText(Number(event.target.value) * 12 + ((inches ?? 0) % 12)) : '',
+                      )
+                    }
+                  >
+                    <option value="">ft</option>
+                    {range(2, 8).map((ft) => (
+                      <option key={ft} value={ft}>
+                        {ft} ft
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className={styles.scoreSelect}
+                    aria-label="And inches"
+                    value={inches === null ? '' : Math.round(inches % 12)}
+                    onChange={(event) =>
+                      set('height', heightText(Math.floor((inches ?? 60) / 12) * 12 + Number(event.target.value)))
+                    }
+                  >
+                    {range(0, 11).map((inch) => (
+                      <option key={inch} value={inch}>
+                        {inch} in
+                      </option>
+                    ))}
+                  </select>
+                </span>
+              )}
+              <span className={styles.note}>{story.height || typical?.height || ''}</span>
+            </div>
+            <div className={styles.smallField}>
+              <span className={styles.fieldLabel}>Weight</span>
+              <select
+                className={styles.scoreSelect}
+                aria-label={metric ? 'Weight in kilograms' : 'Weight in pounds'}
+                value={pounds === null ? '' : metric ? Math.round(pounds * KG_PER_POUND) : Math.round(pounds)}
+                onChange={(event) =>
+                  set(
+                    'weight',
+                    event.target.value
+                      ? weightText(metric ? Number(event.target.value) / KG_PER_POUND : Number(event.target.value))
+                      : '',
+                  )
+                }
+              >
+                <option value="">Pick…</option>
+                {(metric ? range(10, 200) : range(20, 440)).map((n) => (
+                  <option key={n} value={n}>
+                    {n} {metric ? 'kg' : 'lb'}
+                  </option>
+                ))}
+              </select>
+              <span className={styles.note}>{story.weight || typical?.weight || ''}</span>
+            </div>
+          </div>
           <div className={styles.looksGrid}>
             {LOOKS.map((look) => (
               <label key={look.key} className={styles.smallField}>
@@ -167,3 +281,5 @@ export function WhoStep({ draft, onDraft, background }: WhoStepProps) {
     </div>
   )
 }
+
+const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => from + i)
