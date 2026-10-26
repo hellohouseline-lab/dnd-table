@@ -53,3 +53,16 @@ export function fightRows(fight: FightLike, characters: Character[], viewer: 'dm
     }
   })
 }
+
+/** The camera column in a fight: tiles in turn order with the DM last for the monsters, and whose turn it is. */
+export type CameraTurn = { order: string[]; acting: string | null; next: string | null }
+
+export function cameraTurn(rows: FightRow[], dmId: string): CameraTurn {
+  const whose = (row: FightRow | undefined) => (row ? (row.character?.ownerId ?? dmId) : null)
+  const order = [...new Set(rows.flatMap((row) => (row.character ? [row.character.ownerId] : [])))]
+  return {
+    order: [...order.filter((id) => id !== dmId), dmId],
+    acting: whose(rows.find((row) => row.status === 'acting')),
+    next: whose(rows.find((row) => row.status === 'next')),
+  }
+}

@@ -47,7 +47,7 @@ import { monsterAttack, monsterInitiative } from '../../rules/combat.ts'
 import { loadMonsters } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog, StartFightDialog } from '../fight/FightDialogs.tsx'
-import type { FightRow } from '../fight/fightRows.ts'
+import { cameraTurn, fightRows, type FightRow } from '../fight/fightRows.ts'
 import type { MonsterPick } from '../fight/MonsterPicker.tsx'
 import { NotebookPanel } from './NotebookPanel.tsx'
 import { PartyCards, type HitPointChange } from './PartyCards.tsx'
@@ -510,6 +510,7 @@ export function DmView({
         online={online}
         myId={me.user_id}
         chips={chips}
+        turn={fighting ? cameraTurn(fightRows(fighting, characters, 'dm'), me.user_id) : null}
       />
     </main>
   )

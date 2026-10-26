@@ -14,11 +14,21 @@ const campaign: Campaign = {
   party_size: 4,
   starting_level: 1,
   join_code: 'K7QM2P',
+  camera_key: 'abcdef0123456789abcdef01',
   created_at: '2026-10-25T20:00:00Z',
 }
 
 function member(user_id: string, display_name: string, role: 'dm' | 'player', here_tonight = true): Member {
-  return { campaign_id: 'c1', user_id, display_name, role, here_tonight, joined_at: '2026-10-25T20:00:00Z', dice_style: {} }
+  return {
+    campaign_id: 'c1',
+    user_id,
+    camera_id: `dndtest${user_id}`,
+    display_name,
+    role,
+    here_tonight,
+    joined_at: '2026-10-25T20:00:00Z',
+    dice_style: {},
+  }
 }
 
 const members = [member('dm', 'Matt', 'dm'), member('p1', 'Sam', 'player'), member('p2', 'Alex', 'player', false)]
@@ -117,7 +127,10 @@ describe('The player cards', () => {
     expect(html.match(/disabled=""/g)).toHaveLength(1)
   })
 
-  it('keep the camera box from the design', () => {
-    expect(renderToStaticMarkup(<CameraPanel />)).toContain('Camera preview 16:9')
+  it('keep the camera box from the design, with voice and camera in place of the VDO.Ninja link', () => {
+    const html = text(renderToStaticMarkup(<CameraPanel />))
+    expect(html).toContain('Camera preview 16:9')
+    expect(html).toContain('Voice and camera Not joined yet')
+    expect(html).toContain('The same feed appears in everyone’s camera column and in every streamer’s overlay.')
   })
 })

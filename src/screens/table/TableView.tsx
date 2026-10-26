@@ -18,6 +18,9 @@ import type { Roll } from '../../live/rolls.ts'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { Asset } from '../../live/library.ts'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
+import callStyles from '../../call/Call.module.css'
+import { isMuted, useTableCall } from '../../call/callContext.ts'
+import { CameraFeed } from '../../call/CameraFeed.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
@@ -44,7 +47,7 @@ import { RollPrompt, RollResult } from '../rolls/RollPrompt.tsx'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
 import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
-import { fightRows } from '../fight/fightRows.ts'
+import { cameraTurn, fightRows, type CameraTurn } from '../fight/fightRows.ts'
 import { InitiativePrompt, InitiativeRibbon, InspectCard, ThisTurn, TurnBanner } from '../fight/PlayerCombat.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
@@ -419,6 +422,7 @@ export function TableView({
         myId={me.user_id}
         chips={chips}
         badges={badges}
+        turn={fight ? cameraTurn(rows, members.find((m) => m.role === 'dm')?.user_id ?? '') : null}
       />
 
       {sheetTab && (
@@ -489,10 +493,15 @@ type CameraColumnProps = {
   chips?: Record<string, CameraChip>
   /** A small badge per user id in the tile's corner, such as their initiative in a fight. */
   badges?: Record<string, string>
+  /** In a fight: tiles in turn order, a glow on whoever is acting, and who's next. */
+  turn?: CameraTurn | null
   className?: string
 }
 
-/** The camera column from the designs. Until cameras arrive (milestone 7) each tile shows who's here. */
+/**
+ * The camera column from the designs: everyone's live camera and voice (through VDO.Ninja), with
+ * their name plate and HP, roll chips while the DM's request is open, and the turn order in a fight.
+ */
 export function CameraColumn({
   members,
   characters,
@@ -500,36 +509,58 @@ export function CameraColumn({
   myId,
   chips = {},
   badges = {},
+  turn = null,
   className,
 }: CameraColumnProps) {
-  const ordered = [...members.filter((m) => m.role === 'dm'), ...members.filter((m) => m.role === 'player')]
+  const call = useTableCall()
+  const dms = members.filter((m) => m.role === 'dm')
+  const players = members.filter((m) => m.role === 'player')
+  const place = (m: Member) => (turn ? turn.order.indexOf(m.user_id) : -1)
+  const ordered = turn
+    ? [...players, ...dms].sort((a, b) => (place(a) < 0 ? 99 : place(a)) - (place(b) < 0 ? 99 : place(b)))
+    : [...dms, ...players]
   return (
     <div className={cx(styles.cameras, className)} aria-label="The table">
       {ordered.map((member) => {
         const character = characters.find((c) => c.ownerId === member.user_id)
         const here = online.has(member.user_id)
         const you = member.user_id === myId
+        const name = member.role === 'dm' ? member.display_name : (character?.name ?? member.display_name)
+        const badge = badges[member.user_id] ?? (turn && member.role === 'dm' ? 'DM' : null)
+        let who = member.role === 'dm' ? `Dungeon Master${turn ? ' · monsters' : ''}` : member.display_name
+        if (turn?.acting === member.user_id) who += ' · acting now'
+        else if (turn?.next === member.user_id) who += ' · next'
+        else if (you) who += ' · you'
         return (
-          <div key={member.user_id} className={cx(styles.tile, you && styles.you)}>
-            {badges[member.user_id] && <span className={styles.badge}>{badges[member.user_id]}</span>}
+          <div
+            key={member.user_id}
+            className={cx(styles.tile, you && styles.you, turn?.acting === member.user_id && styles.acting)}
+          >
+            <CameraFeed
+              userId={member.user_id}
+              cameraId={member.camera_id}
+              name={name}
+              portraitPath={member.role === 'player' ? (character?.portraitPath ?? null) : null}
+              online={here}
+              you={you}
+            />
+            {badge && <span className={styles.badge}>{badge}</span>}
             {chips[member.user_id] && (
               <span className={cx(styles.chip, styles[`chip_${chips[member.user_id].tone}`])}>
                 {chips[member.user_id].label}
               </span>
             )}
-            <div className={cx(styles.feed, here && styles.feedHere)}>
-              <Icon name="camera" size={14} />
-              <span>{here ? 'Here' : 'Not here yet'}</span>
-            </div>
             <div className={styles.namePlate}>
               <div className={styles.plateText}>
                 <div className={styles.plateName}>
-                  {member.role === 'dm' ? member.display_name : (character?.name ?? member.display_name)}
+                  {name}
+                  {isMuted(call, member.user_id, you) && (
+                    <span className={callStyles.muted} title="Muted" aria-label="Muted">
+                      <Icon name="micOff" size={12} />
+                    </span>
+                  )}
                 </div>
-                <div className={styles.plateWho}>
-                  {member.role === 'dm' ? 'Dungeon Master' : member.display_name}
-                  {you && ' · you'}
-                </div>
+                <div className={styles.plateWho}>{who}</div>
               </div>
               {character && member.role === 'player' && (
                 <div className={styles.plateHp}>

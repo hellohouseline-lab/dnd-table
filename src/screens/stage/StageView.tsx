@@ -10,6 +10,7 @@ import { messageFor } from '../../live/errors.ts'
 import { sizeText, type ArtCategory, type Asset, type AssetPatch, type SoundDetails } from '../../live/library.ts'
 import type { LibraryControls, StageControls } from '../../live/useStage.ts'
 import type { Character } from '../../rules/character.ts'
+import { cameraTurn, fightRows } from '../fight/fightRows.ts'
 import { CameraColumn } from '../table/TableView.tsx'
 import { ArtLibrary } from './ArtLibrary.tsx'
 import { MapStage } from './MapStage.tsx'
@@ -318,6 +319,7 @@ export function StageView({
         characters={characters}
         online={online}
         myId={me.user_id}
+        turn={mapProps.fight ? cameraTurn(fightRows(mapProps.fight, characters, 'dm'), me.user_id) : null}
       />
     </main>
   )

@@ -81,6 +81,7 @@ export type Database = {
       }
       campaign_members: {
         Row: {
+          camera_id: string
           campaign_id: string
           dice_style: Json
           display_name: string
@@ -90,6 +91,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          camera_id?: string
           campaign_id: string
           dice_style?: Json
           display_name: string
@@ -99,6 +101,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          camera_id?: string
           campaign_id?: string
           dice_style?: Json
           display_name?: string
@@ -119,6 +122,7 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          camera_key: string
           created_at: string
           dm_id: string
           id: string
@@ -128,6 +132,7 @@ export type Database = {
           starting_level: number
         }
         Insert: {
+          camera_key?: string
           created_at?: string
           dm_id: string
           id?: string
@@ -137,6 +142,7 @@ export type Database = {
           starting_level?: number
         }
         Update: {
+          camera_key?: string
           created_at?: string
           dm_id?: string
           id?: string
@@ -927,6 +933,7 @@ export type Database = {
           starting_level: number
         }[]
       }
+      renew_camera_key: { Args: { p_campaign_id: string }; Returns: undefined }
       renew_join_code: { Args: { p_campaign_id: string }; Returns: string }
       roll_initiative: {
         Args: { p_combatant_id: string; p_roll: Json }
