@@ -18,6 +18,7 @@ import { TableView } from '../table/TableView.tsx'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
+import { blockedMove } from '../../map/mapTokens.ts'
 import { usePreviewAreas } from './previewAreas.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import { useSrd } from '../../live/useSrd.ts'
@@ -142,6 +143,9 @@ export function TablePreview({
     const character = characters.find((c) => c.id === who.characterId)
     const feet = feetBetween(token, { x, y })
     if (feet > movementLeft(who.turn, character?.speed ?? who.speed)) return false
+    const monsters = now.combatants.filter((c) => c.kind === 'monster' && c.health !== 'down')
+    const enemy = (t: Token) => monsters.find((c) => c.id === (t as Token).combatantId)?.shownName ?? null
+    if (blockedMove(placed.current, token, { x, y }, (t) => enemy(t as Token))) return false
     fight.walk(who.id, feet)
     fight.provoke(who.id, token, { x, y }, placed.current)
     return true

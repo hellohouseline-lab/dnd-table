@@ -3,6 +3,14 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **More from Matt's T1 test (live).**
+  - **Left panel** stops above the dice and scrolls, so nothing overlaps. Roll summaries go after 4 seconds.
+  - **Squares:** nobody ends a move on someone else's square, and players can't walk through a living enemy's square (straight line from start to finish). A friend's square can be passed through, as the 2014 rules allow, and a hidden creature doesn't block (so it isn't given away). The DM can stack miniatures but is asked first. A refused move snaps back.
+  - **Bonus actions:**
+    - anything done with a bonus action is blue on its card ("Bonus action", "Bonus · Off hand");
+    - a **Bonus actions** set in the hand gathers them all: a rogue's Cunning Action (Dash, Disengage, Hide), Rage, Second Wind, bonus-action spells such as Healing Word, and an off-hand attack with a second light weapon;
+    - a blue dot on the tab shows whether the bonus action is still free, and the cards grey out once it's used.
+  - Tests: 385 database (6 new), 331 unit and 19 preview browser tests.
 - **Changes after Matt's T1 test (live).**
   - **Attacks are two clicks again:** click the card, then the target, and it rolls. Spells the same (card, then target or a spot on the map). Features fire on click, with Undo for half a minute.
   - **Info on hover:** hold the mouse on a card for 3 seconds to see what it does, what it costs and the full rules. It never gets in the way of clicking. The side panel is gone.

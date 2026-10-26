@@ -6,7 +6,7 @@ import type { RollRequest } from '../rules/dice.ts'
 import type { TrayThrow } from './diceTray.ts'
 
 /** How long a result card stays up, and how many show at once. */
-const SHOWN_MS = 8000
+const SHOWN_MS = 4000
 const MAX_SHOWN = 3
 
 export type TableRolls = {

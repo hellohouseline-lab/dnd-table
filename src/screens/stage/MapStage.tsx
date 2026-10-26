@@ -139,7 +139,11 @@ export function MapStage({
             }
             onMove={(id, x, y) => {
               const token = tokens.tokens.find((t) => t.id === id)
-              if (token) tokens.move(token, x, y)
+              if (!token) return
+              // The DM can put anyone anywhere, but is asked before two share a square.
+              const taken = tokens.tokens.some((t) => t.id !== id && t.x === x && t.y === y)
+              if (taken && !window.confirm('Someone is already in that square. Put it there anyway?')) return
+              tokens.move(token, x, y)
             }}
             hands={pointers.hands}
             pings={pointers.pings}
