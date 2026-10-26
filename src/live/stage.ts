@@ -22,6 +22,8 @@ export type Stage = {
   mapId: string | null
   mode: 'scene' | 'map'
   playersMoveTokens: boolean
+  /** A scene's read-aloud, on stage for everyone when the DM shows it ('' when not). */
+  readAloud: string
 }
 
 export type StagePatch = Partial<Omit<Stage, 'campaignId'>>
@@ -42,6 +44,7 @@ export function emptyStage(campaignId: string): Stage {
     mapId: null,
     mode: 'scene',
     playersMoveTokens: true,
+    readAloud: '',
   }
 }
 
@@ -71,6 +74,7 @@ export function rowToStage(row: StageRow): Stage {
     mapId: row.map_id,
     mode: row.mode === 'map' ? 'map' : 'scene',
     playersMoveTokens: row.players_move_tokens,
+    readAloud: row.read_aloud,
   }
 }
 
@@ -89,6 +93,7 @@ function patchToRow(patch: StagePatch): TablesUpdate<'stage'> {
   if (patch.mapId !== undefined) row.map_id = patch.mapId
   if (patch.mode !== undefined) row.mode = patch.mode
   if (patch.playersMoveTokens !== undefined) row.players_move_tokens = patch.playersMoveTokens
+  if (patch.readAloud !== undefined) row.read_aloud = patch.readAloud.slice(0, 8000)
   return row
 }
 

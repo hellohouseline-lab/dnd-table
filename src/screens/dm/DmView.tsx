@@ -60,6 +60,10 @@ import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { GiveDialog } from './GiveDialog.tsx'
 import { BoxDialog } from './give/BoxDialog.tsx'
+import { StoryTab } from './story/StoryTab.tsx'
+import type { Scene, StoryControls } from '../../live/story.ts'
+import type { Stage, StagePatch } from '../../live/stage.ts'
+import { serverNow } from '../../live/clock.ts'
 import { ShopDialog } from './give/ShopDialog.tsx'
 import { HaggleCards } from './give/HaggleCards.tsx'
 import type { ShopControls } from '../../live/shops.ts'
@@ -72,9 +76,10 @@ import { useRollsForDm } from '../../live/useRollsForDm.ts'
 import { RollsForDm } from '../rolls/RollsForDm.tsx'
 import styles from './DmView.module.css'
 
-type DmTab = 'party' | 'encounter' | 'items' | 'log'
+type DmTab = 'story' | 'party' | 'encounter' | 'items' | 'log'
 
 const TABS: { label: string; tab?: DmTab; title?: string }[] = [
+  { label: 'Story', tab: 'story' },
   { label: 'Party', tab: 'party' },
   { label: 'Encounter', tab: 'encounter' },
   { label: 'NPCs', title: 'NPCs arrive in Phase 2' },
@@ -145,6 +150,11 @@ type DmViewProps = {
   giving: GivingControls
   /** Shops, their sales and the free-adding setting. */
   shops: ShopControls
+  /** The story (chapters and scenes), the stage it puts things on, and the library to pick from. */
+  story: StoryControls
+  stage: Stage
+  onStage: (patch: StagePatch) => void
+  library: Asset[]
 }
 
 /**
@@ -173,9 +183,13 @@ export function DmView({
   fight,
   maps = [],
   mapOnStage = null,
-  startTab = 'party',
+  startTab = 'story',
   giving,
   shops,
+  story,
+  stage,
+  onStage,
+  library,
 }: DmViewProps) {
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
   const [selectedCombatant, setSelectedCombatant] = useState<string | null>(null)
@@ -238,6 +252,31 @@ export function DmView({
   async function rollDamage(dice: DiceGroup[]) {
     const thrown = await table.roll(freeRoll(dice, { secret: true }))
     return thrown ? (thrown.damage?.total ?? thrown.total) : null
+  }
+
+  /** Go here: the scene's picture, music, ambience and name on stage, Where we are, and the log. */
+  function goHere(scene: Scene) {
+    const patch: StagePatch = { sceneName: (scene.title || 'A scene').slice(0, 80), readAloud: '' }
+    if (scene.imageId) {
+      patch.imageId = scene.imageId
+      if (!fighting) patch.mode = 'scene'
+    }
+    if (scene.musicId && (scene.musicId !== stage.musicId || !stage.musicPlaying)) {
+      Object.assign(patch, {
+        musicId: scene.musicId,
+        musicPlaying: true,
+        musicStartedAt: serverNow(),
+        musicPosition: 0,
+      })
+    }
+    if (Object.keys(scene.ambience).length > 0) patch.ambience = scene.ambience
+    onStage(patch)
+    notebook.change({ ...notebook.notebook, currentSceneId: scene.id })
+    events.add(
+      'stage',
+      `The party is at ${scene.title || 'a new scene'}${scene.place ? ` (${scene.place})` : ''}.`,
+      true,
+    )
   }
 
   /** A key item was given: the notebook's Key items say who has it now. */
@@ -471,7 +510,16 @@ export function DmView({
           ))}
         </div>
         <div className={styles.content} role="tabpanel">
-          {tab === 'encounter' ? (
+          {tab === 'story' ? (
+            <StoryTab
+              story={story}
+              currentSceneId={notebook.notebook.currentSceneId}
+              onGoHere={goHere}
+              readAloudOnStage={stage.readAloud}
+              onShowReadAloud={(readAloud) => onStage({ readAloud })}
+              library={library}
+            />
+          ) : tab === 'encounter' ? (
             fighting ? (
               <EncounterTab
                 campaignId={campaign.id}

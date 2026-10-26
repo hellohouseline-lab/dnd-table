@@ -3,6 +3,14 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **S1a: story mode, chapters and scenes (live).** The plan is in `docs/S1_PLAN.md`, approved with decisions 55 to 63 as recommended.
+  - **The Story tab** is first on Screen 1 and where it opens (decision 55). Chapters and their scenes on the left, **Where we are** marked; **Start your story** makes the first chapter and scene.
+  - **A scene** has a title and place, **Read aloud** on parchment, **Reminders** only you see, and a picture, music and ambience from your library (or "keep what's on").
+  - **Go here** puts it all on at once: the picture on stage, the music (from the start, unless it's already playing), the ambience, the scene name everyone sees, Where we are, and a line in the log.
+  - **Show the read-aloud** (decision 56) puts it on parchment over the stage for everyone, on players' screens and Screen 2; **Take it off the stage** removes it. Going to another scene takes it off too.
+  - New scene, New chapter, rename anything where it sits, Move up and down, Remove. Everything saves as you type.
+  - Only you can read chapters, scenes, read-aloud and reminders (row-level security); players see only what you put on stage.
+  - Server: `20261027240000_story.sql` (`story_chapters`, `story_scenes`, the current scene in your notebook, the read-aloud on stage). Previews: `#/dev/dm/story`, `#/dev/table/story`. Tests: 537 database (8 new), 437 unit, 53 preview browser tests (2 new).
 - **What things are worth, and tidying the stash (live).** Matt's ask.
   - **Market value, for the DM only:** every item on the Items and loot tab shows what it's worth ("Longsword · 15 gp"), and so do the party stash, Give's cards, a box's finds and the shop editor. Gear and bits and bobs show the book price; magic items, which the free rules don't price, show a rough guide by rarity (common 50 to 100 gp, uncommon 100 to 500, rare 500 to 5,000, very rare 5,000 to 50,000, legendary 50,000 or more, plus the weapon for a +1 sword).
   - **Cheap, fair or pricey:** the shop editor marks each price against what it's worth; offering to buy from a player says "Worth 5 gp: that's cheap" as you type; a haggle card says whether the player's offer is cheap, fair or pricey.
@@ -259,7 +267,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **S1 next:** story mode with your campaign on Screen 1, the importer and the player lookups (plan first). Send your starter campaign when you're ready.
+- **S1b next:** what happens in a scene: planned rolls as buttons, Tell players the outcome, Roll behind the screen, choices, things here and a fight ready to start. Then S1c (NPCs), S1d (paste your notes) and S1e (Rules for players). Send your starter campaign when you're ready.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -267,6 +275,8 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try story mode** (refresh first): Screen 1 now opens on **Story**. Press **Start your story**, write a scene's read-aloud and reminders, pick a picture and music (upload them on Screen 2 first), and press **Go here**; then **Show the read-aloud** and check a player sees it.
+- **Send your starter campaign** for the paste import (S1d), and say whether it's your own writing or from a published book.
 - **Try haggling** (refresh first): open a shop; as a player tap **Gear**, press **Haggle** on some rope and offer less; on Screen 1 press **Ask for Persuasion**, then **Counter**; as the player **Take it**.
 - **Try a shop** (refresh first): on Items and loot press **Make a shop**, pick a general store, make it **Pricey**, then **Open** it; as a player buy some rope and sell something back; then **Undo** the sale on Screen 1.
 - **Try opening a box** (refresh first): on Items and loot press **Open a box**, pick a valuable chest, open it, roll one find again, add one of your key items, and **Put it on the table**; then as a player open **Items**, take something from the party stash and split the coins.

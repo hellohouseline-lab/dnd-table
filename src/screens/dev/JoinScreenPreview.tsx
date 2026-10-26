@@ -71,7 +71,7 @@ export function TablePreview({
 }: {
   asked?: boolean
   fighting?: boolean
-  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | null
+  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | 'story' | null
 }) {
   const caster = variant === 'caster'
   const [characters, setCharacters] = useState<Character[]>(() =>
@@ -454,6 +454,11 @@ export function TablePreview({
         offers={offers}
         onAnswerOffer={answerOffer}
         stash={stashControls}
+        readAloud={
+          variant === 'story'
+            ? 'Rain drums on the shutters. Inside the Rusty Flagon, smoke curls from a hearth big enough to roast an ox, and every head turns as you shake the water from your cloaks.'
+            : ''
+        }
         shopping={shopping}
         combat={
           fighting

@@ -3,6 +3,7 @@ import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Notice } from '../../components/Notice.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
+import { ReadAloud } from '../../components/ReadAloud.tsx'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
 import type { Campaign, Member } from '../../live/campaigns.ts'
@@ -218,6 +219,13 @@ export function StageView({
               />
             ) : (
               <div className={styles.screenPreview}>
+                {stage.readAloud && (
+                  <ReadAloud
+                    text={stage.readAloud}
+                    className={styles.readAloud}
+                    onClose={() => change({ readAloud: '' })}
+                  />
+                )}
                 {onStage ? (
                   <StoredImage path={onStage.path} alt={`On stage: ${onStage.name}`} />
                 ) : (

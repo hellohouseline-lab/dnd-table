@@ -14,6 +14,8 @@ export type Notebook = {
   keyItems: KeyItem[]
   /** How full the DM's boxes are (their own numbers, or ours). */
   boxSettings: BoxSettings
+  /** The scene the party is in now (story mode), if any. */
+  currentSceneId: string | null
 }
 
 export type LogKind = 'note' | 'damage' | 'heal' | 'rest' | 'condition' | 'stage' | 'gift'
@@ -37,7 +39,13 @@ export type Gift = {
   stash: boolean
 }
 
-export const EMPTY_NOTEBOOK: Notebook = { whereWeAre: '', nextSteps: [], keyItems: [], boxSettings: DEFAULT_BOXES }
+export const EMPTY_NOTEBOOK: Notebook = {
+  whereWeAre: '',
+  nextSteps: [],
+  keyItems: [],
+  boxSettings: DEFAULT_BOXES,
+  currentSceneId: null,
+}
 const LOG_LENGTH = 150
 
 function db() {
@@ -72,6 +80,7 @@ export function rowToNotebook(row: Tables<'dm_notebooks'>): Notebook {
         : null,
     ),
     boxSettings: parseBoxSettings(row.box_settings),
+    currentSceneId: row.current_scene_id,
   }
 }
 
@@ -88,6 +97,7 @@ export async function saveNotebook(campaignId: string, notebook: Notebook): Prom
     next_steps: notebook.nextSteps,
     key_items: notebook.keyItems,
     box_settings: notebook.boxSettings,
+    current_scene_id: notebook.currentSceneId,
   }
   const updated = await db().from('dm_notebooks').update(row).eq('campaign_id', campaignId).select('campaign_id')
   if (updated.error) throw fromDatabaseError(updated.error)

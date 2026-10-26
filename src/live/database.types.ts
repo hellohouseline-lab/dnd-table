@@ -727,6 +727,7 @@ export type Database = {
         Row: {
           box_settings: Json
           campaign_id: string
+          current_scene_id: string | null
           key_items: Json
           next_steps: Json
           updated_at: string
@@ -735,6 +736,7 @@ export type Database = {
         Insert: {
           box_settings?: Json
           campaign_id: string
+          current_scene_id?: string | null
           key_items?: Json
           next_steps?: Json
           updated_at?: string
@@ -743,6 +745,7 @@ export type Database = {
         Update: {
           box_settings?: Json
           campaign_id?: string
+          current_scene_id?: string | null
           key_items?: Json
           next_steps?: Json
           updated_at?: string
@@ -754,6 +757,13 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: true
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dm_notebooks_current_scene_id_fkey"
+            columns: ["current_scene_id"]
+            isOneToOne: false
+            referencedRelation: "story_scenes"
             referencedColumns: ["id"]
           },
         ]
@@ -1417,6 +1427,7 @@ export type Database = {
           music_started_at: string | null
           music_volume: number
           players_move_tokens: boolean
+          read_aloud: string
           scene_name: string
           updated_at: string
         }
@@ -1432,6 +1443,7 @@ export type Database = {
           music_started_at?: string | null
           music_volume?: number
           players_move_tokens?: boolean
+          read_aloud?: string
           scene_name?: string
           updated_at?: string
         }
@@ -1447,6 +1459,7 @@ export type Database = {
           music_started_at?: string | null
           music_volume?: number
           players_move_tokens?: boolean
+          read_aloud?: string
           scene_name?: string
           updated_at?: string
         }
@@ -1474,6 +1487,115 @@ export type Database = {
           },
           {
             foreignKeyName: "stage_music_id_fkey"
+            columns: ["music_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_chapters: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          position: number
+          title: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          position?: number
+          title?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          position?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_chapters_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_scenes: {
+        Row: {
+          ambience: Json
+          campaign_id: string
+          chapter_id: string
+          created_at: string
+          id: string
+          image_id: string | null
+          music_id: string | null
+          place: string
+          position: number
+          read_aloud: string
+          reminders: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ambience?: Json
+          campaign_id: string
+          chapter_id: string
+          created_at?: string
+          id?: string
+          image_id?: string | null
+          music_id?: string | null
+          place?: string
+          position?: number
+          read_aloud?: string
+          reminders?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          ambience?: Json
+          campaign_id?: string
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          image_id?: string | null
+          music_id?: string | null
+          place?: string
+          position?: number
+          read_aloud?: string
+          reminders?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_scenes_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_scenes_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "story_chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_scenes_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_scenes_music_id_fkey"
             columns: ["music_id"]
             isOneToOne: false
             referencedRelation: "assets"

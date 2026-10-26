@@ -38,6 +38,7 @@ describe('the stage', () => {
       map_id: null,
       mode: 'scene',
       players_move_tokens: true,
+      read_aloud: '',
       updated_at: '2026-10-26T20:00:00Z',
     })
     expect(stage).toMatchObject({
@@ -63,6 +64,7 @@ describe('the notebook', () => {
       next_steps: [{ id: '1', text: 'Meet the innkeeper', done: true }, 'nonsense'],
       key_items: [{ id: 'k', name: 'Silver key' }],
       box_settings: {},
+      current_scene_id: null,
       updated_at: '2026-10-26T20:00:00Z',
     })
     expect(notebook.nextSteps).toEqual([{ id: '1', text: 'Meet the innkeeper', done: true }])

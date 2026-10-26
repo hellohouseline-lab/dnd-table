@@ -1,6 +1,6 @@
 # S1: story mode
 
-Written after I1. **Waiting for Matt's approval.** It builds section 4b of `COMBAT_PLAN.md` (story mode), section 5 of `TABLE_TOOLS_PLAN.md` (your campaign on Screen 1, and lookups for players) and the NPCs tab that decision 48 moved here. The test one-shot on 21 to 22 November is the target: by then you should be able to run it from Screen 1, scene by scene.
+Written after I1. **Approved by Matt with decisions 55 to 63 as recommended.** It builds section 4b of `COMBAT_PLAN.md` (story mode), section 5 of `TABLE_TOOLS_PLAN.md` (your campaign on Screen 1, and lookups for players) and the NPCs tab that decision 48 moved here. The test one-shot on 21 to 22 November is the target: by then you should be able to run it from Screen 1, scene by scene.
 
 ## In plain words
 

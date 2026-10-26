@@ -12,6 +12,8 @@ import { mergeItems } from '../../rules/magic.ts'
 import { syncAttacks } from '../../rules/manage.ts'
 import { addWallets, coinsFor, coinWords, pay, splitCoins } from '../../rules/money.ts'
 import { loadEquipment } from '../../rules/srd/index.ts'
+import { usePreviewStory } from './previewStory.ts'
+import { emptyStage, type Stage } from '../../live/stage.ts'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { RollToast } from '../../dice/RollToasts.tsx'
@@ -157,6 +159,11 @@ export function DmPreview({ tab }: { tab: string }) {
   const events = usePreviewEvents()
   const giving = usePreviewGiving(characters, setCharacters)
   const shops = usePreviewShops(tab === 'haggle')
+  const story = usePreviewStory()
+  const [stage, setStage] = useState<Stage>(() => ({
+    ...emptyStage(sampleCampaign.id),
+    sceneName: 'Arrive at the tavern',
+  }))
   const asking = usePreviewAsking(characters, {
     start: start.request,
     startAnswers: start.answers,
@@ -198,11 +205,25 @@ export function DmPreview({ tab }: { tab: string }) {
         asking={asking}
         notebook={notebook}
         events={events}
-        sceneName="Arrive at the tavern"
+        sceneName={stage.sceneName}
         fight={fight}
-        startTab={tab === 'log' ? 'log' : tab === 'fight' ? 'encounter' : tab === 'items' ? 'items' : 'party'}
+        startTab={
+          tab === 'log'
+            ? 'log'
+            : tab === 'fight'
+              ? 'encounter'
+              : tab === 'items'
+                ? 'items'
+                : tab === 'story'
+                  ? 'story'
+                  : 'party'
+        }
         giving={giving}
         shops={shops}
+        story={story}
+        stage={stage}
+        onStage={(patch) => setStage((now) => ({ ...now, ...patch }))}
+        library={[]}
       />
     </AuthContext.Provider>
   )

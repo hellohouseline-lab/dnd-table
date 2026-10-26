@@ -20,6 +20,7 @@ export function sampleNotebook(): Notebook {
       { id: 'k2', name: 'Merchant’s ledger', holder: 'Elowen has it' },
     ],
     boxSettings: DEFAULT_BOXES,
+    currentSceneId: null,
   }
 }
 
