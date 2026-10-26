@@ -679,6 +679,47 @@ export type Database = {
           },
         ]
       }
+      dm_items: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          description: string
+          id: string
+          key: boolean
+          name: string
+          rarity: string | null
+          type: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          description?: string
+          id?: string
+          key?: boolean
+          name: string
+          rarity?: string | null
+          type?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          key?: boolean
+          name?: string
+          rarity?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_items_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dm_notebooks: {
         Row: {
           campaign_id: string
@@ -793,6 +834,60 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          answered_at: string | null
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item_id: string
+          item_name: string
+          quantity: number
+          status: string
+        }
+        Insert: {
+          answered_at?: string | null
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at?: string
+          id?: string
+          item_id: string
+          item_name: string
+          quantity: number
+          status?: string
+        }
+        Update: {
+          answered_at?: string | null
+          campaign_id?: string
+          character_id?: string
+          copper?: number
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_name?: string
+          quantity?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
             referencedColumns: ["id"]
           },
         ]
@@ -1243,6 +1338,27 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      answer_offer: {
+        Args: { p_offer_id: string; p_sell: boolean }
+        Returns: {
+          answered_at: string | null
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item_id: string
+          item_name: string
+          quantity: number
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "offers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       ask_for_roll: {
         Args: { p_campaign_id: string; p_request: Json }
         Returns: {
@@ -1538,6 +1654,32 @@ export type Database = {
       join_campaign: {
         Args: { p_code: string; p_display_name: string }
         Returns: string
+      }
+      make_offer: {
+        Args: {
+          p_character_id: string
+          p_copper: number
+          p_item_id: string
+          p_quantity: number
+        }
+        Returns: {
+          answered_at: string | null
+          campaign_id: string
+          character_id: string
+          copper: number
+          created_at: string
+          id: string
+          item_id: string
+          item_name: string
+          quantity: number
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "offers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       move_token: {
         Args: { p_token_id: string; p_x: number; p_y: number }
@@ -1937,6 +2079,7 @@ export type Database = {
         }
         Returns: Json
       }
+      withdraw_offer: { Args: { p_offer_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

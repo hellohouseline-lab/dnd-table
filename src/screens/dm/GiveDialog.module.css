@@ -1,9 +1,18 @@
-/* Give an item: the Rest card's look, with a search list. */
+/* Give: a wide card with the browser, the coins and the item maker. */
 .card {
-  width: 680px;
+  width: min(1180px, 96vw);
+  height: min(880px, 92vh);
 }
 
-.sides {
+.head {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.sides,
+.whoRow {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -24,14 +33,22 @@
   color: var(--gold-light);
 }
 
-.field {
+/* The browser: tags on top, cards in the middle (scrolling), ticked things at the foot. */
+.browser {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
 }
 
-.field input,
-.field select {
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search {
   height: 42px;
   padding: 0 12px;
   border-radius: 4px;
@@ -41,61 +58,194 @@
   font-size: 17px;
 }
 
-.small {
-  width: 100px;
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
 }
 
-.results {
+.tagLabel {
+  min-width: 96px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.tag {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.tag:hover {
+  border-color: var(--gold-rule);
+}
+
+.tagOn {
+  border-color: var(--gold);
+  background: rgba(212, 175, 90, 0.16);
+  color: var(--gold-light);
+}
+
+.grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-auto-rows: min-content;
+  gap: 8px;
+}
+
+.item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itemOn {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold-light);
+}
+
+.words {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.more {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.more summary {
+  cursor: pointer;
+  color: var(--label);
+}
+
+.more p {
+  margin: 6px 0 0;
+  white-space: pre-line;
+}
+
+.tick {
+  align-self: flex-start;
+  margin-top: auto;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  background: none;
+  color: var(--gold-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tick[aria-pressed='true'] {
+  background: var(--gold);
+  color: var(--on-gold);
+}
+
+.tray {
+  padding-top: 10px;
+  border-top: 1px solid rgba(168, 132, 60, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tickedList {
   margin: 0;
   padding: 0;
   list-style: none;
-  max-height: 260px;
+  max-height: 120px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.result {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  background: var(--chip-fill);
-  color: var(--text);
-  text-align: left;
+.tickedList li {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 10px;
 }
 
-.result:hover {
-  border-color: var(--gold-rule);
-}
-
-.picked {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid var(--gold);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.name {
+.tickedName {
+  min-width: 200px;
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 16px;
   color: var(--gold-light);
 }
 
-.words {
-  font-size: 15px;
-  color: var(--text-2);
+.tickedList input,
+.tickedList select,
+.field input,
+.field select,
+.field textarea {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 16px;
+}
+
+.tickedList input {
+  width: 64px;
+}
+
+.field textarea {
+  height: auto;
+  padding: 8px 10px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.trayFoot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.grow {
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .link {
-  align-self: flex-start;
   padding: 0;
   border: 0;
   background: none;
@@ -114,4 +264,55 @@
   margin: 0;
   font-size: 16px;
   color: var(--fail-light);
+}
+
+/* Making your own items. */
+.makeColumns {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+}
+
+.makeForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.makeRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.yoursList {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.yoursList li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.yoursButtons {
+  display: flex;
+  gap: 14px;
+}
+
+.keyTag {
+  margin-left: 8px;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--label);
 }

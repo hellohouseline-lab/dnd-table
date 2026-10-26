@@ -1,6 +1,6 @@
 # I1: items, money, loot and shops
 
-Written after C2 and the levelling-up fix. **Approved by Matt with decisions 38 to 50 as recommended.** It builds sections 3 and 4 of `TABLE_TOOLS_PLAN.md` in their simplest form, on top of the wallet and inventory C2 already added, and keeps the test one-shot on 21 to 22 November in view.
+Written after C2 and the levelling-up fix. **Approved by Matt with decisions 38 to 54 as recommended.** It builds sections 3 and 4 of `TABLE_TOOLS_PLAN.md` in their simplest form, on top of the wallet and inventory C2 already added, and keeps the test one-shot on 21 to 22 November in view.
 
 ## In plain words
 

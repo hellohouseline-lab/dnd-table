@@ -100,6 +100,7 @@ export function parseInventory(value: Json): InventoryItem[] {
         ...(typeof i.magic === 'string' ? { magic: i.magic } : {}),
         ...(typeof i.bonus === 'number' && i.bonus > 0 ? { bonus: Math.min(3, Math.round(i.bonus)) } : {}),
         ...(bool(i.attune) ? { attune: true, attuned: bool(i.attuned) } : {}),
+        ...(typeof i.note === 'string' && i.note.trim() ? { note: i.note.slice(0, 1000) } : {}),
       },
     ]
   })

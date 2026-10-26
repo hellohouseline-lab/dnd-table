@@ -23,7 +23,8 @@ import callStyles from '../../call/Call.module.css'
 import { isMuted, useTableCall } from '../../call/callContext.ts'
 import { CameraFeed } from '../../call/CameraFeed.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
-import type { HandOver } from '../../live/giving.ts'
+import type { HandOver, Offer } from '../../live/giving.ts'
+import { coinsFor, coinWords } from '../../rules/money.ts'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
 import { abilityModifier } from '../../rules/maths/core.ts'
@@ -125,10 +126,42 @@ type TableViewProps = {
   /** Things just given to you, shown as cards until seen. */
   arrivals?: Arrival[]
   onArrivalSeen?: (id: number) => void
+  /** The DM's offers to buy something you carry, and selling or saying no. */
+  offers?: Offer[]
+  onAnswerOffer?: (offerId: string, sell: boolean) => Promise<string | null>
 }
 
 /** Something just given to you: "You got a Longsword +1". */
 export type Arrival = { id: number; text: string }
+
+/** The DM offers coins for something you carry: sell it, or say no thanks. */
+function OfferCard({ offer, onAnswer }: { offer: Offer; onAnswer: (sell: boolean) => Promise<string | null> }) {
+  const [busy, setBusy] = useState(false)
+  const [problem, setProblem] = useState<string | null>(null)
+  const answer = async (sell: boolean) => {
+    setBusy(true)
+    const result = await onAnswer(sell)
+    setBusy(false)
+    setProblem(result)
+  }
+  return (
+    <div className={styles.offer} role="dialog" aria-label="An offer for your things">
+      <p className={styles.offerText}>
+        The DM offers <strong>{coinWords(coinsFor(offer.copper))}</strong> for your{' '}
+        {offer.quantity > 1 ? `${offer.quantity} × ${offer.itemName}` : offer.itemName}.
+      </p>
+      {problem && <p className={styles.offerProblem}>{problem}</p>}
+      <div className={styles.offerButtons}>
+        <button type="button" className={styles.offerSell} disabled={busy} onClick={() => void answer(true)}>
+          Sell
+        </button>
+        <button type="button" className={styles.offerNo} disabled={busy} onClick={() => void answer(false)}>
+          No thanks
+        </button>
+      </div>
+    </div>
+  )
+}
 
 /** A gift landing: a card that flies in, then fades after a few seconds unless opened. */
 function ArrivalCard({ arrival, onSeen, onOpen }: { arrival: Arrival; onSeen: () => void; onOpen: () => void }) {
@@ -219,6 +252,8 @@ export function TableView({
   handOver,
   arrivals = [],
   onArrivalSeen,
+  offers = [],
+  onAnswerOffer,
 }: TableViewProps) {
   const [inspected, setInspected] = useState<string | null>(null)
   // The attack you're about to make, while you pick its target.
@@ -963,6 +998,13 @@ export function TableView({
           <CombatFeed className={styles.feed} events={combat.events} nameOf={nameOf} youId={mine?.id} limit={3} />
         )}
         {audio && <NowPlaying audio={audio} />}
+        {offers.length > 0 && onAnswerOffer && (
+          <div className={styles.offers} aria-label="Offers for your things">
+            {offers.map((offer) => (
+              <OfferCard key={offer.id} offer={offer} onAnswer={(sell) => onAnswerOffer(offer.id, sell)} />
+            ))}
+          </div>
+        )}
         {arrivals.length > 0 && (
           <div className={styles.arrivals} role="status" aria-label="Just given to you">
             {arrivals.map((a) => (

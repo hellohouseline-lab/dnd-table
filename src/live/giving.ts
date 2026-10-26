@@ -4,6 +4,7 @@
 // a gift arrive for your character.
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { RARITIES, TYPE_TAGS, type DmItem, type Rarity, type TypeTag } from '../rules/catalogue.ts'
 import type { InventoryItem, Wallet } from '../rules/character.ts'
 import { EMPTY_WALLET } from '../rules/character.ts'
 import { useTableChanges, type RowChange } from './campaignChannel.ts'
@@ -21,8 +22,28 @@ function db() {
 export type PartyStash = { items: InventoryItem[]; wallet: Wallet }
 export const EMPTY_STASH: PartyStash = { items: [], wallet: EMPTY_WALLET }
 
+/** The DM's offer of coins (in copper) for something a character carries. */
+export type Offer = {
+  id: string
+  characterId: string
+  itemId: string
+  itemName: string
+  quantity: number
+  copper: number
+  status: 'open' | 'sold' | 'declined' | 'withdrawn'
+  createdAt: string
+}
+
 /** What the DM can do with things and coins; each resolves with a problem, or null. */
 export type GivingControls = {
+  /** The DM's own items, and making, changing and throwing them away. */
+  yours: DmItem[]
+  saveItem: (item: DmItem) => Promise<string | null>
+  deleteItem: (id: string) => Promise<string | null>
+  /** Offers to buy from players: the newest first. */
+  offers: Offer[]
+  offer: (characterId: string, itemId: string, quantity: number, copper: number) => Promise<string | null>
+  withdraw: (offerId: string) => Promise<string | null>
   /** Items (weapons listed with whether the character is trained, for their card) and coins in copper. */
   give: (
     characterId: string,
@@ -40,6 +61,20 @@ export type HandOver = (
   toCharacterId: string,
   what: { itemId: string | null; quantity: number; coins: Wallet; proficient: boolean | null },
 ) => Promise<string | null>
+
+/** Giving that does nothing, for tests. */
+export const NO_GIVING: GivingControls = {
+  give: async () => null,
+  take: async () => null,
+  split: async () => null,
+  stash: EMPTY_STASH,
+  yours: [],
+  saveItem: async () => null,
+  deleteItem: async () => null,
+  offers: [],
+  offer: async () => null,
+  withdraw: async () => null,
+}
 
 async function call(
   run: () => PromiseLike<{ error: { message: string; code?: string } | null }>,
@@ -141,13 +176,115 @@ export function useGiftArrivals(
 /** Giving for the DM screen, through the server. */
 export function useGivingControls(campaignId: string, userId: string): GivingControls {
   const stash = useStash(campaignId, userId)
+  const offers = useOffers(campaignId, userId)
+  const [yours, setYours] = useState<DmItem[]>([])
+  const reload = useCallback(() => {
+    if (!supabase) return
+    void supabase
+      .from('dm_items')
+      .select('*')
+      .eq('campaign_id', campaignId)
+      .order('created_at')
+      .then(({ data }) => data && setYours(data.map(rowToDmItem)))
+  }, [campaignId])
+  useEffect(reload, [reload])
   return useMemo(
     () => ({
       give: giveItems,
       take: takeCoins,
       split: (ids: string[], copper: number) => splitCoins(campaignId, ids, copper),
       stash,
+      yours,
+      saveItem: async (item: DmItem) => {
+        const row = {
+          name: item.name.trim().slice(0, 60),
+          description: item.description.slice(0, 1000),
+          type: item.type,
+          rarity: item.rarity,
+          key: item.key,
+        }
+        const problem = await call(() =>
+          yours.some((y) => y.id === item.id)
+            ? db().from('dm_items').update(row).eq('id', item.id)
+            : db()
+                .from('dm_items')
+                .insert({ ...row, campaign_id: campaignId }),
+        )
+        if (!problem) reload()
+        return problem
+      },
+      deleteItem: async (id: string) => {
+        const problem = await call(() => db().from('dm_items').delete().eq('id', id))
+        if (!problem) reload()
+        return problem
+      },
+      offers,
+      offer: (characterId: string, itemId: string, quantity: number, copper: number) =>
+        call(() =>
+          db().rpc('make_offer', {
+            p_character_id: characterId,
+            p_item_id: itemId,
+            p_quantity: quantity,
+            p_copper: copper,
+          }),
+        ),
+      withdraw: (offerId: string) => call(() => db().rpc('withdraw_offer', { p_offer_id: offerId })),
     }),
-    [campaignId, stash],
+    [campaignId, stash, yours, offers, reload],
   )
+}
+
+function rowToDmItem(row: Tables<'dm_items'>): DmItem {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    type: (TYPE_TAGS.some((t) => t.key === row.type) ? row.type : 'other') as TypeTag,
+    rarity: (RARITIES.some((r) => r.key === row.rarity) ? row.rarity : null) as Rarity | null,
+    key: row.key,
+  }
+}
+
+function rowToOffer(row: Tables<'offers'>): Offer {
+  return {
+    id: row.id,
+    characterId: row.character_id,
+    itemId: row.item_id,
+    itemName: row.item_name,
+    quantity: row.quantity,
+    copper: row.copper,
+    status: (['open', 'sold', 'declined', 'withdrawn'] as const).find((s) => s === row.status) ?? 'withdrawn',
+    createdAt: row.created_at,
+  }
+}
+
+/** Offers you may see (all, for the DM; your character's, for a player), newest first, kept up to date. */
+export function useOffers(campaignId: string, userId: string): Offer[] {
+  const [offers, setOffers] = useState<Offer[]>([])
+  useEffect(() => {
+    if (!supabase) return
+    let live = true
+    void supabase
+      .from('offers')
+      .select('*')
+      .eq('campaign_id', campaignId)
+      .order('created_at', { ascending: false })
+      .limit(50)
+      .then(({ data }) => live && data && setOffers(data.map(rowToOffer)))
+    return () => {
+      live = false
+    }
+  }, [campaignId])
+  const onChange = useCallback((change: RowChange<'offers'>) => {
+    if (change.type !== 'upsert') return
+    const offer = rowToOffer(change.row)
+    setOffers((now) => [offer, ...now.filter((o) => o.id !== offer.id)])
+  }, [])
+  useTableChanges(campaignId, userId, 'offers', onChange)
+  return offers
+}
+
+/** A player sells, or says no thanks. */
+export function answerOffer(offerId: string, sell: boolean): Promise<string | null> {
+  return call(() => db().rpc('answer_offer', { p_offer_id: offerId, p_sell: sell }))
 }
