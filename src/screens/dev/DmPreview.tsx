@@ -13,6 +13,7 @@ import type { RollRequest } from '../../rules/dice.ts'
 import { DmView } from '../dm/DmView.tsx'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { usePreviewEvents, usePreviewNotebook } from './previewNotebook.ts'
+import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import styles from './DmPreview.module.css'
 
@@ -137,6 +138,9 @@ export function DmPreview({ tab }: { tab: string }) {
     return { request, answers: [previewAnswer(sampleCharacters[0], request, 15)] }
   })
   const notebook = usePreviewNotebook()
+  // #/dev/dm/fight opens with a fight going on.
+  const [fightStart] = useState(() => (tab === 'fight' ? sampleFight(sampleCharacters) : null))
+  const fight = usePreviewFight(fightStart)
   const events = usePreviewEvents()
   const asking = usePreviewAsking(characters, {
     start: start.request,
@@ -175,7 +179,8 @@ export function DmPreview({ tab }: { tab: string }) {
         notebook={notebook}
         events={events}
         sceneName="Arrive at the tavern"
-        startTab={tab === 'log' ? 'log' : 'party'}
+        fight={fight}
+        startTab={tab === 'log' ? 'log' : tab === 'fight' ? 'encounter' : 'party'}
       />
     </AuthContext.Provider>
   )

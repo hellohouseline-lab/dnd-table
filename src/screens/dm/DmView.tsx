@@ -40,31 +40,56 @@ import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { CameraColumn } from '../table/TableView.tsx'
 import { DiceControls } from '../table/DiceControls.tsx'
+import type { Combatant } from '../../live/combat.ts'
+import type { FightControls } from '../../live/useFight.ts'
+import { useSrd } from '../../live/useSrd.ts'
+import { monsterAttack, monsterInitiative } from '../../rules/combat.ts'
+import { loadMonsters } from '../../rules/srd/index.ts'
+import { EncounterTab } from '../fight/EncounterTab.tsx'
+import { AddMonsterDialog, StartFightDialog } from '../fight/FightDialogs.tsx'
+import type { FightRow } from '../fight/fightRows.ts'
+import type { MonsterPick } from '../fight/MonsterPicker.tsx'
 import { NotebookPanel } from './NotebookPanel.tsx'
 import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { useSessionClock } from './useSessionClock.ts'
 import styles from './DmView.module.css'
 
-type DmTab = 'party' | 'log'
+type DmTab = 'party' | 'encounter' | 'log'
 
 const TABS: { label: string; tab?: DmTab; title?: string }[] = [
   { label: 'Party', tab: 'party' },
-  { label: 'Encounter', title: 'Fights arrive in milestone 6' },
+  { label: 'Encounter', tab: 'encounter' },
   { label: 'NPCs', title: 'NPCs arrive in Phase 2' },
   { label: 'Items and loot', title: 'Items arrive in Phase 2' },
   { label: 'Log', tab: 'log' },
 ]
 
-type Verb = 'ask' | 'rest' | 'note'
+type Verb = 'ask' | 'rest' | 'note' | 'fight' | 'next' | 'monster' | 'end'
 
-const VERBS: { label: string; icon: IconName; title: string; verb?: Verb }[] = [
+type VerbButton = { label: string; icon: IconName; title: string; verb?: Verb; primary?: boolean }
+
+const VERBS: VerbButton[] = [
   { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', verb: 'ask' },
-  { label: 'Start combat', icon: 'sword', title: 'Arrives in milestone 6' },
+  { label: 'Start combat', icon: 'sword', title: 'Start a fight: who, which monsters, then initiative', verb: 'fight' },
   { label: 'Show an NPC', icon: 'journal', title: 'Arrives in Phase 2' },
   { label: 'Give an item', icon: 'items', title: 'Arrives in Phase 2' },
   { label: 'Rest', icon: 'moon', title: 'A short or long rest for the party', verb: 'rest' },
   { label: 'Add a note', icon: 'log', title: 'Write a quick note into the log', verb: 'note' },
+]
+
+// The bottom bar during a fight (design 10).
+const COMBAT_VERBS: VerbButton[] = [
+  { label: 'Next turn', icon: 'play', title: 'The next in the turn order goes', verb: 'next', primary: true },
+  { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', verb: 'ask' },
+  { label: 'Add a monster', icon: 'sword', title: 'Add monsters from the SRD to this fight', verb: 'monster' },
+  { label: 'Too hard? Rebalance', icon: 'star', title: 'Arrives in Phase 2' },
+  {
+    label: 'End fight',
+    icon: 'moon',
+    title: 'End the fight: the monsters leave the turn order and the map',
+    verb: 'end',
+  },
 ]
 
 const HP_WORDS: Record<HitPointChange, string> = { damage: 'took', heal: 'healed', temp: 'gained' }
@@ -91,6 +116,8 @@ type DmViewProps = {
   sceneName: string
   /** The table's sound in this tab (left out in the previews). */
   audio?: TableAudio
+  /** The fight going on, if any, and what the DM can do about it. */
+  fight: FightControls
   startTab?: DmTab
 }
 
@@ -116,8 +143,13 @@ export function DmView({
   events,
   sceneName,
   audio,
+  fight,
   startTab = 'party',
 }: DmViewProps) {
+  const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
+  const [selectedCombatant, setSelectedCombatant] = useState<string | null>(null)
+  const monsters = useSrd(loadMonsters)
+  const fighting = fight.fight
   const [resting, setResting] = useState(false)
   const noteInput = useRef<HTMLInputElement>(null)
   const sessionTime = useSessionClock(campaign.id)
@@ -134,7 +166,7 @@ export function DmView({
   const open = characters.find((c) => c.id === sheetFor)
   const choices = { mode, secret }
   const { request } = asking
-  const showResults = request && hiddenFor !== request.id && !askFor && !resting
+  const showResults = request && hiddenFor !== request.id && !askFor && !resting && !fightDialog
   const hereTonight = characters.filter((c) =>
     members.some((m) => m.user_id === c.ownerId && m.role === 'player' && m.here_tonight),
   )
@@ -196,6 +228,45 @@ export function DmView({
     if (verb === 'ask') setAskFor({ only: null })
     if (verb === 'rest') setResting(true)
     if (verb === 'note') noteInput.current?.focus()
+    if (verb === 'fight') setFightDialog('start')
+    if (verb === 'monster') setFightDialog('monster')
+    if (verb === 'next') fight.next()
+    if (verb === 'end' && fighting && window.confirm('End the fight? The monsters leave the turn order and the map.')) {
+      events.add('note', `The fight ended in round ${fighting.encounter.round}.`)
+      fight.end()
+    }
+  }
+
+  async function startFight(party: Character[], foes: MonsterPick[]) {
+    const started = await fight.start(party)
+    if (!started) return
+    for (const foe of foes) await fight.addMonsters(foe.monster, foe.count)
+    events.add(
+      'note',
+      `A fight began: ${[...party.map((c) => c.name), ...foes.map((f) => `${f.count} × ${f.monster.name}`)].join(', ')}.`,
+    )
+    setFightDialog(null)
+    setTab('encounter')
+  }
+
+  function rollInitiativeFor(combatant: Combatant, row: FightRow) {
+    if (row.character) void fight.rollInitiative(combatant, initiativeRoll(row.character))
+    else {
+      const monster = monsters?.find((m) => m.index === row.secret?.monster)
+      void fight.rollInitiative(
+        combatant,
+        monster
+          ? monsterInitiative(monster)
+          : { ...freeRoll([{ sides: 20, count: 1 }]), kind: 'initiative', secret: true },
+      )
+    }
+  }
+
+  // Quick ±1 (or ±5) from the turn order: not logged, unlike Damage or heal on the party cards.
+  function nudgeHp(character: Character, change: number) {
+    const before = { current: character.currentHp, max: character.maxHp, temp: character.tempHp }
+    const after = change < 0 ? takeDamage(before, -change) : heal(before, change)
+    onUpdate(character.id, { currentHp: after.current, tempHp: after.temp })
   }
 
   function roll(request: RollRequest) {
@@ -221,6 +292,11 @@ export function DmView({
           Scene now: <strong className={styles.scene}>{sceneName || 'not named yet'}</strong>
         </span>
         <span className={styles.spacer} />
+        {fighting && (
+          <button type="button" className={styles.combatBadge} onClick={() => setTab('encounter')}>
+            In combat · Round {fighting.encounter.round}
+          </button>
+        )}
         {audio && <NowPlaying audio={audio} />}
         <a className={styles.headerLink} href={href(`/c/${campaign.id}`)}>
           Join screen
@@ -241,6 +317,7 @@ export function DmView({
         {saveError && <Notice tone="error">{saveError}</Notice>}
         {table.error && <Notice tone="error">{table.error}</Notice>}
         {events.error && <Notice tone="error">{events.error}</Notice>}
+        {fight.error && <Notice tone="error">{fight.error}</Notice>}
       </aside>
 
       <DiceControls
@@ -283,7 +360,30 @@ export function DmView({
           ))}
         </div>
         <div className={styles.content} role="tabpanel">
-          {tab === 'party' ? (
+          {tab === 'encounter' ? (
+            fighting ? (
+              <EncounterTab
+                fight={fighting}
+                controls={fight}
+                characters={characters}
+                monsters={monsters}
+                selectedId={selectedCombatant}
+                onSelect={setSelectedCombatant}
+                onCharacterHp={nudgeHp}
+                onRollAttack={(name, action) => void table.roll(monsterAttack(name, action))}
+                onRollInitiative={rollInitiativeFor}
+                onOpenSheet={(character) => {
+                  setSheetTab('sheet')
+                  setSheetFor(character.id)
+                }}
+                rolling={table.rolling}
+              />
+            ) : (
+              <p className={styles.empty}>
+                No fight going on. Press <strong>Start combat</strong> below to choose who fights and which monsters.
+              </p>
+            )
+          ) : tab === 'party' ? (
             <PartyCards
               members={members}
               characters={characters}
@@ -306,11 +406,11 @@ export function DmView({
           )}
         </div>
         <nav className={styles.verbs} aria-label="DM actions">
-          {VERBS.map((verb) => (
+          {(fighting ? COMBAT_VERBS : VERBS).map((verb) => (
             <button
               key={verb.label}
               type="button"
-              className={styles.verb}
+              className={cx(styles.verb, verb.primary && styles.verbPrimary)}
               disabled={!verb.verb}
               title={verb.title}
               onClick={() => verb.verb && runVerb(verb.verb)}
@@ -345,9 +445,25 @@ export function DmView({
         />
       </section>
 
-      {(askFor || showResults || resting) && (
+      {(askFor || showResults || resting || fightDialog) && (
         <div className={styles.overlay}>
-          {resting ? (
+          {fightDialog === 'start' ? (
+            <StartFightDialog
+              characters={characters}
+              hereTonight={hereTonight}
+              monsters={monsters}
+              onStart={startFight}
+              onClose={() => setFightDialog(null)}
+            />
+          ) : fightDialog === 'monster' ? (
+            <AddMonsterDialog
+              monsters={monsters}
+              onAdd={async (pick) => {
+                await fight.addMonsters(pick.monster, pick.count)
+              }}
+              onClose={() => setFightDialog(null)}
+            />
+          ) : resting ? (
             <RestDialog
               characters={characters}
               hereTonight={hereTonight}

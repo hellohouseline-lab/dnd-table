@@ -237,9 +237,14 @@ export async function rollInitiative(combatantId: string, request: RollRequest):
   return rowToRoll(data)
 }
 
-export async function setTurn(encounterId: string, currentId: string | null, round: number): Promise<void> {
-  const { error } = await db().from('encounters').update({ current_id: currentId, round }).eq('id', encounterId)
-  if (error) throw fromDatabaseError(error)
+/** Ends the turn: the next in the order goes (the server works it out). The DM, or whoever's turn it is. */
+export async function endTurn(encounterId: string): Promise<Encounter> {
+  const { data, error } = await db().rpc('end_turn', { p_encounter_id: encounterId })
+  if (error) {
+    if ((error.code === '22023' || error.code === '42501') && error.message) throw new TableError(`${error.message}.`)
+    throw fromDatabaseError(error)
+  }
+  return rowToEncounter(data)
 }
 
 export type CombatantPatch = Partial<Pick<Combatant, 'shownName' | 'revealed' | 'health' | 'conditions'>>

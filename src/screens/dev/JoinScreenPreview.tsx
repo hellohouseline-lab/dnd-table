@@ -14,6 +14,8 @@ import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { TableView } from '../table/TableView.tsx'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
+import { sampleFight, usePreviewFight } from './previewFight.ts'
+import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { loadBackgrounds, loadClasses, loadRaces } from '../../rules/srd/index.ts'
@@ -49,7 +51,7 @@ export function JoinScreenPreview({ as }: { as: string }) {
  * #/dev/table: the table screen. Trackers change on screen but aren't saved. #/dev/table/asked opens
  * with the DM asking for a Constitution save (DC 15, secret), which Elowen has already rolled.
  */
-export function TablePreview({ asked = false }: { asked?: boolean }) {
+export function TablePreview({ asked = false, fighting = false }: { asked?: boolean; fighting?: boolean }) {
   const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(() => parseDiceStyle(sampleMembers[1].dice_style))
   const [start] = useState(() => {
@@ -58,6 +60,11 @@ export function TablePreview({ asked = false }: { asked?: boolean }) {
     return { request, answers: [previewAnswer(sampleCharacters[1], request, 15)] }
   })
   const asking = usePreviewAsking(sampleCharacters, { start: start.request, startAnswers: start.answers })
+  // #/dev/table/fight: Thorin's turn against two goblins on a made-up battle map.
+  const [fightStart] = useState(() => (fighting ? sampleFight(sampleCharacters) : null))
+  const fight = usePreviewFight(fightStart)
+  const [map] = useState(() => (fighting ? previewMap() : null))
+  const tokens = usePreviewTokens(map?.id ?? null, map ? previewMapTokens(map.id, fightStart) : [])
   // The preview throws dice in the browser; there's no database to ask.
   const thrower = useCallback(
     async (request: RollRequest) =>
@@ -80,6 +87,19 @@ export function TablePreview({ asked = false }: { asked?: boolean }) {
         onDiceStyleChange={setDiceStyle}
         thrower={thrower}
         asking={asking}
+        combat={
+          fighting
+            ? {
+                fight: fight.fight,
+                rollInitiative: fight.rollInitiative,
+                endTurn: fight.next,
+                map,
+                tokens,
+                playersMove: true,
+                pointers: { hands: [], pings: [], sendHand: () => {}, sendPing: () => {} },
+              }
+            : undefined
+        }
       />
     </SignedInAs>
   )

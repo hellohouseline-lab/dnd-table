@@ -625,3 +625,57 @@ button.padButton:active {
 .padRemove:focus-visible {
   opacity: 1;
 }
+
+.controlOn {
+  border-color: var(--gold-rule);
+  color: var(--gold-light);
+}
+
+.mapTools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gridTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.tokenTools {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--gold-rule);
+}
+
+.toolLabel {
+  margin-left: 4px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.tool {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 16px;
+}
+
+.tool:hover {
+  border-color: var(--gold-rule);
+}
+
+.toolValue {
+  min-width: 48px;
+  text-align: center;
+  font-size: 15px;
+}

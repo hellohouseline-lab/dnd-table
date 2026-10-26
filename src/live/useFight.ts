@@ -25,7 +25,7 @@ import {
   rowToToken,
   setMonsterHp,
   setTokenHidden,
-  setTurn,
+  endTurn,
   startFight,
   updateCombatant,
   type Combatant,
@@ -125,12 +125,20 @@ export function useFight(campaignId: string, userId: string): FightControls {
     }
   }, [])
 
-  const patchLocal = useCallback((patch: (fight: Fight) => Fight) => setFight((now) => (now ? patch(now) : now)), [])
+  // Changes the fight on screen at once. The ref changes straight away too, so actions taken one
+  // after another (starting a fight, then adding monsters) each see the last one's result.
+  const patchLocal = useCallback((patch: (fight: Fight) => Fight) => {
+    if (current.current) current.current = patch(current.current)
+    setFight((now) => (now ? patch(now) : now))
+  }, [])
 
   const start = useCallback(
     async (characters: Character[]) => {
       const started = await attempt(() => startFight(campaignId, characters))
-      if (started) setFight(started)
+      if (started) {
+        current.current = started
+        setFight(started)
+      }
       return started
     },
     [attempt, campaignId],
@@ -167,13 +175,17 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [attempt, patchLocal],
   )
 
+  // Moves on at once on screen; the server has the final word on whose turn it is.
   const next = useCallback(() => {
     const now = current.current
     if (!now) return
     const entries = now.combatants.map((c) => ({ ...c, out: c.kind === 'monster' && c.health === 'down' }))
     const turn = nextTurn(entries, now.encounter.currentId, now.encounter.round)
     patchLocal((f) => ({ ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }))
-    void attempt(() => setTurn(now.encounter.id, turn.currentId, turn.round))
+    void attempt(async () => {
+      const encounter = await endTurn(now.encounter.id)
+      patchLocal((f) => (f.encounter.id === encounter.id ? { ...f, encounter } : f))
+    })
   }, [attempt, patchLocal])
 
   const setHp = useCallback(

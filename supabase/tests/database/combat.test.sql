@@ -4,7 +4,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(33);
+select plan(37);
 
 insert into auth.users (id, email) values
   ('ffffffff-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -179,6 +179,39 @@ update public.stage set players_move_tokens = false where campaign_id = current_
 set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000002", "role": "authenticated"}';
 update public.tokens set x = 6 where character_id = current_setting('test.fighter')::uuid;
 select is((select x from public.tokens where character_id is not null), 5::smallint, 'Players can''t move tokens when the DM says not to');
+
+-- ---------------------------------------------------------------------------------------------
+-- Turns: fighter 18, Goblin A 15, Goblin B 9
+-- ---------------------------------------------------------------------------------------------
+set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000001", "role": "authenticated"}';
+update public.combatants set initiative = 18 where kind = 'character';
+update public.combatants set initiative = 15 where id = current_setting('test.goblin')::uuid;
+update public.combatants set initiative = 9, health = 'healthy' where id = current_setting('test.goblin2')::uuid;
+select is(
+  (select current_id from public.end_turn(current_setting('test.encounter')::uuid)),
+  (select id from public.combatants where kind = 'character'),
+  'The first turn goes to the highest initiative'
+);
+
+set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000002", "role": "authenticated"}';
+select is(
+  (select current_id from public.end_turn(current_setting('test.encounter')::uuid)),
+  current_setting('test.goblin')::uuid,
+  'A player ends their own turn and the next goes'
+);
+select throws_ok(
+  $$ select public.end_turn(current_setting('test.encounter')::uuid) $$,
+  '42501', null,
+  'A player cannot end someone else''s turn'
+);
+
+set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000001", "role": "authenticated"}';
+update public.combatants set health = 'down' where id = current_setting('test.goblin2')::uuid;
+select ok(
+  (select current_id = (select id from public.combatants where kind = 'character') and round = 2
+   from public.end_turn(current_setting('test.encounter')::uuid)),
+  'Down monsters are passed over, and after the last a new round starts'
+);
 
 -- ---------------------------------------------------------------------------------------------
 -- Someone not at the table, and the end of the fight

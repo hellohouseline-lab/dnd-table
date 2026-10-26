@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { RequestControls } from '../../live/useRollRequest.ts'
+import type { FightControls } from '../../live/useFight.ts'
 import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
 import type { Roll } from '../../live/rolls.ts'
 import { sampleNotebook } from '../dev/previewNotebook.ts'
@@ -8,6 +9,20 @@ import { sampleCampaign, sampleCharacters, sampleMembers } from '../dev/sampleDa
 import { DmView } from './DmView.tsx'
 
 const noop = () => {}
+const noFight: FightControls = {
+  fight: null,
+  status: 'ready',
+  error: null,
+  start: async () => null,
+  addMonsters: async () => null,
+  rollInitiative: async () => null,
+  next: noop,
+  setMonsterHp: noop,
+  reveal: noop,
+  setConditions: noop,
+  remove: noop,
+  end: noop,
+}
 const nobodyAsked: RequestControls = {
   request: null,
   answers: [],
@@ -59,6 +74,7 @@ function render(startTab: 'party' | 'log') {
         notebook={{ notebook: sampleNotebook(), status: 'ready', change: noop, saving: false, error: null }}
         events={{ events: [], add: noop, error: null }}
         sceneName="Arrive at the tavern"
+        fight={noFight}
         startTab={startTab}
       />,
     ),

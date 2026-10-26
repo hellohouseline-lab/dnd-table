@@ -9,6 +9,8 @@ import { nameFromFile, type Asset } from '../../live/library.ts'
 import { emptyStage, type Stage, type StagePatch } from '../../live/stage.ts'
 import type { LibraryControls } from '../../live/useStage.ts'
 import { StageView, type LibraryActions } from '../stage/StageView.tsx'
+import { sampleFight, usePreviewFight } from './previewFight.ts'
+import { usePreviewTokens } from './previewTokens.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 
 const online = new Set(['dm', 'p1'])
@@ -49,6 +51,9 @@ export function StagePreview() {
   const drop = useCallback((id: string) => setAssets((now) => now.filter((a) => a.id !== id)), [])
   const library: LibraryControls = { assets, status: 'ready', error: null, put, drop }
   const audio = useTableAudio('preview', 'dm', stage, assets)
+  const tokens = usePreviewTokens(stage.mapId)
+  const [fightStart] = useState(() => sampleFight(sampleCharacters))
+  const fight = usePreviewFight(fightStart)
 
   const actions: LibraryActions = {
     uploadArt: async (file, category) => previewAsset(file, { kind: 'art', category }),
@@ -78,6 +83,7 @@ export function StagePreview() {
         actions={actions}
         audio={audio}
         now={Date.now}
+        map={{ tokens, fight: fight.fight, pointers: { hands: [], pings: [], sendHand: () => {}, sendPing: () => {} } }}
       />
     </AuthContext.Provider>
   )

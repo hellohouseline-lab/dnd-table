@@ -62,6 +62,11 @@ function render() {
           remove: async () => undefined,
         }}
         now={() => 0}
+        map={{
+          tokens: { tokens: [], error: null, move: noop, place: async () => {}, setHidden: noop, remove: noop },
+          fight: null,
+          pointers: { hands: [], pings: [], sendHand: noop, sendPing: noop },
+        }}
       />,
     ),
   )
@@ -89,6 +94,7 @@ describe('the stage screen', () => {
 
   it('keeps the later features visible but switched off', () => {
     expect(html).toContain('Switch to battle map')
+    expect(html).toContain('Players move their own tokens: on')
     expect(html).toMatch(/Library: 5\.0 MB of the 1 GB free storage/)
   })
 })

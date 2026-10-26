@@ -42,7 +42,8 @@ export function turnOrder<T extends TurnEntry>(entries: T[]): T[] {
       return b.initiative - a.initiative
     }
     if (a.tiebreak !== b.tiebreak) return b.tiebreak - a.tiebreak
-    return a.createdAt.localeCompare(b.createdAt)
+    if (a.createdAt !== b.createdAt) return a.createdAt.localeCompare(b.createdAt)
+    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0
   })
 }
 
@@ -158,4 +159,12 @@ export function actionSummary(action: SrdMonsterAction): string {
   if (action.dc) return `DC ${action.dc.value} ${ABILITY_NAME[action.dc.ability]} save`
   const first = action.desc.split(/(?<=\.)\s/)[0] ?? ''
   return first.length > 90 ? `${first.slice(0, 87)}…` : first
+}
+
+/** "1/4", "2": a challenge rating as the books write it. */
+export function crText(cr: number): string {
+  if (cr === 0.125) return '1/8'
+  if (cr === 0.25) return '1/4'
+  if (cr === 0.5) return '1/2'
+  return String(cr)
 }

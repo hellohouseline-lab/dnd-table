@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { aOrAn } from '../../components/words.ts'
@@ -41,6 +41,11 @@ import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { requestChips, type CameraChip } from '../rolls/requestStatus.ts'
 import { RollPrompt, RollResult } from '../rolls/RollPrompt.tsx'
+import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
+import { feetBetween } from '../../rules/combat.ts'
+import { mapTokens } from '../../map/mapTokens.ts'
+import { fightRows } from '../fight/fightRows.ts'
+import { InitiativePrompt, InitiativeRibbon, InspectCard, ThisTurn, TurnBanner } from '../fight/PlayerCombat.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
 import styles from './TableView.module.css'
@@ -64,6 +69,27 @@ type TableViewProps = {
   stageImage?: Asset | null
   /** The table's sound in this tab (left out in the previews). */
   audio?: TableAudio
+  /** Fights and the battle map (left out in the tests). */
+  combat?: PlayerCombatProps
+}
+
+const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
+
+/** A fight and the battle map, as a player sees them. */
+export type PlayerCombatProps = {
+  fight: FightControls['fight']
+  rollInitiative: FightControls['rollInitiative']
+  endTurn: () => void
+  /** The battle map on stage, or null when the stage shows a picture. */
+  map: Asset | null
+  tokens: TokenControls
+  playersMove: boolean
+  pointers: {
+    hands: Pointer[]
+    pings: (Pointer & { id: number })[]
+    sendHand: (x: number, y: number) => void
+    sendPing: (x: number, y: number) => void
+  }
 }
 
 const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; title: string }[] = [
@@ -93,7 +119,9 @@ export function TableView({
   asking,
   stageImage = null,
   audio,
+  combat,
 }: TableViewProps) {
+  const [inspected, setInspected] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName | null>(null)
   const [mode, setMode] = useState<RollMode>('normal')
   const [secret, setSecret] = useState(false)
@@ -114,6 +142,48 @@ export function TableView({
   const myAnswer = asking.answers.find((answer) => answer.characterId === character.id)
   const showResult = myAnswer && landed === myAnswer.id && closedResult !== myAnswer.id
   const chips = requestChips({ request, answers: asking.answers, members, characters, viewerId: me.user_id })
+
+  // The fight, as the party knows it.
+  const fight = combat?.fight ?? null
+  const rows = fight ? fightRows(fight, characters, 'player') : []
+  const mine = fight?.combatants.find((c) => c.characterId === character.id) ?? null
+  const myTurn = Boolean(fight && mine && fight.encounter.currentId === mine.id)
+  const acting = rows.find((r) => r.status === 'acting')
+  const badges: Record<string, string> = {}
+  for (const row of rows) {
+    if (row.character && row.combatant.initiative !== null)
+      badges[row.character.ownerId] = String(row.combatant.initiative)
+  }
+
+  // How far you've moved this turn: from where your token stood when your turn began.
+  const tokens = combat?.tokens.tokens ?? []
+  const myToken = tokens.find((t) => t.characterId === character.id)
+  const turnKey = myTurn && fight ? `${fight.encounter.id}:${fight.encounter.round}` : null
+  const [turnStart, setTurnStart] = useState<{ key: string; x: number; y: number } | null>(null)
+  if (turnKey && myToken && turnStart?.key !== turnKey) setTurnStart({ key: turnKey, x: myToken.x, y: myToken.y })
+  const moved = turnStart && turnStart.key === turnKey && myToken ? feetBetween(turnStart, myToken) : 0
+  const feetLeft = Math.max(0, character.speed - moved)
+  const mapView = combat
+    ? mapTokens(
+        tokens,
+        { characters, combatants: fight?.combatants ?? [], secrets: [], currentId: fight?.encounter.currentId ?? null },
+        { userId: me.user_id, isDm: false, playersMove: combat.playersMove },
+      )
+    : []
+  const inspectedToken = tokens.find((t) => t.id === inspected)
+  const inspectedRow = inspectedToken
+    ? (rows.find((r) =>
+        inspectedToken.characterId
+          ? r.combatant.characterId === inspectedToken.characterId
+          : r.combatant.id === inspectedToken.combatantId,
+      ) ?? null)
+    : null
+
+  async function rollMyInitiative() {
+    if (!combat || !mine) return
+    setMode('normal')
+    await combat.rollInitiative(mine, initiativeRoll(character, { mode }))
+  }
   const sheet = deriveSheet(character)
   const update = (patch: TrackerPatch) => onUpdate(character.id, patch)
   const conditions = character.conditions.map((c) => findCondition(c)?.name ?? c)
@@ -171,7 +241,27 @@ export function TableView({
   return (
     <main className={styles.screen}>
       <div className={styles.floor} aria-hidden="true" />
-      {stageImage ? (
+      {combat?.map ? (
+        <div className={styles.stageImage}>
+          <Suspense fallback={null}>
+            <BattleMap
+              map={combat.map}
+              tokens={mapView}
+              selectedId={inspected}
+              onSelect={setInspected}
+              onMove={(id, x, y) => {
+                const token = tokens.find((t) => t.id === id)
+                if (token) combat.tokens.move(token, x, y)
+              }}
+              reach={myTurn && myToken ? { tokenId: myToken.id, feet: feetLeft } : null}
+              hands={combat.pointers.hands}
+              pings={combat.pointers.pings}
+              onHand={combat.pointers.sendHand}
+              onPing={combat.pointers.sendPing}
+            />
+          </Suspense>
+        </div>
+      ) : stageImage ? (
         <div className={styles.stageImage}>
           <StoredImage path={stageImage.path} alt={`The scene: ${stageImage.name}`} />
         </div>
@@ -183,9 +273,16 @@ export function TableView({
           </div>
         </div>
       )}
-      {audio && (
-        <div className={styles.topChips}>
-          <NowPlaying audio={audio} />
+      <div className={styles.topChips}>
+        {fight && (
+          <TurnBanner round={fight.encounter.round} mine={myTurn} acting={acting && !myTurn ? acting.name : null} />
+        )}
+        {fight && <InitiativeRibbon rows={rows} />}
+        {audio && <NowPlaying audio={audio} />}
+      </div>
+      {inspectedRow && (
+        <div className={styles.inspect}>
+          <InspectCard row={inspectedRow} onClose={() => setInspected(null)} />
         </div>
       )}
 
@@ -249,7 +346,17 @@ export function TableView({
           </div>
         </section>
 
-        <section className={styles.abilities} aria-label="Abilities and conditions">
+        {fight && mine && (
+          <ThisTurn
+            key={turnKey ?? 'waiting'}
+            speed={character.speed}
+            feetLeft={feetLeft}
+            myTurn={myTurn}
+            onEndTurn={() => combat?.endTurn()}
+          />
+        )}
+
+        <section className={cx(styles.abilities, fight && styles.hiddenInFight)} aria-label="Abilities and conditions">
           <div className={styles.abilityRow}>
             {ABILITIES.map((ability) => (
               <button
@@ -305,7 +412,14 @@ export function TableView({
         {table.error && <Notice tone="error">{table.error}</Notice>}
       </div>
 
-      <CameraColumn members={members} characters={characters} online={online} myId={me.user_id} chips={chips} />
+      <CameraColumn
+        members={members}
+        characters={characters}
+        online={online}
+        myId={me.user_id}
+        chips={chips}
+        badges={badges}
+      />
 
       {sheetTab && (
         <>
@@ -325,6 +439,16 @@ export function TableView({
         </>
       )}
 
+      {fight && mine && mine.initiative === null && !(request && askedMe && !myAnswer) && (
+        <div className={styles.asked}>
+          <InitiativePrompt
+            character={character}
+            mode={mode}
+            onRoll={() => void rollMyInitiative()}
+            rolling={table.rolling}
+          />
+        </div>
+      )}
       {request && askedMe && !myAnswer && (
         <div className={styles.asked}>
           <RollPrompt
@@ -363,11 +487,21 @@ type CameraColumnProps = {
   myId: string
   /** A status chip per user id, such as "Your roll" or "Passed" while the DM's roll request is open. */
   chips?: Record<string, CameraChip>
+  /** A small badge per user id in the tile's corner, such as their initiative in a fight. */
+  badges?: Record<string, string>
   className?: string
 }
 
 /** The camera column from the designs. Until cameras arrive (milestone 7) each tile shows who's here. */
-export function CameraColumn({ members, characters, online, myId, chips = {}, className }: CameraColumnProps) {
+export function CameraColumn({
+  members,
+  characters,
+  online,
+  myId,
+  chips = {},
+  badges = {},
+  className,
+}: CameraColumnProps) {
   const ordered = [...members.filter((m) => m.role === 'dm'), ...members.filter((m) => m.role === 'player')]
   return (
     <div className={cx(styles.cameras, className)} aria-label="The table">
@@ -377,6 +511,7 @@ export function CameraColumn({ members, characters, online, myId, chips = {}, cl
         const you = member.user_id === myId
         return (
           <div key={member.user_id} className={cx(styles.tile, you && styles.you)}>
+            {badges[member.user_id] && <span className={styles.badge}>{badges[member.user_id]}</span>}
             {chips[member.user_id] && (
               <span className={cx(styles.chip, styles[`chip_${chips[member.user_id].tone}`])}>
                 {chips[member.user_id].label}

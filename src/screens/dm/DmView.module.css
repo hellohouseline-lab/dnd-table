@@ -247,3 +247,34 @@
   color: var(--gold-light);
   font-weight: 600;
 }
+
+.combatBadge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--fail);
+  background: none;
+  color: var(--fail-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.verbPrimary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+
+.verbPrimary svg {
+  color: var(--on-gold);
+}
+
+.empty {
+  margin: 24px 0;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-3);
+}
