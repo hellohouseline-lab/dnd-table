@@ -50,6 +50,13 @@ export function CreditsScreen() {
         </p>
       </Panel>
 
+      <Panel title="Voice and cameras">
+        <p>
+          Everyone&rsquo;s voice and camera travel through <a href="https://vdo.ninja">VDO.Ninja</a> by Steve Seguin,
+          a free and open-source service shown inside the table. None of its code is part of this site.
+        </p>
+      </Panel>
+
       <Panel title="Sound">
         <p>
           Music, ambience and sound effects play through <a href="https://howlerjs.com">Howler.js</a> by James Simpson

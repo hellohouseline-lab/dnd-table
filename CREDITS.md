@@ -16,6 +16,10 @@ The 3D dice are thrown by [dice-box-threejs](https://github.com/3d-dice/dice-box
 
 Battle maps are drawn with [Konva](https://konvajs.org) and react-konva by Anton Lavrenov, under the MIT License. Monster stat blocks come from the SRD 5.1 data above. The map pictures are the DM's own and live only in the private database.
 
+## Voice and cameras
+
+Everyone's voice and camera travel through [VDO.Ninja](https://vdo.ninja) by Steve Seguin, a free and open-source service (AGPL-3.0) shown inside the table in frames. None of its code is copied into this repository.
+
 ## Sound
 
 Music, ambience and sound effects play through [Howler.js](https://howlerjs.com) by James Simpson and GoldFire Studios, under the MIT License. The sound files are the DM's own (Envato Elements, licensed for streaming) and live only in the private database, never in this repository.

@@ -232,6 +232,8 @@ Your group streams from a mix of Macs and Windows PCs, so the steps will cover b
 
 ## 8. Milestone 7 in detail: cameras and voice (planned 26 October)
 
+**Built on 26 October** as planned below, without the talking ring (Matt said no). The relay switch waits for the upload check in step D. Also built here: **Check my camera** on the Join screen, and in a fight the camera column in turn order with the acting tile glowing and "acting now" and "next" on the plates (design 05).
+
 **The decision (26 October).** Voice and cameras both go through VDO.Ninja, built into the app. Discord's video can't be shown inside the app. Twitch Stream Together's camera links work in everyone's OBS, which is how your group has used it, but Twitch stops its pages being shown inside any other website (checked on 26 October: every twitch.tv page, the dashboard included, tells the browser "only show me on Twitch"), so those links can't fill the camera tiles. VDO.Ninja's can, and the same feeds go into the overlay in milestone 8. VDO.Ninja is free, open source and run on donations; if it's ever down on a session night, the app still works without cameras and Stream Together is the fallback for that night.
 
 **What you'll see**
