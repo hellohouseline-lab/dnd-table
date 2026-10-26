@@ -1,0 +1,295 @@
+/* Screen 2 in a fight: turn order and the acting creature on the left, the map in the middle with
+   what happened under it, cameras on the right. 1440 by 900 and up. */
+
+.screen {
+  position: relative;
+  height: 100vh;
+  min-height: 720px;
+  overflow: hidden;
+  background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  flex: 0 0 56px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid #2e2533;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.battle {
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--fail-light);
+  color: var(--fail-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.headerButton {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  background: none;
+  color: var(--gold-light);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.headerButton:hover {
+  background: rgba(212, 175, 90, 0.12);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr) 248px;
+  gap: 16px;
+}
+
+.left {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.left > .order {
+  flex: 0 0 auto;
+  height: auto;
+  overflow: visible;
+}
+
+.acting {
+  flex: 0 0 auto;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.next {
+  flex: 1 1 100%;
+  height: 48px;
+  border-radius: 4px;
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.footButton {
+  flex: 1;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.footButton:hover {
+  border-color: var(--gold-rule);
+}
+
+.centre {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.aiming {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 8px 6px 16px;
+  border-radius: 999px;
+  background: rgba(42, 20, 12, 0.94);
+  border: 1px solid var(--fail-light);
+  font-size: 16px;
+}
+
+.aimingCancel {
+  padding: 2px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-3);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.noMap {
+  flex: 1;
+  min-height: 0;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px dashed var(--gold-rule);
+  background: var(--bg-scene);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.noMapTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+}
+
+.mapChoices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mapChoice {
+  width: 150px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: rgba(16, 12, 20, 0.6);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.mapChoice:hover {
+  border-color: var(--gold);
+}
+
+.mapThumb {
+  width: 100%;
+  height: 80px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.strip {
+  flex: 0 0 auto;
+  max-height: 170px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed {
+  flex: 0 0 auto;
+}
+
+.feedEmpty {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--chip-border);
+}
+
+.hint {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--label);
+}
+
+/* Cameras sit in their own column here, below the header. */
+.cameras {
+  position: static;
+  width: 248px;
+  min-height: 0;
+}
+
+.tray {
+  position: absolute;
+  top: 56px;
+  bottom: 0;
+  left: 376px;
+  right: 280px;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
+}
+
+.tray[data-state='fading'] {
+  opacity: 0;
+}
+
+.toasts {
+  position: absolute;
+  top: 72px;
+  left: 376px;
+  right: 280px;
+  z-index: 30;
+}
+
+.overlay {
+  position: absolute;
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 6, 12, 0.72);
+}

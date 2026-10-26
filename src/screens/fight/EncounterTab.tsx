@@ -26,6 +26,8 @@ type TurnOrderProps = {
   /** Picking a target: names in the order can be clicked to pick them. */
   aiming?: Aiming
   rolling?: boolean
+  /** Narrower rows, for the Battle screen's left column. */
+  compact?: boolean
   className?: string
 }
 
@@ -40,6 +42,7 @@ export function TurnOrder({
   onRollInitiative,
   aiming = null,
   rolling,
+  compact = false,
   className,
 }: TurnOrderProps) {
   const waiting = rows.filter((r) => r.combatant.initiative === null)
@@ -72,6 +75,7 @@ export function TurnOrder({
               <div
                 className={cx(
                   styles.row,
+                  compact && styles.rowCompact,
                   row.status === 'acting' && styles.acting,
                   row.combatant.id === focusId && styles.focused,
                   row.health === 'down' && styles.down,
@@ -104,7 +108,7 @@ export function TurnOrder({
                       disabled={rolling}
                       onClick={() => onRollInitiative(row.combatant, row)}
                     >
-                      {row.character ? 'Roll for them' : 'Roll'}
+                      {row.character && !compact ? 'Roll for them' : 'Roll'}
                     </button>
                   ) : row.status ? (
                     STATUS_WORDS[row.status]

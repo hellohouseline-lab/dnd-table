@@ -97,6 +97,8 @@ test('the DM starts a fight with two goblins, runs a turn and reveals one', asyn
   await dialog.getByRole('button', { name: 'One more' }).click()
   await dialog.getByRole('button', { name: 'Add', exact: true }).click()
   await expect(dialog).toContainText('2 × Goblin')
+  // A mystery: players see "Unknown creature" until the DM reveals them.
+  await dialog.getByLabel('Players know what these are').uncheck()
   await dialog.getByRole('button', { name: 'Start the fight' }).click()
 
   const order = page.getByRole('region', { name: 'Turn order' })
@@ -114,14 +116,46 @@ test('the DM starts a fight with two goblins, runs a turn and reveals one', asyn
   await page.getByRole('button', { name: 'End fight' }).click({ trial: true })
 })
 
-test('a player takes their turn in a fight and ends it', async ({ page }) => {
+test('a player dashes, then ends their turn', async ({ page }) => {
   await page.goto('#/dev/table/fight')
   await expect(page.getByText('Your turn · Round 1')).toBeVisible()
   await expect(page.getByRole('list', { name: 'Turn order' })).toContainText('Unknown creature 2')
   const turn = page.getByRole('region', { name: 'This turn' })
   await expect(turn).toContainText('25 of 25 ft')
-  await turn.getByRole('button', { name: /Action Ready/ }).click()
-  await expect(turn).toContainText('Used')
+  await turn.getByRole('button', { name: 'Dash' }).click()
+  await expect(turn).toContainText('50 of 50 ft')
+  await expect(turn).toContainText(/Action\s*Used/)
+  await expect(turn.getByRole('button', { name: 'Dodge' })).toBeDisabled()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You dash.')
   await turn.getByRole('button', { name: 'End turn' }).click()
   await expect(page.getByText('Round 1 · Goblin A is acting')).toBeVisible()
+  await expect(turn).toContainText('Waiting for your turn')
+})
+
+test('a player attacks a goblin by picking it, and their action is spent', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  await page.getByRole('button', { name: /Longsword/ }).first().click()
+  await expect(page.getByRole('status').filter({ hasText: 'Pick a target for Longsword' })).toBeVisible()
+  await page.getByRole('list', { name: 'Turn order' }).getByRole('button', { name: /Goblin A/ }).click()
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText(/You (hit|miss) Goblin A with Longsword/)
+  const turn = page.getByRole('region', { name: 'This turn' })
+  await expect(turn).toContainText(/Action\s*Used/)
+  await page.getByRole('button', { name: /Longsword/ }).first().click()
+  await expect(page.getByText('You have used your action this turn.')).toBeVisible()
+})
+
+test('the DM runs a goblin\'s turn from the Battle screen in two clicks, and undoes it', async ({ page }) => {
+  await page.goto('#/dev/battle')
+  await expect(page.getByText('Battle · Round 1 · Thorin Ironfist is acting')).toBeVisible()
+  await page.getByRole('button', { name: 'Next turn' }).click()
+  await expect(page.getByText('Battle · Round 1 · Goblin A is acting')).toBeVisible()
+  await page.keyboard.press('1')
+  await expect(page.getByRole('status').filter({ hasText: 'Pick a target for Goblin A: Scimitar' })).toBeVisible()
+  await page.getByRole('region', { name: 'Turn order' }).getByRole('button', { name: 'Thorin Ironfist', exact: true }).click()
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText(/Goblin A (hits|misses) Thorin Ironfist with Scimitar/)
+  await feed.getByRole('button', { name: 'Undo' }).click()
+  await expect(feed).toContainText('(undone)')
+  await expect(page.getByRole('region', { name: 'Turn order' })).toContainText('17/20')
 })

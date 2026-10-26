@@ -334,7 +334,8 @@
 }
 
 .rowPips {
-  margin-left: 8px;
+  display: block;
+  margin-top: 2px;
 }
 
 .actingPips {
@@ -412,6 +413,12 @@
   border-radius: 6px;
   background: rgba(31, 26, 39, 0.7);
   border: 1px solid transparent;
+}
+
+.rowCompact {
+  grid-template-columns: 26px minmax(0, 1fr) 44px 60px 26px 26px;
+  gap: 6px;
+  padding: 4px 6px;
 }
 
 .acting {

@@ -39,6 +39,7 @@ export function mapTokens(tokens: Token[], people: People, viewer: Viewer): MapT
           hidden: token.hidden,
           acting: Boolean(combatant && combatant.id === people.currentId),
           canMove: viewer.isDm || (mine && viewer.playersMove && (viewer.moveNow ?? true)),
+          down: character.currentHp === 0,
         },
       ]
     }
@@ -57,6 +58,7 @@ export function mapTokens(tokens: Token[], people: People, viewer: Viewer): MapT
         hidden: token.hidden,
         acting: combatant.id === people.currentId,
         canMove: viewer.isDm,
+        down: combatant.health === 'down',
       },
     ]
   })

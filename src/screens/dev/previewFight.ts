@@ -281,7 +281,8 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           targetId: target.id,
           rollId: roll.id,
           shown: {
-            label: roll.label,
+            // As on the server: a monster's real name stays out of the feed.
+            label: me.kind === 'monster' ? (roll.label.split(': ')[1] ?? roll.label) : roll.label,
             hit,
             critical: hit && roll.natural === 20,
             damage,

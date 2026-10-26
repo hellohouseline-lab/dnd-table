@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import type { Asset, AssetPatch } from '../../live/library.ts'
+import type { Token } from '../../live/combat.ts'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
 import type { Character } from '../../rules/character.ts'
 import { freeSquares, mapTokens } from '../../map/mapTokens.ts'
@@ -22,12 +23,27 @@ type MapStageProps = {
     sendPing: (x: number, y: number) => void
   }
   onGrid: (patch: AssetPatch) => void
+  /** The Battle screen: the map fills the space it's given. */
+  className?: string
+  /** Picking a target: clicking a miniature picks it. */
+  targeting?: { onPick: (token: Token) => void } | null
 }
 
 const GRID_STEP = 2
 
 /** The battle map on the stage, as the DM sees it: every token, real names, and the grid controls. */
-export function MapStage({ map, tokens, fight, characters, userId, playersMove, pointers, onGrid }: MapStageProps) {
+export function MapStage({
+  map,
+  tokens,
+  fight,
+  characters,
+  userId,
+  playersMove,
+  pointers,
+  onGrid,
+  className,
+  targeting = null,
+}: MapStageProps) {
   const [selected, setSelected] = useState<string | null>(null)
   const combatants = fight?.combatants ?? []
   const view = mapTokens(
@@ -60,13 +76,18 @@ export function MapStage({ map, tokens, fight, characters, userId, playersMove, 
 
   return (
     <>
-      <div className={styles.screenPreview}>
+      <div className={cx(styles.screenPreview, className)}>
         <Suspense fallback={<div className={styles.nothing}>Opening the map…</div>}>
           <BattleMap
             map={map}
             tokens={view}
             selectedId={selected}
-            onSelect={setSelected}
+            onSelect={(id) => {
+              const token = tokens.tokens.find((t) => t.id === id)
+              if (targeting && token) targeting.onPick(token)
+              else setSelected(id)
+            }}
+            targeting={targeting !== null}
             onMove={(id, x, y) => {
               const token = tokens.tokens.find((t) => t.id === id)
               if (token) tokens.move(token, x, y)

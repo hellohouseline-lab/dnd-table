@@ -46,6 +46,8 @@ type StageViewProps = {
   now: () => number
   /** The battle map's tokens, the fight (for monster tokens) and everyone's hands and pings. */
   map: Omit<ComponentProps<typeof MapStage>, 'map' | 'characters' | 'userId' | 'playersMove' | 'onGrid'>
+  /** In a fight: back to the Battle screen. */
+  onBattle?: () => void
 }
 
 /** Screen 11, the stage: what everyone sees and hears, the art library, music, ambience and effects. */
@@ -61,6 +63,7 @@ export function StageView({
   audio,
   now,
   map: mapProps,
+  onBattle,
 }: StageViewProps) {
   const { stage, change } = controls
   const [problem, setProblem] = useState<string | null>(null)
@@ -145,6 +148,11 @@ export function StageView({
         </span>
         <span className={styles.spacer} />
         {audio && <NowPlaying audio={audio} />}
+        {onBattle && (
+          <button type="button" className={styles.screenButton} onClick={onBattle}>
+            Back to the battle
+          </button>
+        )}
         <a className={styles.screenButton} href={href(`/c/${campaign.id}/dm`)}>
           Screen 1: Story
         </a>

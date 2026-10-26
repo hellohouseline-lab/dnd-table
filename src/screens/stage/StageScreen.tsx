@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
@@ -9,11 +9,14 @@ import { PageHeader } from '../../components/PageHeader.tsx'
 import { useOnlineIds } from '../../live/campaignChannel.ts'
 import { getCampaign, listMembers } from '../../live/campaigns.ts'
 import { serverNow, syncClock } from '../../live/clock.ts'
-import { deleteAsset, updateAsset, uploadArt, uploadSound } from '../../live/library.ts'
+import { deleteAsset, updateAsset, uploadArt, uploadSound, type Asset, type AssetPatch } from '../../live/library.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useLibrary, useStage } from '../../live/useStage.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
+import { heal, takeDamage } from '../../rules/maths/hitPoints.ts'
+import type { Character } from '../../rules/character.ts'
+import { BattleView } from '../battle/BattleView.tsx'
 import { StageView, type LibraryActions } from './StageView.tsx'
 
 /** The DM's second screen, the stage. Players who open it are sent to their own table screen. */
@@ -32,6 +35,10 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
   const pointerName = useMemo(() => ({ userId: user.id, name: me ? `${me.display_name} (DM)` : 'DM' }), [user.id, me])
   const pointers = useMapPointers(campaignId, pointerName)
+  // In a fight this screen is the Battle screen, unless the DM chose to look at the stage for a moment.
+  const [stageDuring, setStageDuring] = useState<string | null>(null)
+  const fighting = fight.fight
+  const battle = fighting !== null && stageDuring !== fighting.encounter.id
   const ready = campaign.status === 'ready' && members.status === 'ready' && party.status === 'ready'
 
   useEffect(() => {
@@ -74,6 +81,39 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
     remove: deleteAsset,
   }
 
+  function changeHp(character: Character, change: number) {
+    const before = { current: character.currentHp, max: character.maxHp, temp: character.tempHp }
+    const after = change < 0 ? takeDamage(before, -change) : heal(before, change)
+    if (party.status === 'ready') party.update(character.id, { currentHp: after.current, tempHp: after.temp })
+  }
+
+  function changeGrid(map: Asset, patch: AssetPatch) {
+    library.put({ ...map, ...patch })
+    void updateAsset(map.id, patch).then(library.put, () => undefined)
+  }
+
+  if (battle && fighting) {
+    return (
+      <BattleView
+        campaignId={campaignId}
+        campaignName={campaign.data.name}
+        me={me}
+        members={members.data}
+        characters={party.characters}
+        online={online}
+        fight={fighting}
+        controls={fight}
+        tokens={tokens}
+        stage={stage}
+        maps={library.assets.filter((a) => a.kind === 'art' && a.category === 'maps')}
+        pointers={pointers}
+        onCharacterHp={changeHp}
+        onGrid={changeGrid}
+        onShowStage={() => setStageDuring(fighting.encounter.id)}
+      />
+    )
+  }
+
   return (
     <StageView
       campaign={campaign.data}
@@ -87,6 +127,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
       audio={audio}
       now={serverNow}
       map={{ tokens, fight: fight.fight, pointers }}
+      onBattle={fighting ? () => setStageDuring(null) : undefined}
     />
   )
 }

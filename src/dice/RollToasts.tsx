@@ -77,7 +77,7 @@ export function RollToast({
           {roll.secret && <span className={styles.secret}>Secret</span>}
           {roll.passed !== null && showVerdict && (
             <span className={cx(styles.verdict, roll.passed ? styles.verdictPass : styles.verdictFail)}>
-              {roll.passed ? 'Passed' : 'Failed'}
+              {roll.kind === 'attack' ? (roll.passed ? 'Hit' : 'Miss') : roll.passed ? 'Passed' : 'Failed'}
             </span>
           )}
           {onDismiss && (

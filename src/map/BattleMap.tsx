@@ -23,6 +23,8 @@ export type MapToken = {
   hidden: boolean
   acting: boolean
   canMove: boolean
+  /** At 0 hit points: drawn faded. */
+  down?: boolean
 }
 
 type BattleMapProps = {
@@ -208,7 +210,7 @@ export default function BattleMap({
                   x={centre(token.x, offsetX)}
                   y={centre(token.y, offsetY)}
                   draggable={token.canMove}
-                  opacity={token.hidden ? 0.5 : 1}
+                  opacity={token.down ? 0.35 : token.hidden ? 0.5 : 1}
                   onClick={(event) => {
                     event.cancelBubble = true
                     onSelect?.(token.id)
