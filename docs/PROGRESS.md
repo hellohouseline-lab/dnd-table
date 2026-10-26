@@ -57,7 +57,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Combat and characters rework (`docs/COMBAT_PLAN.md`), waiting for Matt's approval:** C1 the turn loop (27 October to 2 November), C2 the character builder (3 to 8 November), C3 the full combat rules (9 to 15 November), before the test one-shot. Then milestone 8 and 9 as below.
+- **Combat and characters rework (`docs/COMBAT_PLAN.md`), waiting for Matt's approval:** C1 the turn loop with a Battle screen that runs the whole fight on Screen 2 (27 October to 2 November), C2 the character builder (3 to 9 November), C3 the full combat rules (10 to 16 November), before the test one-shot. Then milestone 8 and 9 as below.
 - **Milestone 8, the stream overlay:** overlay links, guest access, the 1920 by 1080 frame with everyone's cameras in it, stage mirror, toasts, own character card, an OBS scene collection file, and voices and game audio through the overlay with "Control audio via OBS" (see `PHASE1_PLAN.md` section 8, "What this changes in milestone 8"). Plan first, then build.
 
 ## Targets
@@ -65,7 +65,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Approve `docs/COMBAT_PLAN.md`** and answer its nine decisions in section 7 (or take the recommendations).
+- **Approve `docs/COMBAT_PLAN.md`** and answer its thirteen decisions in section 7 (or take the recommendations).
 - **Try a fight again** now the loading fix is live, and say whether the player gets Roll initiative and End turn works. Today you still put the map on stage yourself on Screen 2 (Maps, then Switch to battle map) and press Add the party there; the rework does that for you.
 - **Run a two-goblin fight** across two browsers: on Screen 2 put a battle map on stage (Maps in the library), **Add the party**; on Screen 1 press **Start combat**, add 2 goblins, start; as the player roll initiative, see "Unknown creature" in the turn order until you click **Reveal name**; move your token, end your turn.
 - **Try milestone 7 with someone on another computer** (or a laptop): both open the live site, go to the table's Join screen and press **Join voice and camera** (allow the camera and microphone when the browser asks). You should see and hear each other in the camera tiles. Press **M** and check the crossed-out microphone appears on the other screen; open **Screen 2: Stage** and check each voice is still heard once. Wear headphones.

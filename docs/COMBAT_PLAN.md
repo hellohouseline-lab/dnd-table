@@ -1,6 +1,6 @@
 # Combat and characters rework: the plan
 
-Written 26 October 2026, after Matt's first combat test. The UX was planned with Fable and checked against the code and the SRD data. Nothing here is built yet; it waits for Matt's approval. Sections 1 to 4 are plain words; section 5 is technical; sections 6 and 7 are the order of work and the decisions.
+Written 26 October 2026, after Matt's first combat test, and revised the same day so the whole fight runs from one DM screen. The UX was planned with Fable (including research into how D&D Beyond and other online tables split the DM's controls, in the appendix) and checked against the code and the SRD data. Nothing here is built yet; it waits for Matt's approval. Sections 1 to 4 are plain words; section 5 is technical; sections 6 and 7 are the order of work and the decisions.
 
 ## In plain words
 
@@ -10,7 +10,7 @@ Matt's test found one real bug and a lot of hand work the app should be doing.
 
 **The rest is hand work.** Today the DM picks a map on Screen 2, switches to it, presses Add the party and Place the monsters, and switches screens to see the map; players tick their own action boxes; nothing targets anything; damage is typed in; and characters are typed in rather than built.
 
-**The rework turns a fight into a guided loop.** The DM presses Start combat and the app asks which map (or none), puts everyone's miniature on it, rolls the monsters' initiative and asks the players for theirs. On your turn your screen says "Your turn", shows cards for everything you can do right now, greys out what you've used, and counts down your movement as you drag your miniature. Attacking is two clicks: the card, then the target. The server rolls, checks the hit against the target's armour class (a monster's stays secret), takes the damage off, and tells everyone who was hit and for how much. The DM gets an Undo for anything. A monster's turn is the same two clicks for the DM. Characters are built in a step-by-step wizard with standard array, point buy, rolled or "random but balanced" scores, starting gear from the rules, and spells from a list.
+**The rework turns a fight into a guided loop.** The DM presses Start combat and the app asks which map (or none), puts everyone's miniature on it, rolls the monsters' initiative and asks the players for theirs. On your turn your screen says "Your turn", shows cards for everything you can do right now, greys out what you've used, and counts down your movement as you drag your miniature. Attacking is two clicks: the card, then the target. The server rolls, checks the hit against the target's armour class (a monster's stays secret), takes the damage off, and tells everyone who was hit and for how much. The DM gets an Undo for anything. A monster's turn is the same two clicks for the DM. The DM runs the whole fight from one screen: Screen 2 turns into a Battle screen with the big map, the turn order, the acting creature's actions, damage, conditions and Undo, while Screen 1 keeps the story. Characters are built in a step-by-step wizard with standard array, point buy, rolled or "random but balanced" scores, starting gear from the rules, and spells from a list.
 
 ## 1. The turn loop
 
@@ -33,20 +33,21 @@ Matt's test found one real bug and a lot of hand work the app should be doing.
 
 **Everyone else sees:** the turn order with the acting creature lit, "Goblin A is acting", and a short feed of what happened ("Goblin A hits Thorin for 5", "Elowen misses Unknown creature 2"). If a creature moves out of their reach without Disengaging, they get "Opportunity attack?" with **Attack** and **Let it go**.
 
-**The DM sees** (Encounter tab, design 10):
+**The DM sees** the Battle screen (Screen 2 during a fight, section 3):
 - The turn order, with four small pips on the acting row: action, bonus, reaction and movement left.
-- The Acting now card, and the same feed with real names and numbers.
+- The Acting now card, the big map, and the same feed with real names and numbers.
 - **Undo** for the last thing that happened.
-- The battle map (section 3).
 
-On a player's turn the card says "Elowen acts from her screen", with **Act for her** for someone who has stepped away.
+Screen 1 keeps the story. Its Encounter tab becomes a glance (the order, Next turn, Ask for a roll and the feed), and the notebook holds "Why this fight matters" and "Read aloud when it ends" from design 10.
 
-**A monster's turn in two clicks.** The Acting now card lists its SRD actions. Click one (or press its number), then click a target. The server rolls to hit against the character's AC, takes the damage off and posts it.
-- **Multiattack:** shows as "Attack ×2", so both rolls go in one click.
+On a player's turn the Acting now card says "Elowen acts from her screen", with **Act for her** for someone who has stepped away.
+
+**A monster's turn in two clicks.** The Acting now card lists its SRD actions. Click one (or press its number), then click a target on the map or in the turn order. The server rolls to hit against the character's AC, takes the damage off and posts it.
+- **Multiattack:** one button, both rolls.
 - **Actions with a saving throw:** open Ask for a roll already filled in with the ability and DC, and the results screen's "damage those who failed, half to those who passed" applies it.
 - **Traits** such as Nimble Escape show as a reminder line.
 
-**Keyboard:** N next turn, 1 to 9 pick an action or a target, U undo, R reveal the name. M is already mute.
+**Keyboard:** N next turn, 1 to 9 an action or a target, U undo, R reveal the name, S the story drawer, and the key left of 1 (\`) swaps screens. M is already mute.
 
 ## 2. Targeting and what's automatic
 
@@ -83,7 +84,25 @@ The DM can still hide a monster for an ambush.
 
 **Who moves what.** The DM drags anything, any time. A player drags their own miniature on their turn, only as far as their movement left (plus Dash). The server refuses a longer move, so the limit is real. The "Players move their own tokens" switch stays, to turn that off. Hands and double-click pings stay for pointing. New: on someone else's turn a player can draw a suggested path, and the DM sees it with **Move them there** (one click).
 
-**The map wherever the DM is.** Design 10 drew Screen 1 without a map, which is why it seemed to vanish when switching screens. The Encounter tab gets a map panel under the turn order (about 540 by 300, zoomable, with all the tokens and targeting), so the DM can run a whole fight from Screen 1. Screen 2 keeps the big map for lining up the grid and hiding tokens.
+**The DM's two screens.** The fight runs from one screen, as Matt asked:
+
+- **Screen 1, "Story and the table"** (design 07): notebook, Party, NPCs, Items and loot, Log, the verb bar and cameras. New: a thin **stage strip** under the header with the picture on stage (and Change), music moods with play and pause, and "Effects: keys 1 to 9". The art library and uploads stay on Screen 2. In a fight the Encounter tab is a glance: the order with pips, Next turn, Ask for a roll and the feed.
+- **Screen 2, "Stage, and the battle"** (design 11): as now between fights. Pressing **Start combat** switches it to the **Battle** layout by itself, and ending the fight switches it back. **Show a picture** in its header cuts to art mid-fight without leaving the battle.
+- **One monitor:** both screens are in the same tab and the call carries on when you switch. In a fight use the Battle layout; the notebook slides in over the turn order as a **story drawer** (key S). The header swaps screens (the \` key).
+
+**The Battle layout at 1440 by 900** (design 11's frame, in the same panels and parchment):
+- **Header:** "Battle · Round 2 · Goblin A is acting", a sound strip (moods, play and pause, effects keys; **Sound** opens the full panels as a drawer), **Show a picture**, **Screen 1: Story**.
+- **Left column, about 320 wide:**
+  - **Turn order:** initiative; real name with "players see Unknown creature 2"; HP or the health word; the four pips; condition chips; − and +.
+  - **Acting now:** name, AC, HP and speed; each action as a button ("Scimitar · +4 · 1d6+2", then pick a target) with its number key; Multiattack; traits; Reveal name; conditions; Act for them; a **Stat block** toggle for the full SRD text.
+  - **At its foot:** Next turn (N), Add a monster, End fight.
+- **Centre, about 840 wide:**
+  - **The battle map** (about 640 tall), with target picking, hands, pings, suggested paths and hidden tokens drawn dashed, "only you". A slim toolbar holds Squares, Nudge, Hide, Take off the map and Players move: on or off.
+  - **Under the map, a strip:** the feed with Undo on the left; on the right a quick bar for damage or healing (targets, amount, type, condition).
+- **Right column:** the cameras at 200 by 113, in turn order with the acting tile lit (as built in milestone 7).
+- At 1920 by 1080 the map grows to about 1300 by 800.
+
+**What changes in the designs:** 07 gains the stage strip and the glance Encounter tab. 10 is retired as a layout: its turn order and Acting now move to the Battle layout, its story column stays on Screen 1, and its bottom bar stays as Screen 1's combat verbs. 11 gains the Battle layout as its in-fight state.
 
 **No map.** Targeting works from the turn order, movement isn't tracked ("Movement: as the DM describes"), and opportunity attacks are the DM's call.
 
@@ -153,7 +172,12 @@ A step-by-step wizard for new characters (the full form stays for edits and for 
 
 **Screens:**
 - **Player:** `YourTurnPanel` (replaces `ThisTurn`), `ActionHand` (replaces `Hand`), target picking in `BattleMap`, hit toasts.
-- **Encounter tab:** turn pips, an action then a target, the feed with Undo, the map panel, Act for them, shortcuts.
+- **Screen 2:** `BattleView`, shown by `StageScreen` while a fight is active.
+  - `TurnOrder` and `ActingNow`, moved out of `EncounterTab`.
+  - `BattleMap` with target picking, `EventFeed` with Undo, `QuickDamageBar`, `SoundStrip`.
+  - `StoryDrawer`: the `NotebookPanel`, read-only.
+  - Whether it shows the battle or a picture is local to the screen, not saved.
+- **Screen 1:** `StageStrip` under the header; the Encounter tab becomes `FightGlance` (order, pips, Next turn, feed); the combat verb bar stays.
 - **Start combat:** the Where step.
 - **Stage:** the Quick map painter and suggested paths.
 - **Characters:** `CharacterWizard`, and an item search on the Sheet tab.
@@ -166,10 +190,10 @@ Each step ends in something Matt can open and try, like the milestones so far.
 
 | When | Step | Matt can try | Size |
 | --- | --- | --- | --- |
-| 27 Oct to 2 Nov | **C1. The turn loop.** Turn record and functions, cards that spend actions, movement limit, map chosen and miniatures placed on Start combat, map panel on Screen 1, attacks that hit and take damage off (weapons and monster attacks) with Undo | A two-goblin fight run from Screen 1 only: click a goblin to attack it, get hit back, End turn works | About 5 days |
-| 3 to 8 Nov | **C2. The character builder.** Wizard, the four ways to make scores, starting gear with AC from armour, spells list, item search, hand built from the sheet, SRD equipment import | Players build their one-shot characters a fortnight early | About 5 days |
-| 9 to 15 Nov | **C3. The full rules.** Standard actions, Talk cards, opportunity attacks, two-weapon fighting, concentration, death saves, resistances, the feed and toasts, Quick map, shortcuts | A full fight with a caster, a character going down and a parley | About 5 days |
-| 16 to 20 Nov | Spare days, then a dry run with the group | | |
+| 27 Oct to 2 Nov | **C1. The turn loop.** Turn record and functions, cards that spend actions, movement limit, map chosen and miniatures placed on Start combat, the Battle layout on Screen 2 (map, order, acting creature, feed, Undo) and the glance tab on Screen 1, attacks that hit and take damage off (weapons and monster attacks) with Undo | A two-goblin fight run from Screen 2 while Screen 1 shows the notebook; then the same fight on one monitor with the story drawer | About 6 days |
+| 3 to 9 Nov | **C2. The character builder.** Wizard, the four ways to make scores, starting gear with AC from armour, spells list, item search, hand built from the sheet, SRD equipment import | Players build their one-shot characters a fortnight early | About 5 days |
+| 10 to 16 Nov | **C3. The full rules.** Standard actions, Talk cards, opportunity attacks, two-weapon fighting, concentration, death saves, resistances, toasts, Quick map, the stage strip on Screen 1, the sound strip and drawer, shortcuts | A full fight with a caster, a character going down and a parley | About 5 days |
+| 17 to 20 Nov | Spare days, then a dry run with the group | | |
 | 21 to 22 Nov | **Test one-shot** | | |
 | 23 to 29 Nov | **8. Stream overlay**, as planned; the feed and turn record feed its toasts and turn panel | | About 5 days |
 | 30 Nov to 4 Dec | **9. Rehearsal fixes** | | |
@@ -200,3 +224,21 @@ Don't cut C1, the wizard's scores and gear, or Undo.
 7. **Can players use Dash, Dodge, Hide and the Talk cards themselves?** Yes; the DM sees each one in the feed and can override.
 8. **Do players see their attack total?** Yes ("You rolled 17: hit"), never the monster's AC.
 9. **A turn timer?** Off; the lit banner and sound are enough.
+10. **Which screen runs the fight?** Screen 2 becomes the Battle screen (map, order, actions, damage, Undo) and Screen 1 stays the story.
+11. **Does Screen 2 switch to the battle by itself?** Yes when you press Start combat, and back when the fight ends, with Show a picture to cut to art mid-fight.
+12. **Where are the sound controls in a fight?** A strip in the Battle header (moods, play and pause, effects keys), with the full panels in a drawer; the effects keys work on both screens.
+13. **One monitor?** The Battle screen with the story drawer in a fight, the Story screen between fights.
+
+## Appendix: how other online tables split the DM's controls
+
+Researched by Fable on 26 October 2026.
+
+- **D&D Beyond's Maps** put the turn order inside the map screen so the DM needn't change tabs, with hidden creatures, AC and HP visible only to the DM. DMs still keep a separate stat block window, because the tracker doesn't show stat blocks, roll attacks or edit monster HP. Many say they have to flick between screens, and some prefer the older Encounter Builder for fights without a map. The lesson: map, order, the acting creature's actions and HP editing must sit together. Sources: [D&D Beyond's launch post](https://www.dndbeyond.com/posts/1841-roll-for-initiative-combat-tracking-comes-to-the), [the Encounter Builder feedback thread](https://www.dndbeyond.com/forums/d-d-beyond-general/d-d-beyond-feedback/215302-encounter-builder-2024), [EN World](https://www.enworld.org/threads/ddb-maps-now-integrates-the-combat-tracker.708432/), [Arcane Eye](https://arcaneeye.com/articles/dnd-beyonds-maps-vtt-gets-a-huge-upgrade-encounter-tracking/).
+- **Foundry VTT** keeps everything as sidebar tabs and lets the DM pop the combat tracker, sheets and notes out to a second monitor. DMs commonly run the map on the big monitor and reference on the other. Sources: [Foundry's combat docs](https://foundryvtt.com/article/combat/), [EN World on screen sizes](https://www.enworld.org/threads/vtt-what-size-screen-do-you-use.689995/).
+- **Roll20** pops out chat, music and sheets but not the turn tracker, and users ask for the tracker and map on different monitors. A common split gives the map a whole monitor. Sources: [Roll20 forum](https://app.roll20.net/forum/permalink/8682682/), [Roll20 forum](https://app.roll20.net/forum/permalink/11609842).
+- **Fantasy Grounds** gives the DM far more in its tracker than players see, and DMs find it cluttered in big fights. Source: [Fantasy Grounds wiki](https://fantasygroundsunity.atlassian.net/wiki/spaces/FGCP/pages/996641984), [forum](https://www.fantasygrounds.com/forums/archive/index.php/t-87559.html?login=1).
+- **Owlbear Rodeo** is map first, with a small turn tracker on top. Source: [Owlbear docs](https://docs.owlbear.rodeo/extensions/examples/initiative-tracker).
+- **Alchemy** is scene first with the map as a separate mode, and users find switching to it awkward. The lesson: don't bury the battle behind the story screen. Source: [r/VTT](https://www.reddit.com/r/VTT/comments/1kirqgz/alchemy_vtt_or_dndbeyond).
+- **Dedicated trackers** ([Improved Initiative](https://improvedinitiative.app/), [Shieldmaiden](https://shieldmaiden.app/)) show a list beside a stat block for the DM, and a separate live list for players, streams or a TV. The lesson: the players' copy belongs on their screens and the overlay, not on the DM's second monitor.
+
+Across them all: one monitor for what you operate (in a fight, the map and the tracker together) and one for reference and story.
