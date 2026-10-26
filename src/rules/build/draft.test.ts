@@ -18,11 +18,21 @@ describe("the builder's race step", () => {
 
   it('asks a half-elf for two +1s and a language', () => {
     const halfElf = withRacePicked(emptyDraft(), 'half-elf')
-    expect(raceSummary(halfElf, races)?.missing).toEqual(['Pick 2 abilities for your +1s', 'Pick an extra language'])
+    expect(raceSummary(halfElf, races)?.missing).toEqual([
+      'Pick 2 abilities for your +1s',
+      'Pick an extra language',
+      'Pick 2 skills',
+    ])
     const done = raceSummary(
-      { ...halfElf, bonusPicks: ['dexterity', 'constitution'], languagePicks: ['Draconic'] },
+      {
+        ...halfElf,
+        bonusPicks: ['dexterity', 'constitution'],
+        languagePicks: ['Draconic'],
+        raceSkillPicks: ['stealth', 'persuasion'],
+      },
       races,
     )
+    expect(done?.skills).toEqual(['stealth', 'persuasion'])
     expect(done).toMatchObject({ bonuses: { charisma: 2, dexterity: 1, constitution: 1 }, missing: [] })
     expect(done?.languages).toEqual(['Common', 'Elvish', 'Draconic'])
   })

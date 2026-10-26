@@ -3,6 +3,13 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C2b part 2: Class, Background and Ability scores in the builder (live for Matt to try at `#/c/<campaign>/build`; players still use the old form).**
+  - **Class:** twelve cards with an emblem, a line and the hit die; picking one shows **How it plays**, the skills to choose (any your race gives are marked "have it"), and whatever its level 1 features ask: a fighter's fighting style, a rogue's expertise (from skills they have, or thieves' tools), a ranger's favoured enemy and terrain, a draconic sorcerer's dragon. Clerics, sorcerers and warlocks get the free rules' one subclass, said plainly.
+  - **Background:** the Acolyte (Insight, Religion, two languages, Shelter of the Faithful), or **Your own** with a name, two skills and two languages. A skill you'd get twice is crossed out and you pick another, as the 2014 rules allow.
+  - **Ability scores, four ways:** the standard set (pick a score to swap it), point buy with a live "points left", **Roll the dice** (4d6 six times, thrown by the server once and in the roll log, the lowest die greyed out) and random but balanced. **Suggest for a Rogue** places the best scores where the class needs them; each row shows the score, the race's bonus, the total and the modifier, with what the ability is for.
+  - **Moving between steps:** Next once a step is done, Back, and the steps on the left open any step reached. **The summary** now shows class, background, final scores with modifiers, hit points, speed, training bonus, saving throws and every skill.
+  - Race step: a half-elf now picks their two skills; an elf has Perception and a half-orc Intimidation. The importer now includes thieves' tools for a rogue's expertise.
+  - Tests: 377 unit (11 new), 24 preview browser tests (1 new).
 - **The DM rules on every requested roll (live).** When a player answers your request, they see their total and "The DM is deciding whether it passes", and their camera tile says Rolled. You see each total with **dice say pass** (or fail) and **Pass** and **Fail** buttons, with the dice's choice outlined; **Go with the dice** rules on everyone left in one click. Only then does the player see pass or fail ("The DM turned it into a fail" if you went against the dice). You can still flip a result afterwards. The server holds the verdict back, so even a player's own browser never gets it early, and a secret DC still never reaches them. Attacks in a fight are unchanged: they hit or miss at once.
   - Server: `supabase/migrations/20261027120000_dm_rules_rolls.sql` (`rolls_hold_verdict` trigger, `override_roll` keeps what the dice said, `accept_dice`).
   - **Quick starts** added to the C2 plan (decision 37): twelve ready-made level 1 characters, one per class, and **Surprise me**, at the start of the builder, built in C2e.
@@ -172,7 +179,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Matt reviews step 1 of the builder**, then C2b carries on: Class, Background and Ability scores.
+- **C2c next:** gear, wallet and inventory, AC from armour, and potions and usable items in a fight.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets

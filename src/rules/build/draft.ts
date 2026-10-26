@@ -3,6 +3,7 @@
 
 import type { Ability } from '../abilities.ts'
 import type { SrdRace, SrdRaces, SrdTrait } from '../srd/index.ts'
+import type { Scores } from './scores.ts'
 
 /** The languages of the SRD: standard first, then exotic. */
 export const LANGUAGES = [
@@ -36,10 +37,54 @@ export type BuilderDraft = {
   languagePicks: string[]
   /** Choices a trait asks for, by trait: a dragonborn's ancestry, a high elf's cantrip. */
   traitPicks: Record<string, string>
+  /** A half-elf's two skills (Skill Versatility). */
+  raceSkillPicks: string[]
+
+  /** Step 2. An SRD class index. */
+  className: string | null
+  /** Picked here for classes that choose at level 1 (a cleric's domain); later otherwise. */
+  subclass: string | null
+  classSkillPicks: string[]
+  /** What a class feature asks for, by feature: a fighting style, expertise, a favoured enemy. */
+  featurePicks: Record<string, string[]>
+
+  /** Step 3. 'acolyte', or 'other' for one typed in. */
+  background: string | null
+  otherBackground: string
+  /** Skills for a typed-in background, or in place of ones you already have from elsewhere. */
+  backgroundSkillPicks: string[]
+  backgroundLanguagePicks: string[]
+
+  /** Step 4. How the scores were made, and the scores before racial bonuses. */
+  scoreMethod: ScoreMethod | null
+  baseScores: Scores | null
+  /** Six rolls of 4d6 (each die), thrown once. */
+  rolled: number[][] | null
 }
 
+export type ScoreMethod = 'standard' | 'pointbuy' | 'roll' | 'random'
+
 export function emptyDraft(): BuilderDraft {
-  return { race: null, subrace: null, otherRace: '', bonusPicks: [], languagePicks: [], traitPicks: {} }
+  return {
+    race: null,
+    subrace: null,
+    otherRace: '',
+    bonusPicks: [],
+    languagePicks: [],
+    traitPicks: {},
+    raceSkillPicks: [],
+    className: null,
+    subclass: null,
+    classSkillPicks: [],
+    featurePicks: {},
+    background: null,
+    otherBackground: '',
+    backgroundSkillPicks: [],
+    backgroundLanguagePicks: [],
+    scoreMethod: null,
+    baseScores: null,
+    rolled: null,
+  }
 }
 
 export type RaceSummary = {
@@ -49,9 +94,16 @@ export type RaceSummary = {
   size: string
   languages: string[]
   traits: { index: string; name: string; desc: string }[]
+  /** Skills the race gives (an elf's Perception, a half-orc's Intimidation, a half-elf's two picks). */
+  skills: string[]
   /** What still needs picking, in plain words. */
   missing: string[]
 }
+
+/** Skills a trait gives outright. */
+const TRAIT_SKILLS: Record<string, string> = { 'keen-senses': 'perception', menacing: 'intimidation' }
+/** Traits that let you pick skills, and how many. */
+export const TRAIT_SKILL_PICKS: Record<string, number> = { 'skill-versatility': 2 }
 
 /** The race as picked so far: its bonuses, speed, languages, traits, and what's left to choose. */
 export function raceSummary(draft: BuilderDraft, races: SrdRaces): RaceSummary | null {
@@ -63,6 +115,7 @@ export function raceSummary(draft: BuilderDraft, races: SrdRaces): RaceSummary |
       size: 'Medium',
       languages: ['Common'],
       traits: [],
+      skills: [],
       missing: draft.otherRace.trim() ? [] : ["Type your race's name"],
     }
   }
@@ -110,6 +163,10 @@ export function raceSummary(draft: BuilderDraft, races: SrdRaces): RaceSummary |
     const trait = races.traits[index]
     if (trait?.choice && !draft.traitPicks[index]) missing.push(choiceWords(trait))
   }
+  const skillPickCount = traitIndexes.reduce((n, t) => n + (TRAIT_SKILL_PICKS[t] ?? 0), 0)
+  const skillPicks = draft.raceSkillPicks.slice(0, skillPickCount)
+  if (skillPicks.length < skillPickCount) missing.push(`Pick ${skillPickCount} skills`)
+  const skills = [...traitIndexes.flatMap((t) => (TRAIT_SKILLS[t] ? [TRAIT_SKILLS[t]] : [])), ...skillPicks]
 
   return {
     name: subrace ? subrace.name : race.name,
@@ -118,6 +175,7 @@ export function raceSummary(draft: BuilderDraft, races: SrdRaces): RaceSummary |
     size: race.size,
     languages: [...race.languages, ...languagePicks],
     traits,
+    skills,
     missing,
   }
 }
@@ -145,7 +203,7 @@ export function togglePick<T>(list: T[], value: T, max: number): T[] {
 /** Picking a different race clears what belonged to the old one. */
 export function withRacePicked(draft: BuilderDraft, race: string): BuilderDraft {
   if (draft.race === race) return draft
-  return { ...draft, race, subrace: null, bonusPicks: [], languagePicks: [], traitPicks: {} }
+  return { ...draft, race, subrace: null, bonusPicks: [], languagePicks: [], traitPicks: {}, raceSkillPicks: [] }
 }
 
 /** The race's bonus abilities a half-elf may pick (not the one the race already raises). */

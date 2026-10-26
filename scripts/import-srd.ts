@@ -338,9 +338,11 @@ async function main(): Promise<void> {
               const flat = (o: Raw): string[] =>
                 o.option_type === 'choice'
                   ? (o.choice.from.options as Raw[]).flatMap(flat)
-                  : o.item
-                    ? [o.item.index]
-                    : []
+                  : o.option_type === 'multiple'
+                    ? (o.items as Raw[]).flatMap(flat)
+                    : o.item
+                      ? [o.item.index]
+                      : []
               return {
                 kind: 'skill',
                 choose: nested.length > 0 ? nested[0].choice.choose : fs.expertise_options.choose,

@@ -5,7 +5,9 @@ import { getCampaign, listMembers } from '../../live/campaigns.ts'
 import { listCharacters } from '../../live/characters.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useSrd } from '../../live/useSrd.ts'
-import { loadRaces, loadSpells } from '../../rules/srd/index.ts'
+import { throwDice } from '../../live/rolls.ts'
+import { freeRoll } from '../../rules/rolls.ts'
+import { loadBackgrounds, loadClasses, loadFeatures, loadRaces, loadSpells } from '../../rules/srd/index.ts'
 import { BuilderView } from './BuilderView.tsx'
 import { useDraft } from './useDraft.ts'
 
@@ -20,6 +22,9 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
     [campaignId],
   )
   const races = useSrd(loadRaces)
+  const classes = useSrd(loadClasses)
+  const features = useSrd(loadFeatures)
+  const backgrounds = useSrd(loadBackgrounds)
   const spells = useSrd(loadSpells)
   const [draft, setDraft] = useDraft(`dnd-table-builder-${campaignId}-${user.id}`)
 
@@ -36,10 +41,34 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
       draft={draft}
       onDraft={setDraft}
       races={races}
+      classes={classes}
+      features={features}
+      backgrounds={backgrounds}
       spells={spells}
+      onRoll={() => rollScores(campaignId)}
       campaignName={campaign?.name}
       exitHref={href(`/c/${campaignId}/${me?.role === 'dm' ? 'dm' : 'play'}`)}
       formHref={me?.role === 'player' && !hasCharacter ? href(`/c/${campaignId}/character/new`) : null}
     />
   )
+}
+
+/**
+ * Six rolls of 4d6, thrown by the server so they're honest and in the table's roll log. The dice
+ * come back as values; the lowest of each four is dropped by the scores step.
+ */
+async function rollScores(campaignId: string): Promise<number[][] | null> {
+  try {
+    const rolls: number[][] = []
+    for (let i = 1; i <= 6; i++) {
+      const roll = await throwDice(campaignId, {
+        ...freeRoll([{ sides: 6, count: 4 }]),
+        label: `Ability scores: roll ${i} of 6`,
+      })
+      rolls.push(roll.dice.map((d) => d.value))
+    }
+    return rolls
+  } catch {
+    return null
+  }
 }

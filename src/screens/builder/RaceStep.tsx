@@ -1,6 +1,14 @@
 import { ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
 import { cx } from '../../components/cx.ts'
-import { LANGUAGES, languageChoices, togglePick, withRacePicked, type BuilderDraft } from '../../rules/build/draft.ts'
+import {
+  LANGUAGES,
+  languageChoices,
+  togglePick,
+  TRAIT_SKILL_PICKS,
+  withRacePicked,
+  type BuilderDraft,
+} from '../../rules/build/draft.ts'
+import { SKILLS } from '../../rules/srd/index.ts'
 import { describeBonuses } from '../../rules/srd/defaults.ts'
 import type { SrdRace, SrdRaces, SrdSpell } from '../../rules/srd/index.ts'
 import styles from './Builder.module.css'
@@ -96,6 +104,7 @@ function RaceDetail({ draft, onDraft, races, race, spells }: RaceStepProps & { r
   const choosing = traitIndexes.filter((index) => races.traits[index]?.choice)
   const knownLanguages = new Set(race.languages)
   const languageCount = languageChoices(race, draft.subrace)
+  const skillPickCount = traitIndexes.reduce((n, t) => n + (TRAIT_SKILL_PICKS[t] ?? 0), 0)
 
   return (
     <div className={styles.detail}>
@@ -218,6 +227,32 @@ function RaceDetail({ draft, onDraft, races, race, spells }: RaceStepProps & { r
         }
         return null
       })}
+
+      {skillPickCount > 0 && (
+        <div className={styles.choice}>
+          <h3 className={styles.choiceTitle}>
+            Pick {skillPickCount} skills you&rsquo;re trained in ({draft.raceSkillPicks.length} of {skillPickCount})
+          </h3>
+          <div className={styles.optionRow}>
+            {SKILLS.map((skill) => {
+              const on = draft.raceSkillPicks.includes(skill.index)
+              return (
+                <button
+                  key={skill.index}
+                  type="button"
+                  className={cx(styles.chip, on && styles.picked)}
+                  aria-pressed={on}
+                  onClick={() =>
+                    onDraft({ ...draft, raceSkillPicks: togglePick(draft.raceSkillPicks, skill.index, skillPickCount) })
+                  }
+                >
+                  {skill.name}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {languageCount > 0 && (
         <div className={styles.choice}>
