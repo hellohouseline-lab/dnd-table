@@ -87,6 +87,7 @@ import {
 import { BonusReady, type BonusChoice } from '../fight/BonusReady.tsx'
 import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
+import { CheckPanel } from './CheckPanel.tsx'
 import { Hand } from './Hand.tsx'
 import styles from './TableView.module.css'
 
@@ -802,6 +803,18 @@ export function TableView({
       <Hand
         className={styles.hand}
         character={character}
+        checks={
+          // Outside a fight, players roll any check themselves ("I search the room").
+          fight ? null : (
+            <CheckPanel
+              character={character}
+              rolls={rolls}
+              mode={mode}
+              onModeChange={setMode}
+              disabled={table.rolling}
+            />
+          )
+        }
         onAttack={attackWith}
         onUseFeature={(feature) => void playFeature(feature)}
         turn={

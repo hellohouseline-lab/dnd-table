@@ -3,6 +3,8 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Players roll checks themselves outside a fight (live).** The hand has a **Checks** set beside Bonus actions when there's no fight: **Advantage / Normal / Disadvantage** on top, the most used checks with each bonus ("Perception +3"), and Skills, Saving throws and Ability checks to open. One click throws the dice for everyone, named ("Perception check"), and shows in your roll log and toasts. Advantage is spent on that roll, as on the dice controls. In a fight the set is hidden.
+  - Tests: 377 unit, 25 preview browser tests (1 new).
 - **C2b part 2: Class, Background and Ability scores in the builder (live for Matt to try at `#/c/<campaign>/build`; players still use the old form).**
   - **Class:** twelve cards with an emblem, a line and the hit die; picking one shows **How it plays**, the skills to choose (any your race gives are marked "have it"), and whatever its level 1 features ask: a fighter's fighting style, a rogue's expertise (from skills they have, or thieves' tools), a ranger's favoured enemy and terrain, a draconic sorcerer's dragon. Clerics, sorcerers and warlocks get the free rules' one subclass, said plainly.
   - **Background:** the Acolyte (Insight, Religion, two languages, Shelter of the Faithful), or **Your own** with a name, two skills and two languages. A skill you'd get twice is crossed out and you pick another, as the 2014 rules allow.

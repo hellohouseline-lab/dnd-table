@@ -442,3 +442,24 @@ test('the builder: a hill dwarf fighter, acolyte, with the standard set, in four
   await page.getByRole('button', { name: 'Raise Strength' }).click()
   await expect(page.getByText(/Points left: 26/)).toBeVisible()
 })
+
+test('outside a fight, a player rolls any check from the hand, with advantage', async ({ page }) => {
+  await page.goto('#/dev/table')
+  await page.getByRole('button', { name: 'Checks', exact: true }).click()
+  const panel = page.getByRole('region', { name: 'Roll a check' })
+  await panel.getByRole('button', { name: 'Advantage', exact: true }).click()
+  await expect(panel).toContainText('Your next roll is with advantage.')
+  await panel.getByText('Saving throws').click()
+  await expect(panel.getByRole('button', { name: /^Charisma/ })).toBeVisible()
+  await panel
+    .getByRole('button', { name: /^Perception/ })
+    .first()
+    .click()
+  // The advantage is spent on that roll.
+  await expect(panel.getByRole('button', { name: 'Normal', exact: true })).toHaveAttribute('aria-pressed', 'true')
+
+  // In a fight the hand is for fighting: no Checks set.
+  await page.goto('#/dev/table/fight')
+  await expect(page.getByRole('button', { name: 'Bonus actions' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Checks', exact: true })).toHaveCount(0)
+})
