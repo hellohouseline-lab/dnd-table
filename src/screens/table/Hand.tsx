@@ -11,7 +11,14 @@ import type { BonusMove } from '../../rules/turn.ts'
 import { SlotPips } from '../fight/SpellParts.tsx'
 import { levelWords, srdSpellFor } from '../fight/useCasting.ts'
 import { CardInfo } from './CardPanel.tsx'
-import { attackDetails, featureDetails, spellDetails, type CardDetails } from './cardDetails.ts'
+import {
+  attackDetails,
+  featureDetails,
+  moveDetails,
+  spellDetails,
+  weaponIcon,
+  type CardDetails,
+} from './cardDetails.ts'
 import styles from './Hand.module.css'
 
 /** A caster's spells for the hand: the SRD list, why one can't be cast now (or null), and casting one. */
@@ -138,7 +145,7 @@ export function Hand({
       key: `${offhand ? 'offhand' : 'attack'}-${entry.id}`,
       tag: offhand ? 'Bonus · Off hand' : 'Attack',
       tone: offhand ? 'bonus' : 'action',
-      icon: 'sword',
+      icon: weaponIcon(entry.weapon || entry.name),
       name: entry.name || 'Attack',
       detail: result ? `${formatBonus(result.toHit)} · ${offhand ? 'no bonus to damage' : result.damage}` : '',
       why,
@@ -178,7 +185,7 @@ export function Hand({
     name: MOVE_WORDS[move][0],
     detail: 'Keeps your action',
     why: bonusWhy,
-    info: { kind: 'Bonus action', title: MOVE_WORDS[move][0], lines: [MOVE_WORDS[move][1]], cost: 'bonus', more: null },
+    info: moveDetails(MOVE_WORDS[move][0], MOVE_WORDS[move][1]),
     spent: bonusWhy !== null,
     play: () => onBonusMove?.(move),
   })

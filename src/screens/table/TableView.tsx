@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { aOrAn } from '../../components/words.ts'
@@ -74,7 +74,7 @@ import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { deathSavePatch, isDying } from '../../rules/dying.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { UndoChip } from './CardPanel.tsx'
-import { featureCost, featureRule, isRaging, RAGE } from '../../rules/features.ts'
+import { concentrationTimer, featureCost, featureRule, isRaging, RAGE, type Effect } from '../../rules/features.ts'
 import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
@@ -341,6 +341,32 @@ export function TableView({
   // Spells from the hand: in a fight, a target or where it goes next (the server settles it);
   // outside one, the slot is spent and the dice rolled here.
   const spellList = useSrd(loadSpells)
+  // A concentration spell's timer starts with it (the server counts it down in a fight).
+  const concentrating = character.concentration
+  const effects = character.effects
+  useEffect(() => {
+    if (!concentrating || effects.some((e) => e.key === 'concentration' && e.spell === concentrating)) return
+    const spell = spellList?.find((s) => s.name === concentrating)
+    const timer = spell ? concentrationTimer(spell.name, spell.duration) : null
+    if (timer) onUpdate(character.id, { effects: [...effects.filter((e) => e.key !== 'concentration'), timer] })
+  }, [concentrating, effects, spellList, character.id, onUpdate])
+
+  // Saying when a timed effect runs out (Rage after its 10 rounds).
+  const [ranOut, setRanOut] = useState<string | null>(null)
+  const before = useRef<Effect[]>(effects)
+  useEffect(() => {
+    const gone = before.current.filter(
+      (e) => e.roundsLeft !== undefined && e.roundsLeft <= 1 && !effects.some((now) => now.key === e.key),
+    )
+    before.current = effects
+    if (gone.length > 0) setRanOut(`Time's up: ${gone.map((e) => e.name).join(' and ')} ended.`)
+  }, [effects])
+  useEffect(() => {
+    if (!ranOut) return
+    const timer = setTimeout(() => setRanOut(null), 8000)
+    return () => clearTimeout(timer)
+  }, [ranOut])
+
   const casting = useCasting(combat?.cast ?? NO_CAST, table.rollWith, tokens, rows)
   const aimingSpell = casting.casting
   function castSpell(spell: SrdSpell) {
@@ -637,9 +663,10 @@ export function TableView({
         </div>
       )}
 
-      {lastUse && (
+      {(lastUse || ranOut) && (
         <div className={styles.cardPanel}>
-          <UndoChip text={lastUse.text} onUndo={undoLastUse} onClose={() => setLastUse(null)} />
+          {lastUse && <UndoChip text={lastUse.text} onUndo={undoLastUse} onClose={() => setLastUse(null)} />}
+          {ranOut && <UndoChip text={ranOut} onClose={() => setRanOut(null)} />}
         </div>
       )}
 
@@ -765,7 +792,13 @@ export function TableView({
             character={character}
             spells={spellList}
             onOpen={(open) => (open.kind === 'feature' ? void playFeature(open.feature) : castSpell(open.spell))}
-            onEndEffect={(key) => update({ effects: character.effects.filter((e) => e.key !== key) })}
+            onEndEffect={(key) =>
+              update({
+                effects: character.effects.filter((e) => e.key !== key),
+                // Ending a concentration timer ends the concentration.
+                ...(key === 'concentration' ? { concentration: null } : {}),
+              })
+            }
           />
         )}
 
