@@ -3,6 +3,29 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **T1, cards that explain themselves and the Party tab (live; plan approved with decisions 22 to 28 as recommended).**
+  - **Cards:** clicking any card in the hand (or on the sheet) opens a side panel just right of the plate. It shows:
+    - what the card does in plain words: to hit, damage, reach and properties for a weapon; the effect, casting time, range, duration and concentration for a spell; the effect and uses left for a feature;
+    - what it costs from the turn, and whether that's free now;
+    - what to do next, and the full rules under **The full rules**.
+
+    An attack waits for its target ("Target: Goblin A (5 ft away)", with Change), and a spell for its target or its area. Nothing rolls until the panel's button is pressed (**Attack Goblin A**, **Cast Darkness**).
+  - **Features run themselves:**
+    - **Rage** marks you Raging: +2 damage on Strength melee attacks, advantage on Strength checks and saves, and resistance to bludgeoning, piercing and slashing, counted by the server when damage lands. It ends at 0 hit points, or with **End rage**.
+    - **Second Wind** rolls and heals.
+    - **Action Surge** gives the action back.
+
+    Each spends its use and its part of the turn, and the feed names it ("Yenn uses Rage"). **Undo** stays on offer for half a minute and gives back the use, the hit points and the bonus action. A player can take back their own newest action; anything else is still the DM's to undo.
+  - **At a glance** lists your bonus actions and reactions (click one to open its card, with opportunity attacks always listed) and what's running now, such as Raging, with **End**.
+  - **Party tab:** the nine quick checks along the top (Perception, Investigation, Insight, Stealth, Athletics, Persuasion, and Dexterity, Constitution and Wisdom saves), with Easy 10, Medium 15, Hard 20 or a number. A tick box on each card starts with whoever is here tonight; then one click sends it, and the results come up as usual.
+  - **Party cards:** each card now shows:
+    - class, level, race and background under the name;
+    - what's left of their turn in a fight, and effects such as Raging;
+    - an accordion with attacks, spells (what each does, the save DC and attack bonus) and features with uses.
+
+    Backstory, gear and money arrive with C2 and I1.
+  - Server: `supabase/migrations/20261027060000_features_effects.sql` (`characters.effects`, `use_feature`, effect resistances in `apply_damage`, Rage ending at 0, players undoing their own newest action). Rules: `src/rules/features.ts`; panel: `src/screens/table/CardPanel.tsx` and `cardDetails.ts`; quick checks: `src/screens/dm/QuickChecks.tsx`.
+  - Tests: 370 database (11 new), 327 unit and 17 preview browser tests.
 - **Fixes from Matt's C1b test, and three starter maps (live).**
   - **End fight** is one step on the server: every miniature leaves the map, chances to strike close, and the map stays up as an ordinary picture, so picking another picture or music works as usual. (Matt's stage had been left in battle-map mode with two miniatures on it.)
   - **Pop-ups** close with a ✕, Escape or a click outside. The sheet panel's close button has a ✕ too.
@@ -93,20 +116,17 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Waiting for Matt's approval: `docs/TABLE_TOOLS_PLAN.md`** (decisions 22 to 28), from his C1b notes:
-  - **T1:** cards that explain themselves (a side panel with what it does, then confirm, roll and Undo), and the Party tab with nine quick checks and fuller party cards.
-  - **C2:** the character builder, now with backstory details, a wallet and starting gear.
-  - **I1:** items, money, loot and shops.
-  - **S1:** story mode, with an importer for Matt's starter campaign, and rules lookups for players.
-  - Then the test one-shot, C3 lite, and the stream overlay (milestone 8).
+- **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
 - Test one-shot with a fight: 21 to 22 November 2026.
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Read `docs/TABLE_TOOLS_PLAN.md`** and approve it, or say what to change (decisions 22 to 28, especially the order in section 6).
-- **Send your starter campaign** when you're ready, and say whether it's your own writing or from a published book. A book's text stays in the table's private database, never in the code.
+- **Try T1** with a player in a second browser:
+  - As the player: click a weapon card, then a goblin, then **Attack**. Click a spell card and follow the panel. A barbarian presses **Rage!**, and a fighter **Roll Second Wind** then **Undo**.
+  - As the DM: on Screen 1's Party tab, pick a check and a difficulty, tick who rolls, press the gold button, and open **Attacks, spells and features** on a card.
+- **Send your starter campaign** for S1 when you're ready, and say whether it's your own writing or from a published book.
 - **Try the fixes:** end a fight and check the map stays as a picture with no miniatures; pick another picture; on a goblin's turn attack twice and see "Attack again anyway?"; drop a character to 0 and roll a death save from their sheet; add a starter map from Maps.
 - **Try C1b** with a player in a second browser (steps in "How to try C1b" below). Say what feels slow or wrong: that's what C3 lite and the fixes are for.
 - **Check decisions 19 to 21** in `docs/COMBAT_PLAN.md` section 7 (death save pips visible to all, players place their own spell areas, moves don't wait for opportunity attacks). They're built as recommended; any is a small change.
