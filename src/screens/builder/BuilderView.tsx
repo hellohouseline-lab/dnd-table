@@ -13,6 +13,8 @@ import {
 import { gearSummary } from '../../rules/build/gearStep.ts'
 import type { SrdBackground, SrdClass, SrdEquipment, SrdFeature, SrdRaces, SrdSpell } from '../../rules/srd/index.ts'
 import { GearStep } from './GearStep.tsx'
+import { QuickStart } from './QuickStart.tsx'
+import { autoDraft, surpriseDraft } from '../../rules/build/quickStart.ts'
 import { ReviewStep } from './ReviewStep.tsx'
 import { SpellsStep } from './SpellsStep.tsx'
 import { WhoStep } from './WhoStep.tsx'
@@ -47,10 +49,15 @@ type BuilderViewProps = {
   exitHref: string
   /** The plain form, for anyone who'd rather type their sheet in. */
   formHref?: string | null
-  /** Saves the finished character; resolves with a problem to show, or null. */
-  onSave: (build: CharacterBuild) => Promise<string | null>
+  /** Saves the finished character (for a player, when the DM makes it); resolves with a problem, or null. */
+  onSave: (build: CharacterBuild, ownerId: string | null) => Promise<string | null>
+  /** The DM: players without a character, to make one for. */
+  owners?: { id: string; name: string }[] | null
   /** Why it can't be saved here (the DM, or a player with a character already), or null. */
   cantSave: string | null
+  /** The table's starting level and gold (gp, on top of the background's). */
+  startingLevel?: number
+  startingGold?: number
 }
 
 /**
@@ -73,8 +80,13 @@ export function BuilderView({
   formHref,
   onSave,
   cantSave,
+  startingLevel = 1,
+  startingGold = 0,
+  owners = null,
 }: BuilderViewProps) {
   const [step, setStep] = useState(0)
+  // The three ways in show until a race is picked, or the player chooses to build their own.
+  const [ownWay, setOwnWay] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -91,7 +103,12 @@ export function BuilderView({
     races && classes && features && backgrounds && equipment && spells
       ? { races, classes, features, backgrounds, equipment, spells }
       : null
-  const build = data ? assembleBuild(draft, data) : null
+  const assembled = data ? assembleBuild(draft, data) : null
+  // The table's starting gold goes in the purse too.
+  const build =
+    assembled && startingGold > 0
+      ? { ...assembled, wallet: { ...assembled.wallet, gp: assembled.wallet.gp + startingGold } }
+      : assembled
 
   const missing: (string[] | null)[] = [
     race ? race.missing : null,
@@ -165,7 +182,25 @@ export function BuilderView({
         </nav>
 
         <section className={styles.centre} aria-label={STEPS[step].name}>
-          {step === 0 && (races ? <RaceStep draft={draft} onDraft={onDraft} races={races} spells={spells} /> : loading)}
+          {step === 0 &&
+            (!races ? (
+              loading
+            ) : draft.race === null && !ownWay && data ? (
+              <QuickStart
+                races={races}
+                onPreset={(preset) => {
+                  onDraft(autoDraft(preset, data))
+                  setStep(7)
+                }}
+                onSurprise={() => {
+                  onDraft(surpriseDraft(data))
+                  setStep(7)
+                }}
+                onOwn={() => setOwnWay(true)}
+              />
+            ) : (
+              <RaceStep draft={draft} onDraft={onDraft} races={races} spells={spells} />
+            ))}
           {step === 1 &&
             (classes && features ? (
               <ClassStep draft={draft} onDraft={onDraft} classes={classes} features={features} race={race} />
@@ -190,8 +225,9 @@ export function BuilderView({
               <div className={styles.stepIntro}>
                 <h2 className={styles.stepTitle}>Your level</h2>
                 <p className={styles.stepLead}>
-                  You start at level 1. When your DM lets you level up after an adventure, you&rsquo;ll pick
-                  what&rsquo;s new here, one card at a time: more hit points, new features and new spells.
+                  {startingLevel > 1
+                    ? `Your DM starts this table at level ${startingLevel}. You build your character at level 1 here; once you save, a gold Level up! takes you to level ${startingLevel}, one level at a time, picking what's new at each.`
+                    : 'You start at level 1. When your DM lets you level up after an adventure, a gold Level up! appears on your table screen and you pick what’s new, one card at a time: more hit points, new features and new spells.'}
                 </p>
               </div>
             </div>
@@ -231,11 +267,12 @@ export function BuilderView({
               cantSave={cantSave}
               saving={saving}
               saveError={saveError}
-              onSave={() => {
+              owners={owners}
+              onSave={(ownerId) => {
                 if (!build) return
                 setSaving(true)
                 setSaveError(null)
-                void onSave(build).then((problem) => {
+                void onSave(build, ownerId).then((problem) => {
                   setSaving(false)
                   setSaveError(problem)
                 })

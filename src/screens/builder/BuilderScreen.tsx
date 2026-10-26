@@ -41,6 +41,10 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
   const [campaign, members, characters] = data.status === 'ready' ? data.data : [null, [], []]
   const me = members.find((m) => m.user_id === user.id)
   const hasCharacter = characters.some((c) => c.ownerId === user.id)
+  // The DM can make a ready-made character for any player who doesn't have one yet.
+  const owners = members
+    .filter((m) => m.role === 'player' && !characters.some((c) => c.ownerId === m.user_id))
+    .map((m) => ({ id: m.user_id, name: m.display_name }))
 
   useEffect(() => {
     document.title = 'Make your character · D&D Table'
@@ -64,26 +68,31 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
       spells={spells}
       onRoll={() => rollScores(campaignId)}
       campaignName={campaign?.name}
+      startingLevel={campaign?.starting_level ?? 1}
+      startingGold={campaign?.starting_gold ?? 0}
       exitHref={href(`/c/${campaignId}/${me?.role === 'dm' ? 'dm' : 'play'}`)}
       formHref={me?.role === 'player' && !hasCharacter ? href(`/c/${campaignId}/character/new/form`) : null}
       cantSave={
         data.status !== 'ready'
           ? 'Opening the table…'
           : me?.role === 'dm'
-            ? 'As the DM you can try the builder; making ready-made characters for players comes next.'
+            ? owners.length === 0
+              ? 'Every player has a character already.'
+              : null
             : hasCharacter
               ? 'You have a character at this table already.'
               : null
       }
-      onSave={async (build) => {
+      owners={me?.role === 'dm' ? owners : null}
+      onSave={async (build, ownerId) => {
         try {
-          await createCharacter(campaignId, user.id, build)
+          await createCharacter(campaignId, ownerId ?? user.id, build)
           try {
             localStorage.removeItem(`dnd-table-builder-${campaignId}-${user.id}`)
           } catch {
             // Nothing to tidy in a private window.
           }
-          navigate(`/c/${campaignId}/play`, { replace: true })
+          navigate(`/c/${campaignId}/${me?.role === 'dm' ? 'dm' : 'play'}`, { replace: true })
           return null
         } catch (caught) {
           return messageFor(caught)

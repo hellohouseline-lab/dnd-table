@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { HpBar } from '../../components/HpBar.tsx'
 import { Portrait } from '../../components/Portrait.tsx'
@@ -83,7 +84,8 @@ export function PartyCards({
   if (cards.length === 0) {
     return (
       <p className={styles.empty}>
-        No characters yet. Once your players have made theirs on the Join screen, their cards appear here.
+        No characters yet. Once your players have made theirs, their cards appear here. You can also{' '}
+        <a href={href(`/c/${campaignId}/character/new`)}>make a ready-made character for a player</a>.
       </p>
     )
   }
@@ -96,6 +98,9 @@ export function PartyCards({
       <div className={styles.grid}>
         {onLevelUp && (
           <div className={styles.partyBar}>
+            <a className={styles.makeLink} href={href(`/c/${campaignId}/character/new`)}>
+              Make a character for a player
+            </a>
             <SheetExport
               copyLabel="Copy everyone’s sheets"
               fileName="party.txt"

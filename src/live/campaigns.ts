@@ -118,7 +118,10 @@ export async function renewCameraKey(campaignId: string): Promise<void> {
 }
 
 /** DM only: changes the campaign's name, party size or starting level. */
-export async function updateCampaign(campaignId: string, details: CampaignDetails): Promise<void> {
+export async function updateCampaign(
+  campaignId: string,
+  details: CampaignDetails & { starting_gold?: number },
+): Promise<void> {
   const { error } = await db()
     .from('campaigns')
     .update({ ...details, name: details.name.trim() })

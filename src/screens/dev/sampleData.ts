@@ -10,6 +10,7 @@ export const sampleCampaign: Campaign = {
   dm_id: 'dm',
   party_size: 4,
   starting_level: 2,
+  starting_gold: 0,
   join_code: 'K7QM2P',
   camera_key: 'abcdef0123456789abcdef01',
   created_at: '2026-10-25T20:00:00Z',

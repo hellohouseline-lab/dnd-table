@@ -10,6 +10,11 @@ import { deriveSheet } from './sheet.ts'
 const line = (label: string, value: string) => (value.trim() ? `${label}: ${value.trim()}` : '')
 const join = (parts: string[]) => parts.filter(Boolean).join('\n')
 
+/** "an 87-year-old", "an elf", "a dwarf": by the sound, so "an" before a vowel or an 8, 11 or 18. */
+export function anOrA(next: string): string {
+  return /^(?:[aeiou]|8|11\b|11-|18\b|18-)/i.test(next.trim()) ? 'an' : 'a'
+}
+
 /** "Hill Dwarf", not "Hill Dwarf Dwarf". */
 function raceName(c: Pick<Character, 'race' | 'subrace'>): string {
   if (!c.subrace) return c.race
@@ -41,7 +46,7 @@ export function pictureDescription(c: Character): string {
   ].filter(Boolean)
   const manner = [s.alignment && `${s.alignment.toLowerCase()} in nature`, s.personality].filter(Boolean)
   return [
-    `A fantasy character portrait of ${c.name || 'an adventurer'}, a ${who}${c.subclass ? ` (${c.subclass})` : ''}.`,
+    `A fantasy character portrait of ${c.name || 'an adventurer'}, ${anOrA(who)} ${who}${c.subclass ? ` (${c.subclass})` : ''}.`,
     looks.length > 0 && `${looks.join(', ').replace(/^./, (x) => x.toUpperCase())}.`,
     carrying.length > 0 && `${carrying.join(', ').replace(/^./, (x) => x.toUpperCase())}.`,
     manner.length > 0 &&

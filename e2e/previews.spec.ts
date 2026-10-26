@@ -393,6 +393,7 @@ test("the DM uses a goblin's Nimble Escape from its card", async ({ page }) => {
 
 test('the builder: a player picks a half-elf and its choices', async ({ page }) => {
   await page.goto('#/dev/builder')
+  await page.getByRole('button', { name: 'Build my own' }).click()
   await page.getByRole('button', { name: /Half-Elf/ }).click()
   const summary = page.getByRole('complementary', { name: 'Your character so far' })
   await expect(summary).toContainText('Level 1 Half-Elf')
@@ -409,6 +410,7 @@ test('the builder: a player picks a half-elf and its choices', async ({ page }) 
 
 test('the builder: a hill dwarf fighter, acolyte, with the standard set, in four steps', async ({ page }) => {
   await page.goto('#/dev/builder')
+  await page.getByRole('button', { name: 'Build my own' }).click()
   const summary = page.getByRole('complementary', { name: 'Your character so far' })
   await page.getByRole('button', { name: /^Dwarf/ }).click()
   await page.getByRole('button', { name: /Hill Dwarf/ }).click()
@@ -445,6 +447,7 @@ test('the builder: a hill dwarf fighter, acolyte, with the standard set, in four
 
 test('the builder: a fighter picks starting gear and gets AC 18 from chain mail and a shield', async ({ page }) => {
   await page.goto('#/dev/builder')
+  await page.getByRole('button', { name: 'Build my own' }).click()
   await page.getByRole('button', { name: /^Human/ }).click()
   await page.getByRole('button', { name: 'Elvish', exact: true }).click()
   await page.getByRole('button', { name: 'Next: Class' }).click()
@@ -569,4 +572,31 @@ test('a sheet copies as text, with a picture description', async ({ page, contex
   expect(text).toContain('THORIN IRONFIST')
   expect(text).toContain('PICTURE DESCRIPTION')
   expect(text).toContain('A fantasy character portrait of Thorin Ironfist')
+})
+
+test('the builder: a ready-made character in one click, then a name of your own', async ({ page }) => {
+  await page.goto('#/dev/builder')
+  await page.getByRole('button', { name: /^Tinka Gearwhistle/ }).click()
+  await expect(page.getByLabel('Your character’s name')).toHaveValue('Tinka Gearwhistle')
+  await page.getByLabel('Your character’s name').fill('Pemberly Gearwhistle')
+  await page.getByRole('button', { name: 'Next: Review' }).click()
+  await expect(page.getByRole('heading', { name: 'Meet Pemberly Gearwhistle' })).toBeVisible()
+  await expect(page.getByText(/Level 1 Rock Gnome Wizard, once an acolyte/)).toBeVisible()
+  await expect(page.getByText('Ready when you are.')).toBeVisible()
+})
+
+test('the builder: Surprise me makes a whole character', async ({ page }) => {
+  await page.goto('#/dev/builder')
+  await page.getByRole('button', { name: 'Surprise me' }).click()
+  await page.getByRole('button', { name: 'Next: Review' }).click()
+  await expect(page.getByText('Ready when you are.')).toBeVisible()
+})
+
+test('the sheet shows Your path: every level ahead and the choices coming', async ({ page }) => {
+  await page.goto('#/dev/table')
+  await page.getByRole('button', { name: /Sheet/ }).first().click()
+  await page.getByRole('tab', { name: 'Your path' }).click()
+  await expect(page.getByText('Level 3next')).toBeVisible()
+  await expect(page.getByText('Pick your path (subclass)')).toBeVisible()
+  await expect(page.getByText(/Extra Attack/).first()).toBeVisible()
 })

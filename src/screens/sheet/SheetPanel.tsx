@@ -6,16 +6,18 @@ import type { Character } from '../../rules/character.ts'
 import { characterText, sheetFileName } from '../../rules/sheetText.ts'
 import { InventoryTab } from './InventoryTab.tsx'
 import { SheetExport } from './SheetExport.tsx'
+import { PathTab } from './PathTab.tsx'
 import { PowersTab } from './PowersTab.tsx'
 import { SheetTab, type SheetRolls } from './SheetTab.tsx'
 import styles from './SheetPanel.module.css'
 
-export type SheetTabName = 'sheet' | 'inventory' | 'powers'
+export type SheetTabName = 'sheet' | 'inventory' | 'powers' | 'path'
 
 const TABS: { name: string; tab?: SheetTabName }[] = [
   { name: 'Sheet', tab: 'sheet' },
   { name: 'Inventory', tab: 'inventory' },
   { name: 'Powers', tab: 'powers' },
+  { name: 'Your path', tab: 'path' },
   { name: 'Journal' },
   { name: 'Lore' },
 ]
@@ -90,6 +92,8 @@ export function SheetPanel({
           <SheetTab character={character} canEdit={canEdit} onUpdate={onUpdate} rolls={rolls} />
         ) : tab === 'inventory' ? (
           <InventoryTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
+        ) : tab === 'path' ? (
+          <PathTab character={character} />
         ) : (
           <PowersTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
         )}

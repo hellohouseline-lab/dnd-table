@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
 import { coinText } from '../../rules/build/gear.ts'
 import { modifierText } from '../../rules/build/steps.ts'
@@ -12,7 +13,9 @@ type ReviewStepProps = {
   onGoTo: (step: number) => void
   /** Why it can't be saved here (a DM, or someone who has a character already), or null. */
   cantSave: string | null
-  onSave: () => void
+  onSave: (ownerId: string | null) => void
+  /** The DM: players without a character, to make this one for. */
+  owners?: { id: string; name: string }[] | null
   saving: boolean
   saveError: string | null
 }
@@ -21,7 +24,18 @@ type ReviewStepProps = {
  * Step 9: the whole character, and Save. Anything still to pick is listed with a link to its step;
  * once there's nothing left, Save puts the character at the table, ready to play.
  */
-export function ReviewStep({ build, missing, onGoTo, cantSave, onSave, saving, saveError }: ReviewStepProps) {
+export function ReviewStep({
+  build,
+  missing,
+  onGoTo,
+  cantSave,
+  onSave,
+  owners = null,
+  saving,
+  saveError,
+}: ReviewStepProps) {
+  const [ownerId, setOwnerId] = useState<string>('')
+  const owner = owners?.find((o) => o.id === ownerId) ?? null
   const left = missing.filter((m) => m.items.length > 0)
   const wallet = build?.wallet
   const coins = wallet ? wallet.cp + wallet.sp * 10 + wallet.ep * 50 + wallet.gp * 100 + wallet.pp * 1000 : 0
@@ -142,14 +156,33 @@ export function ReviewStep({ build, missing, onGoTo, cantSave, onSave, saving, s
         </div>
       )}
 
+      {owners && (
+        <label className={styles.field}>
+          <span className={styles.fieldLabel}>Make it for</span>
+          <select className={styles.scoreSelect} value={ownerId} onChange={(event) => setOwnerId(event.target.value)}>
+            <option value="">Pick a player…</option>
+            {owners.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <div className={styles.saveRow}>
         <button
           type="button"
           className={styles.next}
-          disabled={!build || left.length > 0 || cantSave !== null || saving}
-          onClick={onSave}
+          disabled={!build || left.length > 0 || cantSave !== null || saving || (owners !== null && !owner)}
+          onClick={() => onSave(owner?.id ?? null)}
         >
-          {saving ? 'Saving…' : 'Save and go to the table'}
+          {saving
+            ? 'Saving…'
+            : owners
+              ? owner
+                ? `Give it to ${owner.name}`
+                : 'Pick a player first'
+              : 'Save and go to the table'}
         </button>
         <span className={styles.footerNote}>
           {cantSave ?? (left.length > 0 ? 'Pick what’s left, then save.' : 'Ready when you are.')}
