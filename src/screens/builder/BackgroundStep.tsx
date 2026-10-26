@@ -34,7 +34,13 @@ export function BackgroundStep({ draft, onDraft, backgrounds, summary, already, 
   const pickBackground = (index: string) =>
     draft.background === index
       ? undefined
-      : onDraft({ ...draft, background: index, backgroundSkillPicks: [], backgroundLanguagePicks: [] })
+      : onDraft({
+          ...draft,
+          background: index,
+          backgroundSkillPicks: [],
+          backgroundLanguagePicks: [],
+          backgroundGearPicks: [],
+        })
 
   return (
     <div className={styles.step}>

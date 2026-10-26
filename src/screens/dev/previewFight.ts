@@ -18,7 +18,8 @@ import { adjustDamage, NO_DEFENCES } from '../../rules/damage.ts'
 import { deathSave, hitWhileDown, opportunityThreats } from '../../rules/dying.ts'
 import type { NewArea } from '../../live/areas.ts'
 import type { Ability } from '../../rules/abilities.ts'
-import { savingThrow } from '../../rules/rolls.ts'
+import { freeRoll, savingThrow } from '../../rules/rolls.ts'
+import { USABLE } from '../../rules/items.ts'
 import { concentrationDc, slotsLeft, spellSaveDc } from '../../rules/spells.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import {
@@ -118,6 +119,8 @@ type CharacterState = Pick<
   | 'concentration'
   | 'concentrationDc'
   | 'spellcasting'
+  | 'inventory'
+  | 'effects'
 >
 
 const stateOf = (c: Character): CharacterState => ({
@@ -131,6 +134,8 @@ const stateOf = (c: Character): CharacterState => ({
   concentration: c.concentration,
   concentrationDc: c.concentrationDc,
   spellcasting: c.spellcasting,
+  inventory: c.inventory,
+  effects: c.effects,
 })
 
 type Undo = {
@@ -572,6 +577,58 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         { target: null, actor: { id: me.id, turn: me.turn } },
       )
       return latest.current.events[latest.current.events.length - 1]
+    },
+    // As public.use_item: the action, one out of the pack, and what the item does.
+    applyItem: async (combatant, itemId, target, request) => {
+      const me = latest.current.fight?.combatants.find((c) => c.id === combatant.id)
+      if (!me) throw new Error('No fight')
+      if (me.turn.actionUsed || me.turn.attacksMade > 0) throw new Error('You have used your action this turn.')
+      const character = characters.find((c) => c.id === me.characterId)
+      const item = character?.inventory.find((i) => i.id === itemId)
+      const use = item?.item ? USABLE[item.item] : undefined
+      if (!character || !item || !use) throw new Error('You don’t have that.')
+      const other = target && target.id !== me.id ? target : null
+      const targetCharacter = characters.find((c) => c.id === (other ?? me).characterId)
+      const before = stateOf(character)
+      let roll: Roll | null = null
+      const shown: CombatEvent['shown'] = { what: 'item', item: item.name }
+      if (use.kind === 'throw' && other && request) {
+        roll = settle(me, other, { ...request, label: item.name }, 'none')
+      } else if (use.kind === 'heal' && targetCharacter) {
+        roll = localRoll(
+          { ...freeRoll(use.dice ?? [], { modifier: use.bonus ?? 0, characterId: character.id }), label: item.name },
+          { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+        )
+        onCharacter?.(targetCharacter.id, {
+          currentHp: Math.min(targetCharacter.maxHp, targetCharacter.currentHp + roll.total),
+        })
+        shown.heal = roll.total
+      } else if (use.kind === 'stabilise' && targetCharacter) {
+        if (targetCharacter.currentHp > 0) throw new Error('A healer’s kit steadies someone at 0 hit points.')
+        onCharacter?.(targetCharacter.id, { stable: true })
+        shown.stabilised = true
+      } else if (use.kind === 'effect' && use.effect) {
+        onCharacter?.(character.id, {
+          effects: [...character.effects.filter((e) => e.key !== use.effect?.key), use.effect],
+        })
+      } else if (use.kind === 'other') {
+        shown.scattered = true
+      }
+      onCharacter?.(character.id, {
+        inventory: character.inventory.flatMap((i) => {
+          if (i.id !== itemId) return [i]
+          if (i.uses !== null) return i.uses > 1 ? [{ ...i, uses: i.uses - 1 }] : []
+          return i.quantity > 1 ? [{ ...i, quantity: i.quantity - 1 }] : []
+        }),
+      })
+      setTurn(me.id, (turn) => ({ ...turn, actionUsed: true }))
+      if (use.kind !== 'throw') {
+        post(
+          { kind: 'action', actorId: me.id, targetId: other?.id ?? null, rollId: roll?.id ?? null, shown },
+          { target: { characterId: character.id, before }, actor: { id: me.id, turn: me.turn } },
+        )
+      }
+      return roll
     },
     takeBack: async (event) => {
       const newest = [...latest.current.events].reverse().find((e) => !e.undone)

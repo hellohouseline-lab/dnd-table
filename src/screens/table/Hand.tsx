@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
-import type { AttackEntry, Character, FeatureEntry } from '../../rules/character.ts'
+import type { AttackEntry, Character, FeatureEntry, InventoryItem } from '../../rules/character.ts'
+import type { Usable } from '../../rules/items.ts'
 import { coveredFeatures } from '../../rules/bonusActions.ts'
 import { featureCost } from '../../rules/features.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
@@ -54,6 +55,9 @@ type HandProps = {
   onBonusAttack?: (choice: BonusChoice) => void
   /** Outside a fight: the Checks set, a panel to roll any skill, save or ability check. */
   checks?: ReactNode
+  /** Things in the pack that can be used (a potion, a kit, a flask), and why each can't be now, or null. */
+  items?: { item: InventoryItem; use: Usable; why: string | null }[]
+  onUseItem?: (entry: { item: InventoryItem; use: Usable }) => void
   disabled?: boolean
   className?: string
 }
@@ -73,7 +77,7 @@ type Card = {
   play: () => void
 }
 
-type CardSet = 'weapons' | 'spells' | 'bonus' | 'checks'
+type CardSet = 'weapons' | 'spells' | 'bonus' | 'checks' | 'items'
 
 const MOST_CARDS = 9
 
@@ -102,6 +106,8 @@ export function Hand({
   bonusAttacks = [],
   onBonusAttack,
   checks = null,
+  items = [],
+  onUseItem,
   disabled,
   className,
 }: HandProps) {
@@ -250,10 +256,35 @@ export function Hand({
     ...(light.length >= 2 ? light.map((entry) => attackCard(entry, true)) : []),
   ]
 
+  const itemCard = ({ item, use, why }: { item: InventoryItem; use: Usable; why: string | null }): Card => ({
+    key: `item-${item.id}`,
+    tag: 'Item',
+    tone: 'action',
+    icon: use.kind === 'heal' || use.kind === 'effect' ? 'potion' : use.kind === 'throw' ? 'flame' : 'items',
+    name: item.name,
+    detail: item.uses !== null ? `${item.uses} uses left` : item.quantity > 1 ? `${item.quantity} left` : '1 left',
+    why,
+    info: {
+      kind: 'feature',
+      title: item.name,
+      icon: use.kind === 'heal' || use.kind === 'effect' ? 'potion' : 'items',
+      stats: [
+        { label: 'Takes', value: 'Your action' },
+        { label: 'Left', value: item.uses !== null ? `${item.uses} uses` : String(item.quantity) },
+      ],
+      bullets: [use.what],
+      footer: ['Item', ''],
+      cost: 'action',
+    },
+    spent: why !== null,
+    play: () => onUseItem?.({ item, use }),
+  })
+
   const all: { key: CardSet; name: string; cards: Card[] }[] = [
     { key: 'weapons', name: 'Attacks and features', cards: weaponCards },
     { key: 'spells', name: 'Spells', cards: spells ? spellCards : [] },
     { key: 'bonus', name: 'Bonus actions', cards: bonusCards },
+    { key: 'items', name: 'Items', cards: items.map(itemCard) },
   ]
   const sets = [
     ...all.filter((s) => s.cards.length > 0),

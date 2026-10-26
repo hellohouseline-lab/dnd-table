@@ -86,6 +86,11 @@ import {
   type BonusEntry,
 } from '../../rules/bonusActions.ts'
 import { BonusReady, type BonusChoice } from '../fight/BonusReady.tsx'
+import { usableItems, type Usable } from '../../rules/items.ts'
+import type { InventoryItem } from '../../rules/character.ts'
+
+/** An item from the pack and what using it does. */
+type ItemEntry = { item: InventoryItem; use: Usable }
 import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
 import { CheckPanel } from './CheckPanel.tsx'
@@ -133,6 +138,7 @@ export type PlayerCombatProps = {
   events: CombatEvent[]
   attack: FightControls['attack']
   offhandAttack: FightControls['offhandAttack']
+  applyItem: FightControls['applyItem']
   act: FightControls['act']
   /** Spells: casting one, and the save to keep concentrating after taking damage. */
   cast: FightControls['cast']
@@ -196,6 +202,9 @@ export function TableView({
   const [aimingBonus, setAimingBonus] = useState<BonusAttackKind | null>(null)
   // The weapon last used with the Attack action, so the off-hand attack offers the other one.
   const [mainAttack, setMainAttack] = useState<string | null>(null)
+  // An item waiting for its target (a potion to give, a kit, a flask to throw), or a potion asking drink or give.
+  const [aimingItem, setAimingItem] = useState<ItemEntry | null>(null)
+  const [itemChoice, setItemChoice] = useState<ItemEntry | null>(null)
   // Flurry of Blows is two strikes: which one is next.
   const [flurryStrike, setFlurryStrike] = useState<1 | 2>(1)
   // The round the Bonus action ready card was put away in, so it stays away for the rest of the turn.
@@ -358,6 +367,105 @@ export function TableView({
     }
     update({ features: character.features.map((f) => (f.id === ki.id ? { ...f, usesLeft: f.usesLeft - 1 } : f)) })
     return true
+  }
+
+  // Using something from the pack. In a fight it takes the action (decision 36); outside one, a potion
+  // or antitoxin just works, and the rest is for the DM to describe.
+  function playItem(entry: ItemEntry) {
+    setFightProblem(null)
+    setAiming(null)
+    casting.cancel()
+    const { use } = entry
+    if (!fight || !mine) {
+      if (use.kind === 'heal') return void drinkOutside(entry)
+      if (use.kind === 'effect' && use.effect) {
+        update({
+          effects: [...character.effects.filter((e) => e.key !== use.effect?.key), use.effect],
+          inventory: oneLess(entry),
+        })
+        return
+      }
+      return setFightProblem(`Tell the DM how you use the ${entry.item.name.toLowerCase()}.`)
+    }
+    if (!myTurn) return setFightProblem('Wait for your turn to use it.')
+    if (mine.turn.actionUsed || mine.turn.attacksMade > 0)
+      return setFightProblem('You have used your action this turn.')
+    if (use.kind === 'heal') return setItemChoice(entry)
+    if (use.kind === 'stabilise' || use.kind === 'throw') return setAimingItem(entry)
+    runItem(entry, null)
+  }
+
+  function oneLess(entry: ItemEntry) {
+    return character.inventory.flatMap((i) => {
+      if (i.id !== entry.item.id) return [i]
+      if (i.uses !== null) return i.uses > 1 ? [{ ...i, uses: i.uses - 1 }] : []
+      return i.quantity > 1 ? [{ ...i, quantity: i.quantity - 1 }] : []
+    })
+  }
+
+  async function drinkOutside(entry: ItemEntry) {
+    const { use, item } = entry
+    const thrown = await table.roll({
+      ...freeRoll(use.dice ?? [], { characterId: character.id, modifier: use.bonus ?? 0 }),
+      label: item.name,
+    })
+    if (!thrown) return
+    update({ currentHp: Math.min(character.maxHp, character.currentHp + thrown.total), inventory: oneLess(entry) })
+  }
+
+  function runItem(entry: ItemEntry, target: FightRow | null) {
+    if (!mine || !combat) return
+    let request: RollRequest | null = null
+    if (entry.use.kind === 'throw' && target) {
+      // An improvised throw: Dexterity, no proficiency, and the flask's own damage.
+      const base = attackRoll(
+        character,
+        {
+          id: entry.item.id,
+          name: entry.item.name,
+          weapon: null,
+          proficient: false,
+          magicBonus: 0,
+          ability: 'dexterity',
+          damageDice: '',
+          damageType: entry.use.damageType ?? '',
+        },
+        { ...choices, secret: false },
+      )
+      request = {
+        ...base,
+        label: entry.item.name,
+        damage: { dice: entry.use.dice ?? [], modifier: 0, type: entry.use.damageType ?? '' },
+      }
+    }
+    setAimingItem(null)
+    setItemChoice(null)
+    void table
+      .rollWith(() => combat.applyItem(mine, entry.item.id, target?.combatant ?? null, request))
+      .catch((caught: unknown) => setFightProblem(messageFor(caught)))
+  }
+
+  // Picking who an item is for: a friend next to you (a potion, a kit), or a foe within 20 feet (a flask).
+  function pickItemTarget(row: FightRow) {
+    if (!aimingItem || !mine) return
+    const { use } = aimingItem
+    const targetToken = tokens.find((t) =>
+      row.combatant.characterId ? t.characterId === row.combatant.characterId : t.combatantId === row.combatant.id,
+    )
+    const feet = myToken && targetToken ? feetBetween(myToken, targetToken) : null
+    if (use.kind === 'throw') {
+      if (row.combatant.id === mine.id) return setFightProblem('Throw it at someone else.')
+      if (feet !== null && feet > (use.rangeFt ?? 20)) {
+        return setFightProblem(`${row.name} is ${feet} ft away: you can throw it ${use.rangeFt ?? 20} ft.`)
+      }
+    } else {
+      if (!row.character) return setFightProblem('That’s for someone in the party.')
+      if (feet !== null && feet > 5) return setFightProblem(`Get next to ${row.name} first (${feet} ft away).`)
+      if (use.kind === 'stabilise' && row.character.currentHp > 0) {
+        return setFightProblem(`${row.name} isn’t down: a healer’s kit steadies someone at 0 hit points.`)
+      }
+    }
+    runItem(aimingItem, row)
   }
 
   // Undo stays on offer for half a minute.
@@ -684,6 +792,7 @@ export function TableView({
                     )
                   : undefined
                 if (aimingSpell?.mode === 'target' && !aimingSpell.chosen && row) aimingSpell.onPick(row)
+                else if (aimingItem && row) pickItemTarget(row)
                 else if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
                 else setInspected(id)
               }}
@@ -771,11 +880,25 @@ export function TableView({
             picking={
               aimingSpell?.mode === 'target' && !aimingSpell.chosen
                 ? { canPick: () => true, onPick: aimingSpell.onPick }
-                : aiming
-                  ? { canPick: (row) => row.combatant.id !== mine?.id, onPick: (row) => pickTarget(row) }
-                  : null
+                : aimingItem
+                  ? { canPick: () => true, onPick: (row) => pickItemTarget(row) }
+                  : aiming
+                    ? { canPick: (row) => row.combatant.id !== mine?.id, onPick: (row) => pickTarget(row) }
+                    : null
             }
           />
+        )}
+        {aimingItem && (
+          <div className={styles.aiming} role="status">
+            {aimingItem.use.kind === 'throw'
+              ? `Throw the ${aimingItem.item.name.toLowerCase()}: click who at, within ${aimingItem.use.rangeFt ?? 20} ft.`
+              : aimingItem.use.kind === 'stabilise'
+                ? 'Use the healer’s kit: click the friend who is down, next to you.'
+                : `Give the ${aimingItem.item.name.toLowerCase()}: click the friend next to you.`}
+            <button type="button" className={styles.aimingCancel} onClick={() => setAimingItem(null)}>
+              Cancel
+            </button>
+          </div>
         )}
         {aiming && (
           <div className={styles.aiming} role="status">
@@ -823,6 +946,33 @@ export function TableView({
         </div>
       )}
 
+      {itemChoice && (
+        <div className={styles.bonusReady}>
+          <section className={styles.itemChoice} aria-label={itemChoice.item.name}>
+            <div className={styles.itemChoiceTitle}>{itemChoice.item.name}</div>
+            <p className={styles.itemChoiceText}>{itemChoice.use.what}</p>
+            <div className={styles.itemChoiceButtons}>
+              <button type="button" className={styles.itemChoiceMain} onClick={() => runItem(itemChoice, null)}>
+                Drink it
+              </button>
+              <button
+                type="button"
+                className={styles.itemChoiceOther}
+                onClick={() => {
+                  setAimingItem(itemChoice)
+                  setItemChoice(null)
+                }}
+              >
+                Give it to someone
+              </button>
+              <button type="button" className={styles.itemChoiceOther} onClick={() => setItemChoice(null)}>
+                Not now
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
       {readyNow.length > 0 && !aiming && (
         <div className={styles.bonusReady}>
           <BonusReady choices={readyNow} onTake={takeBonus} onNotNow={() => setBonusDismissed(bonusKey)} />
@@ -853,6 +1003,18 @@ export function TableView({
         }
         bonusMoves={bonusMoves(character.className, character.level)}
         bonusAttacks={bonusAttackCards}
+        items={usableItems(character.inventory).map((entry) => ({
+          ...entry,
+          why:
+            fight && mine
+              ? !myTurn
+                ? 'wait for your turn'
+                : mine.turn.actionUsed || mine.turn.attacksMade > 0
+                  ? 'action used this turn'
+                  : null
+              : null,
+        }))}
+        onUseItem={playItem}
         onBonusAttack={takeBonus}
         onBonusMove={(move) => {
           if (!mine || !combat) return

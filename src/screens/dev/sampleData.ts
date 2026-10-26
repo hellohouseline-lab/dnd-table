@@ -140,6 +140,32 @@ export const sampleFighter: Character = {
       recharge: null,
     },
   ],
+  inventory: [
+    { id: 'i1', item: 'chain-mail', name: 'Chain Mail', quantity: 1, weight: 55, worn: true, uses: null },
+    { id: 'i2', item: 'shield', name: 'Shield', quantity: 1, weight: 6, worn: true, uses: null },
+    { id: 'i3', item: 'longsword', name: 'Longsword', quantity: 1, weight: 3, worn: false, uses: null },
+    { id: 'i4', item: 'handaxe', name: 'Handaxe', quantity: 2, weight: 2, worn: false, uses: null },
+    {
+      id: 'i5',
+      item: 'potion-of-healing-common',
+      name: 'Potion of Healing',
+      quantity: 2,
+      weight: 0.5,
+      worn: false,
+      uses: null,
+    },
+    { id: 'i6', item: 'healers-kit', name: "Healer's Kit", quantity: 1, weight: 3, worn: false, uses: 10 },
+    {
+      id: 'i7',
+      item: 'alchemists-fire-flask',
+      name: "Alchemist's Fire (flask)",
+      quantity: 1,
+      weight: 1,
+      worn: false,
+      uses: null,
+    },
+  ],
+  wallet: { cp: 8, sp: 4, ep: 0, gp: 15, pp: 0 },
 }
 
 export const sampleWizard: Character = {
@@ -176,6 +202,21 @@ export const sampleWizard: Character = {
   resistances: [],
   vulnerabilities: [],
   immunities: [],
+  inventory: [
+    { id: 'w1', item: 'quarterstaff', name: 'Quarterstaff', quantity: 1, weight: 4, worn: false, uses: null },
+    { id: 'w2', item: 'spellbook', name: 'Spellbook', quantity: 1, weight: 3, worn: false, uses: null },
+    {
+      id: 'w3',
+      item: 'potion-of-healing-common',
+      name: 'Potion of Healing',
+      quantity: 1,
+      weight: 0.5,
+      worn: false,
+      uses: null,
+    },
+    { id: 'w4', item: 'antitoxin-vial', name: 'Antitoxin (vial)', quantity: 1, weight: 0, worn: false, uses: null },
+  ],
+  wallet: { cp: 0, sp: 10, ep: 0, gp: 7, pp: 0 },
 }
 
 export const sampleCharacters = [sampleFighter, sampleWizard]

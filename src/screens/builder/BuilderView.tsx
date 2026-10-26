@@ -10,7 +10,9 @@ import {
   scoresValid,
   startingHp,
 } from '../../rules/build/steps.ts'
-import type { SrdBackground, SrdClass, SrdFeature, SrdRaces, SrdSpell } from '../../rules/srd/index.ts'
+import { gearSummary } from '../../rules/build/gearStep.ts'
+import type { SrdBackground, SrdClass, SrdEquipment, SrdFeature, SrdRaces, SrdSpell } from '../../rules/srd/index.ts'
+import { GearStep } from './GearStep.tsx'
 import { BackgroundStep } from './BackgroundStep.tsx'
 import styles from './Builder.module.css'
 import { ClassStep } from './ClassStep.tsx'
@@ -19,8 +21,8 @@ import { ScoresStep } from './ScoresStep.tsx'
 import { STEPS } from './steps.ts'
 import { Summary } from './Summary.tsx'
 
-/** Steps built so far (Race, Class, Background, Ability scores); the rest follow in C2c to C2e. */
-const BUILT = 4
+/** Steps built so far (Race to Gear); Spells, Who they are and Review follow in C2d. */
+const BUILT = 6
 
 type BuilderViewProps = {
   draft: BuilderDraft
@@ -29,6 +31,7 @@ type BuilderViewProps = {
   classes: SrdClass[] | null
   features: Record<string, SrdFeature> | null
   backgrounds: SrdBackground[] | null
+  equipment: SrdEquipment | null
   spells: SrdSpell[] | null
   /** Throws 4d6 six times on the server for the Roll the dice method. */
   onRoll: () => Promise<number[][] | null>
@@ -52,6 +55,7 @@ export function BuilderView({
   classes,
   features,
   backgrounds,
+  equipment,
   spells,
   onRoll,
   campaignName,
@@ -66,12 +70,17 @@ export function BuilderView({
   const already = [...(race?.skills ?? []), ...draft.classSkillPicks]
   const background = backgrounds ? backgroundSummary(draft, backgrounds, already) : null
   const scores = finalScores(draft, race)
+  const backgroundData = backgrounds?.find((b) => b.index === draft.background) ?? null
+  const gear = equipment ? gearSummary(draft, cls, backgroundData, equipment, scores) : null
 
   const missing: (string[] | null)[] = [
     race ? race.missing : null,
     klass ? klass.missing : null,
     background ? background.missing : null,
     draft.scoreMethod ? (scoresValid(draft) ? [] : [scoreMissing(draft)]) : null,
+    // Level: every character starts at level 1 until the DM sets a higher one (C2e).
+    [],
+    gear && cls ? gear.missing : null,
   ]
   const done = missing.map((m) => m !== null && m.length === 0)
   // Steps that can be opened: every one up to the first not yet done.
@@ -153,6 +162,30 @@ export function BuilderView({
             ) : (
               loading
             ))}
+          {step === 4 && (
+            <div className={styles.step}>
+              <div className={styles.stepIntro}>
+                <h2 className={styles.stepTitle}>Your level</h2>
+                <p className={styles.stepLead}>
+                  You start at level 1. When your DM lets you level up after an adventure, you&rsquo;ll pick
+                  what&rsquo;s new here, one card at a time: more hit points, new features and new spells.
+                </p>
+              </div>
+            </div>
+          )}
+          {step === 5 &&
+            (cls && equipment && gear ? (
+              <GearStep
+                draft={draft}
+                onDraft={onDraft}
+                cls={cls}
+                background={backgroundData}
+                equipment={equipment}
+                summary={gear}
+              />
+            ) : (
+              loading
+            ))}
           {step === 3 && (
             <ScoresStep
               draft={draft}
@@ -174,7 +207,9 @@ export function BuilderView({
               {here === null
                 ? step === 3
                   ? 'Pick a way to make your scores.'
-                  : `Pick ${step === 0 ? 'a race' : step === 1 ? 'a class' : 'a background'} to begin.`
+                  : step === 5
+                    ? 'Pick a class first.'
+                    : `Pick ${step === 0 ? 'a race' : step === 1 ? 'a class' : 'a background'} to begin.`
                 : here.length > 0
                   ? `Still to pick: ${here.join('; ')}.`
                   : step + 1 < BUILT
@@ -204,6 +239,8 @@ export function BuilderView({
           skills={allSkills(draft, race, background)}
           background={background?.name ?? null}
           scores={scores}
+          armourClass={gear?.ac?.ac ?? null}
+          attacks={gear?.attacks.map((a) => a.name) ?? []}
         />
       </div>
     </main>

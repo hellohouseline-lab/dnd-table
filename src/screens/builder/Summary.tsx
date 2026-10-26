@@ -15,13 +15,27 @@ type SummaryProps = {
   background: string | null
   /** The final scores, racial bonuses included; null until placed. */
   scores: Scores | null
+  armourClass: number | null
+  /** Weapons in the hand. */
+  attacks: string[]
 }
 
 /**
  * The character taking shape, on the right: everything picked so far. Ability scores show the
  * race's bonuses until the scores step fills them in.
  */
-export function Summary({ race, className, subclass, hitPoints, saves, skills, background, scores }: SummaryProps) {
+export function Summary({
+  race,
+  className,
+  subclass,
+  hitPoints,
+  saves,
+  skills,
+  background,
+  scores,
+  armourClass,
+  attacks,
+}: SummaryProps) {
   return (
     <aside className={styles.summary} aria-label="Your character so far">
       <div className={styles.summaryHead}>
@@ -74,6 +88,10 @@ export function Summary({ race, className, subclass, hitPoints, saves, skills, b
           <span className={styles.fact}>{hitPoints ?? '–'}</span>
         </div>
         <div>
+          <span className={styles.summaryLabel}>Armour class</span>
+          <span className={styles.fact}>{armourClass ?? '–'}</span>
+        </div>
+        <div>
           <span className={styles.summaryLabel}>Speed</span>
           <span className={styles.fact}>{race ? `${race.speed} ft` : '–'}</span>
         </div>
@@ -83,6 +101,12 @@ export function Summary({ race, className, subclass, hitPoints, saves, skills, b
         </div>
       </div>
 
+      {attacks.length > 0 && (
+        <>
+          <div className={styles.summaryLabel}>Weapons</div>
+          <p className={styles.summaryText}>{attacks.join(', ')}</p>
+        </>
+      )}
       {saves.length > 0 && (
         <>
           <div className={styles.summaryLabel}>Saving throws</div>

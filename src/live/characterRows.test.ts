@@ -3,8 +3,11 @@ import { newBuild } from '../rules/character.ts'
 import {
   applyCharacterChange,
   buildToRow,
+  parseEffects,
   parseFeatures,
+  parseInventory,
   parseSpellcasting,
+  parseWallet,
   rowToCharacter,
   trackersToRow,
   type CharacterRow,
@@ -48,6 +51,8 @@ const row: CharacterRow = {
   dead: false,
   concentration_dc: null,
   concentration_queue: [],
+  inventory: [],
+  wallet: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
   effects: [],
   conditions: [],
   resistances: [],
@@ -98,6 +103,48 @@ describe('reading the JSON columns safely', () => {
 
   it('ignores an ability that isn’t one', () => {
     expect(parseSpellcasting({ ability: 'luck' }).ability).toBeNull()
+  })
+})
+
+describe('effects, inventory and wallet', () => {
+  it('keeps a timed effect’s rounds left and a concentration timer’s spell', () => {
+    expect(
+      parseEffects([
+        { key: 'rage', name: 'Raging', roundsLeft: 7, endsWhenDown: true },
+        { key: 'concentration', name: 'Bless (concentration)', spell: 'Bless', roundsLeft: 3 },
+      ]),
+    ).toEqual([
+      { key: 'rage', name: 'Raging', resistances: undefined, endsWhenDown: true, roundsLeft: 7 },
+      {
+        key: 'concentration',
+        name: 'Bless (concentration)',
+        resistances: undefined,
+        endsWhenDown: false,
+        spell: 'Bless',
+        roundsLeft: 3,
+      },
+    ])
+  })
+
+  it('reads an inventory and a wallet safely', () => {
+    expect(
+      parseInventory([
+        { id: 'a', item: 'potion-of-healing', name: 'Potion of Healing', quantity: 2, weight: 0.5 },
+        { junk: 1 },
+      ]),
+    ).toEqual([
+      {
+        id: 'a',
+        item: 'potion-of-healing',
+        name: 'Potion of Healing',
+        quantity: 2,
+        weight: 0.5,
+        worn: false,
+        uses: null,
+      },
+    ])
+    expect(parseWallet({ gp: 15, sp: -3, cp: 2.6 })).toEqual({ cp: 3, sp: 0, ep: 0, gp: 15, pp: 0 })
+    expect(parseWallet(null)).toEqual({ cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 })
   })
 })
 

@@ -4,13 +4,16 @@
 import type { Effect } from '../rules/features.ts'
 import { ABILITIES, isAbility, type Ability } from '../rules/abilities.ts'
 import {
+  EMPTY_WALLET,
   NO_SPELLCASTING,
   type AttackEntry,
   type Character,
   type CharacterBuild,
   type FeatureEntry,
+  type InventoryItem,
   type SpellEntry,
   type Spellcasting,
+  type Wallet,
 } from '../rules/character.ts'
 import type { Json, Tables, TablesUpdate } from './database.types.ts'
 
@@ -68,10 +71,40 @@ export function parseEffects(value: Json): Effect[] {
             name: e.name,
             resistances: Array.isArray(e.resistances) ? e.resistances.filter((r) => typeof r === 'string') : undefined,
             endsWhenDown: e.endsWhenDown === true,
+            // Kept, or saving the effects again would reset a timer the server is counting down.
+            ...(typeof e.roundsLeft === 'number' && Number.isFinite(e.roundsLeft) ? { roundsLeft: e.roundsLeft } : {}),
+            ...(typeof e.spell === 'string' ? { spell: e.spell } : {}),
           },
         ]
       : [],
   )
+}
+
+/** What a character carries; anything malformed is dropped. */
+export function parseInventory(value: Json): InventoryItem[] {
+  if (!Array.isArray(value)) return []
+  return value.filter(isObject).flatMap((i) => {
+    const name = str(i.name).trim()
+    if (!name) return []
+    return [
+      {
+        id: str(i.id, crypto.randomUUID().slice(0, 8)),
+        item: typeof i.item === 'string' ? i.item : null,
+        name,
+        quantity: Math.max(0, Math.round(num(i.quantity, 1))),
+        weight: Math.max(0, num(i.weight)),
+        worn: bool(i.worn),
+        uses: typeof i.uses === 'number' && i.uses >= 0 ? Math.round(i.uses) : null,
+      },
+    ]
+  })
+}
+
+/** Coins, never below 0. */
+export function parseWallet(value: Json): Wallet {
+  if (!isObject(value)) return EMPTY_WALLET
+  const coin = (key: keyof Wallet) => Math.max(0, Math.round(num(value[key])))
+  return { cp: coin('cp'), sp: coin('sp'), ep: coin('ep'), gp: coin('gp'), pp: coin('pp') }
 }
 
 export function parseSpellcasting(value: Json): Spellcasting {
@@ -129,6 +162,8 @@ export function rowToCharacter(row: CharacterRow): Character {
     attacks: parseAttacks(row.attacks),
     features: parseFeatures(row.features),
     spellcasting: parseSpellcasting(row.spellcasting),
+    inventory: parseInventory(row.inventory),
+    wallet: parseWallet(row.wallet),
     deathSaveSuccesses: row.death_save_successes,
     deathSaveFailures: row.death_save_failures,
     stable: row.stable,
@@ -171,6 +206,8 @@ export function buildToRow(build: CharacterBuild): CharacterRowPatch {
     attacks: build.attacks as unknown as Json,
     features: build.features as unknown as Json,
     spellcasting: build.spellcasting as unknown as Json,
+    inventory: build.inventory as unknown as Json,
+    wallet: build.wallet as unknown as Json,
   }
 }
 
@@ -196,6 +233,9 @@ export type TrackerPatch = Partial<
     | 'features'
     | 'spellcasting'
     | 'portraitPath'
+    | 'inventory'
+    | 'wallet'
+    | 'armourClass'
   >
 >
 
@@ -219,6 +259,9 @@ export function trackersToRow(patch: TrackerPatch): CharacterRowPatch {
   if (patch.features !== undefined) row.features = patch.features as unknown as Json
   if (patch.spellcasting !== undefined) row.spellcasting = patch.spellcasting as unknown as Json
   if (patch.portraitPath !== undefined) row.portrait_path = patch.portraitPath
+  if (patch.inventory !== undefined) row.inventory = patch.inventory as unknown as Json
+  if (patch.wallet !== undefined) row.wallet = patch.wallet as unknown as Json
+  if (patch.armourClass !== undefined) row.armour_class = patch.armourClass
   return row
 }
 

@@ -3,15 +3,16 @@ import { ButtonLink } from '../../components/Button.tsx'
 import { cx } from '../../components/cx.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Character } from '../../rules/character.ts'
+import { InventoryTab } from './InventoryTab.tsx'
 import { PowersTab } from './PowersTab.tsx'
 import { SheetTab, type SheetRolls } from './SheetTab.tsx'
 import styles from './SheetPanel.module.css'
 
-export type SheetTabName = 'sheet' | 'powers'
+export type SheetTabName = 'sheet' | 'inventory' | 'powers'
 
 const TABS: { name: string; tab?: SheetTabName }[] = [
   { name: 'Sheet', tab: 'sheet' },
-  { name: 'Inventory' },
+  { name: 'Inventory', tab: 'inventory' },
   { name: 'Powers', tab: 'powers' },
   { name: 'Journal' },
   { name: 'Lore' },
@@ -84,6 +85,8 @@ export function SheetPanel({
       <div className={styles.body} role="tabpanel">
         {tab === 'sheet' ? (
           <SheetTab character={character} canEdit={canEdit} onUpdate={onUpdate} rolls={rolls} />
+        ) : tab === 'inventory' ? (
+          <InventoryTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
         ) : (
           <PowersTab character={character} canEdit={canEdit} onUpdate={onUpdate} />
         )}

@@ -105,6 +105,10 @@ export type CombatEvent = {
     kept?: boolean
     /** For a feature used in a fight: its name ("Rage"). */
     feature?: string
+    /** For an item used in a fight: its name, and what came of it. */
+    item?: string
+    stabilised?: boolean
+    scattered?: boolean
   }
   undone: boolean
   seq: number
@@ -579,6 +583,28 @@ export async function featureInFight(combatantId: string, name: string, cost: Fe
   const { data, error } = await db().rpc('use_feature', { p_combatant_id: combatantId, p_name: name, p_cost: cost })
   if (error) throw fromServerRule(error)
   return rowToEvent(data)
+}
+
+/**
+ * Uses an item from the character's pack (a potion, a healer's kit, a flask to throw, antitoxin):
+ * it takes the action, and one comes out of the inventory. A throw sends its attack roll.
+ */
+export async function itemInFight(
+  combatantId: string,
+  itemId: string,
+  targetId: string | null,
+  request: RollRequest | null,
+): Promise<{ event: CombatEvent; roll: Roll | null }> {
+  const { data, error } = await db().rpc('use_item', {
+    p_combatant_id: combatantId,
+    p_item_id: itemId,
+    // Null when there's no target (drinking it yourself) or nothing to roll; the server allows both.
+    p_target_id: targetId as string,
+    p_roll: (request ? requestToJson(request) : null) as Json,
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { event: Tables<'combat_events'>; roll: Tables<'rolls'> | null }
+  return { event: rowToEvent(result.event), roll: result.roll ? rowToRoll(result.roll) : null }
 }
 
 /** Takes back the newest thing that happened (a player only their own action). */

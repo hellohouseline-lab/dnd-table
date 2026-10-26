@@ -7,7 +7,14 @@ import { useLoad } from '../../live/useLoad.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { throwDice } from '../../live/rolls.ts'
 import { freeRoll } from '../../rules/rolls.ts'
-import { loadBackgrounds, loadClasses, loadFeatures, loadRaces, loadSpells } from '../../rules/srd/index.ts'
+import {
+  loadBackgrounds,
+  loadClasses,
+  loadEquipment,
+  loadFeatures,
+  loadRaces,
+  loadSpells,
+} from '../../rules/srd/index.ts'
 import { BuilderView } from './BuilderView.tsx'
 import { useDraft } from './useDraft.ts'
 
@@ -25,6 +32,7 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
   const classes = useSrd(loadClasses)
   const features = useSrd(loadFeatures)
   const backgrounds = useSrd(loadBackgrounds)
+  const equipment = useSrd(loadEquipment)
   const spells = useSrd(loadSpells)
   const [draft, setDraft] = useDraft(`dnd-table-builder-${campaignId}-${user.id}`)
 
@@ -44,6 +52,7 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
       classes={classes}
       features={features}
       backgrounds={backgrounds}
+      equipment={equipment}
       spells={spells}
       onRoll={() => rollScores(campaignId)}
       campaignName={campaign?.name}
