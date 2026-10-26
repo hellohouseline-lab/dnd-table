@@ -3,6 +3,10 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Shops: tags and haggling (live).** Matt's ask after I1c.
+  - **Tags** on a shop's shelves, for players and in your shop editor: Weapons, Armour, Potions, Jewellery, Magic, Gear, Kits and tools, and Odds and ends, each with how many, plus a search box. Tap tags to narrow it down; tap again to clear.
+  - **Haggle** on any card in a shop: the player names their price (perhaps after talking the shopkeeper round). On Screen 1 a card says "Wren offers 15 gp for Crossbow, light at Harl's Forge. The shop asks 25 gp." with **Agree** (sold at their price), **No**, **Counter** (name your own price), and **Ask for Persuasion**, which opens Ask for a roll with Persuasion already picked. A counter-price shows on the player's card with **Take it** or **Leave it**. Haggle cards sit with the rolls players make for you, top right, and step aside while a window is open.
+  - Server: `20261027220000_haggling.sql` (`haggles`, `haggle`, `answer_haggle`, `take_counter`; buying at the shop's price and at a haggled price share one step). Previews: `#/dev/table/gift` (tags and haggling in Brenna's Goods), `#/dev/dm/haggle` (a haggle to answer). Tests: 525 database (12 new), 435 unit (1 new), 50 preview browser tests (2 new).
 - **I1c: shops (live). Items and money (I1) is complete.**
   - **Make a shop** on the Items and loot tab: pick a general store, blacksmith, alchemist, fletcher or travelling merchant and its shelves fill from the free rules at their real prices (arrows twenty to a bundle; a Potion of Healing at 50 gp). Give it a name, a shopkeeper and your own note on them (only you see it), **Cheap**, **Fair** or **Pricey** (80%, 100% or 125%), and whether it buys from players. Change any price or how many are left, take lines off, or add anything (magic items need a price from you, decision 41).
   - **Open** a shop and players get a gold "Brenna's Goods is open" button. The shop shows its shelves with prices and how many are left; **Buy** takes the coins with change made and puts it in their pack (a weapon joins their hand). **Sell** offers half the book price for gear and bits and bobs (decision 40), and a magic item only where the shop stocks it. **Close** it and it disappears from their screens.
@@ -258,6 +262,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try haggling** (refresh first): open a shop; as a player tap **Gear**, press **Haggle** on some rope and offer less; on Screen 1 press **Ask for Persuasion**, then **Counter**; as the player **Take it**.
 - **Try a shop** (refresh first): on Items and loot press **Make a shop**, pick a general store, make it **Pricey**, then **Open** it; as a player buy some rope and sell something back; then **Undo** the sale on Screen 1.
 - **Try opening a box** (refresh first): on Items and loot press **Open a box**, pick a valuable chest, open it, roll one find again, add one of your key items, and **Put it on the table**; then as a player open **Items**, take something from the party stash and split the coins.
 - **Try the new Give** (refresh first): press **Give an item**, tap **Uncommon** and **Rings**, tick two, and give them; under **Make your own** make a key item from your story and give it; on **Items and loot** add 50 gp with one click and **Offer** to buy something from a player.

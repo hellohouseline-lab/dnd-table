@@ -183,3 +183,63 @@
   gap: 12px;
   max-width: 640px;
 }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.search,
+.offerInput {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 16px;
+}
+
+.offerInput {
+  width: 80px;
+  height: 30px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.tagOn {
+  border-color: var(--gold);
+  background: rgba(212, 175, 90, 0.16);
+  color: var(--gold-light);
+}
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.haggleNote {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--gold-light);
+}

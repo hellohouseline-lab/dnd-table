@@ -803,6 +803,79 @@ export type Database = {
           },
         ]
       }
+      haggles: {
+        Row: {
+          answered_at: string | null
+          asking: number
+          bundles: number
+          campaign_id: string
+          character_id: string
+          counter: number | null
+          created_at: string
+          id: string
+          item_name: string
+          offer: number
+          proficient: boolean | null
+          shop_id: string
+          status: string
+          stock_id: string
+        }
+        Insert: {
+          answered_at?: string | null
+          asking: number
+          bundles: number
+          campaign_id: string
+          character_id: string
+          counter?: number | null
+          created_at?: string
+          id?: string
+          item_name: string
+          offer: number
+          proficient?: boolean | null
+          shop_id: string
+          status?: string
+          stock_id: string
+        }
+        Update: {
+          answered_at?: string | null
+          asking?: number
+          bundles?: number
+          campaign_id?: string
+          character_id?: string
+          counter?: number | null
+          created_at?: string
+          id?: string
+          item_name?: string
+          offer?: number
+          proficient?: boolean | null
+          shop_id?: string
+          status?: string
+          stock_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "haggles_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "haggles_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "haggles_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       log_events: {
         Row: {
           author_id: string | null
@@ -1509,6 +1582,31 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      answer_haggle: {
+        Args: { p_agree: boolean; p_counter: number; p_haggle_id: string }
+        Returns: {
+          answered_at: string | null
+          asking: number
+          bundles: number
+          campaign_id: string
+          character_id: string
+          counter: number | null
+          created_at: string
+          id: string
+          item_name: string
+          offer: number
+          proficient: boolean | null
+          shop_id: string
+          status: string
+          stock_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "haggles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       answer_offer: {
         Args: { p_offer_id: string; p_sell: boolean }
         Returns: {
@@ -1778,6 +1876,38 @@ export type Database = {
           to: "characters"
           isOneToOne: false
           isSetofReturn: true
+        }
+      }
+      haggle: {
+        Args: {
+          p_bundles: number
+          p_character_id: string
+          p_offer: number
+          p_proficient: boolean
+          p_shop_id: string
+          p_stock_id: string
+        }
+        Returns: {
+          answered_at: string | null
+          asking: number
+          bundles: number
+          campaign_id: string
+          character_id: string
+          counter: number | null
+          created_at: string
+          id: string
+          item_name: string
+          offer: number
+          proficient: boolean | null
+          shop_id: string
+          status: string
+          stock_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "haggles"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
       hand_over: {
@@ -2230,6 +2360,31 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "characters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      take_counter: {
+        Args: { p_haggle_id: string; p_take: boolean }
+        Returns: {
+          answered_at: string | null
+          asking: number
+          bundles: number
+          campaign_id: string
+          character_id: string
+          counter: number | null
+          created_at: string
+          id: string
+          item_name: string
+          offer: number
+          proficient: boolean | null
+          shop_id: string
+          status: string
+          stock_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "haggles"
           isOneToOne: true
           isSetofReturn: false
         }

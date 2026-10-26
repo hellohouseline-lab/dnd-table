@@ -11,7 +11,10 @@ import {
   MARKUPS,
   needsPrice,
   SHOP_KINDS,
+  shopTag,
+  shopTags,
   startingStock,
+  type ShopTag,
   type Shop,
   type ShopKind,
   type StockLine,
@@ -44,6 +47,7 @@ export function ShopDialog({ shop, equipment, magicItems, giving, shops, onClose
   const [draft, setDraft] = useState<Shop | null>(shop)
   const [note, setNote] = useState(shop ? (shops.notes[shop.id] ?? '') : '')
   const [adding, setAdding] = useState('')
+  const [tags, setTags] = useState<ShopTag[]>([])
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState<StatusLine | null>(null)
   const entries = useMemo(
@@ -213,6 +217,22 @@ export function ShopDialog({ shop, equipment, magicItems, giving, shops, onClose
               Set a price for {unpriced.map((l) => l.name).join(', ')}: the free rules don&rsquo;t price magic items.
             </p>
           )}
+          <div className={own.tagRow} role="group" aria-label="What kind">
+            <span className={own.tagLabel}>Show</span>
+            {shopTags(draft.stock, equipment).map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                className={cx(own.tag, tags.includes(t.key) && own.tagOn)}
+                aria-pressed={tags.includes(t.key)}
+                onClick={() =>
+                  setTags((now) => (now.includes(t.key) ? now.filter((k) => k !== t.key) : [...now, t.key]))
+                }
+              >
+                {t.name} ({t.count})
+              </button>
+            ))}
+          </div>
           <table className={shopStyles.table} aria-label="On the shelves">
             <thead>
               <tr>
@@ -224,15 +244,17 @@ export function ShopDialog({ shop, equipment, magicItems, giving, shops, onClose
               </tr>
             </thead>
             <tbody>
-              {draft.stock.map((line) => (
-                <ShelfRow
-                  key={line.id}
-                  line={line}
-                  markup={draft.markup}
-                  onChange={(patch) => setLine(line.id, patch)}
-                  onRemove={() => setDraft({ ...draft, stock: draft.stock.filter((l) => l.id !== line.id) })}
-                />
-              ))}
+              {draft.stock
+                .filter((line) => tags.length === 0 || tags.includes(shopTag(line, equipment)))
+                .map((line) => (
+                  <ShelfRow
+                    key={line.id}
+                    line={line}
+                    markup={draft.markup}
+                    onChange={(patch) => setLine(line.id, patch)}
+                    onRemove={() => setDraft({ ...draft, stock: draft.stock.filter((l) => l.id !== line.id) })}
+                  />
+                ))}
             </tbody>
           </table>
         </div>

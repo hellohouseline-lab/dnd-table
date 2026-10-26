@@ -26,7 +26,7 @@ import { usePreviewAreas } from './previewAreas.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { loadBackgrounds, loadClasses, loadEquipment, loadMagicItems, loadRaces } from '../../rules/srd/index.ts'
-import type { Shopping } from '../../live/shops.ts'
+import type { Haggle, Shopping } from '../../live/shops.ts'
 import { boughtItem, linePrice, sellPrice, startingStock, type Shop } from '../../rules/shops.ts'
 
 const online = new Set(['dm', 'p1'])
@@ -310,8 +310,61 @@ export function TablePreview({
   const [changedShop, setShop] = useState<Shop | null>(null)
   const shop = changedShop ?? baseShop
   const me = characters[caster ? 1 : 0]
+  // Haggling in the preview: Brenna answers after a moment, halfway between.
+  const [haggles, setHaggles] = useState<Haggle[]>([])
   const shopping: Shopping = {
     shops: shop ? [shop] : [],
+    haggles,
+    haggle: async (_shopId, stockId, bundles, offer) => {
+      const line = shop?.stock.find((l) => l.id === stockId)
+      if (!shop || !line) return 'That’s not on the shelves any more'
+      const asking = linePrice(line, shop.markup) * bundles
+      const id = `h-${stockId}`
+      setHaggles((now) => [
+        {
+          id,
+          shopId: shop.id,
+          characterId: me.id,
+          stockId,
+          itemName: line.name,
+          bundles,
+          asking,
+          offer,
+          counter: null,
+          status: 'open',
+          createdAt: '2026-11-21T19:00:00Z',
+        },
+        ...now.filter((h) => h.id !== id),
+      ])
+      window.setTimeout(
+        () =>
+          setHaggles((now) =>
+            now.map((h) =>
+              h.id === id ? { ...h, status: 'countered', counter: Math.round((offer + asking) / 2) } : h,
+            ),
+          ),
+        1200,
+      )
+      return null
+    },
+    takeCounter: async (haggleId, take) => {
+      const h = haggles.find((x) => x.id === haggleId)
+      const line = shop?.stock.find((l) => l.id === h?.stockId)
+      if (!h || !line || h.counter === null) return 'That offer has gone'
+      if (take) {
+        const after = pay(me.wallet, h.counter)
+        if (!after) return 'You haven’t enough coins'
+        setCharacters((list) =>
+          list.map((c) =>
+            c.id === me.id
+              ? { ...c, wallet: after, inventory: mergeItems(c.inventory, [boughtItem(line, h.bundles)]) }
+              : c,
+          ),
+        )
+      }
+      setHaggles((now) => now.map((x) => (x.id === haggleId ? { ...x, status: take ? 'agreed' : 'withdrawn' } : x)))
+      return null
+    },
     buy: async (_shopId, stockId, bundles) => {
       const line = shop?.stock.find((l) => l.id === stockId)
       if (!shop || !line) return 'That’s not on the shelves any more'
