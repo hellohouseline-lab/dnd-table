@@ -75,7 +75,7 @@ export function RollToast({ roll, who, onDismiss }: { roll: Roll; who: string; o
         </div>
         {(showSum || mode) && (
           <div className={styles.sum}>
-            {showSum && `${sumText(roll)} = ${roll.total}`}
+            {showSum && `${sumText(roll)} = ${roll.total}${roll.kind === 'attack' ? ' to hit' : ''}`}
             {showSum && mode && ' · '}
             {mode && <span className={styles.mode}>{mode}</span>}
           </div>

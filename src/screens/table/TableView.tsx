@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
+import { aOrAn } from '../../components/words.ts'
 import { HpBar } from '../../components/HpBar.tsx'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import { Notice } from '../../components/Notice.tsx'
@@ -175,7 +176,7 @@ export function TableView({
                 key={ability}
                 type="button"
                 className={styles.ability}
-                title={`Roll a ${ABILITY_NAME[ability]} check`}
+                title={`Roll ${aOrAn(ABILITY_NAME[ability])} check`}
                 disabled={table.rolling}
                 onClick={() => rolls.ability(ability)}
               >

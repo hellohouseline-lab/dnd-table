@@ -42,81 +42,84 @@ function sample(id: string, minutesAgo: number, roll: Partial<Roll>): Roll {
   }
 }
 
-const sampleRolls: Roll[] = [
-  sample('crit', 1, {
-    label: 'Longsword',
-    kind: 'attack',
-    dice: [{ sides: 20, value: 20, dropped: false }],
-    modifier: 5,
-    parts: [
-      { label: 'Strength', value: 3 },
-      { label: 'Proficiency', value: 2 },
-    ],
-    total: 25,
-    natural: 20,
-    damage: {
-      dice: [
-        { sides: 8, value: 6, dropped: false },
-        { sides: 8, value: 3, dropped: false },
+// Made when a preview opens (not when the file loads), so the live build can leave all of this out.
+function sampleRolls(): Roll[] {
+  return [
+    sample('crit', 1, {
+      label: 'Longsword',
+      kind: 'attack',
+      dice: [{ sides: 20, value: 20, dropped: false }],
+      modifier: 5,
+      parts: [
+        { label: 'Strength', value: 3 },
+        { label: 'Proficiency', value: 2 },
       ],
-      modifier: 3,
-      total: 12,
-      type: 'slashing',
-      critical: true,
-    },
-  }),
-  sample('fumble', 3, {
-    rollerId: 'p2',
-    characterId: 'wizard',
-    label: 'Stealth check',
-    dice: [{ sides: 20, value: 1, dropped: false }],
-    modifier: 2,
-    parts: [{ label: 'Dexterity', value: 2 }],
-    total: 3,
-    natural: 1,
-    style: { material: 'stone', colour: 'slate', numbers: 'white' },
-  }),
-  sample('advantage', 6, {
-    label: 'Constitution save',
-    kind: 'save',
-    mode: 'advantage',
-    dice: [
-      { sides: 20, value: 7, dropped: true },
-      { sides: 20, value: 16, dropped: false },
-    ],
-    modifier: 4,
-    parts: [
-      { label: 'Constitution', value: 2 },
-      { label: 'Proficiency', value: 2 },
-    ],
-    total: 20,
-    natural: 16,
-  }),
-  sample('secret', 9, {
-    rollerId: 'dm',
-    characterId: null,
-    label: '1d20',
-    kind: 'free',
-    dice: [{ sides: 20, value: 9, dropped: false }],
-    modifier: 0,
-    parts: [],
-    total: 9,
-    natural: 9,
-    secret: true,
-    style: DEFAULT_DICE_STYLE,
-  }),
-  sample('fireball', 12, {
-    rollerId: 'p2',
-    characterId: 'wizard',
-    label: '8d6',
-    kind: 'free',
-    dice: [6, 2, 5, 4, 1, 6, 3, 5].map((value) => ({ sides: 6 as const, value, dropped: false })),
-    modifier: 0,
-    parts: [],
-    total: 32,
-    natural: null,
-  }),
-]
+      total: 25,
+      natural: 20,
+      damage: {
+        dice: [
+          { sides: 8, value: 6, dropped: false },
+          { sides: 8, value: 3, dropped: false },
+        ],
+        modifier: 3,
+        total: 12,
+        type: 'slashing',
+        critical: true,
+      },
+    }),
+    sample('fumble', 3, {
+      rollerId: 'p2',
+      characterId: 'wizard',
+      label: 'Stealth check',
+      dice: [{ sides: 20, value: 1, dropped: false }],
+      modifier: 2,
+      parts: [{ label: 'Dexterity', value: 2 }],
+      total: 3,
+      natural: 1,
+      style: { material: 'stone', colour: 'slate', numbers: 'white' },
+    }),
+    sample('advantage', 6, {
+      label: 'Constitution save',
+      kind: 'save',
+      mode: 'advantage',
+      dice: [
+        { sides: 20, value: 7, dropped: true },
+        { sides: 20, value: 16, dropped: false },
+      ],
+      modifier: 4,
+      parts: [
+        { label: 'Constitution', value: 2 },
+        { label: 'Proficiency', value: 2 },
+      ],
+      total: 20,
+      natural: 16,
+    }),
+    sample('secret', 9, {
+      rollerId: 'dm',
+      characterId: null,
+      label: '1d20',
+      kind: 'free',
+      dice: [{ sides: 20, value: 9, dropped: false }],
+      modifier: 0,
+      parts: [],
+      total: 9,
+      natural: 9,
+      secret: true,
+      style: DEFAULT_DICE_STYLE,
+    }),
+    sample('fireball', 12, {
+      rollerId: 'p2',
+      characterId: 'wizard',
+      label: '8d6',
+      kind: 'free',
+      dice: [6, 2, 5, 4, 1, 6, 3, 5].map((value) => ({ sides: 6 as const, value, dropped: false })),
+      modifier: 0,
+      parts: [],
+      total: 32,
+      natural: null,
+    }),
+  ]
+}
 
 export function DmPreview({ tab }: { tab: string }) {
   const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
@@ -157,7 +160,7 @@ function Moments() {
   const names: Record<string, string> = { fighter: 'Thorin Ironfist', wizard: 'Elowen' }
   return (
     <main className={styles.moments}>
-      {sampleRolls.map((roll) => (
+      {sampleRolls().map((roll) => (
         <RollToast key={roll.id} roll={roll} who={roll.characterId ? names[roll.characterId] : 'Matt (DM)'} />
       ))}
     </main>

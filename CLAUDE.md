@@ -21,7 +21,7 @@ A private, browser-based Dungeons & Dragons table for one first-time DM (Matt) a
   - Storage in private buckets, served with signed URLs, for maps, art, tokens and audio.
   - Edge Functions only where a secret or a trusted check is needed.
   - Schema changes live in `supabase/migrations/` and are applied with the Supabase CLI.
-- **Libraries:** PixiJS or Konva for maps, `@3d-dice/dice-box` for dice, Howler.js for audio. Prefer free, maintained, MIT-style licences; ask before adding anything heavy.
+- **Libraries:** PixiJS or Konva for maps, `@3d-dice/dice-box-threejs` for dice (the three.js version from the same 3D Dice project as `@3d-dice/dice-box`, chosen in milestone 3 because it can land dice on numbers the server already threw), Howler.js for audio. Prefer free, maintained, MIT-style licences; ask before adding anything heavy.
 - **Config:** the browser gets only `VITE_SUPABASE_URL` and the Supabase anon (publishable) key. The service role key never goes in the client, the repo or a workflow log.
 
 ## Hard rules

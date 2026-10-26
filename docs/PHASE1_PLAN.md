@@ -20,7 +20,7 @@ dnd-table/
       maths/                     pure functions with tests: modifiers, checks, rests, XP
       srd/                       the SRD 5.1 data in our own slim shape, plus the loader
     live/                        Supabase client, saved-data hooks, live-update hooks
-    dice/  map/  audio/          wrappers around dice-box, Konva and Howler
+    dice/  map/  audio/          wrappers around dice-box-threejs, Konva and Howler
   scripts/import-srd.ts          fetches 5e-database's 2014 files and writes src/rules/srd/
   supabase/migrations/           every database change as a numbered SQL file
   e2e/                           the Playwright roll-flow test
@@ -51,7 +51,7 @@ One **workflow** file. On every push to `main` it installs, runs the tests, buil
 
 | Job | Library | Version | Note |
 | --- | --- | --- | --- |
-| 3D dice | `@3d-dice/dice-box` | 1.1.4 (Aug 2024) | Built on BabylonJS; its dice models are copied into `public/`. Slowly updated, so it sits behind our own thin wrapper. Metal, glass and stone dice are made as our own themes in milestone 3, using only free-to-use textures |
+| 3D dice | `@3d-dice/dice-box-threejs` | 0.0.12 (Oct 2022) | **Changed in milestone 3.** The planned `@3d-dice/dice-box` 1.1.4 can't make dice land on a number decided beforehand, so each screen would show different faces. Its three.js sibling from the same project can, so the server throws the numbers and every screen animates the same result. MIT, about 140 KB zipped, loaded only on the table screens, behind our own wrapper (`src/dice/diceTray.ts`). Metal and stone textures are drawn by our own code; none of the library's images or sounds are used |
 | Battle map | `konva` + `react-konva` | 10.9.0 / 19.3.2 | Chosen over PixiJS 8.22: dragging tokens on a 2D grid is its home ground |
 | Audio | `howler` | 2.2.4 (2023) | Stable, hugely used, no longer actively developed; also behind a wrapper |
 | Tests | Vitest, Playwright | current | Unit tests for the maths; one end-to-end test of the roll flow with two logged-in browsers |
@@ -99,7 +99,7 @@ These rules live in the database, not just in the screens, so a curious player c
 | --- | --- |
 | Hand cursors on the map: at most 4 a second, only while moving, in-app screens only | Rolls, roll requests and verdicts |
 | Pings | HP, conditions, Inspiration, death saves |
-| "Dice thrown" with the values, so every screen animates the same throw | Initiative, turn order, round, whose turn |
+| (Dice throws are not broadcast after all: since milestone 3 every screen animates the saved roll as it arrives, so secret rolls reach only the roller and the DM, by the database's rules) | Initiative, turn order, round, whose turn |
 | Sound effect pad presses, natural 20 and 1 stings | Token positions, hidden flags |
 | "Your turn" and "please roll" nudges | What is on stage, the track playing and its start time, ambience levels |
 | Who is online (Supabase presence) | Sheets, notebook, log, library |
@@ -126,7 +126,7 @@ A **bucket** is a folder of uploaded files. All three are private and served wit
 
 **How it gets in.** `scripts/import-srd.ts` downloads those files from one pinned commit, keeps what Phase 1 needs (abilities and skills, conditions, equipment, classes, levels and features, races and traits, spells, monsters, rules text for hover explanations), converts them into our own slim shapes and writes `src/rules/srd/*.json`, each with a header naming the source commit and licence. The output is committed, so builds are repeatable, and Vitest checks it (counts and known entries such as Goblin and Longsword). Monsters load only on DM screens. Because it all sits in `src/rules/`, a later move to the 2024 rules or Open5e is a data swap, not a rebuild.
 
-**Credits.** A `#/credits` page, linked from the join screen footer and both DM headers, and a `CREDITS.md` in the repository, carry: the SRD 5.1 attribution statement word for word ("This work includes material taken from the System Reference Document 5.1 ("SRD 5.1") by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode."); the 5e-database MIT notice; game-icons.net CC BY 3.0 with each icon author used; dice-box themes (CC0); the fonts. An Open Game Licence notice is added when Open5e content arrives in Phase 2. Note: the 5e-database project labels its material as Open Game Licence; Wizards also publishes SRD 5.1 under CC-BY-4.0, which is the licence we credit, as `CLAUDE.md` asks.
+**Credits.** A `#/credits` page, linked from the join screen footer and both DM headers, and a `CREDITS.md` in the repository, carry: the SRD 5.1 attribution statement word for word ("This work includes material taken from the System Reference Document 5.1 ("SRD 5.1") by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode."); the 5e-database MIT notice; game-icons.net CC BY 3.0 with each icon author used; the dice library (dice-box-threejs, three.js and cannon-es, all MIT); the fonts. An Open Game Licence notice is added when Open5e content arrives in Phase 2. Note: the 5e-database project labels its material as Open Game Licence; Wizards also publishes SRD 5.1 under CC-BY-4.0, which is the licence we credit, as `CLAUDE.md` asks.
 
 ## 4. Screens in build order
 
@@ -228,7 +228,7 @@ Your group streams from a mix of Macs and Windows PCs, so the steps will cover b
 - The screens show several Phase 2 features (difficulty badge, XP sharing, scenes, NPCs, inventory, handouts, fog, difficult terrain, the gold and items on the Join card). They are built as drawn and switched off, as `DESIGN_NOTES.md` asks.
 - Supabase image resizing needs the Pro plan, so thumbnails are made in the browser on upload. Egress (5 GB a month) is the limit to watch, which is why caching is in milestone 5, not milestone 9.
 - The free project pauses after 7 days idle. The keep-awake task helps, but check the dashboard on session day.
-- dice-box and Howler are stable but slowly maintained. Both sit behind thin wrappers so they can be replaced without touching the screens.
+- The dice library and Howler are stable but slowly maintained. Both sit behind thin wrappers so they can be replaced without touching the screens.
 - The realtime cursor budget only works with the throttle (4 a second, while moving, in-app only). If it ever feels laggy we lower it, not raise it.
 
 ## Jargon

@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { buttonClassName } from '../../components/buttonClassName.ts'
 import { cx } from '../../components/cx.ts'
+import { aOrAn } from '../../components/words.ts'
 import { HpBar } from '../../components/HpBar.tsx'
 import { Icon } from '../../components/Icon.tsx'
 import { Pips } from '../../components/Pips.tsx'
@@ -50,7 +51,7 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
                   key={ability}
                   type="button"
                   className={cx(styles.ability, styles.rollable)}
-                  title={`Roll a ${ABILITY_NAME[ability]} check`}
+                  title={`Roll ${aOrAn(ABILITY_NAME[ability])} check`}
                   disabled={rolls.disabled}
                   onClick={() => rolls.ability(ability)}
                 >
@@ -69,7 +70,7 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
             {sheet.saves.map((save) => (
               <RollRow
                 key={save.ability}
-                title={`Roll a ${ABILITY_NAME[save.ability]} save`}
+                title={`Roll ${aOrAn(ABILITY_NAME[save.ability])} save`}
                 onRoll={rolls && (() => rolls.save(save.ability))}
                 disabled={rolls?.disabled}
               >
@@ -95,7 +96,7 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
             {sheet.skills.map((skill) => (
               <RollRow
                 key={skill.index}
-                title={`Roll a ${skill.name} check`}
+                title={`Roll ${aOrAn(skill.name)} check`}
                 onRoll={rolls && (() => rolls.skill(skill.index))}
                 disabled={rolls?.disabled}
               >
