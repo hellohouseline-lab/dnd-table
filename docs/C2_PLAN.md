@@ -1,6 +1,6 @@
 # C2: the character builder
 
-Written 26 October 2026. **Nothing here is built yet; it waits for Matt's approval.** It expands section 4 of `COMBAT_PLAN.md` with the additions from `TABLE_TOOLS_PLAN.md` (backstory, wallet, starting gear), and keeps the test one-shot on 21 to 22 November in view.
+Written 26 October 2026. **Approved by Matt on 26 October with decisions 29 to 35 as recommended, and levelling up added (below).** It expands section 4 of `COMBAT_PLAN.md` with the additions from `TABLE_TOOLS_PLAN.md` (backstory, wallet, starting gear), and keeps the test one-shot on 21 to 22 November in view.
 
 ## In plain words
 
@@ -22,14 +22,39 @@ On the left, the steps with ticks as each is done. In the middle, the choices as
    - **Random but balanced:** the standard array dealt for you.
 
    Each offers **Suggest for a Wizard**: the class's main ability gets the best score, then Constitution. Racial bonuses are added on top and shown separately.
-5. **Level** (if the DM has set one above 1): for each level, hit points (the average, or roll the hit die), the new features, an ability score increase at level 4, and the subclass at level 3 (the SRD has one per class).
+5. **Level** (if the DM has set one above 1): the character is built at level 1 and then taken through **Level up** (below) once for each level, so building at level 3 and levelling up later are the same thing.
 6. **Starting gear:** the class's choices as cards ("Chain mail, or leather armour, a longbow and 20 arrows") plus the background's kit.
    - Armour and a shield set the AC by themselves; weapons become attack cards; arrows and bolts are counted.
-   - Or **take the gold instead** (the class's starting gold, rolled) and buy from a list of SRD equipment at its real prices.
+   - Or **take gold instead** and buy from a list of SRD equipment at its real prices. The free rules have no starting-gold table, so the DM sets the amount for the table.
    - Above level 1 the free rules have no gear-by-level tables, so the character gets level 1 gear plus the gold the DM sets.
 7. **Spells** for casters: how many cantrips and spells the class table allows, from a list filtered by class and level, one click to add. A wizard's spellbook and a cleric's prepared spells are explained in one line each.
 8. **Who they are:** name, alignment (nine cards with one line each), age, height, weight, eyes, skin, hair, personality traits, ideals, bonds, flaws, goals and a backstory box. All optional except the name. The portrait upload is here too.
 9. **Review and save:** the whole sheet, with anything missing pointed out ("You haven't picked your second skill").
+
+## Levelling up
+
+Levelling up is where new players most often get lost, and where a character becomes their own, so it gets the same care as the builder.
+
+**The DM lets it happen.** On the Party tab: **Level up** on a character's card, or **Everyone levels up** for the party (after a milestone or enough XP; the table shows XP if the DM tracks it). The player can't raise their own level; the server refuses it unless the DM has granted it. Players see a gold **Level up!** on their character plate until they've done it, and it can wait until after the session.
+
+**The player walks through it, one card at a time,** with every choice selectable and explained, never typed:
+
+1. **What's new at this level,** in plain words: "Level 5: Extra Attack. You attack twice when you take the Attack action." Proficiency bonus rises are pointed out.
+2. **Hit points:** the average (shown), or **Roll** the hit die with the 3D dice. Constitution is added for you.
+3. **Choices, as cards, only the ones this level brings:**
+   - the **subclass** (at the class's level for it), with what it gives now and later;
+   - an **ability score increase** (+2 to one, or +1 to two, never past 20), or a feat where the table allows it (the SRD has one: Grappler; others typed in);
+   - **fighting styles, expertise, metamagic, eldritch invocations, a pact boon, favoured enemies and terrains, a dragon ancestor, a hunter's choices, a land druid's circle**: each a list of cards with what it does, filtered to what's allowed (an invocation that needs level 5 or a pact boon is greyed out with why);
+   - **spells:** new cantrips and spells known, swapping one out where the class allows it (bards, sorcerers, rangers, warlocks), new spell levels unlocked, and for wizards two spells for the spellbook;
+   - **class numbers that grow**, shown rather than asked: rages, ki points, sneak attack dice, martial arts die, sorcery points, bardic inspiration die, Wild Shape limits.
+4. **Review:** before and after side by side (hit points, AC, attacks, spells, features), then **Done**. The hand of cards, uses and slots update at once. The DM's Undo can take a level back.
+
+**Looking ahead.** On the sheet, a **Your path** tab shows every level from now to 20: what each brings, the choices coming and what they'd mean, so a player can plan ("at level 3 you pick a Circle"). Some classes get a picture of their own:
+
+- **Druids:** the beasts you can Wild Shape into now and at your next Wild Shape level (beast, challenge rating limit, no flying or swimming until the levels that allow it), from the SRD's monsters, each with its hit points, AC, speeds and attacks. In a fight, Wild Shape uses that beast's card.
+- **Warlocks:** invocations you'll qualify for and when.
+- **Wizards:** spell levels you'll reach and how many spells your book will hold.
+- **Everyone:** ability score increases coming, and what +2 to a score would change (to hit, save DCs, hit points).
 
 ## Money and gear on the sheet
 
@@ -53,8 +78,9 @@ Nine races, twelve classes with one subclass each, one background (Acolyte), and
 ## How it's built
 
 - **Data:** the importer adds armour (AC, Dexterity cap, Strength needed, stealth disadvantage), adventuring gear, packs, the classes' starting equipment and choices, backgrounds' equipment, and starting gold, from the same 2014 5e-database commit.
-- **Rules as pure functions with tests** (`src/rules/build/`): point buy costs and limits, the standard array, 4d6 drop lowest, racial bonuses, hit points by level (average or rolled), AC from armour and shield (light, medium with the Dexterity cap, heavy), carrying capacity, skill choice limits, spells known and prepared counts, and what a level adds.
-- **Server:** a migration adds the wallet, inventory and backstory columns to `characters`, with the same row-level security (players edit only their own; the DM edits all). The rolled scores are thrown by the server like any roll. A `give_character` function lets the DM hand a ready-made character to a player.
+- **Data, for levelling up:** each class's numbers by level (rages, ki, sneak attack, invocations and metamagic known, Wild Shape limits), and every feature's choices (fighting styles, expertise, metamagic, invocations with their prerequisites, pact boons, favoured enemies, terrains, dragon ancestors, hunter's choices, land circles).
+- **Rules as pure functions with tests** (`src/rules/build/`): point buy costs and limits, the standard array, 4d6 drop lowest, racial bonuses, hit points by level (average or rolled), AC from armour and shield (light, medium with the Dexterity cap, heavy), carrying capacity, skill choice limits, spells known and prepared counts, what a level adds and which choices it asks for, invocation prerequisites, and the beasts a druid can become.
+- **Server:** a migration adds the wallet, inventory and backstory columns to `characters`, with the same row-level security (players edit only their own; the DM edits all). The rolled scores are thrown by the server like any roll. A `give_character` function lets the DM hand a ready-made character to a player. A `levels_granted` column, set only by the DM, caps the level a player may save; `grant_level_up` sets it for one character or the party.
 - **Screens:** a new `src/screens/builder/` with one component per step and the live summary. The builder saves a draft as you go, so closing the tab loses nothing.
 - **Tests:** Vitest for every rule above and the importer; a Playwright preview test that builds a level 1 dwarf fighter and a level 3 elf wizard end to end without signing in.
 
@@ -62,13 +88,13 @@ Nine races, twelve classes with one subclass each, one background (Acolyte), and
 
 | When | Milestone | Try it |
 |---|---|---|
-| 27 to 28 Oct | **C2a.** Data import and the rules functions, with tests | Nothing to see; the numbers are checked |
+| 27 to 28 Oct | **C2a.** Data import (gear, starting kits, class numbers, feature choices) and the rules functions, with tests | Nothing to see; the numbers are checked |
 | 29 to 31 Oct | **C2b.** Steps 1 to 4 (race, class, background, scores) and the live summary | Build the start of a character |
 | 1 to 3 Nov | **C2c.** Gear, wallet and inventory; AC from armour | Pick a kit and see the AC and hand change |
-| 4 to 6 Nov | **C2d.** Spells, levels above 1, who they are, review and save | Make a level 3 wizard ready to play |
-| 7 to 8 Nov | **C2e.** The DM's starting level and gold, ready-made characters, Party tab tags | Make one as the DM and give it to a player |
+| 4 to 6 Nov | **C2d.** Level up (DM grants, the player's walk-through, every choice), spells, who they are, review and save | Make a level 3 wizard; level a fighter to 4 |
+| 7 to 9 Nov | **C2e.** Your path (looking ahead, a druid's beasts), ready-made characters, the DM's starting level and gold | Plan a druid's Wild Shapes; give a character to a player |
 
-That leaves two weeks before the one-shot for I1, S1 and fixes, as in `TABLE_TOOLS_PLAN.md`.
+That leaves twelve days before the one-shot for I1, S1 and fixes, as in `TABLE_TOOLS_PLAN.md`.
 
 ## Decisions for Matt (recommendations first)
 
