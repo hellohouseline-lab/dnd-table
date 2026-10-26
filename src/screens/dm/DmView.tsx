@@ -59,6 +59,7 @@ import { NotebookPanel } from './NotebookPanel.tsx'
 import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { GiveDialog } from './GiveDialog.tsx'
+import { BoxDialog } from './give/BoxDialog.tsx'
 import { entryId } from '../../rules/character.ts'
 import { ItemsTab } from './ItemsTab.tsx'
 import type { GivingControls } from '../../live/giving.ts'
@@ -177,6 +178,7 @@ export function DmView({
   const [resting, setResting] = useState(false)
   // The Give card, optionally for one character.
   const [giveTo, setGiveTo] = useState<{ only: string | null } | null>(null)
+  const [boxOpen, setBoxOpen] = useState(false)
   const equipment = useSrd(loadEquipment)
   const magicItems = useSrd(loadMagicItems)
   const noteInput = useRef<HTMLInputElement>(null)
@@ -227,6 +229,18 @@ export function DmView({
   async function rollDamage(dice: DiceGroup[]) {
     const thrown = await table.roll(freeRoll(dice, { secret: true }))
     return thrown ? (thrown.damage?.total ?? thrown.total) : null
+  }
+
+  /** A key item was given: the notebook's Key items say who has it now. */
+  function keyItemGiven(name: string, holder: string) {
+    const keyItems = notebook.notebook.keyItems
+    const known = keyItems.find((k) => k.name.trim().toLowerCase() === name.trim().toLowerCase())
+    notebook.change({
+      ...notebook.notebook,
+      keyItems: known
+        ? keyItems.map((k) => (k.id === known.id ? { ...k, holder } : k))
+        : [...keyItems, { id: entryId(), name, holder }],
+    })
   }
 
   function hitPoints(character: Character, change: HitPointChange, amount: number) {
@@ -480,6 +494,7 @@ export function DmView({
               characters={characters}
               giving={giving}
               onGive={(character) => setGiveTo({ only: character?.id ?? null })}
+              onOpenBox={() => setBoxOpen(true)}
             />
           ) : tab === 'party' ? (
             <PartyCards
@@ -554,12 +569,13 @@ export function DmView({
         <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
       </section>
 
-      {(askFor || showResults || resting || fightDialog || giveTo) && (
+      {(askFor || showResults || resting || fightDialog || giveTo || boxOpen) && (
         <Backdrop
           className={styles.overlay}
           onClose={() => {
             if (fightDialog) setFightDialog(null)
             else if (giveTo) setGiveTo(null)
+            else if (boxOpen) setBoxOpen(false)
             else if (resting) setResting(false)
             else if (askFor) setAskFor(null)
             else if (request) setHiddenFor(request.id)
@@ -592,17 +608,21 @@ export function DmView({
                 equipment={equipment}
                 magicItems={magicItems}
                 giving={giving}
-                onKeyItem={(name, holder) => {
-                  const keyItems = notebook.notebook.keyItems
-                  const known = keyItems.find((k) => k.name.trim().toLowerCase() === name.trim().toLowerCase())
-                  notebook.change({
-                    ...notebook.notebook,
-                    keyItems: known
-                      ? keyItems.map((k) => (k.id === known.id ? { ...k, holder } : k))
-                      : [...keyItems, { id: entryId(), name, holder }],
-                  })
-                }}
+                onKeyItem={keyItemGiven}
                 onClose={() => setGiveTo(null)}
+              />
+            ) : null
+          ) : boxOpen ? (
+            equipment && magicItems ? (
+              <BoxDialog
+                characters={characters}
+                equipment={equipment}
+                magicItems={magicItems}
+                giving={giving}
+                settings={notebook.notebook.boxSettings}
+                onSettings={(boxSettings) => notebook.change({ ...notebook.notebook, boxSettings })}
+                onKeyItem={keyItemGiven}
+                onClose={() => setBoxOpen(false)}
               />
             ) : null
           ) : resting ? (

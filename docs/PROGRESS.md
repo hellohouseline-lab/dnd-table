@@ -3,6 +3,13 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **I1b: opening boxes and the party stash (live).**
+  - **Open a box** at the top of the Items and loot tab: pick what it is (a chest, a sack or pack, a body, a desk or cupboard, a hoard), how rich (junk, ordinary, valuable, treasure), and their search roll if there was one (no roll, under 10 for only junk, 10 to 14 for the finds but not the coins, 15 to 19 for everything, 20 or more for something extra). Press **Open it** and the table fills it with bits and bobs, gear, coins and magic items.
+  - **Magic items suit the party's level** (decision 53): up to uncommon at levels 1 to 4, rare from 5, very rare from 11, legendary from 17, leaning towards the commoner ones and towards potions and scrolls. A +1 weapon or armour comes as a real one ("Shortsword +1"). The party level is filled in from the characters and can be changed.
+  - **Before anyone sees it:** **Roll again** on any find (another of the same kind), **Take out**, change the coins, or **Add something** (your own key items too). Then **Give it all to** one person, or **Put it on the table**.
+  - **How full boxes are** is yours to change: fewest and most bits and bobs, gear, gold and magic items for each richness, saved privately in your notebook, with **Back to ours**.
+  - **The party stash** (decision 44): what's put on the table lands on every player's screen ("On the table for the party: …") and shows under their Items. Anyone can **Take** something for their own character, and **Split the coins** shares the stash's coins evenly across the party (odd coins stay).
+  - Server: `20261027200000_boxes_stash.sql` (`put_on_table`, `take_from_stash`, `split_stash`, box numbers in the notebook). Previews: `#/dev/dm/items` (Open a box), `#/dev/table/gift` (the stash on a player's Items). Tests: 491 database (12 new), 430 unit (5 new), 46 preview browser tests (2 new).
 - **I1a+: giving made easier (live).** Matt's notes after trying I1a, added to `docs/I1_PLAN.md` with decisions 51 to 54 (approved as recommended).
   - **The Give window is a browser:** every item as a card in a scrolling grid, narrowed with toggle tags: **Where from** (Magic items, Everyday gear, Bits and bobs, Your items), **Rarity** (Common to Legendary) and **Type** (Weapons, Armour, Potions, Rings, Amulets, Cloaks, Boots and gloves, Belts, Headwear, Bags, Wands, Staffs and rods, Scrolls, Kits and tools, Gear, Other), plus words. **Tick** as many as you like, set how many, pick who, and **Give all** at once. A +1 weapon or armour asks which weapon or armour in the ticked list. Open **All of it** on a card for the full text.
   - **Make your own:** your own items (name, what it is, type, rarity, and **Key item**), kept privately in your campaign (`dm_items`). Giving a key item fills in who has it in your notebook. Players see the description on their Items once it's theirs.
@@ -237,7 +244,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **I1b next:** open a box (container and richness, rarity by party level, re-roll, swap and add before Give or Put it on the table, the optional Investigation roll, the party stash with Take and Split the coins), then **I1c** shops, then S1 (story mode).
+- **I1c next:** shops (make, stock, price, open and close; players buy and sell; each sale on Screen 1 with Undo; the free-adding setting), then S1 (story mode).
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -245,6 +252,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try opening a box** (refresh first): on Items and loot press **Open a box**, pick a valuable chest, open it, roll one find again, add one of your key items, and **Put it on the table**; then as a player open **Items**, take something from the party stash and split the coins.
 - **Try the new Give** (refresh first): press **Give an item**, tap **Uncommon** and **Rings**, tick two, and give them; under **Make your own** make a key item from your story and give it; on **Items and loot** add 50 gp with one click and **Offer** to buy something from a player.
 - **Try giving** (refresh first): on Screen 1 press **Give an item**, give a player a Longsword +1 and watch the card land on their screen; split some gold across the party; then as the player open **Items** and **Give to…** a friend.
 - **Try levelling up a caster:** as the DM press **Level up** on a spellcaster's card, then as that player take the level and try **Swap a spell** or **Prepare more today**.

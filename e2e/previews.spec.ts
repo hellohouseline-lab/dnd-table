@@ -791,3 +791,46 @@ test('a player hands a potion to a friend, a gift lands with a card, and a cloak
   await expect(cloak.getByRole('button', { name: 'Attuned' })).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByText('Attuned to 1 of 3.')).toBeVisible()
 })
+
+test('the DM opens a valuable chest, adds a key item and puts it on the table', async ({ page }) => {
+  await page.goto('#/dev/dm/items')
+  await page.getByRole('button', { name: 'Open a box' }).click()
+  const box = page.getByRole('dialog', { name: 'Open a box' })
+  await box.getByRole('radio', { name: /^Valuable/ }).click()
+  await box.getByRole('radio', { name: /^15 to 19/ }).click()
+  await expect(box.getByText('Magic items up to uncommon.')).toBeVisible()
+  await box.getByText('How full boxes are').click()
+  await box.getByRole('spinbutton', { name: 'Junk: Bits and bobs, most' }).fill('6')
+  await expect(box.getByRole('spinbutton', { name: 'Junk: Bits and bobs, most' })).toHaveValue('6')
+  await box.getByRole('button', { name: 'Open it', exact: true }).click()
+
+  const inside = box.getByRole('list', { name: 'In the box' })
+  await expect(inside.getByRole('listitem').first()).toBeVisible()
+  await expect(box.getByRole('textbox', { name: 'Coins in the box' })).toHaveValue(/gp/)
+  const first = inside.getByRole('button', { name: /^Roll again for / }).first()
+  await first.click()
+  await box.getByRole('textbox', { name: 'Add something to the box' }).fill('raven')
+  await box.getByRole('button', { name: 'The Raven Seal' }).click()
+  await expect(inside).toContainText('The Raven Seal')
+  await box.getByRole('button', { name: 'Put it on the table' }).click()
+  await expect(box.getByRole('status')).toHaveText('It’s on the table for the party.')
+  await box.getByRole('button', { name: 'Done' }).click()
+
+  await expect(page.getByRole('region', { name: 'Party stash' })).toContainText('The Raven Seal')
+  await expect(page.locator('input[placeholder="not found"]').last()).toHaveValue('On the table')
+})
+
+test('a player takes from the party stash and shares out its coins', async ({ page }) => {
+  await page.goto('#/dev/table/gift')
+  await page.getByTitle('What you carry and your coins').click()
+  const stash = page.getByRole('region', { name: 'Party stash' })
+  await expect(stash).toContainText('To someone called Merra.')
+  await stash.getByRole('button', { name: 'Take Dagger' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'You took' })).toHaveText(
+    'You took Dagger from the party stash.',
+  )
+  await stash.getByRole('button', { name: 'Split the coins' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'shared' })).toHaveText(
+    'The coins are shared out across the party.',
+  )
+})

@@ -99,7 +99,7 @@ export function readCoins(text: string): number | null {
 
 /** What a gift says to the one who got it: "You got Longsword +1 and 5 gp", "Mira gave you a Rope". */
 export function giftWords(
-  gift: { items: { name: string; quantity: number }[]; copper: number },
+  gift: { items: { name: string; quantity: number }[]; copper: number; stash?: boolean },
   fromName: string | null,
 ): string {
   const things = [
@@ -108,5 +108,6 @@ export function giftWords(
   ]
   const list =
     things.length > 1 ? `${things.slice(0, -1).join(', ')} and ${things[things.length - 1]}` : (things[0] ?? '')
+  if (gift.stash) return `On the table for the party: ${list}`
   return fromName ? `${fromName} gave you ${list}` : `You got ${list}`
 }

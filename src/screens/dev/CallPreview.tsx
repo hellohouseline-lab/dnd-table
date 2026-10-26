@@ -24,7 +24,9 @@ function previewKey(run: string): string {
 export function CallPreview({ who, run }: { who: string; run: string }) {
   const me = who === 'dm' ? sampleMembers[0] : sampleMembers[1]
   const other = who === 'dm' ? sampleMembers[1] : sampleMembers[0]
-  const [calls] = useState<ReadonlyMap<string, CallPresence>>(() => new Map([[other.user_id, { camera: true, mic: true }]]))
+  const [calls] = useState<ReadonlyMap<string, CallPresence>>(
+    () => new Map([[other.user_id, { camera: true, mic: true }]]),
+  )
   const [details] = useState(() => ({ cameraId: me.camera_id, key: previewKey(run) }))
   const announce = useCallback(() => undefined, [])
   const renew = useCallback(async () => undefined, [])

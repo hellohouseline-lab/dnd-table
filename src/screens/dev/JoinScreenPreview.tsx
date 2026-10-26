@@ -15,9 +15,9 @@ import { CharacterForm } from '../character/CharacterForm.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { TableView, type Arrival } from '../table/TableView.tsx'
-import type { HandOver, Offer } from '../../live/giving.ts'
+import { EMPTY_STASH, type HandOver, type Offer, type PartyStash, type StashControls } from '../../live/giving.ts'
 import { mergeItems } from '../../rules/magic.ts'
-import { addWallets, coinsFor, subtractCoins } from '../../rules/money.ts'
+import { addWallets, coinsFor, splitCoins, subtractCoins, walletCopper } from '../../rules/money.ts'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
@@ -244,6 +244,48 @@ export function TablePreview({
     setOffers((now) => now.filter((o) => o.id !== offerId))
     return null
   }
+  // ...and a box the DM put on the table.
+  const [stash, setStash] = useState<PartyStash>(() =>
+    variant === 'gift'
+      ? {
+          items: [
+            { id: 's1', item: 'dagger', name: 'Dagger', quantity: 2, weight: 1, worn: false, uses: null },
+            {
+              id: 's2',
+              item: null,
+              name: 'Unsent letter',
+              quantity: 1,
+              weight: 0,
+              worn: false,
+              uses: null,
+              note: 'To someone called Merra. It ends mid-sentence.',
+            },
+          ],
+          wallet: { ...EMPTY_STASH.wallet, gp: 12, sp: 5 },
+        }
+      : EMPTY_STASH,
+  )
+  const stashControls: StashControls = {
+    stash,
+    take: async (itemId, quantity) => {
+      const item = stash.items.find((i) => i.id === itemId)
+      if (!item) return 'Someone has taken that already'
+      setStash((s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) }))
+      setCharacters((list) =>
+        list.map((c, i) =>
+          i === (caster ? 1 : 0) ? { ...c, inventory: mergeItems(c.inventory, [{ ...item, quantity }]) } : c,
+        ),
+      )
+      return null
+    },
+    split: async () => {
+      const { each, left } = splitCoins(walletCopper(stash.wallet), characters.length)
+      if (each === 0) return 'Too few coins to share'
+      setCharacters((list) => list.map((c) => ({ ...c, wallet: addWallets(c.wallet, coinsFor(each)) })))
+      setStash((s) => ({ ...s, wallet: coinsFor(left) }))
+      return null
+    },
+  }
   // Handing things over, as the server does it (outside a fight).
   const handOver: HandOver = async (to, what) => {
     const from = characters[caster ? 1 : 0]
@@ -293,6 +335,7 @@ export function TablePreview({
         onArrivalSeen={(id) => setArrivals((now) => now.filter((a) => a.id !== id))}
         offers={offers}
         onAnswerOffer={answerOffer}
+        stash={stashControls}
         combat={
           fighting
             ? {

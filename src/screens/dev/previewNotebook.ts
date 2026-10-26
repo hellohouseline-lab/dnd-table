@@ -1,6 +1,7 @@
 // Local development only: stand-ins for the DM's notebook and log in the design previews.
 
 import { useState } from 'react'
+import { DEFAULT_BOXES } from '../../rules/boxes.ts'
 import type { LogEvent, Notebook } from '../../live/notebook.ts'
 import type { NotebookControls } from '../../live/useNotebook.ts'
 import type { LogControls } from '../../live/useStage.ts'
@@ -18,6 +19,7 @@ export function sampleNotebook(): Notebook {
       { id: 'k1', name: 'Silver key', holder: '' },
       { id: 'k2', name: 'Merchant’s ledger', holder: 'Elowen has it' },
     ],
+    boxSettings: DEFAULT_BOXES,
   }
 }
 
