@@ -15,8 +15,10 @@ import {
   addMonsters,
   endFight,
   getActiveFight,
+  castSpell,
   listEvents,
   listPrompts,
+  rollConcentrationSave,
   opportunityAttack,
   passReaction,
   resolveAttack,
@@ -44,6 +46,7 @@ import {
   type CombatEvent,
   type FightState,
   type ReactionPrompt,
+  type SpellCast,
   type TurnAction,
   type NewToken,
   type Token,
@@ -92,6 +95,21 @@ export type FightControls = {
   letGo: (prompt: ReactionPrompt) => void
   /** Rolls a death save for a character at 0 hit points. Throws in plain words if it's refused. */
   deathSave: (combatant: Combatant) => Promise<Roll>
+  /**
+   * Casts a spell on the server against these targets (or everyone in its area), leaving a lasting
+   * area on the map if given. Resolves with the roll to show with the dice (none for Bless); throws
+   * in plain words if it's refused.
+   */
+  cast: (
+    caster: Combatant,
+    spell: SpellCast,
+    slot: number,
+    targetIds: string[],
+    roll: Parameters<typeof castSpell>[4],
+    area: Parameters<typeof castSpell>[5],
+  ) => Promise<Roll | null>
+  /** The Constitution save to keep concentrating after taking damage. Throws in plain words if refused. */
+  concentrationSave: (characterId: string) => Promise<Roll>
 }
 
 /** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
@@ -410,6 +428,30 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reload],
   )
 
+  const cast = useCallback(
+    async (
+      caster: Combatant,
+      spell: SpellCast,
+      slot: number,
+      targetIds: string[],
+      roll: Parameters<typeof castSpell>[4],
+      area: Parameters<typeof castSpell>[5],
+    ) => {
+      setError(null)
+      const result = await castSpell(caster.id, spell, slot, targetIds, roll, area)
+      setEvents((list) => result.events.reduce(withRow, list).sort((a, b) => a.seq - b.seq))
+      reload()
+      return result.roll
+    },
+    [reload],
+  )
+
+  const concentrationSave = useCallback(async (characterId: string) => {
+    setError(null)
+    const { roll } = await rollConcentrationSave(characterId)
+    return roll
+  }, [])
+
   const undo = useCallback(() => {
     const newest = [...events].reverse().find((e) => !e.undone)
     if (!newest) return
@@ -428,6 +470,8 @@ export function useFight(campaignId: string, userId: string): FightControls {
     strike,
     letGo,
     deathSave,
+    cast,
+    concentrationSave,
     start,
     addMonsters: addMonstersTo,
     rollInitiative: rollFor,

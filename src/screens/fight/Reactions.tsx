@@ -54,6 +54,42 @@ export function StrikePrompt({ provoker, strikes, onStrike, onLetGo, rolling }: 
   )
 }
 
+type ConcentrationPromptProps = {
+  spell: string
+  dc: number
+  onRoll: () => void
+  /** Let the spell end without rolling. */
+  onLetGo: () => void
+  rolling?: boolean
+}
+
+/** You took damage while concentrating: a Constitution save to keep the spell going. */
+export function ConcentrationPrompt({ spell, dc, onRoll, onLetGo, rolling }: ConcentrationPromptProps) {
+  return (
+    <div className={styles.prompt} role="dialog" aria-labelledby="concentration-title">
+      <span className={styles.seal} aria-hidden="true">
+        <Icon name="star" size={28} />
+      </span>
+      <div className={styles.eyebrow}>Concentration</div>
+      <h2 id="concentration-title" className={styles.title}>
+        Hold on to {spell}
+      </h2>
+      <p className={styles.plain}>
+        You took damage. Roll a Constitution save, DC {dc}, to keep the spell going. If you fail, it ends.
+      </p>
+      <div className={styles.buttons}>
+        <button type="button" className={styles.strike} disabled={rolling} onClick={onRoll}>
+          <Icon name="d20" size={20} />
+          Roll the save
+        </button>
+        <button type="button" className={styles.letGo} disabled={rolling} onClick={onLetGo}>
+          Let the spell end
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export type OpenChance = {
   id: string
   /** Who may strike, and who is moving away. */

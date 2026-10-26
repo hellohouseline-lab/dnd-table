@@ -23,12 +23,16 @@ import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import { AskRollDialog } from '../rolls/AskRollDialog.tsx'
 import { RequestResults } from '../rolls/RequestResults.tsx'
-import { loadMonsters } from '../../rules/srd/index.ts'
+import { loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { ActingNow, TurnOrder } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog } from '../fight/FightDialogs.tsx'
 import { cameraTurn, fightRows, type FightRow } from '../fight/fightRows.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
-import { useAiming } from '../fight/useAiming.ts'
+import { useAiming, type Aiming } from '../fight/useAiming.ts'
+import { useCasting } from '../fight/useCasting.ts'
+import { AreaDialog, type AreaDraft } from '../fight/AreaDialog.tsx'
+import { SlotPicker } from '../fight/SlotPicker.tsx'
+import type { AreaControls } from '../../live/areas.ts'
 import { ChanceStrip, type OpenChance } from '../fight/Reactions.tsx'
 import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { MapStage } from '../stage/MapStage.tsx'
@@ -62,6 +66,8 @@ type BattleViewProps = {
   onUpdate: (characterId: string, patch: TrackerPatch) => void
   /** The DM's request for a roll and its answers: Ask for a roll works here too, mid-fight. */
   asking: RequestControls
+  /** Areas on the map on stage: spells' lasting shapes and the DM's own. */
+  areas: AreaControls
   onGrid: (map: Asset, patch: AssetPatch) => void
   /** Back to the stage (pictures, music, the library) without ending the fight. */
   onShowStage: () => void
@@ -91,6 +97,7 @@ export function BattleView({
   onCharacterHp,
   onUpdate,
   asking,
+  areas,
   onGrid,
   onShowStage,
   thrower,
@@ -98,6 +105,9 @@ export function BattleView({
   const monsters = useSrd(loadMonsters)
   const [selected, setSelected] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
+  // Add an area: the DM's shape, first described, then put on the map.
+  const [drawing, setDrawing] = useState<{ draft: AreaDraft | null } | null>(null)
+  const spells = useSrd(loadSpells)
   const [askFor, setAskFor] = useState<{ only: string | null } | null>(null)
   const [hiddenFor, setHiddenFor] = useState<string | null>(null)
   const { request } = asking
@@ -108,9 +118,40 @@ export function BattleView({
   const [problem, setProblem] = useState<string | null>(null)
   const { attach: attachTray, throwDice } = useDiceTray()
   const table = useTableRolls({ campaignId, userId: me.user_id, throwDice, thrower })
-  const { aiming, aimMonster, aimCharacter, cancel } = useAiming(controls.attack, table.rollWith, tokens.tokens)
+  const {
+    aiming: attacking,
+    aimMonster,
+    aimCharacter,
+    cancel: cancelAttack,
+  } = useAiming(controls.attack, table.rollWith, tokens.tokens)
 
   const rows = fightRows(fight, characters, 'dm')
+  const {
+    casting,
+    begin: beginCast,
+    cancel: cancelCast,
+    problem: castProblem,
+  } = useCasting(controls.cast, table.rollWith, tokens.tokens, rows)
+  // Whatever is waiting for its target: an attack, or a spell aimed at a creature.
+  const aiming: Aiming =
+    attacking ??
+    (casting && casting.mode === 'target'
+      ? {
+          label: casting.label,
+          attackerId: casting.casterId,
+          reach: { melee: casting.rangeFt ?? 5280, normal: null, long: null },
+          onPick: casting.onPick,
+        }
+      : null)
+  const cancel = () => {
+    cancelAttack()
+    cancelCast()
+    setDrawing(null)
+  }
+  // Characters who took damage while concentrating, and owe the save.
+  const owing = characters.filter(
+    (c) => c.concentration && c.concentrationDc !== null && fight.combatants.some((x) => x.characterId === c.id),
+  )
   const acting = rows.find((r) => r.status === 'acting') ?? null
   const focus = rows.find((r) => r.combatant.id === (selected ?? fight.encounter.currentId)) ?? null
   const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
@@ -283,6 +324,9 @@ export function BattleView({
             onOpenSheet={(character) => window.open(href(`/c/${campaignId}/sheet/${character.id}`), '_blank')}
             onDeathSave={(row) => void table.rollWith(() => controls.deathSave(row.combatant))}
             onUpdate={onUpdate}
+            spells={spells}
+            onCast={(row, spell) => beginCast(row, spell)}
+            onConcentrationSave={(character) => void table.rollWith(() => controls.concentrationSave(character.id))}
             numbered
             rolling={table.rolling}
           />
@@ -293,6 +337,11 @@ export function BattleView({
             <button type="button" className={styles.footButton} onClick={() => setAdding(true)}>
               Add a monster
             </button>
+            {map && (
+              <button type="button" className={styles.footButton} onClick={() => setDrawing({ draft: null })}>
+                Add an area
+              </button>
+            )}
             <button
               type="button"
               className={styles.footButton}
@@ -315,9 +364,46 @@ export function BattleView({
             }}
             rolling={table.rolling}
           />
+          {owing.map((character) => (
+            <div key={character.id} className={styles.owing} role="status">
+              <span>
+                <strong>{character.name}</strong> took damage while concentrating on {character.concentration}:
+                Constitution save, DC {character.concentrationDc}
+              </span>
+              <button
+                type="button"
+                className={styles.aimingCancel}
+                disabled={table.rolling}
+                onClick={() => void table.rollWith(() => controls.concentrationSave(character.id))}
+              >
+                Roll for them
+              </button>
+            </div>
+          ))}
           {aiming && (
             <div className={styles.aiming} role="status">
-              Pick a target for {aiming.label}: click a miniature or a name in the turn order.
+              {casting && casting.mode === 'target'
+                ? `Cast ${aiming.label}: click who it's for, on the map or in the turn order.`
+                : `Pick a target for ${aiming.label}: click a miniature or a name in the turn order.`}
+              {casting && <SlotPicker casting={casting} />}
+              <button type="button" className={styles.aimingCancel} onClick={cancel}>
+                Cancel
+              </button>
+            </div>
+          )}
+          {casting && casting.mode === 'area' && (
+            <div className={styles.aiming} role="status">
+              Cast {casting.label}:{' '}
+              {casting.area?.fromCaster ? 'point it with the mouse and click' : 'click where it goes'}.
+              <SlotPicker casting={casting} />
+              <button type="button" className={styles.aimingCancel} onClick={cancel}>
+                Cancel
+              </button>
+            </div>
+          )}
+          {drawing?.draft && (
+            <div className={styles.aiming} role="status">
+              Click on the map where {drawing.draft.label || 'the area'} goes.
               <button type="button" className={styles.aimingCancel} onClick={cancel}>
                 Cancel
               </button>
@@ -334,7 +420,39 @@ export function BattleView({
               playersMove={stage.stage.playersMoveTokens}
               pointers={pointers}
               onGrid={(patch) => onGrid(map, patch)}
-              aim={aiming ? { attackerId: aiming.attackerId, reach: aiming.reach } : null}
+              aim={
+                aiming && !(casting && casting.rangeFt === null)
+                  ? { attackerId: aiming.attackerId, reach: aiming.reach }
+                  : null
+              }
+              areas={areas.areas}
+              onAreaClick={(id) => {
+                const area = areas.areas.find((a) => a.id === id)
+                if (area && window.confirm(`Take ${area.label || 'this area'} off the map?`)) areas.remove(area)
+              }}
+              placing={
+                casting && casting.mode === 'area' && casting.area
+                  ? {
+                      shape: casting.area.shape,
+                      sizeFt: casting.area.sizeFt,
+                      tone: casting.area.tone,
+                      label: casting.label,
+                      fromId: casting.area.fromCaster ? casting.casterId : null,
+                      onPlace: casting.onPlace,
+                    }
+                  : drawing?.draft
+                    ? {
+                        ...drawing.draft,
+                        fromId: null,
+                        onPlace: (template) => {
+                          const draft = drawing.draft
+                          setDrawing(null)
+                          if (draft)
+                            void areas.add({ ...template, label: draft.label, tone: draft.tone, hidden: draft.hidden })
+                        },
+                      }
+                    : null
+              }
               targeting={
                 aiming
                   ? {
@@ -386,8 +504,10 @@ export function BattleView({
                 What happens shows here: hits, misses and damage, with Undo for the newest.
               </p>
             )}
-            {(problem ?? controls.error ?? table.error ?? tokens.error) && (
-              <Notice tone="error">{problem ?? controls.error ?? table.error ?? tokens.error}</Notice>
+            {(problem ?? castProblem ?? controls.error ?? table.error ?? tokens.error ?? areas.error) && (
+              <Notice tone="error">
+                {problem ?? castProblem ?? controls.error ?? table.error ?? tokens.error ?? areas.error}
+              </Notice>
             )}
           </div>
         </div>
@@ -442,6 +562,12 @@ export function BattleView({
               />
             )
           )}
+        </div>
+      )}
+
+      {drawing && !drawing.draft && (
+        <div className={styles.overlay}>
+          <AreaDialog onPlace={(draft) => setDrawing({ draft })} onCancel={() => setDrawing(null)} />
         </div>
       )}
 

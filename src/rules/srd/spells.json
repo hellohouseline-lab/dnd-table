@@ -19,7 +19,20 @@
       "classes": ["wizard"],
       "desc": "A shimmering green arrow streaks toward a target within range and bursts in a spray of acid. Make a ranged spell attack against the target. On a hit, the target takes 4d4 acid damage immediately and 2d4 acid damage at the end of its next turn. On a miss, the arrow splashes the target with acid for half as much of the initial damage and no damage at the end of its next turn.",
       "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the damage (both initial and later) increases by 1d4 for each slot level above 2nd.",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "acid",
+        "slots": {
+          "2": "4d4",
+          "3": "5d4",
+          "4": "6d4",
+          "5": "7d4",
+          "6": "8d4",
+          "7": "9d4",
+          "8": "10d4",
+          "9": "11d4"
+        }
+      }
     },
     {
       "index": "acid-splash",
@@ -35,7 +48,16 @@
       "classes": ["sorcerer", "wizard"],
       "desc": "You hurl a bubble of acid. Choose one creature within range, or choose two creatures within range that are within 5 feet of each other. A target must succeed on a dexterity saving throw or take 1d6 acid damage.\n\nThis spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6).",
       "save": "dexterity",
-      "dcSuccess": "none"
+      "dcSuccess": "none",
+      "damage": {
+        "type": "acid",
+        "levels": {
+          "1": "1d6",
+          "5": "2d6",
+          "11": "3d6",
+          "17": "4d6"
+        }
+      }
     },
     {
       "index": "aid",
@@ -283,7 +305,13 @@
       "ritual": false,
       "classes": ["bard", "wizard"],
       "desc": "You create a sword-shaped plane of force that hovers within range. It lasts for the duration.\n\nWhen the sword appears, you make a melee spell attack against a target of your choice within 5 feet of the sword. On a hit, the target takes 3d10 force damage. Until the spell ends, you can use a bonus action on each of your turns to move the sword up to 20 feet to a spot you can see and repeat this attack against the same target or a different one.",
-      "attackType": "melee"
+      "attackType": "melee",
+      "damage": {
+        "type": "force",
+        "slots": {
+          "7": "3d10"
+        }
+      }
     },
     {
       "index": "arcanists-magic-aura",
@@ -435,6 +463,12 @@
       "desc": "Squirming, ebony tentacles fill a 20-foot square on ground that you can see within range. For the duration, these tentacles turn the ground in the area into difficult terrain.\n\nWhen a creature enters the affected area for the first time on a turn or starts its turn there, the creature must succeed on a Dexterity saving throw or take 3d6 bludgeoning damage and be restrained by the tentacles until the spell ends. A creature that starts its turn in the area and is already restrained by the tentacles takes 3d6 bludgeoning damage.\n\nA creature restrained by the tentacles can use its action to make a Strength or Dexterity check (its choice) against your spell save DC. On a success, it frees itself.",
       "save": "dexterity",
       "dcSuccess": "none",
+      "damage": {
+        "type": "bludgeoning",
+        "slots": {
+          "4": "3d6"
+        }
+      },
       "area": {
         "type": "cube",
         "size": 20
@@ -455,6 +489,12 @@
       "desc": "You create a vertical wall of whirling, razor-sharp blades made of magical energy. The wall appears within range and lasts for the duration. You can make a straight wall up to 100 feet long, 20 feet high, and 5 feet thick, or a ringed wall up to 60 feet in diameter, 20 feet high, and 5 feet thick. The wall provides three-quarters cover to creatures behind it, and its space is difficult terrain.\n\nWhen a creature enters the wall's area for the first time on a turn or starts its turn there, the creature must make a dexterity saving throw. On a failed save, the creature takes 6d10 slashing damage. On a successful save, the creature takes half as much damage.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "slashing",
+        "slots": {
+          "6": "6d10"
+        }
+      },
       "area": {
         "type": "line",
         "size": 100
@@ -490,7 +530,18 @@
       "desc": "Necromantic energy washes over a creature of your choice that you can see within range, draining moisture and vitality from it. The target must make a constitution saving throw. The target takes 8d8 necrotic damage on a failed save, or half as much damage on a successful one. The spell has no effect on undead or constructs.\n\nIf you target a plant creature or a magical plant, it makes the saving throw with disadvantage, and the spell deals maximum damage to it.\n\nIf you target a nonmagical plant that isn't a creature, such as a tree or shrub, it doesn't make a saving throw; it simply withers and dies.",
       "higherLevel": "When you cast this spell using a spell slot of 5th level of higher, the damage increases by 1d8 for each slot level above 4th.",
       "save": "constitution",
-      "dcSuccess": "half"
+      "dcSuccess": "half",
+      "damage": {
+        "type": "necrotic",
+        "slots": {
+          "4": "8d8",
+          "5": "9d8",
+          "6": "10d8",
+          "7": "11d8",
+          "8": "12d8",
+          "9": "13d8"
+        }
+      }
     },
     {
       "index": "blindness-deafness",
@@ -550,7 +601,20 @@
       "ritual": false,
       "classes": ["paladin"],
       "desc": "The next time you hit a creature with a weapon attack before this spell ends, the weapon gleams with astral radiance as you strike. The attack deals an extra 2d6 radiant damage to the target, which becomes visible if it's invisible, and the target sheds dim light in a 5-foot radius and can't become invisible until the spell ends.",
-      "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the extra damage increases by 1d6 for each slot level above 2nd."
+      "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the extra damage increases by 1d6 for each slot level above 2nd.",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "2": "2d6",
+          "3": "3d6",
+          "4": "4d6",
+          "5": "5d6",
+          "6": "6d6",
+          "7": "7d6",
+          "8": "8d6",
+          "9": "9d6"
+        }
+      }
     },
     {
       "index": "burning-hands",
@@ -568,6 +632,20 @@
       "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "1": "3d6",
+          "2": "4d6",
+          "3": "5d6",
+          "4": "6d6",
+          "5": "7d6",
+          "6": "8d6",
+          "7": "9d6",
+          "8": "10d6",
+          "9": "11d6"
+        }
+      },
       "area": {
         "type": "cone",
         "size": 15
@@ -587,6 +665,18 @@
       "classes": ["druid"],
       "desc": "A storm cloud appears in the shape of a cylinder that is 10 feet tall with a 60-foot radius, centered on a point you can see 100 feet directly above you. The spell fails if you can't see a point in the air where the storm cloud could appear (for example, if you are in a room that can't accommodate the cloud).\n\nWhen you cast the spell, choose a point you can see within range. A bolt of lightning flashes down from the cloud to that point. Each creature within 5 feet of that point must make a dexterity saving throw. A creature takes 3d10 lightning damage on a failed save, or half as much damage on a successful one. On each of your turns until the spell ends, you can use your action to call down lightning in this way again, targeting the same point or a different one.\n\nIf you are outdoors in stormy conditions when you cast this spell, the spell gives you control over the existing storm instead of creating a new one. Under such conditions, the spell's damage increases by 1d10.",
       "higherLevel": "When you cast this spell using a spell slot of 4th or higher level, the damage increases by 1d10 for each slot level above 3rd.",
+      "damage": {
+        "type": "lightning",
+        "slots": {
+          "3": "3d10",
+          "4": "4d10",
+          "5": "5d10",
+          "6": "6d10",
+          "7": "7d10",
+          "8": "8d10",
+          "9": "9d10"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 5
@@ -627,7 +717,13 @@
       "desc": "You create a bolt of lightning that arcs toward a target of your choice that you can see within range. Three bolts then leap from that target to as many as three other targets, each of which must be within 30 feet of the first target. A target can be a creature or an object and can be targeted by only one of the bolts.\n\nA target must make a dexterity saving throw. The target takes 10d8 lightning damage on a failed save, or half as much damage on a successful one.",
       "higherLevel": "When you cast this spell using a spell slot of 7th level or higher, one additional bolt leaps from the first target to another target for each slot level above 6th.",
       "save": "dexterity",
-      "dcSuccess": "half"
+      "dcSuccess": "half",
+      "damage": {
+        "type": "lightning",
+        "slots": {
+          "6": "10d8"
+        }
+      }
     },
     {
       "index": "charm-person",
@@ -659,7 +755,16 @@
       "ritual": false,
       "classes": ["sorcerer", "warlock", "wizard"],
       "desc": "You create a ghostly, skeletal hand in the space of a creature within range. Make a ranged spell attack against the creature to assail it with the chill of the grave. On a hit, the target takes 1d8 necrotic damage, and it can't regain hit points until the start of your next turn. Until then, the hand clings to the target.\n\nIf you hit an undead target, it also has disadvantage on attack rolls against you until the end of your next turn.\n\nThis spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "necrotic",
+        "levels": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      }
     },
     {
       "index": "circle-of-death",
@@ -677,6 +782,15 @@
       "higherLevel": "When you cast this spell using a spell slot of 7th level or higher, the damage increases by 2d6 for each slot level above 6th.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "necrotic",
+        "slots": {
+          "6": "8d6",
+          "7": "10d6",
+          "8": "12d6",
+          "9": "14d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 60
@@ -726,6 +840,16 @@
       "higherLevel": "When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d8 for each slot level above 5th.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "poison",
+        "slots": {
+          "5": "5d8",
+          "6": "6d8",
+          "7": "7d8",
+          "8": "8d8",
+          "9": "9d8"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 20
@@ -841,6 +965,16 @@
       "higherLevel": "When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d8 for each slot level above 5th.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "cold",
+        "slots": {
+          "5": "8d8",
+          "6": "9d8",
+          "7": "10d8",
+          "8": "11d8",
+          "9": "12d8"
+        }
+      },
       "area": {
         "type": "cone",
         "size": 60
@@ -1035,6 +1169,12 @@
       "desc": "Until the spell ends, you control any freestanding water inside an area you choose that is a cube up to 100 feet on a side. You can choose from any of the following effects when you cast this spell. As an action on your turn, you can repeat the same effect or choose a different one.\n\n***Flood.*** You cause the water level of all standing water in the area to rise by as much as 20 feet. If the area includes a shore, the flooding water spills over onto dry land.\n\nIf you choose an area in a large body of water, you instead create a 20-foot tall wave that travels from one side of the area to the other and then crashes down. Any Huge or smaller vehicles in the wave's path are carried with it to the other side. Any Huge or smaller vehicles struck by the wave have a 25 percent chance of capsizing.\n\nThe water level remains elevated until the spell ends or you choose a different effect. If this effect produced a wave, the wave repeats on the start of your next turn while the flood effect lasts.\n\n***Part Water.*** You cause water in the area to move apart and create a trench. The trench extends across the spell's area, and the separated water forms a wall to either side. The trench remains until the spell ends or you choose a different effect. The water then slowly fills in the trench over the course of the next round until the normal water level is restored.\n\n***Redirect Flow.*** You cause flowing water in the area to move in a direction you choose, even if the water has to flow over obstacles, up walls, or in other unlikely directions. The water in the area moves as you direct it, but once it moves beyond the spell's area, it resumes its flow based on the terrain conditions. The water continues to move in the direction you chose until the spell ends or you choose a different effect.\n\n***Whirlpool.*** This effect requires a body of water at least 50 feet square and 25 feet deep. You cause a whirlpool to form in the center of the area. The whirlpool forms a vortex that is 5 feet wide at the base, up to 50 feet wide at the top, and 25 feet tall. Any creature or object in the water and within 25 feet of the vortex is pulled 10 feet toward it. A creature can swim away from the vortex by making a Strength (Athletics) check against your spell save DC.\n\nWhen a creature enters the vortex for the first time on a turn or starts its turn there, it must make a strength saving throw. On a failed save, the creature takes 2d8 bludgeoning damage and is caught in the vortex until the spell ends. On a successful save, the creature takes half damage, and isn't caught in the vortex. A creature caught in the vortex can use its action to try to swim away from the vortex as described above, but has disadvantage on the Strength (Athletics) check to do so.\n\nThe first time each turn that an object enters the vortex, the object takes 2d8 bludgeoning damage; this damage occurs each round it remains in the vortex.",
       "save": "strength",
       "dcSuccess": "half",
+      "damage": {
+        "type": "bludgeoning",
+        "slots": {
+          "4": "2d8"
+        }
+      },
       "area": {
         "type": "cube",
         "size": 100
@@ -1256,6 +1396,14 @@
       "higherLevel": "When you cast this spell using a spell slot of 8th level or higher, the base damage increases by 1d6 for each slot level above 7th.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "7": "12d6",
+          "8": "13d6",
+          "9": "14d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 20
@@ -1355,7 +1503,13 @@
       "concentration": false,
       "ritual": false,
       "classes": ["bard", "sorcerer", "warlock", "wizard"],
-      "desc": "You teleport yourself from your current location to any other spot within range. You arrive at exactly the spot desired. It can be a place you can see, one you can visualize, or one you can describe by stating distance and direction, such as \"200 feet straight downward\" or \"upward to the northwest at a 45-degree angle, 300 feet.\"\n\nYou can bring along objects as long as their weight doesn't exceed what you can carry. You can also bring one willing creature of your size or smaller who is carrying gear up to its carrying capacity. The creature must be within 5 feet of you when you cast this spell.\n\nIf you would arrive in a place already occupied by an object or a creature, you and any creature traveling with you each take 4d6 force damage, and the spell fails to teleport you."
+      "desc": "You teleport yourself from your current location to any other spot within range. You arrive at exactly the spot desired. It can be a place you can see, one you can visualize, or one you can describe by stating distance and direction, such as \"200 feet straight downward\" or \"upward to the northwest at a 45-degree angle, 300 feet.\"\n\nYou can bring along objects as long as their weight doesn't exceed what you can carry. You can also bring one willing creature of your size or smaller who is carrying gear up to its carrying capacity. The creature must be within 5 feet of you when you cast this spell.\n\nIf you would arrive in a place already occupied by an object or a creature, you and any creature traveling with you each take 4d6 force damage, and the spell fails to teleport you.",
+      "damage": {
+        "type": "force",
+        "slots": {
+          "4": "4d6"
+        }
+      }
     },
     {
       "index": "disguise-self",
@@ -1387,6 +1541,12 @@
       "higherLevel": "When you cast this spell using a spell slot of 7th level or higher, the damage increases by 3d6 for each slot level above 6th.",
       "save": "dexterity",
       "dcSuccess": "none",
+      "damage": {
+        "type": "force",
+        "slots": {
+          "6": "10d6 + 40"
+        }
+      },
       "area": {
         "type": "cube",
         "size": 10
@@ -1448,7 +1608,13 @@
       "concentration": true,
       "ritual": false,
       "classes": ["paladin"],
-      "desc": "Your prayer empowers you with divine radiance. Until the spell ends, your weapon attacks deal an extra 1d4 radiant damage on a hit."
+      "desc": "Your prayer empowers you with divine radiance. Until the spell ends, your weapon attacks deal an extra 1d4 radiant damage on a hit.",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "1": "1d4"
+        }
+      }
     },
     {
       "index": "divine-word",
@@ -1530,7 +1696,13 @@
       "classes": ["bard", "warlock", "wizard"],
       "desc": "This spell shapes a creature's dreams. Choose a creature known to you as the target of this spell. The target must be on the same plane of existence as you. Creatures that don't sleep, such as elves, can't be contacted by this spell. You, or a willing creature you touch, enters a trance state, acting as a messenger.\n\nWhile in the trance, the messenger is aware of his or her surroundings, but can't take actions or move.\n\nIf the target is asleep, the messenger appears in the target's dreams and can converse with the target as long as it remains asleep, through the duration of the spell. The messenger can also shape the environment of the dream, creating landscapes, objects, and other images. The messenger can emerge from the trance at any time, ending the effect of the spell early. The target recalls the dream perfectly upon waking. If the target is awake when you cast the spell, the messenger knows it, and can either end the trance (and the spell) or wait for the target to fall asleep, at which point the messenger appears in the target's dreams.\n\nYou can make the messenger appear monstrous and terrifying to the target. If you do, the messenger can deliver a message of no more than ten words and then the target must make a wisdom saving throw. On a failed save, echoes of the phantasmal monstrosity spawn a nightmare that lasts the duration of the target's sleep and prevents the target from gaining any benefit from that rest. In addition, when the target wakes up, it takes 3d6 psychic damage.\n\nIf you have a body part, lock of hair, clipping from a nail, or similar portion of the target's body, the target makes its saving throw with disadvantage.",
       "save": "wisdom",
-      "dcSuccess": "none"
+      "dcSuccess": "none",
+      "damage": {
+        "type": "psychic",
+        "slots": {
+          "5": "3d6"
+        }
+      }
     },
     {
       "index": "druidcraft",
@@ -1577,7 +1749,16 @@
       "ritual": false,
       "classes": ["warlock"],
       "desc": "A beam of crackling energy streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage. The spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "force",
+        "levels": {
+          "1": "1d10",
+          "5": "1d10",
+          "11": "1d10",
+          "17": "1d10"
+        }
+      }
     },
     {
       "index": "enhance-ability",
@@ -1738,7 +1919,13 @@
       "ritual": false,
       "classes": ["wizard"],
       "desc": "You conjure a phantom watchdog in an unoccupied space that you can see within range, where it remains for the duration, until you dismiss it as an action, or until you move more than 100 feet away from it.\n\nThe hound is invisible to all creatures except you and can't be harmed. When a Small or larger creature comes within 30 feet of it without first speaking the password that you specify when you cast this spell, the hound starts barking loudly. The hound sees invisible creatures and can see into the Ethereal Plane. It ignores illusions.\n\nAt the start of each of your turns, the hound attempts to bite one creature within 5 feet of it that is hostile to you. The hound's attack bonus is equal to your spellcasting ability modifier + your proficiency bonus. On a hit, it deals 4d8 piercing damage.",
-      "attackType": "melee"
+      "attackType": "melee",
+      "damage": {
+        "type": "piercing",
+        "slots": {
+          "4": "4d8"
+        }
+      }
     },
     {
       "index": "false-life",
@@ -1813,7 +2000,13 @@
       "ritual": false,
       "classes": ["bard", "druid", "warlock", "wizard"],
       "desc": "You blast the mind of a creature that you can see within range, attempting to shatter its intellect and personality. The target takes 4d6 psychic damage and must make an intelligence saving throw.\n\nOn a failed save, the creature's Intelligence and Charisma scores become 1. The creature can't cast spells, activate magic items, understand language, or communicate in any intelligible way. The creature can, however, identify its friends, follow them, and even protect them.\n\nAt the end of every 30 days, the creature can repeat its saving throw against this spell. If it succeeds on its saving throw, the spell ends.\n\nThe spell can also be ended by greater restoration, heal, or wish.",
-      "save": "intelligence"
+      "save": "intelligence",
+      "damage": {
+        "type": "psychic",
+        "slots": {
+          "8": "4d6"
+        }
+      }
     },
     {
       "index": "find-familiar",
@@ -1885,7 +2078,13 @@
       "classes": ["sorcerer", "warlock", "wizard"],
       "desc": "You send negative energy coursing through a creature that you can see within range, causing it searing pain. The target must make a constitution saving throw. It takes 7d8 + 30 necrotic damage on a failed save, or half as much damage on a successful one.\n\nA humanoid killed by this spell rises at the start of your next turn as a zombie that is permanently under your command, following your verbal orders to the best of its ability.",
       "save": "constitution",
-      "dcSuccess": "half"
+      "dcSuccess": "half",
+      "damage": {
+        "type": "necrotic",
+        "slots": {
+          "7": "7d8 + 30"
+        }
+      }
     },
     {
       "index": "fire-bolt",
@@ -1900,7 +2099,16 @@
       "ritual": false,
       "classes": ["sorcerer", "wizard"],
       "desc": "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried.\n\nThis spell's damage increases by 1d10 when you reach 5th level (2d10), 11th level (3d10), and 17th level (4d10).",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "fire",
+        "levels": {
+          "1": "1d10",
+          "5": "2d10",
+          "11": "3d10",
+          "17": "4d10"
+        }
+      }
     },
     {
       "index": "fire-shield",
@@ -1915,6 +2123,12 @@
       "ritual": false,
       "classes": ["wizard"],
       "desc": "Thin and vaporous flame surround your body for the duration of the spell, radiating a bright light bright light in a 10-foot radius and dim light for an additional 10 feet. You can end the spell using an action to make it disappear.\n\nThe flames are around you a heat shield or cold, your choice. The heat shield gives you cold damage resistance and the cold resistance to fire damage.\n\nIn addition, whenever a creature within 5 feet of you hits you with a melee attack, flames spring from the shield. The attacker then suffers 2d8 points of fire damage or cold, depending on the model.",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "4": "2d8"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 5
@@ -1935,6 +2149,12 @@
       "desc": "A storm made up of sheets of roaring flame appears in a location you choose within range. The area of the storm consists of up to ten 10-foot cubes, which you can arrange as you wish. Each cube must have at least one face adjacent to the face of another cube. Each creature in the area must make a dexterity saving throw. It takes 7d10 fire damage on a failed save, or half as much damage on a successful one.\n\nThe fire damages objects in the area and ignites flammable objects that aren't being worn or carried. If you choose, plant life in the area is unaffected by this spell.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "7": "7d10"
+        }
+      },
       "area": {
         "type": "cube",
         "size": 100
@@ -1956,6 +2176,18 @@
       "higherLevel": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "3": "8d6",
+          "4": "9d6",
+          "5": "10d6",
+          "6": "11d6",
+          "7": "12d6",
+          "8": "13d6",
+          "9": "14d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 20
@@ -1974,7 +2206,16 @@
       "ritual": false,
       "classes": ["druid"],
       "desc": "You evoke a fiery blade in your free hand. The blade is similar in size and shape to a scimitar, and it lasts for the duration. If you let go of the blade, it disappears, but you can evoke the blade again as a bonus action.\n\nYou can use your action to make a melee spell attack with the fiery blade. On a hit, the target takes 3d6 fire damage.\n\nThe flaming blade sheds bright light in a 10-foot radius and dim light for an additional 10 feet.",
-      "higherLevel": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for every two slot levels above 2nd."
+      "higherLevel": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for every two slot levels above 2nd.",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "2": "3d6",
+          "4": "4d6",
+          "6": "5d6",
+          "8": "6d6"
+        }
+      }
     },
     {
       "index": "flame-strike",
@@ -1992,6 +2233,16 @@
       "higherLevel": "When you cast this spell using a spell slot of 6th level or higher, the fire damage or the radiant damage (your choice) increases by 1d6 for each slot level above 5th.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "5": "4d6",
+          "6": "4d6 OR 5d6",
+          "7": "4d6 OR 6d6",
+          "8": "4d6 OR 7d6",
+          "9": "4d6 OR 8d6"
+        }
+      },
       "area": {
         "type": "cylinder",
         "size": 40
@@ -2010,7 +2261,20 @@
       "ritual": false,
       "classes": ["druid", "wizard"],
       "desc": "A 5-foot-diameter sphere of fire appears in an unoccupied space of your choice within range and lasts for the duration. Any creature that ends its turn within 5 feet of the sphere must make a dexterity saving throw. The creature takes 2d6 fire damage on a failed save, or half as much damage on a successful one.\n\nAs a bonus action, you can move the sphere up to 30 feet. If you ram the sphere into a creature, that creature must make the saving throw against the sphere's damage, and the sphere stops moving this turn.\n\nWhen you move the sphere, you can direct it over barriers up to 5 feet tall and jump it across pits up to 10 feet wide. The sphere ignites flammable objects not being worn or carried, and it sheds bright light in a 20-foot radius and dim light for an additional 20 feet.",
-      "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d6 for each slot level above 2nd."
+      "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d6 for each slot level above 2nd.",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "2": "2d6",
+          "3": "3d6",
+          "4": "4d6",
+          "5": "5d6",
+          "6": "6d6",
+          "7": "7d6",
+          "8": "8d6",
+          "9": "9d6"
+        }
+      }
     },
     {
       "index": "flesh-to-stone",
@@ -2156,6 +2420,12 @@
       "higherLevel": "When you cast this spell using a spell slot of 7th level or higher, the damage increases by 1d6 for each slot level above 6th.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "cold",
+        "slots": {
+          "6": "10d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 60
@@ -2359,6 +2629,12 @@
       "desc": "A Large spectral guardian appears and hovers for the duration in an unoccupied space of your choice that you can see within range. The guardian occupies that space and is indistinct except for a gleaming sword and shield emblazoned with the symbol of your deity.\n\nAny creature hostile to you that moves to a space within 10 feet of the guardian for the first time on a turn must succeed on a dexterity saving throw. The creature takes 20 radiant damage on a failed save, or half as much damage on a successful one. The guardian vanishes when it has dealt a total of 60 damage.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "4": "20"
+        }
+      },
       "area": {
         "type": "cylinder",
         "size": 10
@@ -2410,7 +2686,21 @@
       "classes": ["cleric"],
       "desc": "A flash of light streaks toward a creature of your choice within range. Make a ranged spell attack against the target. On a hit, the target takes 4d6 radiant damage, and the next attack roll made against this target before the end of your next turn has advantage, thanks to the mystical dim light glittering on the target until then.",
       "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st.",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "1": "4d6",
+          "2": "5d6",
+          "3": "6d6",
+          "4": "7d6",
+          "5": "8d6",
+          "6": "9d6",
+          "7": "10d6",
+          "8": "11d6",
+          "9": "12d6"
+        }
+      }
     },
     {
       "index": "gust-of-wind",
@@ -2484,7 +2774,13 @@
       "classes": ["cleric"],
       "desc": "You unleash a virulent disease on a creature that you can see within range. The target must make a constitution saving throw. On a failed save, it takes 14d6 necrotic damage, or half as much damage on a successful save. The damage can't reduce the target's hit points below 1. If the target fails the saving throw, its hit point maximum is reduced for 1 hour by an amount equal to the necrotic damage it took. Any effect that removes a disease allows a creature's hit point maximum to return to normal before that time passes.",
       "save": "constitution",
-      "dcSuccess": "half"
+      "dcSuccess": "half",
+      "damage": {
+        "type": "necrotic",
+        "slots": {
+          "6": "14d6"
+        }
+      }
     },
     {
       "index": "haste",
@@ -2561,7 +2857,20 @@
       "classes": ["bard", "druid"],
       "desc": "Choose a manufactured metal object, such as a metal weapon or a suit of heavy or medium metal armor, that you can see within range. You cause the object to glow red-hot. Any creature in physical contact with the object takes 2d8 fire damage when you cast the spell. Until the spell ends, you can use a bonus action on each of your subsequent turns to cause this damage again.\n\nIf a creature is holding or wearing the object and takes the damage from it, the creature must succeed on a constitution saving throw or drop the object if it can. If it doesn't drop the object, it has disadvantage on attack rolls and ability checks until the start of your next turn.",
       "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d8 for each slot level above 2nd.",
-      "save": "constitution"
+      "save": "constitution",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "2": "2d8",
+          "3": "3d8",
+          "4": "4d8",
+          "5": "5d8",
+          "6": "6d8",
+          "7": "7d8",
+          "8": "8d8",
+          "9": "9d8"
+        }
+      }
     },
     {
       "index": "hellish-rebuke",
@@ -2578,7 +2887,21 @@
       "desc": "You point your finger, and the creature that damaged you is momentarily surrounded by hellish flames. The creature must make a dexterity saving throw. It takes 2d10 fire damage on a failed save, or half as much damage on a successful one.",
       "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d10 for each slot level above 1st.",
       "save": "dexterity",
-      "dcSuccess": "half"
+      "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "1": "2d10",
+          "2": "3d10",
+          "3": "4d10",
+          "4": "5d10",
+          "5": "6d10",
+          "6": "7d10",
+          "7": "8d10",
+          "8": "9d10",
+          "9": "10d10"
+        }
+      }
     },
     {
       "index": "heroes-feast",
@@ -2723,6 +3046,17 @@
       "higherLevel": "When you cast this spell using a spell slot of 5th level or higher, the bludgeoning damage increases by 1d8 for each slot level above 4th.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "bludgeoning",
+        "slots": {
+          "4": "2d8",
+          "5": "3d8",
+          "6": "4d8",
+          "7": "5d8",
+          "8": "6d8",
+          "9": "7d8"
+        }
+      },
       "area": {
         "type": "cylinder",
         "size": 20
@@ -2787,6 +3121,12 @@
       "desc": "A swirling cloud of smoke shot through with white-hot embers appears in a 20-foot-radius sphere centered on a point within range. The cloud spreads around corners and is heavily obscured. It lasts for the duration or until a wind of moderate or greater speed (at least 10 miles per hour) disperses it.\n\nWhen the cloud appears, each creature in it must make a dexterity saving throw. A creature takes 10d8 fire damage on a failed save, or half as much damage on a successful one. A creature must also make this saving throw when it enters the spell's area for the first time on a turn or ends its turn there.\n\nThe cloud moves 10 feet directly away from you in a direction that you choose at the start of each of your turns.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "8": "10d8"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 20
@@ -2806,7 +3146,21 @@
       "classes": ["cleric"],
       "desc": "Make a melee spell attack against a creature you can reach. On a hit, the target takes 3d10 necrotic damage.",
       "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d10 for each slot level above 1st.",
-      "attackType": "melee"
+      "attackType": "melee",
+      "damage": {
+        "type": "necrotic",
+        "slots": {
+          "1": "3d10",
+          "2": "4d10",
+          "3": "5d10",
+          "4": "6d10",
+          "5": "7d10",
+          "6": "8d10",
+          "7": "9d10",
+          "8": "10d10",
+          "9": "11d10"
+        }
+      }
     },
     {
       "index": "insect-plague",
@@ -2824,6 +3178,16 @@
       "higherLevel": "When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d10 for each slot level above 5th.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "piercing",
+        "slots": {
+          "5": "4d10",
+          "6": "5d10",
+          "7": "6d10",
+          "8": "7d10",
+          "9": "8d10"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 20
@@ -2974,6 +3338,18 @@
       "higherLevel": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "lightning",
+        "slots": {
+          "3": "8d6",
+          "4": "9d6",
+          "5": "10d6",
+          "6": "11d6",
+          "7": "12d6",
+          "8": "13d6",
+          "9": "14d6"
+        }
+      },
       "area": {
         "type": "line",
         "size": 100
@@ -3112,7 +3488,21 @@
       "ritual": false,
       "classes": ["sorcerer", "wizard"],
       "desc": "You create three glowing darts of magical force. Each dart hits a creature of your choice that you can see within range. A dart deals 1d4 + 1 force damage to its target. The darts all strike simultaneously, and you can direct them to hit one creature or several.",
-      "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the spell creates one more dart for each slot level above 1st."
+      "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the spell creates one more dart for each slot level above 1st.",
+      "damage": {
+        "type": "force",
+        "slots": {
+          "1": "3d4 + 3",
+          "2": "4d4 + 4",
+          "3": "5d4 + 5",
+          "4": "6d4 + 6",
+          "5": "7d4 + 7",
+          "6": "8d4 + 8",
+          "7": "9d4 + 9",
+          "8": "10d4 + 10",
+          "9": "11d4 + 11"
+        }
+      }
     },
     {
       "index": "magic-mouth",
@@ -3331,6 +3721,12 @@
       "desc": "Blazing orbs of fire plummet to the ground at four different points you can see within range. Each creature in a 40-foot-radius sphere centered on each point you choose must make a dexterity saving throw. The sphere spreads around corners. A creature takes 20d6 fire damage and 20d6 bludgeoning damage on a failed save, or half as much damage on a successful one. A creature in the area of more than one fiery burst is affected only once.\n\nThe spell damages objects in the area and ignites flammable objects that aren't being worn or carried.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "9": "20d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 40
@@ -3457,6 +3853,19 @@
       "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1dl0 for each slot level above 2nd.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "2": "2d10",
+          "3": "3d10",
+          "4": "4d10",
+          "5": "5d10",
+          "6": "6d10",
+          "7": "7d10",
+          "8": "8d10",
+          "9": "9d10"
+        }
+      },
       "area": {
         "type": "cylinder",
         "size": 5
@@ -3537,7 +3946,13 @@
       "desc": "You tap into the nightmares of a creature you can see within range and create an illusory manifestation of its deepest fears, visible only to that creature. The target must make a wisdom saving throw. On a failed save, the target becomes frightened for the duration. At the start of each of the target's turns before the spell ends, the target must succeed on a wisdom saving throw or take 4d10 psychic damage. On a successful save, the spell ends.",
       "higherLevel": "When you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d10 for each slot level above 4th.",
       "save": "wisdom",
-      "dcSuccess": "none"
+      "dcSuccess": "none",
+      "damage": {
+        "type": "psychic",
+        "slots": {
+          "4": "4d10"
+        }
+      }
     },
     {
       "index": "phantom-steed",
@@ -3629,7 +4044,16 @@
       "classes": ["sorcerer", "warlock", "wizard", "druid"],
       "desc": "You extend your hand toward a creature you can see within range and project a puff of noxious gas from your palm. The creature must succeed on a constitution saving throw or take 1d12 poison damage.\n\nThis spell's damage increases by 1d12 when you reach 5th level (2d12), 11th level (3d12), and 17th level (4d12).",
       "save": "constitution",
-      "dcSuccess": "none"
+      "dcSuccess": "none",
+      "damage": {
+        "type": "poison",
+        "levels": {
+          "1": "1d12",
+          "5": "2d12",
+          "11": "3d12",
+          "17": "4d12"
+        }
+      }
     },
     {
       "index": "polymorph",
@@ -3783,7 +4207,16 @@
       "ritual": false,
       "classes": ["druid"],
       "desc": "A flickering flame appears in your hand. The flame remains there for the duration and harms neither you nor your equipment. The flame sheds bright light in a 10-foot radius and dim light for an additional 10 feet. The spell ends if you dismiss it as an action or if you cast it again.\n\nYou can also attack with the flame, although doing so ends the spell. When you cast this spell, or as an action on a later turn, you can hurl the flame at a creature within 30 feet of you. Make a ranged spell attack. On a hit, the target takes 1d8 fire damage.\n\nThis spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "fire",
+        "levels": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      }
     },
     {
       "index": "programmed-illusion",
@@ -3917,7 +4350,16 @@
       "ritual": false,
       "classes": ["sorcerer", "wizard"],
       "desc": "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.\n\nThe spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
-      "attackType": "ranged"
+      "attackType": "ranged",
+      "damage": {
+        "type": "cold",
+        "levels": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      }
     },
     {
       "index": "regenerate",
@@ -4069,7 +4511,16 @@
       "classes": ["cleric"],
       "desc": "Flame-like radiance descends on a creature that you can see within range. The target must succeed on a dexterity saving throw or take 1d8 radiant damage. The target gains no benefit from cover for this saving throw.\n\nThe spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
       "save": "dexterity",
-      "dcSuccess": "none"
+      "dcSuccess": "none",
+      "damage": {
+        "type": "radiant",
+        "levels": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      }
     },
     {
       "index": "sanctuary",
@@ -4098,7 +4549,13 @@
       "ritual": false,
       "classes": ["sorcerer", "wizard"],
       "desc": "You create three rays of fire and hurl them at targets within range. You can hurl them at one target or several.\n\nMake a ranged spell attack for each ray. On a hit, the target takes 2d6 fire damage.",
-      "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, you create one additional ray for each slot level above 2nd."
+      "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, you create one additional ray for each slot level above 2nd.",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "2": "2d6"
+        }
+      }
     },
     {
       "index": "scrying",
@@ -4216,6 +4673,19 @@
       "higherLevel": "When you cast this spell using a 3 or higher level spell slot, the damage of the spell increases by 1d8 for each level of higher spell slot 2.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "thunder",
+        "slots": {
+          "2": "3d8",
+          "3": "4d8",
+          "4": "5d8",
+          "5": "6d8",
+          "6": "7d8",
+          "7": "8d8",
+          "8": "9d8",
+          "9": "10d8"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 10
@@ -4276,7 +4746,16 @@
       "ritual": false,
       "classes": ["sorcerer", "wizard"],
       "desc": "Lightning springs from your hand to deliver a shock to a creature you try to touch. Make a melee spell attack against the target. You have advantage on the attack roll if the target is wearing armor made of metal. On a hit, the target takes 1d8 lightning damage, and it can't take reactions until the start of its next turn.\n\nThe spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
-      "attackType": "melee"
+      "attackType": "melee",
+      "damage": {
+        "type": "lightning",
+        "levels": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      }
     },
     {
       "index": "silence",
@@ -4506,7 +4985,20 @@
       "classes": ["cleric"],
       "desc": "You create a floating, spectral weapon within range that lasts for the duration or until you cast this spell again. When you cast the spell, you can make a melee spell attack against a creature within 5 feet of the weapon. On a hit, the target takes force damage equal to 1d8 + your spellcasting ability modifier.\n\nAs a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it.\n\nThe weapon can take whatever form you choose. Clerics of deities who are associated with a particular weapon (as St. Cuthbert is known for his mace and Thor for his hammer) make this spell's effect resemble that weapon.",
       "higherLevel": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d8 for every two slot levels above the 2nd.",
-      "attackType": "melee"
+      "attackType": "melee",
+      "damage": {
+        "type": "force",
+        "slots": {
+          "2": "1d8 + MOD",
+          "3": "1d8 + MOD",
+          "4": "2d8 + MOD",
+          "5": "2d8 + MOD",
+          "6": "3d8 + MOD",
+          "7": "3d8 + MOD",
+          "8": "4d8 + MOD",
+          "9": "4d8 + MOD"
+        }
+      }
     },
     {
       "index": "stinking-cloud",
@@ -4571,6 +5063,12 @@
       "desc": "A churning storm cloud forms, centered on a point you can see and spreading to a radius of 360 feet. Lightning flashes in the area, thunder booms, and strong winds roar. Each creature under the cloud (no more than 5,000 feet beneath the cloud) when it appears must make a constitution saving throw. On a failed save, a creature takes 2d6 thunder damage and becomes deafened for 5 minutes.\n\nEach round you maintain concentration on this spell, the storm produces additional effects on your turn.\n\n***Round 2.*** Acidic rain falls from the cloud. Each creature and object under the cloud takes 1d6 acid damage.\n\n***Round 3.*** You call six bolts of lightning from the cloud to strike six creatures or objects of your choice beneath the cloud. A given creature or object can't be struck by more than one bolt. A struck creature must make a dexterity saving throw. The creature takes 10d6 lightning damage on a failed save, or half as much damage on a successful one.\n\n***Round 4.*** Hailstones rain down from the cloud. Each creature under the cloud takes 2d6 bludgeoning damage.\n\n***Round 5-10.*** Gusts and freezing rain assail the area under the cloud. The area becomes difficult terrain and is heavily obscured. Each creature there takes 1d6 cold damage. Ranged weapon attacks in the area are impossible. The wind and rain count as a severe distraction for the purposes of maintaining concentration on spells. Finally, gusts of strong wind (ranging from 20 to 50 miles per hour) automatically disperse fog, mists, and similar phenomena in the area, whether mundane or magical.",
       "save": "constitution",
       "dcSuccess": "none",
+      "damage": {
+        "type": "thunder",
+        "slots": {
+          "9": "2d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 360
@@ -4607,6 +5105,12 @@
       "desc": "A beam of brilliant light flashes out from your hand in a 5-foot-wide, 60-foot-long line. Each creature in the line must make a constitution saving throw. On a failed save, a creature takes 6d8 radiant damage and is blinded until your next turn. On a successful save, it takes half as much damage and isn't blinded by this spell. Undead and oozes have disadvantage on this saving throw.\n\nYou can create a new line of radiance as your action on any turn until the spell ends.\n\nFor the duration, a mote of brilliant radiance shines in your hand. It sheds bright light in a 30-foot radius and dim light for an additional 30 feet. This light is sunlight.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "6": "6d8"
+        }
+      },
       "area": {
         "type": "line",
         "size": 60
@@ -4627,6 +5131,12 @@
       "desc": "Brilliant sunlight flashes in a 60-foot radius centered on a point you choose within range. Each creature in that light must make a constitution saving throw. On a failed save, a creature takes 12d6 radiant damage and is blinded for 1 minute. On a successful save, it takes half as much damage and isn't blinded by this spell. Undead and oozes have disadvantage on this saving throw.\n\nA creature blinded by this spell makes another constitution saving throw at the end of each of its turns. On a successful save, it is no longer blinded.\n\nThis spell dispels any darkness in its area that was created by a spell.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "radiant",
+        "slots": {
+          "8": "12d6"
+        }
+      },
       "area": {
         "type": "cylinder",
         "size": 60
@@ -4748,6 +5258,20 @@
       "higherLevel": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d8 for each slot level above 1st.",
       "save": "constitution",
       "dcSuccess": "half",
+      "damage": {
+        "type": "thunder",
+        "slots": {
+          "1": "2d8",
+          "2": "3d8",
+          "3": "4d8",
+          "4": "5d8",
+          "5": "6d8",
+          "6": "7d8",
+          "7": "8d8",
+          "8": "9d8",
+          "9": "10d8"
+        }
+      },
       "area": {
         "type": "cube",
         "size": 15
@@ -4911,7 +5435,19 @@
       "classes": ["warlock", "wizard"],
       "desc": "The touch of your shadow-wreathed hand can siphon life force from others to heal your wounds. Make a melee spell attack against a creature within your reach. On a hit, the target takes 3d6 necrotic damage, and you regain hit points equal to half the amount of necrotic damage dealt. Until the spell ends, you can make the attack again on each of your turns as an action.",
       "higherLevel": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.",
-      "attackType": "melee"
+      "attackType": "melee",
+      "damage": {
+        "type": "necrotic",
+        "slots": {
+          "3": "3d6",
+          "4": "4d6",
+          "5": "5d6",
+          "6": "6d6",
+          "7": "7d6",
+          "8": "8d6",
+          "9": "9d6"
+        }
+      }
     },
     {
       "index": "vicious-mockery",
@@ -4927,7 +5463,16 @@
       "classes": ["bard"],
       "desc": "You unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.\n\nThis spell's damage increases by 1d4 when you reach 5th level (2d4), 11th level (3d4), and 17th level (4d4).",
       "save": "wisdom",
-      "dcSuccess": "none"
+      "dcSuccess": "none",
+      "damage": {
+        "type": "psychic",
+        "levels": {
+          "1": "1d4",
+          "5": "2d4",
+          "11": "3d4",
+          "17": "4d4"
+        }
+      }
     },
     {
       "index": "wall-of-fire",
@@ -4945,6 +5490,12 @@
       "higherLevel": "When you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d8 for each slot level above 4th.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "fire",
+        "slots": {
+          "4": "5d8"
+        }
+      },
       "area": {
         "type": "line",
         "size": 60
@@ -4980,6 +5531,15 @@
       "higherLevel": "When you cast this spell using a spell slot of 7th level or higher, the damage the wall deals when it appears increases by 2d6, and the damage from passing through the sheet of frigid air increases by 1d6, for each slot level above 6th.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "cold",
+        "slots": {
+          "6": "10d6",
+          "7": "12d6",
+          "8": "14d6",
+          "9": "16d6"
+        }
+      },
       "area": {
         "type": "sphere",
         "size": 10
@@ -5015,6 +5575,15 @@
       "higherLevel": "When you cast this spell using a spell slot of 7th level or higher, both types of damage increase by 1d8 for each slot level above 6th.",
       "save": "dexterity",
       "dcSuccess": "half",
+      "damage": {
+        "type": "piercing",
+        "slots": {
+          "6": "7d8",
+          "7": "8d8",
+          "8": "9d8",
+          "9": "10d8"
+        }
+      },
       "area": {
         "type": "line",
         "size": 60
@@ -5129,6 +5698,12 @@
       "desc": "A wall of strong wind rises from the ground at a point you choose within range. You can make the wall up to 50 feet long, 15 feet high, and 1 foot thick. You can shape the wall in any way you choose so long as it makes one continuous path along the ground. The wall lasts for the duration.\n\nWhen the wall appears, each creature within its area must make a strength saving throw. A creature takes 3d8 bludgeoning damage on a failed save, or half as much damage on a successful one.\n\nThe strong wind keeps fog, smoke, and other gases at bay. Small or smaller flying creatures or objects can't pass through the wall. Loose, lightweight materials brought into the wall fly upward. Arrows, bolts, and other ordinary projectiles launched at targets behind the wall are deflected upward and automatically miss. (Boulders hurled by giants or siege engines, and similar projectiles, are unaffected.) Creatures in gaseous form can't pass through it.",
       "save": "strength",
       "dcSuccess": "half",
+      "damage": {
+        "type": "bludgeoning",
+        "slots": {
+          "3": "3d8"
+        }
+      },
       "area": {
         "type": "line",
         "size": 50

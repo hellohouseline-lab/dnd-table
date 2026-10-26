@@ -64,7 +64,7 @@ describe('the Powers tab', () => {
     expect(html).toMatch(/Save DC 13/)
     expect(html).toMatch(/Attack \+5/)
     expect(html).toContain('1st level slots')
-    expect(markup).toContain('aria-label="1st level slots left: 2 of 3"')
+    expect(markup).toContain('aria-label="1st level slots left: 3 of 4"')
     expect(html).toMatch(/Cantrips Fire Bolt/)
     expect(html).toContain('Magic Missile')
   })

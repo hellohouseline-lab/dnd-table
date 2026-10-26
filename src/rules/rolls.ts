@@ -160,6 +160,22 @@ export function attackRoll(character: RollCharacter, attack: AttackEntry, choice
   }
 }
 
+/** A spell attack: a d20 plus the spellcasting modifier and proficiency, with the spell's damage. */
+export function spellAttackRoll(
+  character: RollCharacter,
+  spell: { name: string },
+  ability: Ability,
+  damage: { dice: DiceGroup[]; modifier: number; type: string } | null,
+  choices: RollChoices = {},
+): RollRequest {
+  const parts = [abilityPart(character, ability), { label: 'Proficiency', value: proficiencyBonus(character.level) }]
+  return {
+    ...d20Roll(character, { label: spell.name, kind: 'attack', ability, parts }, choices),
+    magical: true,
+    damage,
+  }
+}
+
 /**
  * A character's answer to the DM's request for a roll: the right check or save, with their bonus,
  * their conditions and anything they chose, under the request's name.

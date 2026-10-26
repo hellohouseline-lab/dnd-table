@@ -46,8 +46,50 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
     }
   }
 
+  if (event.kind === 'concentration') {
+    const spell = event.shown.spell ?? 'the spell'
+    const rolled =
+      typeof event.shown.total === 'number' ? ` (rolled ${event.shown.total} against DC ${event.shown.dc})` : ''
+    return event.shown.kept
+      ? `${actor} ${verb('keeps', 'keep')} concentrating on ${spell}${rolled}.`
+      : `${actor} ${verb('loses', 'lose')} concentration, and ${spell} ends${rolled}.`
+  }
+
   const targetIsYou = event.targetId !== null && event.targetId === youId
   const target = targetIsYou ? 'you' : nameOf(event.targetId)
+
+  // A spell that isn't an attack roll: a saving throw, damage that just lands, healing, or nothing to roll.
+  if (event.kind === 'spell' && !event.shown.attack) {
+    const spell = event.shown.spell ?? 'a spell'
+    const whose = you ? `Your ${spell}` : `${actor}'s ${spell}`
+    const damage = event.shown.damage ?? 0
+    const type = event.shown.damageType ? ` ${event.shown.damageType}` : ''
+    const adjusted =
+      event.shown.adjust === 'resisted'
+        ? ' (resisted, so halved)'
+        : event.shown.adjust === 'vulnerable'
+          ? ' (vulnerable, so doubled)'
+          : event.shown.adjust === 'immune'
+            ? ' (immune)'
+            : ''
+    const down = event.shown.down ? ` ${targetIsYou ? 'You go' : `${target} goes`} down.` : ''
+    const takes = (they: string) =>
+      damage > 0 ? ` and ${they} ${damage}${type}${adjusted}` : event.shown.damage === 0 ? ` and ${they} nothing` : ''
+    if (event.targetId === null) return `${actor} ${verb('casts', 'cast')} ${spell}.`
+    if (event.shown.save) {
+      const rolled = typeof event.shown.saveTotal === 'number' ? ` (rolled ${event.shown.saveTotal})` : ''
+      const outcome =
+        event.shown.save === 'passed'
+          ? `${targetIsYou ? 'You make' : `${target} makes`} the save against ${spell}${rolled}`
+          : `${targetIsYou ? 'You fail' : `${target} fails`} the save against ${spell}${rolled}`
+      return `${outcome}${takes(targetIsYou ? 'take' : 'takes')}.${down}`
+    }
+    if (typeof event.shown.heal === 'number') return `${whose} heals ${target} for ${event.shown.heal}.`
+    if (event.shown.damage !== null && event.shown.damage !== undefined) {
+      return `${whose} hits ${target} for ${damage}${type}${adjusted}.${down}`
+    }
+    return `${actor} ${verb('casts', 'cast')} ${spell} on ${target}.`
+  }
   // An opportunity attack, made with the reaction as the target moves away.
   const weapon =
     (event.shown.label ? ` with ${event.shown.label}` : '') + (event.shown.reaction ? ' as they move away' : '')

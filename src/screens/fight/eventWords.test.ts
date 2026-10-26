@@ -102,4 +102,47 @@ describe('the feed in plain words', () => {
       'Thorin fails a third death save (rolled 1). Thorin dies.',
     )
   })
+
+  it('says what a spell did', () => {
+    const spell = (shown: CombatEvent['shown'], targetId: string | null = 'goblin') => ({
+      ...attack(shown, 'thorin', 'goblin'),
+      targetId,
+      kind: 'spell' as const,
+    })
+    expect(eventWords(spell({ spell: 'Darkness', slot: 2 }, null), { nameOf, youId: 'thorin' })).toBe(
+      'You cast Darkness.',
+    )
+    expect(eventWords(spell({ spell: 'Magic Missile', damage: 11, damageType: 'force' }), { nameOf })).toBe(
+      "Thorin's Magic Missile hits Goblin A for 11 force.",
+    )
+    expect(
+      eventWords(spell({ spell: 'Fireball', save: 'failed', damage: 28, damageType: 'fire', down: true }), { nameOf }),
+    ).toBe('Goblin A fails the save against Fireball and takes 28 fire. Goblin A goes down.')
+    expect(
+      eventWords(
+        spell({ spell: 'Fireball', save: 'passed', saveTotal: 16, damage: 14, damageType: 'fire' }, 'thorin'),
+        {
+          nameOf,
+          youId: 'thorin',
+        },
+      ),
+    ).toBe('You make the save against Fireball (rolled 16) and take 14 fire.')
+    expect(eventWords(spell({ spell: 'Hold Person', save: 'failed' }), { nameOf })).toBe(
+      'Goblin A fails the save against Hold Person.',
+    )
+    expect(eventWords(spell({ spell: 'Cure Wounds', heal: 7 }, 'thorin'), { nameOf, youId: 'thorin' })).toBe(
+      'Your Cure Wounds heals you for 7.',
+    )
+  })
+
+  it('says whether concentration held', () => {
+    const held = (kept: boolean) => ({
+      ...attack({ spell: 'Darkness', dc: 12, total: kept ? 15 : 8, kept }, 'thorin', 'thorin'),
+      kind: 'concentration' as const,
+    })
+    expect(eventWords(held(true), { nameOf })).toBe('Thorin keeps concentrating on Darkness (rolled 15 against DC 12).')
+    expect(eventWords(held(false), { nameOf, youId: 'thorin' })).toBe(
+      'You lose concentration, and Darkness ends (rolled 8 against DC 12).',
+    )
+  })
 })

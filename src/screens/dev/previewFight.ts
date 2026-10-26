@@ -16,6 +16,10 @@ import { abilityModifier } from '../../rules/maths/core.ts'
 import { takeDamage } from '../../rules/maths/hitPoints.ts'
 import { adjustDamage, NO_DEFENCES } from '../../rules/damage.ts'
 import { deathSave, hitWhileDown, opportunityThreats } from '../../rules/dying.ts'
+import type { NewArea } from '../../live/areas.ts'
+import type { Ability } from '../../rules/abilities.ts'
+import { savingThrow } from '../../rules/rolls.ts'
+import { concentrationDc, slotsLeft, spellSaveDc } from '../../rules/spells.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import {
   attackHits,
@@ -98,11 +102,22 @@ type PreviewOptions = {
   onCharacter?: (id: string, patch: Partial<CharacterState>) => void
   /** Chances to strike already open when the preview starts. */
   prompts?: ReactionPrompt[]
+  /** A spell left an area on the map. */
+  onArea?: (area: PreviewArea) => void
 }
 
 type CharacterState = Pick<
   Character,
-  'currentHp' | 'tempHp' | 'conditions' | 'deathSaveSuccesses' | 'deathSaveFailures' | 'stable' | 'dead'
+  | 'currentHp'
+  | 'tempHp'
+  | 'conditions'
+  | 'deathSaveSuccesses'
+  | 'deathSaveFailures'
+  | 'stable'
+  | 'dead'
+  | 'concentration'
+  | 'concentrationDc'
+  | 'spellcasting'
 >
 
 const stateOf = (c: Character): CharacterState => ({
@@ -113,13 +128,22 @@ const stateOf = (c: Character): CharacterState => ({
   deathSaveFailures: c.deathSaveFailures,
   stable: c.stable,
   dead: c.dead,
+  concentration: c.concentration,
+  concentrationDc: c.concentrationDc,
+  spellcasting: c.spellcasting,
 })
 
 type Undo = {
   target:
     { characterId: string; before: CharacterState } | { secret: CombatantSecret; health: Combatant['health'] } | null
-  actor: { id: string; turn: TurnRecord }
+  /** The actor's turn as it was; none for the second and later targets of one spell. */
+  actor: { id: string; turn: TurnRecord } | null
+  /** A spell's caster: the slot and concentration as they were. */
+  caster?: { characterId: string; before: CharacterState }
 }
+
+/** A spell's lasting area, or the DM's, for the preview's map. */
+export type PreviewArea = NewArea & { characterId: string | null; concentration: boolean }
 
 export type PreviewFightControls = FightControls & {
   /** The miniature of whoever's turn it is moved: count the feet. */
@@ -170,21 +194,14 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
     characters.find((c) => c.id === combatant.characterId)?.speed ?? combatant.speed
 
   // An attack, as private.settle_attack: on your turn from your action, or as a reaction.
-  function settle(me: Combatant, target: Combatant, request: RollRequest, reaction: boolean): Roll {
+  // Damage after the target's defences, as private.apply_damage: temporary hit points first, a death
+  // save failure for someone already down, and a concentration save for a caster still standing.
+  function hurt(target: Combatant, amount: number, type: string, magical: boolean, critical: boolean) {
     const f = latest.current.fight
-    if (!f) throw new Error('No fight')
-    const roll = localRoll(request, { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE })
     const targetCharacter = characters.find((c) => c.id === target.characterId)
-    const secret = f.secrets.find((s) => s.combatantId === target.id)
-    const ac = targetCharacter?.armourClass ?? secret?.ac ?? 10
-    const hit = attackHits(roll.natural ?? 0, roll.total, ac)
+    const secret = f?.secrets.find((s) => s.combatantId === target.id)
     const defences = targetCharacter ?? secret ?? NO_DEFENCES
-    const { amount: damage, adjust } = adjustDamage(
-      hit ? (roll.damage?.total ?? 0) : 0,
-      roll.damage?.type ?? '',
-      Boolean(request.magical),
-      defences,
-    )
+    const { amount: damage, adjust } = adjustDamage(amount, type, magical, defences)
     let undoTarget: Undo['target'] = null
     let down = false
     if (targetCharacter) {
@@ -193,7 +210,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         { current: targetCharacter.currentHp, max: targetCharacter.maxHp, temp: targetCharacter.tempHp },
         damage,
       )
-      down = hit && after.current === 0
+      down = damage > 0 && after.current === 0
       const wasDown = targetCharacter.currentHp === 0
       const saves = {
         successes: targetCharacter.deathSaveSuccesses,
@@ -201,7 +218,8 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         stable: targetCharacter.stable,
         dead: targetCharacter.dead,
       }
-      const hurt = wasDown && damage > 0 ? hitWhileDown(saves, roll.natural === 20) : saves
+      const hurtSaves = wasDown && damage > 0 ? hitWhileDown(saves, critical) : saves
+      const concentrating = targetCharacter.concentration !== null && after.current > 0 && damage > 0
       onCharacter?.(targetCharacter.id, {
         currentHp: after.current,
         tempHp: after.temp,
@@ -209,14 +227,20 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           down && !targetCharacter.conditions.includes('unconscious')
             ? [...targetCharacter.conditions, 'unconscious']
             : targetCharacter.conditions,
-        deathSaveFailures: hurt.failures,
-        stable: hurt.stable,
-        dead: hurt.dead,
+        deathSaveFailures: hurtSaves.failures,
+        stable: hurtSaves.stable,
+        dead: hurtSaves.dead,
+        concentration: after.current === 0 ? null : targetCharacter.concentration,
+        concentrationDc: concentrating
+          ? Math.max(targetCharacter.concentrationDc ?? 0, concentrationDc(damage))
+          : after.current === 0
+            ? null
+            : targetCharacter.concentrationDc,
       })
     } else if (secret) {
       undoTarget = { secret, health: target.health }
       const hp = Math.max(0, secret.hp - damage)
-      down = hit && hp === 0
+      down = damage > 0 && hp === 0
       set((fx) => ({
         ...fx,
         secrets: fx.secrets.map((s) => (s.combatantId === secret.combatantId ? { ...s, hp } : s)),
@@ -225,12 +249,42 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         ),
       }))
     }
-    setTurn(me.id, (turn) =>
-      reaction ? { ...turn, reactionUsed: true } : { ...turn, actionUsed: true, attacksMade: turn.attacksMade + 1 },
+    return { damage, adjust, down, undoTarget }
+  }
+
+  // An attack, as private.settle_attack: on your turn from your action, as a reaction, or (for a
+  // spell, which has paid already) spending nothing.
+  function settle(
+    me: Combatant,
+    target: Combatant,
+    request: RollRequest,
+    spend: 'action' | 'reaction' | 'none',
+    spell: { name: string; slot: number; caster: Undo['caster'] } | null = null,
+  ): Roll {
+    const f = latest.current.fight
+    if (!f) throw new Error('No fight')
+    const roll = localRoll(request, { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE })
+    const targetCharacter = characters.find((c) => c.id === target.characterId)
+    const secret = f.secrets.find((s) => s.combatantId === target.id)
+    const ac = targetCharacter?.armourClass ?? secret?.ac ?? 10
+    const hit = attackHits(roll.natural ?? 0, roll.total, ac)
+    const { damage, adjust, down, undoTarget } = hurt(
+      target,
+      hit ? (roll.damage?.total ?? 0) : 0,
+      roll.damage?.type ?? '',
+      Boolean(request.magical) || spell !== null,
+      hit && roll.natural === 20,
     )
+    if (spend !== 'none') {
+      setTurn(me.id, (turn) =>
+        spend === 'reaction'
+          ? { ...turn, reactionUsed: true }
+          : { ...turn, actionUsed: true, attacksMade: turn.attacksMade + 1 },
+      )
+    }
     post(
       {
-        kind: 'attack',
+        kind: spell ? 'spell' : 'attack',
         actorId: me.id,
         targetId: target.id,
         rollId: roll.id,
@@ -243,11 +297,12 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           damageType: roll.damage?.type ?? '',
           adjust,
           total: me.kind === 'character' ? roll.total : null,
-          down,
-          reaction,
+          down: hit && down,
+          reaction: spend === 'reaction',
+          ...(spell ? { spell: spell.name, slot: spell.slot, attack: true } : {}),
         },
       },
-      { target: undoTarget, actor: { id: me.id, turn: me.turn } },
+      { target: undoTarget, actor: { id: me.id, turn: me.turn }, caster: spell?.caster },
     )
     return { ...roll, passed: hit, passedByDice: hit }
   }
@@ -376,7 +431,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       if (attacksLeft(me.turn, perAction) === 0 && me.kind === 'character') {
         throw new Error('You have used your action this turn.')
       }
-      return settle(me, target, request, false)
+      return settle(me, target, request, 'action')
     },
     prompts,
     strike: async (prompt, request) => {
@@ -386,7 +441,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       if (!me || !target) throw new Error('That chance has passed.')
       if (me.turn.reactionUsed && me.kind === 'character') throw new Error('You have used your reaction.')
       setPrompts((list) => list.filter((p) => p.id !== prompt.id))
-      return settle(me, target, request, true)
+      return settle(me, target, request, 'reaction')
     },
     letGo: (prompt) => setPrompts((list) => list.filter((p) => p.id !== prompt.id)),
     deathSave: async (combatant) => {
@@ -475,9 +530,179 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           combatants: f.combatants.map((c) => (c.id === secret.combatantId ? { ...c, health } : c)),
         }))
       }
-      setTurn(saved.actor.id, (turn) => ({ ...saved.actor.turn, feetMoved: turn.feetMoved }))
+      const actor = saved.actor
+      if (actor) setTurn(actor.id, (turn) => ({ ...actor.turn, feetMoved: turn.feetMoved }))
+      if (saved.caster) {
+        const { spellcasting, concentration } = saved.caster.before
+        onCharacter?.(saved.caster.characterId, { spellcasting, concentration })
+      }
       latest.current.events = latest.current.events.map((e) => (e.id === newest.id ? { ...e, undone: true } : e))
       setEvents(latest.current.events)
+    },
+    cast: async (caster, spell, slot, targetIds, roll, area) => {
+      const f = latest.current.fight
+      const me = f?.combatants.find((c) => c.id === caster.id)
+      const character = characters.find((c) => c.id === me?.characterId)
+      if (!f || !me || !character) throw new Error('No fight')
+      if (spell.cost !== 'reaction' && f.encounter.currentId !== me.id) throw new Error('It isn’t your turn.')
+      if (spell.cost === 'action' && (me.turn.actionUsed || me.turn.attacksMade > 0)) {
+        throw new Error('You have used your action this turn.')
+      }
+      if (spell.cost === 'bonus' && me.turn.bonusUsed) throw new Error('You have used your bonus action this turn.')
+      if (spell.cost === 'reaction' && me.turn.reactionUsed) throw new Error('You have used your reaction.')
+      if (slot > 0 && slotsLeft(character.spellcasting, slot) === 0) throw new Error(`No level ${slot} slots left.`)
+
+      // As cast_spell: spend the turn and the slot, start concentrating, leave the area.
+      const casterUndo = { characterId: character.id, before: stateOf(character) }
+      const before = { ...me, turn: me.turn }
+      setTurn(me.id, (turn) => ({
+        ...turn,
+        actionUsed: turn.actionUsed || spell.cost === 'action',
+        bonusUsed: turn.bonusUsed || spell.cost === 'bonus',
+        reactionUsed: turn.reactionUsed || spell.cost === 'reaction',
+      }))
+      onCharacter?.(character.id, {
+        spellcasting: {
+          ...character.spellcasting,
+          slotsUsed: character.spellcasting.slotsUsed.map((used, i) => (i === slot - 1 ? used + 1 : used)),
+        },
+        ...(spell.concentration ? { concentration: spell.name, concentrationDc: null } : {}),
+      })
+      if (area) {
+        options.onArea?.({ ...area, label: spell.name, characterId: character.id, concentration: spell.concentration })
+      }
+      const targets = targetIds.flatMap((id) => f.combatants.filter((c) => c.id === id))
+
+      if (spell.kind === 'attack') {
+        if (!targets[0] || !roll || !('kind' in roll)) throw new Error('Pick who the spell is for.')
+        return settle(before, targets[0], { ...roll, label: spell.name }, 'none', {
+          name: spell.name,
+          slot,
+          caster: casterUndo,
+        })
+      }
+      if (['damage', 'heal'].includes(spell.kind) && targets.length === 0) throw new Error('Pick who the spell is for.')
+
+      const effect =
+        roll && !('kind' in roll) && roll.dice.length > 0
+          ? localRoll(
+              {
+                label: `${spell.name} ${spell.kind === 'heal' ? 'healing' : 'damage'}`,
+                kind: 'free',
+                characterId: character.id,
+                dice: roll.dice,
+                modifier: roll.modifier,
+                parts: [],
+                mode: 'normal',
+                damage: null,
+                secret: false,
+                requestId: null,
+              },
+              { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+            )
+          : null
+      const total = Math.max(0, effect?.total ?? 0)
+      const dc = spell.kind === 'save' ? spellSaveDc(character) : null
+      const actor = { id: me.id, turn: me.turn }
+      if (targets.length === 0) {
+        post(
+          {
+            kind: 'spell',
+            actorId: me.id,
+            targetId: null,
+            rollId: effect?.id ?? null,
+            shown: { spell: spell.name, slot, dc },
+          },
+          { target: null, actor, caster: casterUndo },
+        )
+      }
+      targets.forEach((target, i) => {
+        const targetCharacter = characters.find((c) => c.id === target.characterId)
+        let saveTotal: number | null = null
+        let passed: boolean | null = null
+        let result: ReturnType<typeof hurt> | null = null
+        let healed: Undo['target'] = null
+        if (spell.kind === 'save' && spell.save) {
+          const bonus = targetCharacter ? savingThrow(targetCharacter, spell.save as Ability).modifier : 0
+          const rolled = secureDraw(20) + bonus
+          passed = rolled >= (dc ?? 10)
+          if (targetCharacter) saveTotal = rolled
+          if (total > 0) {
+            const amount = !passed ? total : spell.dcSuccess === 'half' ? Math.floor(total / 2) : 0
+            result = hurt(target, amount, spell.damageType ?? '', true, false)
+          }
+        } else if (spell.kind === 'damage') {
+          result = hurt(target, total, spell.damageType ?? '', true, false)
+        } else if (spell.kind === 'heal' && targetCharacter && !targetCharacter.dead) {
+          healed = { characterId: targetCharacter.id, before: stateOf(targetCharacter) }
+          const currentHp = Math.min(targetCharacter.maxHp, targetCharacter.currentHp + total)
+          onCharacter?.(targetCharacter.id, {
+            currentHp,
+            ...(targetCharacter.currentHp === 0 && currentHp > 0
+              ? {
+                  deathSaveSuccesses: 0,
+                  deathSaveFailures: 0,
+                  stable: false,
+                  conditions: targetCharacter.conditions.filter((c) => c !== 'unconscious'),
+                }
+              : {}),
+          })
+        }
+        post(
+          {
+            kind: 'spell',
+            actorId: me.id,
+            targetId: target.id,
+            rollId: effect?.id ?? null,
+            shown: {
+              spell: spell.name,
+              slot,
+              save: passed === null ? null : passed ? 'passed' : 'failed',
+              saveAbility: spell.save ?? null,
+              dc,
+              saveTotal,
+              damage: result?.damage ?? null,
+              damageType: result ? (spell.damageType ?? null) : null,
+              adjust: result?.adjust ?? null,
+              down: result?.down ?? false,
+              heal: spell.kind === 'heal' ? total : null,
+            },
+          },
+          {
+            target: result?.undoTarget ?? healed,
+            actor: i === 0 ? actor : null,
+            caster: i === 0 ? casterUndo : undefined,
+          },
+        )
+      })
+      return effect
+    },
+    concentrationSave: async (characterId) => {
+      const character = characters.find((c) => c.id === characterId)
+      if (!character?.concentration || character.concentrationDc === null) {
+        throw new Error('There’s no concentration save to make.')
+      }
+      const request = savingThrow(character, 'constitution')
+      const roll = localRoll(
+        { ...request, label: `Constitution save: keep concentrating on ${character.concentration}` },
+        { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+      )
+      const kept = roll.total >= character.concentrationDc
+      onCharacter?.(character.id, kept ? { concentrationDc: null } : { concentration: null, concentrationDc: null })
+      const me = latest.current.fight?.combatants.find((c) => c.characterId === character.id)
+      if (me) {
+        post(
+          {
+            kind: 'concentration',
+            actorId: me.id,
+            targetId: me.id,
+            rollId: roll.id,
+            shown: { spell: character.concentration, dc: character.concentrationDc, total: roll.total, kept },
+          },
+          { target: { characterId: character.id, before: stateOf(character) }, actor: null },
+        )
+      }
+      return { ...roll, passed: kept, passedByDice: kept }
     },
     walk: (combatantId, feet) => setTurn(combatantId, (turn) => ({ ...turn, feetMoved: turn.feetMoved + feet })),
     provoke: (moverId, from, to, tokens) => {

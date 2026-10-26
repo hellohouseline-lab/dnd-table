@@ -15,6 +15,7 @@ import { useParty } from '../../live/useParty.ts'
 import { useLibrary, useStage } from '../../live/useStage.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { useRollRequest } from '../../live/useRollRequest.ts'
+import { useAreas } from '../../live/areas.ts'
 import { heal, takeDamage } from '../../rules/maths/hitPoints.ts'
 import type { Character } from '../../rules/character.ts'
 import { BattleView } from '../battle/BattleView.tsx'
@@ -32,6 +33,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const audio = useTableAudio(campaignId, user.id, stage.stage, library.assets)
   const fight = useFight(campaignId, user.id)
   const tokens = useTokens(campaignId, user.id, stage.stage.mapId)
+  const areas = useAreas(campaignId, user.id, stage.stage.mode === 'map' ? stage.stage.mapId : null)
   const asking = useRollRequest(campaignId, user.id, true)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
@@ -112,6 +114,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
         onCharacterHp={changeHp}
         onUpdate={(id, patch) => party.status === 'ready' && party.update(id, patch)}
         asking={asking}
+        areas={areas}
         onGrid={changeGrid}
         onShowStage={() => setStageDuring(fighting.encounter.id)}
       />

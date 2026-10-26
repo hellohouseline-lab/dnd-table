@@ -14,6 +14,11 @@ import {
 } from '../rules/combat.ts'
 import type { RollRequest } from '../rules/dice.ts'
 import { threatReach, type TurnRecord } from '../rules/turn.ts'
+import type { AreaTemplate } from '../rules/areas.ts'
+import type { DiceGroup } from '../rules/dice.ts'
+import type { SpellKind } from '../rules/spells.ts'
+import { areaToJson, type AreaTone } from './areas.ts'
+import type { Json } from './database.types.ts'
 import type { Defences } from '../rules/damage.ts'
 import type { SrdMonster } from '../rules/srd/index.ts'
 import type { Tables } from './database.types.ts'
@@ -59,14 +64,14 @@ export type CombatEvent = {
   round: number
   actorId: string | null
   targetId: string | null
-  kind: 'attack' | 'action' | 'death_save'
+  kind: 'attack' | 'action' | 'death_save' | 'spell' | 'concentration'
   rollId: string | null
   shown: {
     label?: string
     hit?: boolean
     critical?: boolean
-    damage?: number
-    damageType?: string
+    damage?: number | null
+    damageType?: string | null
     /** A player's own attack total; null for a monster's, which stays behind the screen. */
     total?: number | null
     /** The target dropped to 0 hit points. */
@@ -82,6 +87,20 @@ export type CombatEvent = {
     rolled?: number
     successes?: number
     failures?: number
+    /** For spells: its name and the slot it was cast with (0 for a cantrip). */
+    spell?: string
+    slot?: number
+    /** A spell attack (hit, damage and so on as for an attack). */
+    attack?: boolean
+    /** A spell's saving throw: how it went, the ability and the DC. A monster's total is never sent. */
+    save?: 'passed' | 'failed' | null
+    saveAbility?: string | null
+    dc?: number | null
+    saveTotal?: number | null
+    /** Hit points a healing spell gave back. */
+    heal?: number | null
+    /** For a concentration save: whether the spell held. */
+    kept?: boolean
   }
   undone: boolean
   seq: number
@@ -179,7 +198,10 @@ export function rowToEvent(row: Tables<'combat_events'>): CombatEvent {
     round: row.round,
     actorId: row.actor_id,
     targetId: row.target_id,
-    kind: row.kind === 'attack' || row.kind === 'death_save' ? row.kind : 'action',
+    kind:
+      row.kind === 'attack' || row.kind === 'death_save' || row.kind === 'spell' || row.kind === 'concentration'
+        ? row.kind
+        : 'action',
     rollId: row.roll_id,
     shown: shown as CombatEvent['shown'],
     undone: row.undone,
@@ -451,6 +473,56 @@ export async function listPrompts(encounterId: string): Promise<ReactionPrompt[]
     .order('created_at', { ascending: true })
   if (error) throw fromDatabaseError(error)
   return data.map(rowToPrompt)
+}
+
+/** A spell as cast_spell needs it, from its SRD entry and the caster's sheet. */
+export type SpellCast = {
+  index: string | null
+  name: string
+  level: number
+  cost: 'action' | 'bonus' | 'reaction'
+  concentration: boolean
+  kind: SpellKind
+  save?: string
+  dcSuccess?: 'half' | 'none'
+  damageType?: string | null
+}
+
+/**
+ * Casts a spell on the server: spends its slot and its part of the turn, then settles it against
+ * the targets (or everyone in its area). `roll` is the attack roll for an attack spell, otherwise
+ * the dice of what it does. A lasting `area` is left on the map on stage.
+ */
+export async function castSpell(
+  combatantId: string,
+  spell: SpellCast,
+  slot: number,
+  targetIds: string[],
+  roll: RollRequest | { dice: DiceGroup[]; modifier: number } | null,
+  area: (AreaTemplate & { tone: AreaTone }) | null,
+): Promise<{ roll: Roll | null; events: CombatEvent[] }> {
+  const { data, error } = await db().rpc('cast_spell', {
+    p_combatant_id: combatantId,
+    p_spell: spell as unknown as Json,
+    p_slot_level: slot,
+    p_target_ids: targetIds,
+    p_roll: (roll === null ? {} : 'kind' in roll ? requestToJson(roll) : roll) as unknown as Json,
+    p_area: (area ? areaToJson(area) : null) as unknown as Json,
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'> | null; events: Tables<'combat_events'>[] }
+  return {
+    roll: result.roll && result.roll.id ? rowToRoll(result.roll) : null,
+    events: (result.events ?? []).map(rowToEvent),
+  }
+}
+
+/** Rolls the Constitution save to keep concentrating, on the server; failing it ends the spell. */
+export async function rollConcentrationSave(characterId: string): Promise<{ roll: Roll; kept: boolean }> {
+  const { data, error } = await db().rpc('concentration_save', { p_character_id: characterId })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; kept: boolean }
+  return { roll: rowToRoll(result.roll), kept: result.kept }
 }
 
 /** Rolls a death save for a character at 0 hit points, on the server. */

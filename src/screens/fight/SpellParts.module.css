@@ -1,0 +1,109 @@
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.slotLevel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slotWord {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.level {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+/* "C" for concentration, as on the turn order. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--pass);
+  color: var(--pass);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  flex: none;
+}
+
+.concentration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(134, 212, 232, 0.4);
+  background: rgba(134, 212, 232, 0.08);
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.concentration .badge {
+  margin-left: 0;
+}
+
+.owed {
+  border-color: var(--fail);
+  background: rgba(224, 123, 66, 0.12);
+}
+
+.concentrationWords {
+  flex: 1;
+}
+
+.concentrationWords strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.save,
+.lost {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex: none;
+}
+
+.save {
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--on-gold);
+}
+
+.save:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.lost {
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-3);
+}
+
+.lost:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}

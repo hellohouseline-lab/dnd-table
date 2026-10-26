@@ -7,7 +7,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
-import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Token } from '../../live/combat.ts'
 import { emptyStage, type Stage, type StagePatch } from '../../live/stage.ts'
 import type { Character } from '../../rules/character.ts'
@@ -15,6 +14,7 @@ import { feetBetween } from '../../rules/combat.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import { BattleView } from '../battle/BattleView.tsx'
 import { usePreviewAsking } from './previewAsking.ts'
+import { usePreviewAreas } from './previewAreas.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
@@ -27,10 +27,14 @@ export function BattlePreview() {
   const [map] = useState(previewMap)
   const [stage, setStage] = useState<Stage>(() => ({ ...emptyStage('preview'), mapId: map.id, mode: 'map' }))
   const change = useCallback((patch: StagePatch) => setStage((now) => ({ ...now, ...patch })), [])
-  const update = (id: string, patch: TrackerPatch) =>
+  const areas = usePreviewAreas(map.id)
+  const update = (id: string, patch: Partial<Character>) => {
     setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
+    // Lost it, or a failed save: the spell's area goes too.
+    if (patch.concentration === null) areas.endConcentration(id)
+  }
   const [fightStart] = useState(() => sampleFight(sampleCharacters))
-  const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
+  const fight = usePreviewFight(fightStart, { characters, onCharacter: update, onArea: areas.fromSpell })
   // Made-up players answer a roll the DM asks for a moment after it's sent.
   const asking = usePreviewAsking(characters, { answerFor: sampleCharacters.map((c) => c.id) })
   // Moving the creature whose turn it is counts its feet, as on the server; the DM is never stopped.
@@ -79,6 +83,7 @@ export function BattlePreview() {
         }
         onUpdate={update}
         asking={asking}
+        areas={areas}
         onGrid={() => undefined}
         onShowStage={() => undefined}
         thrower={thrower}

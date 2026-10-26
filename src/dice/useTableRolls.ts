@@ -12,8 +12,11 @@ const MAX_SHOWN = 3
 export type TableRolls = {
   /** Throws the dice on the server. Resolves with the roll, or null if it failed (see `error`). */
   roll: (request: RollRequest) => Promise<Roll | null>
-  /** Throws some other way, such as an attack settled on the server, and shows it like any roll. */
-  rollWith: (work: () => Promise<Roll>) => Promise<Roll | null>
+  /**
+   * Throws some other way, such as an attack settled on the server, and shows it like any roll.
+   * Work that turns out to throw no dice (a spell such as Bless) resolves with null.
+   */
+  rollWith: (work: () => Promise<Roll | null>) => Promise<Roll | null>
   /** Throws and shows a roll made in this browser only, such as a practice throw. */
   showLocal: (roll: Roll) => void
   /** The result cards showing now, oldest first. */
@@ -62,12 +65,12 @@ export function useTableRolls({ campaignId, userId, throwDice, thrower, onLanded
   useRollInserts(campaignId, userId, present)
 
   const rollWith = useCallback(
-    async (work: () => Promise<Roll>) => {
+    async (work: () => Promise<Roll | null>) => {
       setError(null)
       setRolling(true)
       try {
         const result = await work()
-        present(result)
+        if (result) present(result)
         return result
       } catch (caught) {
         setError(messageFor(caught))

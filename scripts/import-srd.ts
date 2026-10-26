@@ -44,18 +44,42 @@ function write(file: string, data: Record<string, unknown>): void {
   console.log(`wrote ${file}`)
 }
 
-const text = (lines: string[] | string | undefined): string => (Array.isArray(lines) ? lines.join('\n\n') : (lines ?? ''))
+const text = (lines: string[] | string | undefined): string =>
+  Array.isArray(lines) ? lines.join('\n\n') : (lines ?? '')
 const bonuses = (list: Raw[] = []): Record<string, number> =>
   Object.fromEntries(list.map((b) => [ABILITY[b.ability_score.index], b.bonus]))
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true })
-  const [skills, conditions, equipment, classes, levels, races, subraces, traits, backgrounds, features, spells, monsters] =
-    await Promise.all(
-      ['Skills', 'Conditions', 'Equipment', 'Classes', 'Levels', 'Races', 'Subraces', 'Traits', 'Backgrounds', 'Features', 'Spells', 'Monsters'].map(
-        load,
-      ),
-    )
+  const [
+    skills,
+    conditions,
+    equipment,
+    classes,
+    levels,
+    races,
+    subraces,
+    traits,
+    backgrounds,
+    features,
+    spells,
+    monsters,
+  ] = await Promise.all(
+    [
+      'Skills',
+      'Conditions',
+      'Equipment',
+      'Classes',
+      'Levels',
+      'Races',
+      'Subraces',
+      'Traits',
+      'Backgrounds',
+      'Features',
+      'Spells',
+      'Monsters',
+    ].map(load),
+  )
 
   // Small and needed everywhere on the sheet: skills, conditions, weapons.
   write('basics.json', {
@@ -167,11 +191,19 @@ async function main(): Promise<void> {
     features: Object.fromEntries(
       features.map((f) => [
         f.index,
-        { name: f.name, class: f.class?.index ?? null, subclass: f.subclass?.index ?? null, level: f.level, desc: text(f.desc) },
+        {
+          name: f.name,
+          class: f.class?.index ?? null,
+          subclass: f.subclass?.index ?? null,
+          level: f.level,
+          desc: text(f.desc),
+        },
       ]),
     ),
   })
 
+  // A spell's damage comes as a list (one entry for every spell in the SRD).
+  const spellDamage = (s: Raw): Raw | undefined => (Array.isArray(s.damage) ? s.damage[0] : s.damage)
   write('spells.json', {
     spells: spells.map((s) => ({
       index: s.index,
@@ -192,11 +224,11 @@ async function main(): Promise<void> {
       // What a save does on a success: half the damage, or none.
       dcSuccess: s.dc?.dc_success === 'half' || s.dc?.dc_success === 'none' ? s.dc.dc_success : undefined,
       // Damage by slot level ("8d6" at 3rd), or for cantrips by character level ("2d10" from 5th).
-      damage: s.damage?.damage_type
+      damage: spellDamage(s)?.damage_type
         ? {
-            type: (s.damage.damage_type.name as string).toLowerCase(),
-            slots: s.damage.damage_at_slot_level,
-            levels: s.damage.damage_at_character_level,
+            type: String(spellDamage(s)?.damage_type?.name ?? '').toLowerCase(),
+            slots: spellDamage(s)?.damage_at_slot_level,
+            levels: spellDamage(s)?.damage_at_character_level,
           }
         : undefined,
       heal: s.heal_at_slot_level ?? undefined,

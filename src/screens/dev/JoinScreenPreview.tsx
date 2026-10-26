@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
-import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Token } from '../../live/combat.ts'
 import { newBuild, type Character } from '../../rules/character.ts'
 import { feetBetween } from '../../rules/combat.ts'
@@ -19,6 +18,7 @@ import { TableView } from '../table/TableView.tsx'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
+import { usePreviewAreas } from './previewAreas.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { loadBackgrounds, loadClasses, loadRaces } from '../../rules/srd/index.ts'
@@ -55,6 +55,7 @@ export function JoinScreenPreview({ as }: { as: string }) {
  * with the DM asking for a Constitution save (DC 15, secret), which Elowen has already rolled.
  * #/dev/table/reaction: on Goblin A's turn it has just stepped away from Thorin, who may strike.
  * #/dev/table/dying: Thorin's turn at 0 hit points, with one death save failed.
+ * #/dev/table/caster: Elowen's turn (played by Alex), with her spells in the hand.
  */
 export function TablePreview({
   asked = false,
@@ -63,8 +64,9 @@ export function TablePreview({
 }: {
   asked?: boolean
   fighting?: boolean
-  variant?: 'reaction' | 'dying' | null
+  variant?: 'reaction' | 'dying' | 'caster' | null
 }) {
+  const caster = variant === 'caster'
   const [characters, setCharacters] = useState<Character[]>(() =>
     variant === 'dying'
       ? sampleCharacters.map((c, i) =>
@@ -83,14 +85,28 @@ export function TablePreview({
   const [fightStart] = useState(() => {
     if (!fighting) return null
     const sample = sampleFight(sampleCharacters)
-    if (variant !== 'reaction') return sample
-    return { ...sample, encounter: { ...sample.encounter, currentId: 'goblin-1' } }
+    if (variant === 'reaction') return { ...sample, encounter: { ...sample.encounter, currentId: 'goblin-1' } }
+    if (variant === 'caster') {
+      const elowen = `fighter-${sampleCharacters[1].id}`
+      return {
+        ...sample,
+        encounter: { ...sample.encounter, currentId: elowen },
+        combatants: sample.combatants.map((c) => (c.id === elowen ? { ...c, initiative: 16 } : c)),
+      }
+    }
+    return sample
   })
-  const update = (id: string, patch: TrackerPatch) =>
+  const [map] = useState(() => (fighting ? previewMap() : null))
+  const areas = usePreviewAreas(map?.id ?? null)
+  const update = (id: string, patch: Partial<Character>) => {
     setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
+    // Lost it, or a failed save: the spell's area goes too.
+    if (patch.concentration === null) areas.endConcentration(id)
+  }
   const fight = usePreviewFight(fightStart, {
     characters,
     onCharacter: update,
+    onArea: areas.fromSpell,
     prompts:
       variant === 'reaction' && fightStart
         ? [
@@ -105,7 +121,6 @@ export function TablePreview({
           ]
         : [],
   })
-  const [map] = useState(() => (fighting ? previewMap() : null))
   const [mapStart] = useState(() =>
     map
       ? previewMapTokens(map.id, fightStart).map((t) =>
@@ -141,11 +156,11 @@ export function TablePreview({
     [diceStyle],
   )
   return (
-    <SignedInAs userId="p1">
+    <SignedInAs userId={caster ? 'p2' : 'p1'}>
       <TableView
         campaignId="preview"
-        me={sampleMembers[1]}
-        character={characters[0]}
+        me={sampleMembers[caster ? 2 : 1]}
+        character={characters[caster ? 1 : 0]}
         members={sampleMembers}
         characters={characters}
         online={online}
@@ -167,6 +182,9 @@ export function TablePreview({
                 strike: fight.strike,
                 letGo: fight.letGo,
                 deathSave: fight.deathSave,
+                cast: fight.cast,
+                concentrationSave: fight.concentrationSave,
+                areas: areas.areas,
                 map,
                 tokens,
                 playersMove: true,

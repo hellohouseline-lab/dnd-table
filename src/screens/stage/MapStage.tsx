@@ -6,6 +6,7 @@ import type { FightControls, Pointer, TokenControls } from '../../live/useFight.
 import type { Character } from '../../rules/character.ts'
 import { freeSquares, mapTokens } from '../../map/mapTokens.ts'
 import { movementLeft, type Reach } from '../../rules/turn.ts'
+import type { MapArea, MapPlacing } from '../../map/BattleMap.tsx'
 import styles from './StageView.module.css'
 
 const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
@@ -30,6 +31,11 @@ type MapStageProps = {
   targeting?: { onPick: (token: Token) => void } | null
   /** An attack being aimed: who from, and how far it reaches. */
   aim?: { attackerId: string; reach: Reach } | null
+  /** Areas on the map, and clicking one (to take it off). */
+  areas?: MapArea[]
+  onAreaClick?: (id: string) => void
+  /** Putting an area down: where it starts from (a combatant, for a cone), and what happens when it's placed. */
+  placing?: (Omit<MapPlacing, 'from'> & { fromId: string | null }) | null
 }
 
 const GRID_STEP = 2
@@ -47,6 +53,9 @@ export function MapStage({
   className,
   targeting = null,
   aim = null,
+  areas = [],
+  onAreaClick,
+  placing = null,
 }: MapStageProps) {
   const [selected, setSelected] = useState<string | null>(null)
   const combatants = fight?.combatants ?? []
@@ -87,6 +96,8 @@ export function MapStage({
         }
       : null
 
+  const placingFrom = placing?.fromId ? tokenOf(combatants.find((c) => c.id === placing.fromId)) : undefined
+
   function place(kind: 'party' | 'monsters') {
     const squares = freeSquares(
       tokens.tokens,
@@ -118,6 +129,14 @@ export function MapStage({
             targeting={targeting !== null}
             reach={reach}
             aim={aimBand}
+            areas={areas}
+            onAreaClick={onAreaClick}
+            placing={
+              placing && {
+                ...placing,
+                from: placing.fromId && placingFrom ? { x: placingFrom.x, y: placingFrom.y } : null,
+              }
+            }
             onMove={(id, x, y) => {
               const token = tokens.tokens.find((t) => t.id === id)
               if (token) tokens.move(token, x, y)

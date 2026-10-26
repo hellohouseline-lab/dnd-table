@@ -33,6 +33,8 @@ const controls: FightControls = {
   strike: () => Promise.reject(new Error('No fight')),
   letGo: noop,
   deathSave: () => Promise.reject(new Error('No fight')),
+  cast: () => Promise.reject(new Error('No fight')),
+  concentrationSave: () => Promise.reject(new Error('No fight')),
 }
 
 describe('the turn order', () => {

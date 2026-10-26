@@ -61,6 +61,51 @@
   color: var(--pass);
 }
 
+.spell {
+  color: var(--gold);
+}
+
+/* A caster's two sets of cards, and the slots left above the spells. */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sets {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 12, 20, 0.85);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-3);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tabOn {
+  border-color: var(--gold-rule);
+  color: var(--gold-light);
+}
+
 .art {
   flex: 1;
   display: flex;

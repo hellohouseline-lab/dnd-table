@@ -5,11 +5,18 @@ import type { AttackEntry, Character } from '../../rules/character.ts'
 import { actionSummary, crText, HEALTH_WORDS, isAttack } from '../../rules/combat.ts'
 import { defencesText, NO_DEFENCES } from '../../rules/damage.ts'
 import { abilityModifier, formatBonus } from '../../rules/maths/core.ts'
-import { CONDITIONS, findCondition, type SrdMonster, type SrdMonsterAction } from '../../rules/srd/index.ts'
+import {
+  CONDITIONS,
+  findCondition,
+  type SrdMonster,
+  type SrdMonsterAction,
+  type SrdSpell,
+} from '../../rules/srd/index.ts'
 import { fightRows, turnLimits, type FightRow } from './fightRows.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
+import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Aiming } from './useAiming.ts'
 
@@ -165,8 +172,14 @@ type ActingNowProps = {
   onOpenSheet: (character: Character) => void
   /** A character at 0 hit points: roll their death save. */
   onDeathSave?: (row: FightRow) => void
-  /** Changes a character's sheet: Stabilise, or up with 1 hit point. */
+  /** Changes a character's sheet: Stabilise, up with 1 hit point, or Lost it (concentration). */
   onUpdate?: (characterId: string, patch: TrackerPatch) => void
+  /** The SRD spells, for a caster's spell list. */
+  spells?: SrdSpell[] | null
+  /** Acting for a caster: one of their spells, then its target or where it goes. */
+  onCast?: (row: FightRow, spell: SrdSpell) => void
+  /** Rolls the save a caster owes to keep concentrating. */
+  onConcentrationSave?: (character: Character) => void
   /** Show the number key for each attack (the Battle screen's keyboard). */
   numbered?: boolean
   rolling?: boolean
@@ -183,6 +196,9 @@ export function ActingNow({
   onOpenSheet,
   onDeathSave,
   onUpdate,
+  spells = null,
+  onCast,
+  onConcentrationSave,
   numbered = false,
   rolling,
   className,
@@ -261,6 +277,24 @@ export function ActingNow({
               </li>
             ))}
           </ul>
+          {onCast && row.character.spellcasting.spells.length > 0 && (
+            <>
+              <div className={styles.legend}>Spells</div>
+              <SlotPips spellcasting={row.character.spellcasting} />
+              <SpellList
+                character={row.character}
+                spells={spells}
+                onCast={(spell) => onCast(row, spell)}
+                rolling={rolling}
+              />
+            </>
+          )}
+          <ConcentrationChip
+            character={row.character}
+            onLostIt={onUpdate && (() => row.character && onUpdate(row.character.id, { concentration: null }))}
+            onSave={onConcentrationSave && (() => row.character && onConcentrationSave(row.character))}
+            rolling={rolling}
+          />
           <button
             type="button"
             className={styles.secondary}
