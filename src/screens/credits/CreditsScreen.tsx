@@ -43,6 +43,13 @@ export function CreditsScreen() {
         </p>
       </Panel>
 
+      <Panel title="Battle maps">
+        <p>
+          Battle maps are drawn with <a href="https://konvajs.org">Konva</a> and react-konva by Anton Lavrenov, free
+          under the MIT License. The maps themselves are the DM&rsquo;s own.
+        </p>
+      </Panel>
+
       <Panel title="Sound">
         <p>
           Music, ambience and sound effects play through <a href="https://howlerjs.com">Howler.js</a> by James Simpson
