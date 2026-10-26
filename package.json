@@ -14,7 +14,9 @@
     "test:db": "node scripts/test-db.mjs",
     "lint": "oxlint",
     "db:push": "supabase db push --linked",
-    "db:types": "supabase gen types typescript --linked --schema public > src/live/database.types.ts"
+    "db:types": "supabase gen types typescript --linked --schema public > src/live/database.types.ts",
+    "test:e2e": "node scripts/e2e.mjs",
+    "test:previews": "playwright test e2e/previews.spec.ts"
   },
   "dependencies": {
     "@3d-dice/dice-box-threejs": "0.0.12",
@@ -26,6 +28,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
