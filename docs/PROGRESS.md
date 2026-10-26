@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Voice and cameras decided (26 October): VDO.Ninja, built into the app.** Twitch Stream Together's camera links work in OBS, but Twitch won't let its pages be shown inside another website, so they couldn't fill the camera tiles. The milestone 7 plan is in `PHASE1_PLAN.md` section 8.
 - **Milestone 6, combat and the battle map (26 October).**
   - Rules data: all 334 SRD monsters (`src/rules/srd/monsters.json`: AC, HP, speed, abilities, CR, XP, traits, actions with attack bonus and damage), loaded only on the DM's screens.
   - Database: `encounters`, `combatants` (everyone sees the turn order; a monster shows as "Unknown creature N" and a health word until revealed), `combatant_secrets` (a monster's real name, HP and AC: DM only), `tokens` (players see them only while the map is on stage, never hidden ones, and move only their own while the DM allows it), and battle maps on the stage (`map_id`, `mode`, `players_move_tokens`, a grid size and offset on each map). `roll_initiative` throws initiative on the server (monsters behind the screen); `end_turn` works out who goes next (the DM any time, a player on their own turn). 37 more database tests.
@@ -47,7 +48,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Milestone 7, cameras in the app:** camera tiles in the column on every screen, name plates, turn glow and roll chips, built around whichever voice and camera setup wins the test call (step D in `PHASE1_PLAN.md`). Needs Matt's answer from that test first.
+- **Milestone 7, cameras and voice in the app:** VDO.Ninja built in. Join voice and camera, the camera check on the Join screen, live tiles on every screen, mute, camera off and volume. Planned in `PHASE1_PLAN.md` section 8; waiting for Matt's go-ahead.
 
 ## Targets
 - Test one-shot with a fight: 21 to 22 November 2026.
@@ -55,11 +56,11 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Waiting on Matt
 - **Run a two-goblin fight** across two browsers: on Screen 2 put a battle map on stage (Maps in the library), **Add the party**; on Screen 1 press **Start combat**, add 2 goblins, start; as the player roll initiative, see "Unknown creature" in the turn order until you click **Reveal name**; move your token, end your turn.
-- **Before milestone 7:** the voice and camera test call (see below) decides how milestone 7 is built.
+- **Approve the milestone 7 plan** (`PHASE1_PLAN.md` section 8), and say yes or no to the ring around whoever is talking.
 - **Try milestones 2 to 5** on the live site with two browsers (DM and player): make a character, take your seat, roll dice and watch them land on the DM screen; ask for a Constitution save and apply damage; then open **Screen 2: Stage**, upload a tavern picture and a track, put the picture on stage and press play, and check the player hears it a second later. Nobody has used these on the real site yet, because Claude can't sign in there.
 - **Your music and art:** upload from your Envato Elements downloads on the Stage screen (MP3 or OGG up to 15 MB; pictures of any size). The free plan has 1 GB of storage; the Stage screen shows how much is used.
 - **Test logins, for the two-browser Playwright test (optional, a few minutes):** in Supabase, **Authentication**, **Users**, **Add user**, **Create new user**: an email such as `hellohouseline+dm-test@gmail.com`, a password, and tick **Auto Confirm User**. Do it again for `hellohouseline+player-test@gmail.com`. Then run `npm run test:e2e` in Terminal: it asks for both emails and passwords (hidden as you type), makes a throwaway campaign, runs the test and deletes it. Claude never sees the passwords.
-- **Before milestone 7:** a test call with the group to choose voice and cameras (step D): Twitch Stream Together, VDO.Ninja for both, or Discord plus VDO.Ninja.
+- **Before the test one-shot, ask the group** (step D in `PHASE1_PLAN.md`): an upload speed test at speedtest.net, headphones, Chrome or Edge, and on Windows close other camera apps before joining.
 
 ## Notes for the next session
 - The project needs Node 24 (`.nvmrc`). Matt's Mac default is still Node 20, so run commands with Node 24 on the PATH (`~/.nvm/versions/node/v24.22.1/bin`).

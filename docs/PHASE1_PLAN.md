@@ -64,8 +64,8 @@ A **table** is a spreadsheet-like list in the database. Phase 1 needs these (all
 
 | Table | What a row is | Who writes it |
 | --- | --- | --- |
-| `campaigns` | Name, party size, starting level, join code, the DM | DM |
-| `campaign_members` | One person at the table: role, display name, colour, VDO.Ninja camera link, "here tonight" | Each person their own row; DM any |
+| `campaigns` | Name, party size, starting level, join code, the DM, a camera password | DM |
+| `campaign_members` | One person at the table: role, display name, colour, camera address (made by the app for VDO.Ninja), "here tonight" | Each person their own row; DM any |
 | `characters` | A character sheet: abilities, HP, AC, speed, proficiencies, saves, skills, conditions, Inspiration, attacks, features and uses, spell slots, dice style, portrait, private notes | Owner; DM any |
 | `roll_requests` | A DM ask: the check, plain-words line, who rolls, whether the number is shown, status | DM |
 | `roll_request_secrets` | The DC for a request. Separate table so players can never read it | DM; read by the judging function |
@@ -102,7 +102,7 @@ These rules live in the database, not just in the screens, so a curious player c
 | (Dice throws are not broadcast after all: since milestone 3 every screen animates the saved roll as it arrives, so secret rolls reach only the roller and the DM, by the database's rules) | Initiative, turn order, round, whose turn |
 | Sound effect pad presses, natural 20 and 1 stings | Token positions, hidden flags |
 | "Your turn" and "please roll" nudges | What is on stage, the track playing and its start time, ambience levels |
-| Who is online (Supabase presence) | Sheets, notebook, log, library |
+| Who is online, and who is in the call, muted or with their camera off (Supabase presence) | Sheets, notebook, log, library |
 
 Music sync works by saving "track X started at time T"; each browser plays the file locally from the right offset, so no audio goes over the call. All live traffic uses one private channel per campaign, protected by the same security rules.
 
@@ -133,7 +133,7 @@ A **bucket** is a folder of uploaded files. All three are private and served wit
 | Order | Screen (image) | Works in Phase 1 | Hidden or disabled until Phase 2 |
 | --- | --- | --- | --- |
 | 1 | Credits and a small Campaign setup form (no design; join-screen style) | Create campaign, party size, starting level, invite link and join code, attendance toggle | |
-| 2 | Join (01) | Email link sign-in, campaign header, "At the table now", pick your character, VDO.Ninja link box with preview | "Forge a new character" wizard: the card shows but opens a plain "type your sheet in" form |
+| 2 | Join (01) | Email link sign-in, campaign header, "At the table now", pick your character, camera check (preview, camera and microphone pickers, Join voice and camera) | "Forge a new character" wizard: the card shows but opens a plain "type your sheet in" form |
 | 3 | Player sheet panel (06, Sheet and Powers tabs) | Full sheet typed in, every derived number calculated live, weapons picked from the SRD list so damage fills in, features with uses, spell slots, hit dice, death saves, conditions, dice style, portrait upload | Inventory grid, equipped slots, coins, drag to give (a simple "gear and attacks" list sits on the Sheet tab instead); Journal and Lore tabs |
 | 4 | At the table (02) | Character plate, ability medallions, panel buttons, dice medallion and picker, hand of cards (attacks, features, quick items), "Now playing", camera column | Handout toast; Journal and Lore buttons |
 | 5 | Ask for a roll (08) | The nine preset checks plus "Any other skill or save", who rolls, Easy to Very hard or custom, "Tell players the number", confirmation sentence, send | |
@@ -142,7 +142,7 @@ A **bucket** is a folder of uploaded files. All three are private and served wit
 | 8 | DM Command (07) | Header with scene name and session clock, notebook (where we are, checklist, key items, quick note), Party tab with Damage or heal, Ask to roll, Rest; Log tab; verb bar: Ask for a roll, Start combat, Rest, Add a note | NPCs tab, Items and loot tab, Show an NPC, Give an item, Give item on cards, "view as player" |
 | 9 | DM Stage (11) | "What everyone sees" preview, art library (Places, Moments, People) with upload, put an image on stage, switch to a battle map, music by mood, ambience sliders, sound effects pad on keys 1 to 9, players-move-their-own-tokens toggle, a one-line "Scene now" name | Tonight's scenes list, people in this scene and lower thirds, Reveal hidden areas, DM-only dashed items, Chapter title card |
 | 10 | Player combat (05) and DM Encounter tab (10) | Start combat rolls monster initiative and prompts players, turn order on every screen, round counter, your-turn banner, This turn pips and End turn, grid map with tokens, movement circle from remaining speed, hands and pings, inspect card (shown name, token picture, health state), Acting now card with SRD actions, HP plus and minus, conditions, "Roll its attack in secret", Add a monster from the SRD, Reveal name (players see "Unknown creature" until you click it), Next turn, End fight | Difficulty badge, Too hard? Rebalance, XP sharing, difficult terrain, fog |
-| 11 | Stream overlay (12) | One 1920 by 1080 link per streamer: frame with transparent camera and chat windows, name plates with HP, turn glow, turn order panel, the stage in the centre, roll toasts and nat 20 or 1 moments, now playing, the streamer's own character card. Pieces can be switched off in the link (`?stage=0`) for anyone who wants to layer differently | Lower third (NPC names, item reveals); the 3-player quest card corner stays empty |
+| 11 | Stream overlay (12) | One 1920 by 1080 link per streamer: frame with everyone's cameras in it and a transparent chat window, name plates with HP, turn glow, turn order panel, the stage in the centre, roll toasts and nat 20 or 1 moments, now playing, the streamer's own character card. Pieces can be switched off in the link (`?stage=0`) for anyone who wants to layer differently | Lower third (NPC names, item reveals); the 3-player quest card corner stays empty |
 
 ## 5. Milestones
 
@@ -157,11 +157,11 @@ Each milestone is its own branch, merged to `main` when it works, so the live si
 | 4 | **The roll flow.** Screens 08, 03, 04, 09 end to end, secret DC judged on the server, overrides and outcome buttons, status chips. Playwright test added here | Ask for a Constitution save from the DM screen, roll it as a player, apply damage to the failed |
 | 5 | **Notebook and stage.** DM Command with notebook, party cards, damage or heal, rest, notes; DM Stage with art upload, image on stage, music, ambience, effects, now playing | Upload a tavern image and a track, press play, hear it on the player screen a second later |
 | 6 | **Combat and the battle map.** Map upload with grid alignment, tokens, hands, pings, initiative, turn order, your turn, movement circle, Acting now, health states, hidden monster names, conditions, end fight | Run a two-goblin fight across two browsers; the player sees "Unknown creature" until you click Reveal name |
-| 7 | **Cameras in the app.** Camera tiles in the column on every screen, name plates, turn glow, roll chips, built around whichever voice and camera setup wins your test call (step D) | Two laptops with webcams see and hear each other in sync |
-| 8 | **Stream overlay.** Overlay links, guest access, the 1920 by 1080 frame, stage mirror, toasts, own character card, an OBS scene collection file to import, audio through the overlay with "Control audio via OBS" | Add the browser source in OBS and watch a roll toast appear live |
+| 7 | **Cameras and voice in the app.** VDO.Ninja built in (decided 26 October): Join voice and camera, the camera check on the Join screen, live camera tiles on every screen with the name plates, turn glow and roll chips, mute, camera off and volume. Details in section 8 | Two computers with webcams see and hear each other in sync |
+| 8 | **Stream overlay.** Overlay links, guest access, the 1920 by 1080 frame with everyone's cameras in it, stage mirror, toasts, own character card, an OBS scene collection file to import, voices and game audio through the overlay with "Control audio via OBS" | Add the browser source in OBS and watch a roll toast appear live |
 | 9 | **Rehearsal fixes.** Keyboard shortcuts for every DM verb and effect, caching, keep-awake, whatever the test session showed | A dry run with the whole group on OBS |
 
-**Private test one-shot:** possible after milestone 5 for a theatre-of-the-mind game, after 6 if it has a fight. Cameras in the app are not needed for the test (use whichever call setup you're trying). **First stream:** after 8 and a rehearsal.
+**Private test one-shot:** possible after milestone 5 for a theatre-of-the-mind game, after 6 if it has a fight. Milestone 7 should land before it, so the test can use the app's own voice and cameras; Stream Together is the fallback. **First stream:** after 8 and a rehearsal.
 
 **Do the dates fit?** Honestly: mid-November (three weeks away) is tight. It needs the Supabase and GitHub settings done this week and each milestone tried within a day or two of landing. The build is not the slow part; your testing and the group's camera and OBS setup are. My estimate: milestones 0 to 6 by 15 to 20 November, so a test one-shot on 21 to 22 November is realistic, with 14 to 15 November possible for a fight-free one. A first stream on 5 to 6 December fits if the test happens by 22 November and every player sets up VDO.Ninja and OBS during November, in parallel.
 
@@ -191,19 +191,18 @@ Everything with an account, a key or a password is yours to do. I will tell you 
 
 Simplest: a Gmail **app password**. In your Google Account, **Security**, turn on **2-Step Verification**, then search the settings for **App passwords**, name it `Supabase`, click **Create** and copy the 16-character password. In B7 use Host `smtp.gmail.com`, Port `465`, Username and Sender email your Gmail address, Password the app password. (Chosen on 25 October.)
 
-**D. Voice and cameras (whole group, test before milestone 7)**
+**D. Voice and cameras (whole group, before the test one-shot)**
 
-You want voice and cameras in sync, so before milestone 7 run one short test call with the group and try:
+Decided on 26 October: VDO.Ninja for voice and cameras together, built into the app (section 8). Nobody needs a VDO.Ninja link or account. Before the test one-shot, ask everyone to:
 
-1. **Twitch Stream Together.** If it gives you voice and cameras in sync and works alongside the app and overlay, use it.
-2. **VDO.Ninja for voice and camera together.** One link per player carries both, so they stay in sync.
-3. **Discord for voice, VDO.Ninja for cameras.** The original plan. Simple, but voice and picture travel separately and can drift slightly.
-
-Tell me which one wins; milestones 7 and 8 are built around it. For options 2 and 3, each player makes a VDO.Ninja link: open vdo.ninja, click **Add your Camera to OBS**, pick the camera, choose the microphone for option 2 or **No Audio** for option 3, click **Start**, then copy the **view link** (it looks like `https://vdo.ninja/?view=xxxxxxxx`) into the **VDO.Ninja link** box on the Join screen. Bookmark the page: the same link works every session.
+1. Run a speed test at speedtest.net and send you the **Upload** number. About 12 Mbps or more is comfortable while streaming. Pass on anyone's number under 10 and I'll add the relay switch for them.
+2. Use **headphones**, so their microphone doesn't pick up everyone else's voices.
+3. Use **Chrome** or **Edge** for the table.
+4. On Windows, close other apps that use the camera (Teams, Zoom, the Camera app) before pressing **Join voice and camera**.
 
 **E. OBS (each streamer, milestone 8; I will write the exact steps then)**
 
-Your group streams from a mix of Macs and Windows PCs, so the steps will cover both. In short: import the scene collection file the app gives you, add one **Browser** source with your overlay link at 1920 by 1080 on top, place everyone's VDO.Ninja links and your own Twitch chat behind the windows, and hear game audio from one place only, the app tab or the overlay, never both.
+Your group streams from a mix of Macs and Windows PCs, so the steps will cover both. In short: import the scene collection file the app gives you, add one **Browser** source with your overlay link at 1920 by 1080 on top, the overlay shows everyone's cameras itself, so only your own Twitch chat goes behind its window, and hear game audio from one place only, the app tab or the overlay, never both.
 
 **F. Decisions.** All nine questions were answered on 25 October; see section 7.
 
@@ -215,7 +214,7 @@ Your group streams from a mix of Macs and Windows PCs, so the steps will cover b
 2. **Email sender.** Gmail app password (step C).
 3. **Music licence.** Your Envato Elements licence covers music on every player's channel, so the "stream-safe" tick starts on for Envato tracks.
 4. **Players' kit.** Everyone has OBS and a camera. The group is a mix of Macs and Windows PCs, so the OBS audio steps cover both.
-5. **Voice.** Not fixed yet. You want voice and cameras in sync and will test a few setups, ideally Twitch Stream Together (step D). Milestones 7 and 8 wait on the result; nothing before them does.
+5. **Voice.** Decided on 26 October: VDO.Ninja for voice and cameras together, built into the app (section 8). Your group knows Twitch Stream Together, whose camera links work in OBS, but Twitch won't let its pages be shown inside another website, so it couldn't fill the camera tiles.
 6. **Phase 1 characters.** Typed in by hand, with race, class and background from SRD lists. The wizard waits for Phase 2.
 7. **Dice looks.** Metal, glass and stone materials in Phase 1, built in milestone 3.
 8. **Overlay.** One link per streamer, with switches in the address to turn pieces off.
@@ -230,6 +229,38 @@ Your group streams from a mix of Macs and Windows PCs, so the steps will cover b
 - The free project pauses after 7 days idle. The keep-awake task helps, but check the dashboard on session day.
 - The dice library and Howler are stable but slowly maintained. Both sit behind thin wrappers so they can be replaced without touching the screens.
 - The realtime cursor budget only works with the throttle (4 a second, while moving, in-app only). If it ever feels laggy we lower it, not raise it.
+
+## 8. Milestone 7 in detail: cameras and voice (planned 26 October)
+
+**The decision (26 October).** Voice and cameras both go through VDO.Ninja, built into the app. Discord's video can't be shown inside the app. Twitch Stream Together's camera links work in everyone's OBS, which is how your group has used it, but Twitch stops its pages being shown inside any other website (checked on 26 October: every twitch.tv page, the dashboard included, tells the browser "only show me on Twitch"), so those links can't fill the camera tiles. VDO.Ninja's can, and the same feeds go into the overlay in milestone 8. VDO.Ninja is free, open source and run on donations; if it's ever down on a session night, the app still works without cameras and Stream Together is the fallback for that night.
+
+**What you'll see**
+
+1. **No links to copy.** The app makes each person a private camera address, and the table a camera password, at random. Nobody visits vdo.ninja, makes an account or pastes anything.
+2. **The camera box on the Join screen (design 01).** Your camera in the preview, a **Camera** and a **Microphone** picker, a bar that moves when you speak, and **Join voice and camera**. The line under the preview reads "Voice and camera · Connected" once you're in. The design says "VDO.Ninja link" there; it's renamed because there is no link to paste.
+3. **Nothing turns on by itself.** Your camera and microphone start only when you press **Join voice and camera** (the browser asks permission the first time). Then they stay on while the table is open, through every screen, until you press **Leave the call** or close the tab. The same click turns the table's sound on.
+4. **Camera tiles on every screen** (player and DM Command 248 × 140, Stage 200 × 113). Each live camera fills its tile behind the name plate, HP bar, turn glow, roll chips and initiative badges that are already there. Your own tile shows your camera straight from your computer, mirrored, with no delay. Someone who hasn't joined shows their portrait and "Not in the call"; camera off shows their portrait and "Camera off"; a crossed-out microphone on the name plate means muted.
+5. **Your controls.** On your own tile: **Mute** and **Camera off**, with a keyboard shortcut for mute. On anyone else's tile: a volume slider for their voice, on your screen only.
+6. **Everyone is heard once.** With two screens open (Screen 1 and Screen 2) both show the cameras, but only one sends your camera and plays the voices, the same rule as the music.
+7. **Optional, not in the designs:** a thin pale ring around whoever is talking. Say no and I'll leave it out.
+
+**Upload speed: the one thing to check.** VDO.Ninja sends your camera straight to each person watching it (peer to peer), so every viewer takes its own copy of your upload.
+
+- In the app the tiles are small, so each copy is light (about 0.3 Mbps): about 1.5 Mbps for the whole table, counting the DM's second screen.
+- In milestone 8 each other streamer's overlay takes a sharper copy (about 1 to 1.5 Mbps): about 5 Mbps more.
+- With a Twitch stream on top, plan on about 12 Mbps of upload each while streaming. Anyone well under that can send their camera through VDO.Ninja's free relay (Meshcast), which needs only one copy. I'll add that switch if the check in step D shows someone needs it.
+
+**How it's built (for the record)**
+
+- **Database.** `campaign_members.camera_id` and `campaigns.camera_key`, made at random by the database and readable only by members of the table. The DM can make new ones with **Make new camera links**, like the join code, if one ever leaks. Presence also carries whether each person is in the call and whether their camera and microphone are on. pgTAP tests for who can read them.
+- **`src/call/`.** A pure function that builds the VDO.Ninja addresses, with unit tests: sending (`&push`, `&password`, the chosen devices, starting straight away with no VDO.Ninja screens) and watching (`&view`, a small `&videobitrate` for tiles, no sound from your own feed). A hidden sender kept at the top of the app, so moving between screens doesn't drop the call, holding a Web Lock so one tab per browser sends and plays. The camera tile and the camera check.
+- **Control** through VDO.Ninja's IFRAME API (messages between the app and the embedded feed): mute, volume and how loud each person is.
+- **Credits:** VDO.Ninja, free and open source.
+- **Tests:** unit and render tests, design previews with sample tiles, and a two-browser check on my Mac using Chrome's built-in test camera and tone, which proves a picture and sound really travel from one browser to the other through VDO.Ninja. That check needs the internet, so it isn't part of the deploy.
+
+**Try it.** Open the live site on two computers, press **Join voice and camera** on both, and see and hear each other in the tiles. Mute one and watch the microphone icon appear on the other screen. Open Screen 2 and check each voice is still heard once.
+
+**What this changes in milestone 8.** The overlay shows everyone's cameras itself, so each streamer adds one browser source and puts only their own Twitch chat behind its window; there are no camera sources to place. The overlay carries everyone else's voices into OBS with "Control audio via OBS", and your own voice comes from your microphone in OBS as now, so nobody is heard twice and voices stay in step with faces. On Windows a webcam can often be used by only one app at a time, so Chrome keeps the camera and your own window on the overlay shows you from the app (or OBS's Virtual Camera feeds Chrome). I'll write the exact steps for Mac and Windows then.
 
 ## Jargon
 
@@ -247,3 +278,7 @@ Your group streams from a mix of Macs and Windows PCs, so the steps will cover b
 | Magic link | A login email with a one-time link; no password |
 | SMTP | The way email is sent; "custom SMTP" means using your own sender rather than Supabase's |
 | Anonymous sign-in | A throwaway guest login with no email, used only by the OBS overlay |
+| Peer to peer | Video and sound sent straight from one computer to another, with no company's server in the middle. Free and quick, but each viewer takes its own copy of your upload |
+| Upload speed | How fast your internet sends data out, in Mbps. Video calls and streaming both use it |
+| Relay (Meshcast) | VDO.Ninja's free server that takes one copy of your camera and passes it on to everyone, for anyone whose upload is too small |
+| IFRAME | A box inside a web page that shows another website, here a VDO.Ninja camera feed |

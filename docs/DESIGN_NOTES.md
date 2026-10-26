@@ -30,6 +30,7 @@ The roll flow runs 8, then 3, then 4, then 9: the DM asks, each player gets the 
 - Each tile has a name plate (character name, player, HP bar). The active player's tile glows gold.
 - In combat the column doubles as the turn order: an initiative number on each tile, "acting now" and "next" labels, and the DM tile standing in for the monsters.
 - During a roll request, each tile shows a status chip (waiting, rolled, passed, failed).
+- Decided on 26 October: voice and cameras both come through VDO.Ninja, built into the app (`PHASE1_PLAN.md` section 8). The app makes everyone's camera address, so the Join screen's camera box becomes a camera check with camera and microphone pickers and **Join voice and camera**, and its "VDO.Ninja link" line reads "Voice and camera".
 
 ### Player screen
 - The DM's scene fills the whole screen. Everything else floats over it:
@@ -110,6 +111,7 @@ The roll flow runs 8, then 3, then 4, then 9: the DM asks, each player gets the 
 ### Stream overlay (screen 12)
 - The layout is as in the spec, restyled to match: four player camera windows, the DM camera with turn order underneath, the stage in the centre, the streamer's own character card and a lower third along the bottom, and the Twitch chat window on the right.
 - Twitch chat stays on the overlay. Every streamer has two monitors and reads chat on the second one, so there's no chat inside the app.
+- Decided on 26 October: the overlay fills the camera windows itself from VDO.Ninja, so they aren't cut-outs any more. Only the chat window stays transparent.
 
 ## Phase 1 scope note
 
