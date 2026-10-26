@@ -16,6 +16,7 @@ import {
   type RollRequest,
 } from './dice.ts'
 import { flatDamage, weaponAbility } from './maths/attacks.ts'
+import { isRaging, rageDamage, type Effect } from './features.ts'
 import { abilityModifier, proficiencyBonus } from './maths/core.ts'
 import { skillRank } from './sheet.ts'
 import { findWeapon, SKILLS } from './srd/index.ts'
@@ -31,7 +32,7 @@ export type RollCharacter = Pick<
   | 'conditions'
   | 'exhaustion'
   | 'attacks'
->
+> & { effects?: Effect[] }
 
 /** What the person rolling chose: advantage or disadvantage, and whether only the DM sees it. */
 export type RollChoices = { mode?: RollMode; secret?: boolean }
@@ -43,7 +44,7 @@ export type ConditionEffect = { mode: Exclude<RollMode, 'normal'>; reason: strin
  * because it depends on whether the source of fear is in sight, which only the table knows.
  */
 export function conditionEffects(
-  character: Pick<Character, 'conditions' | 'exhaustion'>,
+  character: Pick<Character, 'conditions' | 'exhaustion'> & { effects?: Effect[] },
   kind: RollKind,
   ability: Ability | null,
 ): ConditionEffect[] {
@@ -66,6 +67,9 @@ export function conditionEffects(
   if (kind === 'save') {
     if (character.exhaustion >= 3) add('disadvantage', 'Exhaustion')
     if (has('restrained') && ability === 'dexterity') add('disadvantage', 'Restrained')
+  }
+  if ((kind === 'check' || kind === 'save') && ability === 'strength' && isRaging(character)) {
+    add('advantage', 'Raging')
   }
   return effects
 }
@@ -142,7 +146,10 @@ export function attackRoll(character: RollCharacter, attack: AttackEntry, choice
   if (attack.magicBonus) parts.push({ label: 'Magic', value: attack.magicBonus })
 
   const dice = parseDice(weapon ? weapon.damageDice : attack.damageDice)
-  const damageBonus = abilityBonus + attack.magicBonus
+  // Raging adds to Strength melee weapon attacks (a typed-in attack counts as melee).
+  const melee = weapon ? weapon.range === 'Melee' : true
+  const rage = ability === 'strength' && melee && isRaging(character) ? rageDamage(character.level) : 0
+  const damageBonus = abilityBonus + attack.magicBonus + rage
   const request = d20Roll(
     character,
     { label: attack.name || weapon?.name || 'Attack', kind: 'attack', ability, parts },

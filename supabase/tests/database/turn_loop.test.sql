@@ -175,9 +175,9 @@ select throws_ok(
 -- Undo
 -- ---------------------------------------------------------------------------------------------
 select throws_ok(
-  $$ select public.undo_event((select id from public.combat_events order by created_at desc limit 1)) $$,
-  '42501', 'Only the DM can undo',
-  'Players can''t undo'
+  $$ select public.undo_event((select id from public.combat_events where shown ->> 'what' = 'dash')) $$,
+  '22023', 'Undo the newer things first',
+  'Players undo only their own newest action'
 );
 set local request.jwt.claims = '{"sub": "dddddddd-0000-4000-8000-000000000001", "role": "authenticated"}';
 select throws_ok(

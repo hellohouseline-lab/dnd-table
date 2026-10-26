@@ -44,6 +44,7 @@ const tired = {
   stable: false,
   dead: false,
   concentrationDc: null,
+  effects: [],
 }
 
 describe('a short rest', () => {

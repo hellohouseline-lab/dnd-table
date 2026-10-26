@@ -59,6 +59,7 @@ const trackers = {
   stable: false,
   dead: false,
   concentrationDc: null,
+  effects: [],
   conditions: [],
   resistances: [],
   vulnerabilities: [],

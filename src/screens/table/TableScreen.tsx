@@ -105,6 +105,8 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
         deathSave: fight.deathSave,
         cast: fight.cast,
         concentrationSave: fight.concentrationSave,
+        applyFeature: fight.applyFeature,
+        takeBack: fight.takeBack,
         areas: areas.areas,
         map: battleMap,
         tokens,

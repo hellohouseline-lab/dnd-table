@@ -32,6 +32,8 @@ const noFight: FightControls = {
   deathSave: () => Promise.reject(new Error('No fight')),
   cast: () => Promise.reject(new Error('No fight')),
   concentrationSave: () => Promise.reject(new Error('No fight')),
+  applyFeature: () => Promise.reject(new Error('No fight')),
+  takeBack: () => Promise.reject(new Error('No fight')),
 }
 const nobodyAsked: RequestControls = {
   request: null,

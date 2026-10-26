@@ -1,0 +1,208 @@
+/* Out of the way: just right of the plate, above the hand. */
+.panel {
+  width: 380px;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 14px 16px 16px;
+  border-radius: 8px;
+  background: var(--panel-fill);
+  border: 1px solid var(--gold-rule);
+  box-shadow:
+    inset 0 0 0 3px var(--panel-fill),
+    inset 0 0 0 4px rgba(212, 175, 90, 0.25),
+    0 12px 40px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.kind {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.title {
+  margin: 2px 0 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--gold-light);
+}
+
+.close,
+.closeSmall {
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-2);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close {
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+}
+
+.closeSmall {
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+}
+
+.close:hover,
+.closeSmall:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.lines li:first-child {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.cost {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.costUsed {
+  color: var(--text-3);
+}
+
+.costUsed .dot {
+  background: none;
+  border: 1px solid var(--chip-border);
+}
+
+.step {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px dashed var(--fail);
+  font-size: 15px;
+  color: var(--fail-light);
+}
+
+.chosen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--fail);
+  background: rgba(224, 123, 66, 0.12);
+  font-size: 16px;
+}
+
+.note {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.again {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-2);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.again:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.action {
+  height: 46px;
+  border-radius: 4px;
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.more summary {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--label);
+}
+
+.more p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+  white-space: pre-line;
+}
+
+.undo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--gold-rule);
+  background: rgba(16, 12, 20, 0.92);
+  font-size: 15px;
+  color: var(--text);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}

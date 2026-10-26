@@ -44,7 +44,8 @@ export function CharacterEditorScreen({ campaignId, characterId }: EditorProps) 
   }, [data.status, characterId, mine, campaignId])
 
   if (data.status === 'loading' || (!characterId && mine)) return <LoadingScreen />
-  if (data.status === 'error') return <Problem title="The form didn't open" message={data.message} campaignId={campaignId} />
+  if (data.status === 'error')
+    return <Problem title="The form didn't open" message={data.message} campaignId={campaignId} />
 
   if (!me || (characterId && !editing) || (editing && editing.ownerId !== user.id && !isDm) || (!characterId && isDm)) {
     return (
@@ -60,7 +61,8 @@ export function CharacterEditorScreen({ campaignId, characterId }: EditorProps) 
     )
   }
 
-  const backTo = editing && editing.ownerId !== user.id ? `/c/${campaignId}/sheet/${editing.id}` : `/c/${campaignId}/play`
+  const backTo =
+    editing && editing.ownerId !== user.id ? `/c/${campaignId}/sheet/${editing.id}` : `/c/${campaignId}/play`
 
   async function save(build: CharacterBuild) {
     if (editing) await saveCharacterBuild(editing, build)
@@ -105,6 +107,7 @@ function toBuild(character: Character): CharacterBuild {
     inspiration: _inspiration,
     concentration: _concentration,
     concentrationDc: _concentrationDc,
+    effects: _effects,
     portraitPath: _portraitPath,
     updatedAt: _updatedAt,
     ...build

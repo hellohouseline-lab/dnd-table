@@ -1,6 +1,7 @@
 // Converts between database rows and the app's Character. The JSON columns (attacks, features,
 // spellcasting) are read defensively: anything missing or malformed becomes a safe default.
 
+import type { Effect } from '../rules/features.ts'
 import { ABILITIES, isAbility, type Ability } from '../rules/abilities.ts'
 import {
   NO_SPELLCASTING,
@@ -54,6 +55,23 @@ export function parseFeatures(value: Json): FeatureEntry[] {
       recharge: f.recharge === 'short' || f.recharge === 'long' ? f.recharge : null,
     }
   })
+}
+
+/** Effects running on a character; anything malformed is dropped. */
+export function parseEffects(value: Json): Effect[] {
+  if (!Array.isArray(value)) return []
+  return value.filter(isObject).flatMap((e) =>
+    typeof e.key === 'string' && typeof e.name === 'string'
+      ? [
+          {
+            key: e.key,
+            name: e.name,
+            resistances: Array.isArray(e.resistances) ? e.resistances.filter((r) => typeof r === 'string') : undefined,
+            endsWhenDown: e.endsWhenDown === true,
+          },
+        ]
+      : [],
+  )
 }
 
 export function parseSpellcasting(value: Json): Spellcasting {
@@ -123,6 +141,7 @@ export function rowToCharacter(row: CharacterRow): Character {
     inspiration: row.inspiration,
     concentration: row.concentration,
     concentrationDc: row.concentration_dc,
+    effects: parseEffects(row.effects),
     portraitPath: row.portrait_path,
     updatedAt: row.updated_at,
   }
@@ -173,6 +192,7 @@ export type TrackerPatch = Partial<
     | 'exhaustion'
     | 'inspiration'
     | 'concentration'
+    | 'effects'
     | 'features'
     | 'spellcasting'
     | 'portraitPath'
@@ -195,6 +215,7 @@ export function trackersToRow(patch: TrackerPatch): CharacterRowPatch {
   if (patch.exhaustion !== undefined) row.exhaustion = patch.exhaustion
   if (patch.inspiration !== undefined) row.inspiration = patch.inspiration
   if (patch.concentration !== undefined) row.concentration = patch.concentration
+  if (patch.effects !== undefined) row.effects = patch.effects as unknown as Json
   if (patch.features !== undefined) row.features = patch.features as unknown as Json
   if (patch.spellcasting !== undefined) row.spellcasting = patch.spellcasting as unknown as Json
   if (patch.portraitPath !== undefined) row.portrait_path = patch.portraitPath

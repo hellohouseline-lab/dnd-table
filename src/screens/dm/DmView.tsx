@@ -49,7 +49,7 @@ import { monsterInitiative } from '../../rules/combat.ts'
 import { placeFighters } from '../../live/combat.ts'
 import { messageFor } from '../../live/errors.ts'
 import type { Asset } from '../../live/library.ts'
-import { loadMonsters } from '../../rules/srd/index.ts'
+import { loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog, StartFightDialog, type FightSetting } from '../fight/FightDialogs.tsx'
 import { useAiming } from '../fight/useAiming.ts'
@@ -160,6 +160,7 @@ export function DmView({
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
   const [selectedCombatant, setSelectedCombatant] = useState<string | null>(null)
   const monsters = useSrd(loadMonsters)
+  const spells = useSrd(loadSpells)
   const fighting = fight.fight
   const [resting, setResting] = useState(false)
   const noteInput = useRef<HTMLInputElement>(null)
@@ -456,6 +457,10 @@ export function DmView({
             )
           ) : tab === 'party' ? (
             <PartyCards
+              onQuickCheck={asking.ask}
+              quickError={asking.error}
+              spells={spells}
+              combatants={fighting?.combatants ?? []}
               campaignId={campaign.id}
               members={members}
               characters={characters}

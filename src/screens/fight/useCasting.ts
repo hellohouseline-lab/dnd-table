@@ -38,6 +38,15 @@ export type Casting = {
   area: { shape: AreaShape; sizeFt: number; tone: AreaTone; fromCaster: boolean } | null
   onPick: (target: FightRow) => void
   onPlace: (template: AreaTemplate) => void
+  /**
+   * With a confirm step (the player's screen): who it's for or where it went, waiting for Cast.
+   * Null until then, and always null without the step, where picking casts at once.
+   */
+  chosen: { names: string[]; template: AreaTemplate | null } | null
+  /** Casts what's been chosen. */
+  fire: () => void
+  /** Pick again. */
+  again: () => void
 } | null
 
 /** The SRD entry for a spell on a sheet: by its index, or its name as typed. */
@@ -95,8 +104,15 @@ export function useCasting(
   rollWith: (work: () => Promise<Roll | null>) => Promise<Roll | null>,
   tokens: Token[],
   rows: FightRow[],
+  /** Wait for Cast after the target is picked or the area placed, rather than casting at once. */
+  confirm = false,
 ) {
-  const [pending, setPending] = useState<{ row: FightRow; spell: SrdSpell; slot: number } | null>(null)
+  const [pending, setPending] = useState<{
+    row: FightRow
+    spell: SrdSpell
+    slot: number
+    chosen: { targets: FightRow[]; template: AreaTemplate | null } | null
+  } | null>(null)
   const [problem, setProblem] = useState<string | null>(null)
 
   useEffect(() => {
@@ -171,17 +187,23 @@ export function useCasting(
       const chosen = slot !== undefined && slots.includes(slot) ? slot : slots[0]
       const kind = spellKind(spell)
       if (!spell.area && kind === 'other') {
-        go(row, spell, chosen, [], null)
+        if (confirm) setPending({ row, spell, slot: chosen, chosen: { targets: [], template: null } })
+        else go(row, spell, chosen, [], null)
         return
       }
-      setPending({ row, spell, slot: chosen })
+      setPending({ row, spell, slot: chosen, chosen: null })
     },
-    [go],
+    [go, confirm],
   )
 
   let casting: Casting = null
   if (pending) {
     const { row, spell, slot } = pending
+    // Picked: cast now, or wait for Cast.
+    const settle = (targets: FightRow[], template: AreaTemplate | null) =>
+      confirm
+        ? setPending((now) => (now ? { ...now, chosen: { targets, template } } : now))
+        : go(row, spell, slot, targets, template)
     const character = row.character
     const self = /^self/i.test(spell.range)
     const range = spellRange(spell.range)
@@ -214,13 +236,13 @@ export function useCasting(
             return
           }
         }
-        go(row, spell, slot, [target], null)
+        settle([target], null)
       },
       onPlace: (template) => {
         // Everyone standing in it, but not the caster of a cone, line or "Self" spell. A spell that
         // only changes the place (Darkness, Fog Cloud) has nobody to settle.
         if (spellKind(spell) === 'other') {
-          go(row, spell, slot, [], template)
+          settle([], template)
           return
         }
         const inside = creaturesIn(template, tokens)
@@ -229,8 +251,13 @@ export function useCasting(
           if (!token || !inside.includes(token)) return false
           return !(r.combatant.id === row.combatant.id && fromCaster)
         })
-        go(row, spell, slot, caught, template)
+        settle(caught, template)
       },
+      chosen: pending.chosen
+        ? { names: pending.chosen.targets.map((t) => t.name), template: pending.chosen.template }
+        : null,
+      fire: () => pending.chosen && go(row, spell, slot, pending.chosen.targets, pending.chosen.template),
+      again: () => setPending((now) => (now ? { ...now, chosen: null } : now)),
     }
   }
 

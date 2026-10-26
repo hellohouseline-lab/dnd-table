@@ -244,6 +244,7 @@ export type Database = {
           death_save_failures: number
           death_save_successes: number
           dexterity: number
+          effects: Json
           exhaustion: number
           features: Json
           hit_dice_used: number
@@ -292,6 +293,7 @@ export type Database = {
           death_save_failures?: number
           death_save_successes?: number
           dexterity?: number
+          effects?: Json
           exhaustion?: number
           features?: Json
           hit_dice_used?: number
@@ -340,6 +342,7 @@ export type Database = {
           death_save_failures?: number
           death_save_successes?: number
           dexterity?: number
+          effects?: Json
           exhaustion?: number
           features?: Json
           hit_dice_used?: number
@@ -1439,6 +1442,29 @@ export type Database = {
       }
       use_action: {
         Args: { p_combatant_id: string; p_what: string }
+        Returns: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combat_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      use_feature: {
+        Args: { p_combatant_id: string; p_cost: string; p_name: string }
         Returns: {
           actor_id: string | null
           campaign_id: string

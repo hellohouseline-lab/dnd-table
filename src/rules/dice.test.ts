@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AttackEntry } from './character.ts'
+import { RAGE } from './features.ts'
 import {
   combineModes,
   diceText,
@@ -250,6 +251,24 @@ describe('ready-made rolls', () => {
     const request = attackRoll(character, longsword)
     expect(request).toMatchObject({ label: 'Longsword', kind: 'attack', modifier: 6 })
     expect(request.damage).toEqual({ dice: [{ sides: 8, count: 1 }], modifier: 4, type: 'slashing' })
+  })
+
+  it('adds Rage to Strength melee attacks, and advantage to Strength checks and saves', () => {
+    const raging = { ...character, effects: [RAGE] }
+    const longsword: AttackEntry = {
+      id: 'a1',
+      name: 'Longsword',
+      weapon: 'longsword',
+      proficient: true,
+      magicBonus: 0,
+      ability: 'strength',
+      damageDice: '',
+      damageType: '',
+    }
+    expect(attackRoll(raging, longsword).damage?.modifier).toBe(attackRoll(character, longsword).damage!.modifier + 2)
+    expect(abilityCheck(raging, 'strength').mode).toBe('advantage')
+    expect(savingThrow(raging, 'strength').mode).toBe('advantage')
+    expect(savingThrow(raging, 'dexterity').mode).toBe('normal')
   })
 
   it('rolls an unarmed strike with flat damage of 1 + Strength', () => {
