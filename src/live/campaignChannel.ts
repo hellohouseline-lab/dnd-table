@@ -28,6 +28,9 @@ type LiveCampaign = {
   effectListeners: Set<(assetId: string) => void>
   pointerListeners: Set<(kind: 'hand' | 'ping', pointer: MapPointer) => void>
   cameraKeyListeners: Set<() => void>
+  /** Told to load everything again: after the connection comes back, or when the tab is looked at again. */
+  catchUpListeners: Set<() => void>
+  subscribedBefore: boolean
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
@@ -91,6 +94,8 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     effectListeners: new Set(),
     pointerListeners: new Set(),
     cameraKeyListeners: new Set(),
+    catchUpListeners: new Set(),
+    subscribedBefore: false,
     users: 1,
   }
 
@@ -183,7 +188,14 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
   channel.on('broadcast', { event: 'camera-key' }, () => live.cameraKeyListeners.forEach((listener) => listener()))
 
   channel.subscribe((status) => {
-    if (status === 'SUBSCRIBED') void channel.track(presencePayload(campaignId, live))
+    if (status === 'SUBSCRIBED') {
+      void channel.track(presencePayload(campaignId, live))
+      // Changes made while the connection was down never arrive, so after a reconnect, load again.
+      if (live.subscribedBefore) live.catchUpListeners.forEach((listener) => listener())
+      live.subscribedBefore = true
+    } else {
+      console.warn(`The table's live connection: ${status}`)
+    }
   })
   open.set(campaignId, live)
   return live
@@ -379,4 +391,33 @@ export function useCameraKeyBroadcasts(campaignId: string, userId: string, onCha
 /** DM: tells everyone the camera password has changed. */
 export function broadcastCameraKey(campaignId: string): void {
   void open.get(campaignId)?.channel.send({ type: 'broadcast', event: 'camera-key', payload: {} })
+}
+
+const CATCH_UP_GAP_MS = 5000
+let lastCatchUp = 0
+
+// A laptop waking up or a tab coming back into view may have missed changes: load again, at most
+// every few seconds.
+if (typeof document !== 'undefined') {
+  const catchUp = () => {
+    if (document.visibilityState !== 'visible' || Date.now() - lastCatchUp < CATCH_UP_GAP_MS) return
+    lastCatchUp = Date.now()
+    open.forEach((live) => live.catchUpListeners.forEach((listener) => listener()))
+  }
+  document.addEventListener('visibilitychange', catchUp)
+  window.addEventListener('online', catchUp)
+  window.addEventListener('focus', catchUp)
+}
+
+/** Calls `onCatchUp` when this screen may have missed live changes and should load again. */
+export function useCatchUp(campaignId: string, userId: string, onCatchUp: () => void): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.catchUpListeners.add(onCatchUp)
+    return () => {
+      live.catchUpListeners.delete(onCatchUp)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onCatchUp])
 }

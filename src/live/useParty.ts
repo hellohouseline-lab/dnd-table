@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Character } from '../rules/character.ts'
-import { useCharacterChanges } from './campaignChannel.ts'
+import { useCatchUp, useCharacterChanges } from './campaignChannel.ts'
 import { applyCharacterChange, type CharacterChange, type TrackerPatch } from './characterRows.ts'
 import { listCharacters, saveTrackers } from './characters.ts'
 import { messageFor } from './errors.ts'
@@ -30,7 +30,7 @@ export function useParty(campaignId: string, userId: string): Party {
   const [saveError, setSaveError] = useState<string | null>(null)
   const saving = useRef(new Map<string, number>())
 
-  useEffect(() => {
+  const load = useCallback(() => {
     let current = true
     listCharacters(campaignId).then(
       (list) => current && setCharacters(list),
@@ -40,6 +40,8 @@ export function useParty(campaignId: string, userId: string): Party {
       current = false
     }
   }, [campaignId])
+  useEffect(load, [load])
+  useCatchUp(campaignId, userId, load)
 
   const onChange = useCallback((change: CharacterChange) => {
     const id = change.type === 'delete' ? change.id : change.row.id
