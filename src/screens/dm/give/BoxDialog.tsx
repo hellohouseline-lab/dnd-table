@@ -21,6 +21,7 @@ import { buildCatalogue, RARITIES } from '../../../rules/catalogue.ts'
 import { entryId, type Character } from '../../../rules/character.ts'
 import { giftItem } from '../../../rules/magic.ts'
 import { coinWords, readCoins, walletCopper } from '../../../rules/money.ts'
+import { entryValue, valueWords } from '../../../rules/value.ts'
 import type { SrdEquipment, SrdMagicItem } from '../../../rules/srd/index.ts'
 import own from '../GiveDialog.module.css'
 import styles from '../RestDialog.module.css'
@@ -251,6 +252,11 @@ export function BoxDialog({
                   {f.entry.name}
                 </span>
                 <span className={own.words}>{f.entry.line}</span>
+                {valueWords(entryValue(f.entry.gift, equipment, magicItems), f.quantity) && (
+                  <span className={own.worth}>
+                    Worth {valueWords(entryValue(f.entry.gift, equipment, magicItems), f.quantity)}
+                  </span>
+                )}
                 {f.entry.desc && (
                   <details className={own.more}>
                     <summary>All of it</summary>

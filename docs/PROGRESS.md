@@ -3,6 +3,11 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **What things are worth, and tidying the stash (live).** Matt's ask.
+  - **Market value, for the DM only:** every item on the Items and loot tab shows what it's worth ("Longsword · 15 gp"), and so do the party stash, Give's cards, a box's finds and the shop editor. Gear and bits and bobs show the book price; magic items, which the free rules don't price, show a rough guide by rarity (common 50 to 100 gp, uncommon 100 to 500, rare 500 to 5,000, very rare 5,000 to 50,000, legendary 50,000 or more, plus the weapon for a +1 sword).
+  - **Cheap, fair or pricey:** the shop editor marks each price against what it's worth; offering to buy from a player says "Worth 5 gp: that's cheap" as you type; a haggle card says whether the player's offer is cheap, fair or pricey.
+  - **The party stash:** **Take out** next to anything in it (gone for good), and **Clear the stash** (everything, coins too). The log says so.
+  - Server: `20261027230000_clear_stash.sql` (`remove_from_stash`, `clear_stash`). Tests: 529 database (4 new), 437 unit (2 new), 51 preview browser tests (1 new).
 - **Shops: tags and haggling (live).** Matt's ask after I1c.
   - **Tags** on a shop's shelves, for players and in your shop editor: Weapons, Armour, Potions, Jewellery, Magic, Gear, Kits and tools, and Odds and ends, each with how many, plus a search box. Tap tags to narrow it down; tap again to clear.
   - **Haggle** on any card in a shop: the player names their price (perhaps after talking the shopkeeper round). On Screen 1 a card says "Wren offers 15 gp for Crossbow, light at Harl's Forge. The shop asks 25 gp." with **Agree** (sold at their price), **No**, **Counter** (name your own price), and **Ask for Persuasion**, which opens Ask for a roll with Persuasion already picked. A counter-price shows on the player's card with **Take it** or **Leave it**. Haggle cards sit with the rolls players make for you, top right, and step aside while a window is open.

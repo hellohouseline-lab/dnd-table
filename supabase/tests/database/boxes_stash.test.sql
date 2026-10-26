@@ -5,7 +5,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(16);
 
 insert into auth.users (id, email) values
   ('5c5c5c5c-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -73,6 +73,22 @@ select throws_ok(
   $$ select public.split_stash(current_setting('test.campaign')::uuid) $$,
   '22023', 'Too few coins to share', 'One copper won''t split'
 );
+
+select throws_ok(
+  $$ select public.clear_stash(current_setting('test.campaign')::uuid) $$,
+  '42501', 'Only the DM can tidy the stash', 'Players can''t clear the stash'
+);
+
+set local request.jwt.claims = '{"sub": "5c5c5c5c-0000-4000-8000-000000000001", "role": "authenticated"}';
+select public.remove_from_stash(current_setting('test.campaign')::uuid,
+  (select e ->> 'id' from public.party_stash, jsonb_array_elements(items) e where e ->> 'name' = 'Bent spoon'));
+select is(
+  (select count(*)::int from public.party_stash, jsonb_array_elements(items) e where e ->> 'name' = 'Bent spoon'),
+  0, 'The DM takes the spoon out of the stash'
+);
+select public.clear_stash(current_setting('test.campaign')::uuid);
+select is((select jsonb_array_length(items) from public.party_stash), 0, 'Clearing empties the stash');
+select is((select private.wallet_copper(wallet) from public.party_stash), 0, '...coins and all');
 
 select * from finish();
 rollback;

@@ -316,3 +316,9 @@
   font-style: italic;
   color: var(--label);
 }
+
+.worth {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-3);
+}

@@ -20,6 +20,7 @@ import {
   type StockLine,
 } from '../../../rules/shops.ts'
 import type { SrdEquipment, SrdMagicItem } from '../../../rules/srd/index.ts'
+import { marketValue, priceVerdict, valueWords, type Value } from '../../../rules/value.ts'
 import own from '../GiveDialog.module.css'
 import styles from '../RestDialog.module.css'
 import box from './BoxDialog.module.css'
@@ -239,6 +240,7 @@ export function ShopDialog({ shop, equipment, magicItems, giving, shops, onClose
                 <th>Item</th>
                 <th>Book price</th>
                 <th>Price here</th>
+                <th />
                 <th>How many</th>
                 <th />
               </tr>
@@ -251,6 +253,7 @@ export function ShopDialog({ shop, equipment, magicItems, giving, shops, onClose
                     key={line.id}
                     line={line}
                     markup={draft.markup}
+                    value={marketValue(line, equipment, magicItems)}
                     onChange={(patch) => setLine(line.id, patch)}
                     onRemove={() => setDraft({ ...draft, stock: draft.stock.filter((l) => l.id !== line.id) })}
                   />
@@ -292,26 +295,32 @@ export function ShopDialog({ shop, equipment, magicItems, giving, shops, onClose
 function ShelfRow({
   line,
   markup,
+  value,
   onChange,
   onRemove,
 }: {
   line: StockLine
   markup: number
+  value: Value | null
   onChange: (patch: Partial<StockLine>) => void
   onRemove: () => void
 }) {
   const [text, setText] = useState(line.price !== null ? coinWords(coinsFor(line.price)) : '')
   const typed = text.trim() ? readCoins(text) : null
+  const charged = needsPrice(line) ? null : linePrice(line, markup)
+  const verdict = charged !== null ? priceVerdict(charged, value, line.bundle) : null
   return (
     <tr className={needsPrice(line) ? shopStyles.unpriced : undefined}>
       <th scope="row">{line.name}</th>
-      <td>{line.cost > 0 ? price(line.cost) : '–'}</td>
+      <td>{line.cost > 0 ? price(line.cost) : valueWords(value, line.bundle) || '–'}</td>
       <td>
         <input
           value={text}
           placeholder={needsPrice(line) ? 'Set a price' : price(linePrice({ ...line, price: null }, markup))}
           aria-label={`Price of ${line.name}`}
           aria-invalid={text.trim() !== '' && typed === null}
+          title={verdict ? `That’s ${verdict} for what it’s worth` : undefined}
+          className={verdict ? shopStyles[verdict] : undefined}
           onChange={(e) => {
             setText(e.target.value)
             const copper = e.target.value.trim() ? readCoins(e.target.value) : null
@@ -320,6 +329,7 @@ function ShelfRow({
           }}
         />
       </td>
+      <td className={verdict ? shopStyles[verdict] : shopStyles.muted}>{verdict ?? ''}</td>
       <td>
         <input
           type="number"
