@@ -30,6 +30,11 @@ export function InitiativeRibbon({ rows, picking = null }: RibbonProps) {
         const label = (
           <>
             <span className={styles.pillInit}>{row.combatant.initiative ?? '?'}</span> {row.name}
+            {row.character?.concentration && (
+              <span className={styles.pillConc} title={`Concentrating on ${row.character.concentration}`}>
+                C
+              </span>
+            )}
           </>
         )
         return (
@@ -102,24 +107,25 @@ export function YourTurn({
       : turn.actionUsed
         ? 'Used'
         : 'Ready'
-  const rows: { key: 'bonus' | 'reaction'; label: string; tone: string; used: boolean; can: boolean; hint: string }[] = [
-    {
-      key: 'bonus',
-      label: 'Bonus action',
-      tone: styles.blue,
-      used: turn.bonusUsed,
-      can: myTurn && canAct,
-      hint: 'Click when you use your bonus action, for a spell or feature',
-    },
-    {
-      key: 'reaction',
-      label: 'Reaction',
-      tone: styles.grey,
-      used: turn.reactionUsed,
-      can: started && canAct,
-      hint: 'Click when you use your reaction, such as an opportunity attack',
-    },
-  ]
+  const rows: { key: 'bonus' | 'reaction'; label: string; tone: string; used: boolean; can: boolean; hint: string }[] =
+    [
+      {
+        key: 'bonus',
+        label: 'Bonus action',
+        tone: styles.blue,
+        used: turn.bonusUsed,
+        can: myTurn && canAct,
+        hint: 'Click when you use your bonus action, for a spell or feature',
+      },
+      {
+        key: 'reaction',
+        label: 'Reaction',
+        tone: styles.grey,
+        used: turn.reactionUsed,
+        can: started && canAct,
+        hint: 'Click when you use your reaction, such as an opportunity attack',
+      },
+    ]
   const moves: [TurnAction, string, string][] = [
     ['dash', 'Dash', 'Spend your action to move your speed again'],
     ['disengage', 'Disengage', 'Spend your action so moving away draws no opportunity attacks'],

@@ -3,6 +3,14 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Concentration, fully tracked, and quicker hover cards (live).**
+  - Hover cards open after 2 seconds instead of 3.
+  - Concentration spells carry a gold **C** seal on their card, a **Concentration** tag on the hover card, and "Concentration, up to 1 minute" as their duration. If you're already concentrating, the card says which spell casting it would end.
+  - Everyone can see who is concentrating: a tag on their camera tile with the spell's name (red with the DC when a save is owed) and a C beside their name in the turn order.
+  - **Each hit is its own save** (2014 rules): two hits before the first save mean two saves. The second comes up by itself once the first is kept. A failed save ends the spell and its area.
+  - **Being incapacitated, paralysed, petrified, stunned or knocked out ends concentration** by itself. Poisoned or prone don't.
+  - Already in place and checked again: damage sets the DC (10 or half the damage), the player gets a "Hold on to Bless" card to roll, the DM can roll it from Acting now or the Battle screen, a new concentration spell ends the old one, and the timer ends it when its time is up.
+  - Server: `supabase/migrations/20261027110000_concentration_rules.sql` (`characters.concentration_queue`). Tests: 412 database (8 new), 340 unit and 20 preview browser tests.
 - **Matt's latest list: stage sync, cards, timed effects, quick rolls, bonus actions (live, tested by Matt with a player on 26 October: works).**
   - **Stage sync, found and fixed.** Every stage save from the DM after the very first had been refused by the database ("permission denied"), because the save also rewrote the table's own ID column, which nobody may change. The DM's screen changed at once, so it looked as if it worked, but players never got the picture, the cleared stage, the music or the "players move tokens" switch. The DM notebook (Where we are, What happens next, Key items) had the same fault. Both now save properly, and a failed stage save puts the DM's screen back to what everyone really sees.
   - **Example pictures:** a market city (Places), a campfire at night (Moments) and an innkeeper (People), simple drawings in `public/art/`, offered at the top of each section of the art library like the starter maps. Use them to check pictures reach the players and stay up.

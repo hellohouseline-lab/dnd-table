@@ -90,6 +90,20 @@
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 }
 
+.concTag {
+  margin-left: auto;
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f0d58f;
+  color: #3a2414;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .stats {
   position: relative;
   margin: 0 0 10px;

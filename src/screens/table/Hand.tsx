@@ -66,6 +66,8 @@ type Card = {
   why: string | null
   info: CardDetails
   spent: boolean
+  /** A concentration spell: a C seal on the card. */
+  concentration?: boolean
   play: () => void
 }
 
@@ -85,7 +87,7 @@ const MOVE_WORDS: Record<BonusMove, [string, string]> = {
  * set, and anyone with bonus actions has a third, Bonus actions, gathering everything they can do
  * with one (Rage, Second Wind, Healing Word, an off-hand attack, a rogue's Cunning Action). Bonus
  * action cards are blue everywhere, and grey out once the bonus action is used this turn. Hovering on
- * a card for 3 seconds shows what it does.
+ * a card for 2 seconds shows what it does. Concentration spells carry a C seal.
  */
 export function Hand({
   character,
@@ -102,14 +104,14 @@ export function Hand({
 }: HandProps) {
   const sheet = deriveSheet(character)
   const [showing, setShowing] = useState<CardSet>('weapons')
-  // Hovering on a card for 3 seconds shows what it does.
+  // Hovering on a card for 2 seconds shows what it does.
   const [about, setAbout] = useState<string | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   useEffect(() => () => clearTimeout(timer.current), [])
   const hover = (key: string | null) => {
     clearTimeout(timer.current)
     setAbout(null)
-    if (key) timer.current = setTimeout(() => setAbout(key), 3000)
+    if (key) timer.current = setTimeout(() => setAbout(key), 2000)
   }
 
   // In a fight, a bonus action card can't be played once the bonus action is gone, or off your turn.
@@ -133,7 +135,8 @@ export function Hand({
     const why = spells?.whyNot(spell) ?? null
     return {
       key: `spell-${spell.index}`,
-      tag: `${bonus ? 'Bonus · ' : ''}${levelWords(spell.level)}${spell.concentration ? ' · C' : ''}`,
+      tag: `${bonus ? 'Bonus · ' : ''}${levelWords(spell.level)}`,
+      concentration: spell.concentration,
       tone: bonus ? 'bonus' : 'spell',
       icon: 'star',
       name: spell.name,
@@ -301,6 +304,11 @@ export function Hand({
                 }}
               >
                 <span className={cx(styles.tag, styles[card.tone])}>{card.tag}</span>
+                {card.concentration && (
+                  <span className={styles.concSeal} title="Concentration: one at a time, and damage means a save">
+                    C<span className={styles.hidden}> (concentration)</span>
+                  </span>
+                )}
                 <span className={styles.art}>
                   <Icon name={card.icon} size={26} />
                 </span>

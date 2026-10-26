@@ -21,6 +21,7 @@ export function CardInfo({ details, why }: { details: CardDetails; why?: string 
           <Icon name={details.icon} size={22} />
         </span>
         <h2 className={styles.title}>{details.title}</h2>
+        {details.concentration && <span className={styles.concTag}>Concentration</span>}
       </div>
       {details.stats.length > 0 && (
         <dl className={styles.stats}>

@@ -74,10 +74,12 @@ export function AtAGlance({ character, spells = null, onOpen, onEndEffect }: AtA
           <span className={styles.label}>Now</span>
           {character.effects.map((effect) => (
             <span key={effect.key} className={styles.effect}>
-              {effect.name}
-              {effect.roundsLeft !== undefined && (
-                <span className={styles.roundsLeft}> · {roundsLeftWords(effect.roundsLeft)}</span>
-              )}
+              <span>
+                {effect.name}
+                {effect.roundsLeft !== undefined && (
+                  <span className={styles.roundsLeft}> · {roundsLeftWords(effect.roundsLeft)}</span>
+                )}
+              </span>
               {onEndEffect && (
                 <button type="button" className={styles.end} onClick={() => onEndEffect(effect.key)}>
                   End

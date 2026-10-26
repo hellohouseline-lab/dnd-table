@@ -253,6 +253,9 @@ test('a wizard puts Darkness on the map and concentrates on it', async ({ page }
   await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.5)
   await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeVisible()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You cast Darkness.')
+  // Everyone sees it on her camera tile, and a C in the turn order.
+  await expect(page.getByLabel('The table')).toContainText('Darkness')
+  await expect(page.getByRole('list', { name: 'Turn order' }).getByTitle('Concentrating on Darkness')).toBeVisible()
   // Its timer: 10 minutes.
   await expect(page.getByRole('region', { name: 'At a glance' })).toContainText(
     'Darkness (concentration) · about 10 minutes left',
