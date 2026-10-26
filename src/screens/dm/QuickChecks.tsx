@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import type { AskInput } from '../../live/rollRequests.ts'
-import { DIFFICULTIES, findAskable, PRESET_KEYS } from '../../rules/askable.ts'
+import { ASKABLES, DIFFICULTIES, findAskable, PRESET_KEYS, type Askable, type AskKind } from '../../rules/askable.ts'
 import styles from './QuickChecks.module.css'
 
 type QuickChecksProps = {
@@ -9,50 +9,55 @@ type QuickChecksProps = {
   characterIds: string[]
   onSend: (input: AskInput) => Promise<boolean>
   error?: string | null
+  className?: string
 }
 
 const EVERYDAY = DIFFICULTIES.slice(0, 3)
 
-/**
- * The Party tab's quick checks (docs/TABLE_TOOLS_PLAN.md section 2): the nine checks a table asks
- * for most, a difficulty, and Roll, for everyone ticked on the cards below. Any other roll, or a
- * secret DC, is still under Ask for a roll.
- */
-export function QuickChecks({ characterIds, onSend, error }: QuickChecksProps) {
-  const [key, setKey] = useState<string>(PRESET_KEYS[0])
-  const [dc, setDc] = useState(15)
-  const [sending, setSending] = useState(false)
-  const askable = findAskable(key)
-  const custom = !EVERYDAY.some((d) => d.dc === dc)
+const SECTIONS: { kind: AskKind; name: string }[] = [
+  { kind: 'skill', name: 'Skills' },
+  { kind: 'save', name: 'Saving throws' },
+  { kind: 'ability', name: 'Ability checks' },
+]
 
-  async function send() {
-    if (!askable || characterIds.length === 0) return
-    setSending(true)
+/**
+ * The Party tab's quick rolls, in a column beside the cameras: how hard first, then one click on a
+ * roll asks everyone ticked on the party cards. The rolls a table asks for most are open at the top;
+ * every skill, saving throw and ability check is in the sections below. A secret DC is still under
+ * Ask for a roll.
+ */
+export function QuickChecks({ characterIds, onSend, error, className }: QuickChecksProps) {
+  const [dc, setDc] = useState(15)
+  const [sending, setSending] = useState<string | null>(null)
+  const custom = !EVERYDAY.some((d) => d.dc === dc)
+  const nobody = characterIds.length === 0
+
+  async function send(askable: Askable) {
+    if (nobody || sending) return
+    setSending(askable.key)
     await onSend({ askable, characterIds, dc, dcShown: true })
-    setSending(false)
+    setSending(null)
   }
 
+  const rollButton = (askable: Askable) => (
+    <button
+      key={askable.key}
+      type="button"
+      className={cx(styles.check, sending === askable.key && styles.on)}
+      title={`${askable.short}. Asks ${characterIds.length === 1 ? '1 player' : `${characterIds.length} players`}, DC ${dc}.`}
+      disabled={nobody || sending !== null}
+      onClick={() => void send(askable)}
+    >
+      {askable.name}
+    </button>
+  )
+
   return (
-    <section className={styles.bar} aria-label="Quick checks">
-      <div className={styles.checks} role="group" aria-label="Which check">
-        {PRESET_KEYS.map((presetKey) => {
-          const preset = findAskable(presetKey)
-          if (!preset) return null
-          return (
-            <button
-              key={presetKey}
-              type="button"
-              className={cx(styles.check, key === presetKey && styles.on)}
-              aria-pressed={key === presetKey}
-              title={preset.short}
-              onClick={() => setKey(presetKey)}
-            >
-              {preset.name}
-            </button>
-          )
-        })}
-      </div>
-      <div className={styles.row}>
+    <section className={cx(styles.panel, className)} aria-label="Quick checks">
+      <h2 className={styles.title}>Quick rolls</h2>
+
+      <div className={styles.step}>
+        <span className={styles.label}>How hard</span>
         <div className={styles.difficulty} role="group" aria-label="How hard">
           {EVERYDAY.map((d) => (
             <button
@@ -78,17 +83,34 @@ export function QuickChecks({ characterIds, onSend, error }: QuickChecksProps) {
             />
           </label>
         </div>
-        <button
-          type="button"
-          className={styles.roll}
-          disabled={sending || characterIds.length === 0}
-          onClick={() => void send()}
-        >
-          {characterIds.length === 0
-            ? 'Tick who rolls'
-            : `${askable?.name ?? 'Roll'}: ask ${characterIds.length === 1 ? '1 player' : `${characterIds.length} players`}`}
-        </button>
       </div>
+
+      <p className={cx(styles.who, nobody && styles.nobody)}>
+        {nobody
+          ? 'Tick who rolls on their card.'
+          : `Click a roll to ask ${characterIds.length === 1 ? 'the 1 player' : `the ${characterIds.length} players`} ticked.`}
+      </p>
+
+      <details className={styles.section} open>
+        <summary>Most asked</summary>
+        <div className={styles.checks}>
+          {PRESET_KEYS.map((key) => findAskable(key))
+            .filter((a): a is Askable => a !== undefined)
+            .map(rollButton)}
+        </div>
+      </details>
+      {SECTIONS.map((section) => {
+        const rolls = ASKABLES.filter((a) => a.kind === section.kind)
+        return (
+          <details key={section.kind} className={styles.section}>
+            <summary>
+              {section.name} <span className={styles.count}>{rolls.length}</span>
+            </summary>
+            <div className={styles.checks}>{rolls.map(rollButton)}</div>
+          </details>
+        )
+      })}
+
       {error && <p className={styles.error}>{error}</p>}
     </section>
   )

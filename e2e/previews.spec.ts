@@ -66,7 +66,7 @@ test('the DM uploads a picture, puts it on stage and plays music', async ({ page
     .locator('input[type=file]')
     .setInputFiles({ name: 'merry-inn.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from([0]) })
   await music.getByRole('button', { name: 'Merry inn', exact: true }).click()
-  await expect(music).toContainText('Tavern · stream-safe')
+  await expect(music).toContainText('Merry inn')
   await expect(page.getByRole('button', { name: 'Pause the music' })).toBeVisible()
 })
 
@@ -307,13 +307,17 @@ test('hovering on a card for a few seconds shows what it does', async ({ page })
 test('the DM asks the party for a Perception check in one click', async ({ page }) => {
   await page.goto('#/dev/dm/party')
   const quick = page.getByRole('region', { name: 'Quick checks' })
-  await quick.getByRole('button', { name: 'Perception', exact: true }).click()
   await quick.getByRole('button', { name: 'Hard 20' }).click()
   await page.getByRole('checkbox', { name: 'Elowen rolls the quick check' }).check()
-  await quick.getByRole('button', { name: 'Perception: ask 2 players' }).click()
+  await expect(quick).toContainText('ask the 2 players ticked')
+  await quick.getByRole('button', { name: 'Perception', exact: true }).click()
   const results = page.getByRole('region', { name: 'Perception check' })
   await expect(results).toContainText('Needed 20 or more')
   await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
+  // Every saving throw is in its own section.
+  await page.keyboard.press('Escape')
+  await quick.getByText('Saving throws').click()
+  await expect(quick.getByRole('button', { name: 'Charisma save' })).toBeVisible()
 })
 
 test('a fighter has a Bonus actions set, in blue, that greys out once the bonus action is used', async ({ page }) => {

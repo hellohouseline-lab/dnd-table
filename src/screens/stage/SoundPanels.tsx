@@ -75,22 +75,12 @@ type MusicPanelProps = {
   onChange: (patch: StagePatch) => void
   onUpload: SoundUpload
   onDelete: (asset: Asset) => void
-  onToggleSafe: (asset: Asset) => void
   options: UploadOptions
   now: () => number
 }
 
 /** Music by mood from design 11: one track at a time, looping, the same moment on every screen. */
-export function MusicPanel({
-  music,
-  stage,
-  onChange,
-  onUpload,
-  onDelete,
-  onToggleSafe,
-  options,
-  now,
-}: MusicPanelProps) {
+export function MusicPanel({ music, stage, onChange, onUpload, onDelete, options, now }: MusicPanelProps) {
   const playing = music.find((m) => m.id === stage.musicId)
   const [mood, setMood] = useState<Mood>(playing?.mood ?? 'tavern')
   const tracks = music.filter((m) => m.mood === mood)
@@ -127,7 +117,7 @@ export function MusicPanel({
           <div className={styles.trackName}>{playing ? playing.name : 'No music on'}</div>
           <div className={styles.trackMeta}>
             {playing
-              ? `${MOODS.find((m) => m.key === playing.mood)?.name} · ${playing.streamSafe ? 'stream-safe' : 'not marked stream-safe'}${stage.musicPlaying ? '' : ' · paused'}`
+              ? `${MOODS.find((m) => m.key === playing.mood)?.name}${stage.musicPlaying ? '' : ' · paused'}`
               : 'Pick a track below'}
           </div>
         </div>
@@ -171,14 +161,6 @@ export function MusicPanel({
             >
               <Icon name="play" size={12} filled />
               <span>{track.name}</span>
-            </button>
-            <button
-              type="button"
-              className={cx(styles.safe, !track.streamSafe && styles.unsafe)}
-              title="Click to change. Only stream-safe music should play while anyone is live."
-              onClick={() => onToggleSafe(track)}
-            >
-              {track.streamSafe ? 'stream-safe' : 'not safe'}
             </button>
             <button
               type="button"

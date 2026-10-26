@@ -74,8 +74,10 @@ export function PartyCards({
   }
 
   return (
-    <div className={styles.tab}>
-      {onQuickCheck && <QuickChecks characterIds={chosen} onSend={onQuickCheck} error={quickError} />}
+    <div className={cx(styles.tab, onQuickCheck && styles.withChecks)}>
+      {onQuickCheck && (
+        <QuickChecks className={styles.checks} characterIds={chosen} onSend={onQuickCheck} error={quickError} />
+      )}
       <div className={styles.grid}>
         {cards.map(({ member, character }) => {
           const combatant = combatants.find((c) => c.characterId === character.id)
