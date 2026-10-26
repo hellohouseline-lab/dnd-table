@@ -206,6 +206,7 @@
   clip-path: inset(50%);
 }
 
-.handHidden {
-  display: none;
+/* A roll for the DM: gold. */
+.roll {
+  color: var(--gold-light);
 }

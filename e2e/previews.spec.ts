@@ -477,17 +477,28 @@ test('the builder: a fighter picks starting gear and gets AC 18 from chain mail 
 test('outside a fight, a player rolls a d20 for the DM, with advantage', async ({ page }) => {
   await page.goto('#/dev/table')
   await page.getByRole('button', { name: 'Checks', exact: true }).click()
-  const panel = page.getByRole('region', { name: 'Roll for the DM' })
-  await panel.getByRole('button', { name: 'Advantage', exact: true }).click()
-  await panel.getByRole('button', { name: 'Roll a d20 with advantage' }).click()
-  // The advantage is spent on that roll, and the dice land for everyone.
-  await expect(panel.getByRole('button', { name: 'Normal', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  const hand = page.getByLabel('Your hand')
+  await expect(hand.getByRole('button', { name: /Roll a d20/ })).toBeVisible()
+  await hand.getByRole('button', { name: /^Check Advantage/ }).click()
+  // Two dice, the higher counting, landing for everyone.
   await expect(page.getByRole('status').filter({ hasText: 'A roll for the DM' })).toBeVisible({ timeout: 10_000 })
 
   // In a fight the hand is for fighting: no Checks set.
   await page.goto('#/dev/table/fight')
   await expect(page.getByRole('button', { name: 'Bonus actions' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Checks', exact: true })).toHaveCount(0)
+})
+
+test("the DM says what a player's roll was, from buttons with each total, and judges it", async ({ page }) => {
+  await page.goto('#/dev/dm-rolls')
+  const card = page.getByRole('region', { name: "Thorin Ironfist's roll for you" })
+  await expect(card).toContainText('rolled for you with advantage')
+  await card.getByRole('button', { name: /^DEX/ }).click()
+  await expect(card).toContainText('Dexterity save: 11 +1 = 12')
+  await card.getByRole('button', { name: 'Medium 15' }).click()
+  await expect(card).toContainText('dice say fail')
+  await card.getByRole('button', { name: 'Pass', exact: true }).click()
+  await expect(card).toBeHidden()
 })
 
 test('a fighter drinks a potion from the Items set, which takes the action', async ({ page }) => {
