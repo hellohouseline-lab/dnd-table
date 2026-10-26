@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
 import { LoadingScreen } from '../../components/LoadingScreen.tsx'
@@ -15,6 +15,7 @@ import { useParty } from '../../live/useParty.ts'
 import { useRollRequest } from '../../live/useRollRequest.ts'
 import { useLibrary, useStage, useStageImage } from '../../live/useStage.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
+import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { TableView } from './TableView.tsx'
 
 /** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
@@ -28,11 +29,20 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
   const library = useLibrary(campaignId, user.id)
   const stageImage = useStageImage(stage.imageId, library.assets)
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
+  const fight = useFight(campaignId, user.id)
+  const mapId = stage.mode === 'map' ? stage.mapId : null
+  const battleMap = useStageImage(mapId, library.assets)
+  const tokens = useTokens(campaignId, user.id, mapId)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
   const character = party.status === 'ready' ? party.characters.find((c) => c.ownerId === user.id) : undefined
+  const pointerName = useMemo(
+    () => ({ userId: user.id, name: character?.name ?? 'A player' }),
+    [user.id, character?.name],
+  )
+  const pointers = useMapPointers(campaignId, pointerName)
   const ready = members.status === 'ready' && party.status === 'ready'
 
   useEffect(() => {
@@ -74,12 +84,21 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       characters={party.characters}
       online={online}
       onUpdate={party.update}
-      saveError={party.saveError ?? styleError}
+      saveError={party.saveError ?? styleError ?? fight.error ?? tokens.error}
       diceStyle={diceStyle}
       onDiceStyleChange={changeDiceStyle}
       asking={asking}
       stageImage={stageImage}
       audio={audio}
+      combat={{
+        fight: fight.fight,
+        rollInitiative: fight.rollInitiative,
+        endTurn: fight.next,
+        map: battleMap,
+        tokens,
+        playersMove: stage.playersMoveTokens,
+        pointers,
+      }}
     />
   )
 }

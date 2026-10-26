@@ -39,7 +39,10 @@ type SheetInput = Pick<
   | 'hitDiceUsed'
 >
 
-export function skillRank(character: Pick<Character, 'skillProficiencies' | 'skillExpertise'>, skill: string): SkillRank {
+export function skillRank(
+  character: Pick<Character, 'skillProficiencies' | 'skillExpertise'>,
+  skill: string,
+): SkillRank {
   if (character.skillExpertise.includes(skill)) return 'expertise'
   return character.skillProficiencies.includes(skill) ? 'proficient' : 'none'
 }

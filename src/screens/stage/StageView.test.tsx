@@ -23,6 +23,7 @@ function asset(id: string, patch: Partial<Asset>): Asset {
     credit: '',
     hotkey: null,
     createdAt: '2026-10-26T20:00:00Z',
+    grid: { size: 70, offsetX: 0, offsetY: 0 },
     ...patch,
   }
 }
@@ -61,6 +62,11 @@ function render() {
           remove: async () => undefined,
         }}
         now={() => 0}
+        map={{
+          tokens: { tokens: [], error: null, move: noop, place: async () => {}, setHidden: noop, remove: noop },
+          fight: null,
+          pointers: { hands: [], pings: [], sendHand: noop, sendPing: noop },
+        }}
       />,
     ),
   )
@@ -88,6 +94,7 @@ describe('the stage screen', () => {
 
   it('keeps the later features visible but switched off', () => {
     expect(html).toContain('Switch to battle map')
+    expect(html).toContain('Players move their own tokens: on')
     expect(html).toMatch(/Library: 5\.0 MB of the 1 GB free storage/)
   })
 })

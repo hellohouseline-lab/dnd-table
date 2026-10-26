@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ComponentProps } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Notice } from '../../components/Notice.tsx'
@@ -12,14 +12,13 @@ import type { LibraryControls, StageControls } from '../../live/useStage.ts'
 import type { Character } from '../../rules/character.ts'
 import { CameraColumn } from '../table/TableView.tsx'
 import { ArtLibrary } from './ArtLibrary.tsx'
+import { MapStage } from './MapStage.tsx'
 import { AmbiencePanel, EffectsPanel, MusicPanel } from './SoundPanels.tsx'
 import styles from './StageView.module.css'
 
 const FREE_STORAGE_BYTES = 1024 * 1024 * 1024
 
 const LATER: { label: string; title: string }[] = [
-  { label: 'Switch to battle map', title: 'Battle maps arrive in milestone 6' },
-  { label: 'Players move their own tokens: on', title: 'Tokens arrive in milestone 6' },
   { label: 'Reveal hidden areas', title: 'Arrives in Phase 2' },
   { label: 'Chapter title card', title: 'Arrives in Phase 2' },
 ]
@@ -44,6 +43,8 @@ type StageViewProps = {
   audio?: TableAudio
   /** The server's time in milliseconds, for starting music in step. */
   now: () => number
+  /** The battle map's tokens, the fight (for monster tokens) and everyone's hands and pings. */
+  map: Omit<ComponentProps<typeof MapStage>, 'map' | 'characters' | 'userId' | 'playersMove' | 'onGrid'>
 }
 
 /** Screen 11, the stage: what everyone sees and hears, the art library, music, ambience and effects. */
@@ -58,6 +59,7 @@ export function StageView({
   actions,
   audio,
   now,
+  map: mapProps,
 }: StageViewProps) {
   const { stage, change } = controls
   const [problem, setProblem] = useState<string | null>(null)
@@ -65,6 +67,8 @@ export function StageView({
   const [sceneName, setSceneName] = useState<string | null>(null)
   const art = library.assets.filter((a) => a.kind === 'art')
   const onStage = art.find((a) => a.id === stage.imageId) ?? null
+  const battleMap = art.find((a) => a.id === stage.mapId) ?? null
+  const showingMap = stage.mode === 'map' && battleMap !== null
   const effects = library.assets.filter((a) => a.kind === 'effect')
   const used = library.assets.reduce((sum, a) => sum + a.sizeBytes, 0)
 
@@ -113,6 +117,12 @@ export function StageView({
     }
     const done = await attempt(() => actions.remove(asset))
     if (done !== null) library.drop(asset.id)
+  }
+
+  async function updateAsset(asset: Asset, patch: AssetPatch) {
+    library.put({ ...asset, ...patch })
+    const updated = await attempt(() => actions.update(asset.id, patch))
+    if (updated) library.put(updated)
   }
 
   async function toggleSafe(asset: Asset) {
@@ -199,27 +209,57 @@ export function StageView({
               <h2 id="sees-title" className={styles.panelTitle}>
                 What everyone sees
               </h2>
-              <span className={styles.hint}>{onStage ? onStage.name : 'Nothing on stage'}</span>
+              <span className={styles.hint}>
+                {showingMap ? `Battle map: ${battleMap.name}` : onStage ? onStage.name : 'Nothing on stage'}
+              </span>
             </div>
-            <div className={styles.screenPreview}>
-              {onStage ? (
-                <StoredImage path={onStage.path} alt={`On stage: ${onStage.name}`} />
-              ) : (
-                <div className={styles.nothing}>
-                  <span className={styles.nothingTitle}>[ The table ]</span>
-                  <span>Pick a picture from the library below and it appears behind everyone&rsquo;s screen.</span>
-                </div>
-              )}
-            </div>
+            {showingMap ? (
+              <MapStage
+                {...mapProps}
+                map={battleMap}
+                characters={characters}
+                userId={me.user_id}
+                playersMove={stage.playersMoveTokens}
+                onGrid={(patch) => void updateAsset(battleMap, patch)}
+              />
+            ) : (
+              <div className={styles.screenPreview}>
+                {onStage ? (
+                  <StoredImage path={onStage.path} alt={`On stage: ${onStage.name}`} />
+                ) : (
+                  <div className={styles.nothing}>
+                    <span className={styles.nothingTitle}>[ The table ]</span>
+                    <span>Pick a picture from the library below and it appears behind everyone&rsquo;s screen.</span>
+                  </div>
+                )}
+              </div>
+            )}
           </section>
           <div className={styles.controls}>
             <button
               type="button"
               className={styles.control}
-              disabled={!stage.imageId}
-              onClick={() => change({ imageId: null })}
+              disabled={!stage.imageId && !showingMap}
+              onClick={() => change({ imageId: null, mode: 'scene' })}
             >
               Clear the stage
+            </button>
+            <button
+              type="button"
+              className={styles.control}
+              disabled={!battleMap}
+              title={battleMap ? undefined : 'Pick a map from Maps in the library first'}
+              onClick={() => change({ mode: showingMap ? 'scene' : 'map' })}
+            >
+              {showingMap ? 'Back to the picture' : 'Switch to battle map'}
+            </button>
+            <button
+              type="button"
+              className={cx(styles.control, stage.playersMoveTokens && styles.controlOn)}
+              aria-pressed={stage.playersMoveTokens}
+              onClick={() => change({ playersMoveTokens: !stage.playersMoveTokens })}
+            >
+              Players move their own tokens: {stage.playersMoveTokens ? 'on' : 'off'}
             </button>
             {LATER.map((later) => (
               <button key={later.label} type="button" className={styles.control} disabled title={later.title}>
@@ -232,8 +272,12 @@ export function StageView({
           )}
           <ArtLibrary
             art={art}
-            onStage={stage.imageId}
-            onShow={(asset) => change({ imageId: asset.id })}
+            onStage={showingMap ? stage.mapId : stage.imageId}
+            onShow={(asset) =>
+              asset.category === 'maps'
+                ? change({ mapId: asset.id, mode: 'map' })
+                : change({ imageId: asset.id, mode: 'scene' })
+            }
             onUpload={uploadArt}
             onDelete={(asset) => void remove(asset)}
           />

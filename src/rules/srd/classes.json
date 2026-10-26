@@ -1,4935 +1,1827 @@
 {
- "source": {
-  "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
-  "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
-  "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
- },
- "classes": [
-  {
-   "index": "barbarian",
-   "name": "Barbarian",
-   "hitDie": 12,
-   "saves": [
-    "strength",
-    "constitution"
-   ],
-   "spellcastingAbility": null,
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "animal-handling",
-     "athletics",
-     "intimidation",
-     "nature",
-     "perception",
-     "survival"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Medium Armor",
-    "Shields",
-    "Simple Weapons",
-    "Martial Weapons"
-   ],
-   "subclasses": [
-    {
-     "index": "berserker",
-     "name": "Berserker"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "rage",
-      "barbarian-unarmored-defense"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "reckless-attack",
-      "danger-sense"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "primal-path"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "barbarian-ability-score-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "barbarian-extra-attack",
-      "fast-movement"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "primal-path-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "feral-instinct"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "barbarian-ability-score-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [
-      "brutal-critical-1-die"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "primal-path-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "relentless-rage"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "barbarian-ability-score-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [
-      "brutal-critical-2-dice"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "primal-path-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "persistent-rage"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "barbarian-ability-score-improvement-4"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "brutal-critical-3-dice"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "indomitable-might"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "barbarian-ability-score-improvement-5"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "primal-champion"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    }
-   },
-   "subclassFeatures": {
-    "berserker": {
-     "3": [
-      "frenzy"
-     ],
-     "6": [
-      "mindless-rage"
-     ],
-     "10": [
-      "intimidating-presence"
-     ],
-     "14": [
-      "retaliation"
-     ]
-    }
-   }
+  "source": {
+    "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
+    "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
+    "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
   },
-  {
-   "index": "bard",
-   "name": "Bard",
-   "hitDie": 8,
-   "saves": [
-    "dexterity",
-    "charisma"
-   ],
-   "spellcastingAbility": "charisma",
-   "skillChoices": {
-    "choose": 3,
-    "from": [
-     "acrobatics",
-     "animal-handling",
-     "arcana",
-     "athletics",
-     "deception",
-     "history",
-     "insight",
-     "intimidation",
-     "investigation",
-     "medicine",
-     "nature",
-     "perception",
-     "performance",
-     "persuasion",
-     "religion",
-     "sleight-of-hand",
-     "stealth",
-     "survival"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Simple Weapons",
-    "Longswords",
-    "Rapiers",
-    "Shortswords",
-    "Hand crossbows"
-   ],
-   "subclasses": [
+  "classes": [
     {
-     "index": "lore",
-     "name": "Lore"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "spellcasting-bard",
-      "bardic-inspiration-d6"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2,
-     "spellsKnown": 4
+      "index": "barbarian",
+      "name": "Barbarian",
+      "hitDie": 12,
+      "saves": ["strength", "constitution"],
+      "spellcastingAbility": null,
+      "skillChoices": {
+        "choose": 2,
+        "from": ["animal-handling", "athletics", "intimidation", "nature", "perception", "survival"]
+      },
+      "proficiencies": ["Light Armor", "Medium Armor", "Shields", "Simple Weapons", "Martial Weapons"],
+      "subclasses": [
+        {
+          "index": "berserker",
+          "name": "Berserker"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["rage", "barbarian-unarmored-defense"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["reckless-attack", "danger-sense"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["primal-path"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["barbarian-ability-score-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["barbarian-extra-attack", "fast-movement"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["primal-path-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["feral-instinct"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["barbarian-ability-score-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "9": {
+          "profBonus": 4,
+          "features": ["brutal-critical-1-die"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["primal-path-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["relentless-rage"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["barbarian-ability-score-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "13": {
+          "profBonus": 5,
+          "features": ["brutal-critical-2-dice"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["primal-path-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["persistent-rage"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["barbarian-ability-score-improvement-4"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["brutal-critical-3-dice"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["indomitable-might"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["barbarian-ability-score-improvement-5"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["primal-champion"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      "subclassFeatures": {
+        "berserker": {
+          "3": ["frenzy"],
+          "6": ["mindless-rage"],
+          "10": ["intimidating-presence"],
+          "14": ["retaliation"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "jack-of-all-trades",
-      "song-of-rest-d6"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2,
-     "spellsKnown": 5
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "bard-expertise-1",
-      "bard-college"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2,
-     "spellsKnown": 6
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "bard-ability-score-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 7
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "bardic-inspiration-d8",
-      "font-of-inspiration"
-     ],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 8
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "countercharm",
-      "bard-college-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 9
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 10
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "bard-ability-score-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 11
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [
-      "song-of-rest-d8"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 12
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "bard-expertise-2",
-      "bardic-inspiration-d10",
-      "magical-secrets-1"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 14
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 15
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "bard-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 15
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [
-      "song-of-rest-d10"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 16
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "magical-secrets-2",
-      "bard-college-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 18
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "bardic-inspiration-d12"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 19
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "bard-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 19
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "song-of-rest-d12"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 20
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "magical-secrets-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 22
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "bard-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 22
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "superior-inspiration"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      2,
-      1,
-      1
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 22
-    }
-   },
-   "subclassFeatures": {
-    "lore": {
-     "3": [
-      "bonus-proficiencies",
-      "cutting-words"
-     ],
-     "6": [
-      "additional-magical-secrets"
-     ],
-     "14": [
-      "peerless-skill"
-     ]
-    }
-   }
-  },
-  {
-   "index": "cleric",
-   "name": "Cleric",
-   "hitDie": 8,
-   "saves": [
-    "wisdom",
-    "charisma"
-   ],
-   "spellcastingAbility": "wisdom",
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "history",
-     "insight",
-     "medicine",
-     "persuasion",
-     "religion"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Medium Armor",
-    "Shields",
-    "Simple Weapons"
-   ],
-   "subclasses": [
     {
-     "index": "life",
-     "name": "Life"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "spellcasting-cleric",
-      "divine-domain",
-      "domain-spells-1"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
+      "index": "bard",
+      "name": "Bard",
+      "hitDie": 8,
+      "saves": ["dexterity", "charisma"],
+      "spellcastingAbility": "charisma",
+      "skillChoices": {
+        "choose": 3,
+        "from": [
+          "acrobatics",
+          "animal-handling",
+          "arcana",
+          "athletics",
+          "deception",
+          "history",
+          "insight",
+          "intimidation",
+          "investigation",
+          "medicine",
+          "nature",
+          "perception",
+          "performance",
+          "persuasion",
+          "religion",
+          "sleight-of-hand",
+          "stealth",
+          "survival"
+        ]
+      },
+      "proficiencies": ["Light Armor", "Simple Weapons", "Longswords", "Rapiers", "Shortswords", "Hand crossbows"],
+      "subclasses": [
+        {
+          "index": "lore",
+          "name": "Lore"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["spellcasting-bard", "bardic-inspiration-d6"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2,
+          "spellsKnown": 4
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["jack-of-all-trades", "song-of-rest-d6"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2,
+          "spellsKnown": 5
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["bard-expertise-1", "bard-college"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2,
+          "spellsKnown": 6
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["bard-ability-score-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 7
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["bardic-inspiration-d8", "font-of-inspiration"],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 8
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["countercharm", "bard-college-improvement-1"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 9
+        },
+        "7": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 10
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["bard-ability-score-improvement-2"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 11
+        },
+        "9": {
+          "profBonus": 4,
+          "features": ["song-of-rest-d8"],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 12
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["bard-expertise-2", "bardic-inspiration-d10", "magical-secrets-1"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 14
+        },
+        "11": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 15
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["bard-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 15
+        },
+        "13": {
+          "profBonus": 5,
+          "features": ["song-of-rest-d10"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 16
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["magical-secrets-2", "bard-college-improvement-2"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 18
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["bardic-inspiration-d12"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 19
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["bard-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 19
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["song-of-rest-d12"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 1],
+          "cantripsKnown": 4,
+          "spellsKnown": 20
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["magical-secrets-3"],
+          "slots": [4, 3, 3, 3, 3, 1, 1, 1, 1],
+          "cantripsKnown": 4,
+          "spellsKnown": 22
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["bard-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 3, 2, 1, 1, 1],
+          "cantripsKnown": 4,
+          "spellsKnown": 22
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["superior-inspiration"],
+          "slots": [4, 3, 3, 3, 3, 2, 2, 1, 1],
+          "cantripsKnown": 4,
+          "spellsKnown": 22
+        }
+      },
+      "subclassFeatures": {
+        "lore": {
+          "3": ["bonus-proficiencies", "cutting-words"],
+          "6": ["additional-magical-secrets"],
+          "14": ["peerless-skill"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "channel-divinity-1-rest",
-      "channel-divinity-turn-undead",
-      "divine-domain-improvement-1"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "domain-spells-2"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "cleric-ability-score-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "domain-spells-3",
-      "destroy-undead-cr-1-2-or-below"
-     ],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "channel-divinity-2-rest",
-      "divine-domain-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "domain-spells-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "cleric-ability-score-improvement-2",
-      "destroy-undead-cr-1-or-below",
-      "divine-domain-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [
-      "domain-spells-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "divine-intervention"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "destroy-undead-cr-2-or-below"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "cleric-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "destroy-undead-cr-3-or-below"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "cleric-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "destroy-undead-cr-4-or-below",
-      "divine-domain-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "channel-divinity-3-rest"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "cleric-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "divine-intervention-improvement"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      2,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    }
-   },
-   "subclassFeatures": {
-    "life": {
-     "1": [
-      "bonus-proficiency",
-      "disciple-of-life"
-     ],
-     "2": [
-      "channel-divinity-preserve-life"
-     ],
-     "6": [
-      "blessed-healer"
-     ],
-     "8": [
-      "divine-strike"
-     ],
-     "17": [
-      "supreme-healing"
-     ]
-    }
-   }
-  },
-  {
-   "index": "druid",
-   "name": "Druid",
-   "hitDie": 8,
-   "saves": [
-    "intelligence",
-    "wisdom"
-   ],
-   "spellcastingAbility": "wisdom",
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "arcana",
-     "animal-handling",
-     "insight",
-     "medicine",
-     "nature",
-     "perception",
-     "religion",
-     "survival"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Medium Armor",
-    "Shields",
-    "Clubs",
-    "Daggers",
-    "Javelins",
-    "Maces",
-    "Quarterstaffs",
-    "Sickles",
-    "Spears",
-    "Darts",
-    "Slings",
-    "Scimitars",
-    "Herbalism Kit"
-   ],
-   "subclasses": [
     {
-     "index": "land",
-     "name": "Land"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "spellcasting-druid",
-      "druidic"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2
+      "index": "cleric",
+      "name": "Cleric",
+      "hitDie": 8,
+      "saves": ["wisdom", "charisma"],
+      "spellcastingAbility": "wisdom",
+      "skillChoices": {
+        "choose": 2,
+        "from": ["history", "insight", "medicine", "persuasion", "religion"]
+      },
+      "proficiencies": ["Light Armor", "Medium Armor", "Shields", "Simple Weapons"],
+      "subclasses": [
+        {
+          "index": "life",
+          "name": "Life"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["spellcasting-cleric", "divine-domain", "domain-spells-1"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["channel-divinity-1-rest", "channel-divinity-turn-undead", "divine-domain-improvement-1"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["domain-spells-2"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["cleric-ability-score-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["domain-spells-3", "destroy-undead-cr-1-2-or-below"],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["channel-divinity-2-rest", "divine-domain-improvement-2"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["domain-spells-4"],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "8": {
+          "profBonus": 3,
+          "features": [
+            "cleric-ability-score-improvement-2",
+            "destroy-undead-cr-1-or-below",
+            "divine-domain-improvement-3"
+          ],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "9": {
+          "profBonus": 4,
+          "features": ["domain-spells-5"],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["divine-intervention"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "cantripsKnown": 5
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["destroy-undead-cr-2-or-below"],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 5
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["cleric-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 5
+        },
+        "13": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 5
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["destroy-undead-cr-3-or-below"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 5
+        },
+        "15": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 5
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["cleric-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 5
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["destroy-undead-cr-4-or-below", "divine-domain-improvement-4"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 1],
+          "cantripsKnown": 5
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["channel-divinity-3-rest"],
+          "slots": [4, 3, 3, 3, 3, 1, 1, 1, 1],
+          "cantripsKnown": 5
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["cleric-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 3, 2, 1, 1, 1],
+          "cantripsKnown": 5
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["divine-intervention-improvement"],
+          "slots": [4, 3, 3, 3, 3, 2, 2, 1, 1],
+          "cantripsKnown": 5
+        }
+      },
+      "subclassFeatures": {
+        "life": {
+          "1": ["bonus-proficiency", "disciple-of-life"],
+          "2": ["channel-divinity-preserve-life"],
+          "6": ["blessed-healer"],
+          "8": ["divine-strike"],
+          "17": ["supreme-healing"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "wild-shape-cr-1-4-or-below-no-flying-or-swim-speed",
-      "druid-circle"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "wild-shape-cr-1-2-or-below-no-flying-speed",
-      "druid-ability-score-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "druid-circle-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "wild-shape-cr-1-or-below",
-      "druid-ability-score-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "druid-circle-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "druid-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "druid-circle-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "druid-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 4
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "druid-timeless-body",
-      "beast-spells"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 4
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "druid-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 4
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "archdruid"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      2,
-      1,
-      1
-     ],
-     "cantripsKnown": 4
-    }
-   },
-   "subclassFeatures": {
-    "land": {
-     "2": [
-      "bonus-cantrip",
-      "natural-recovery"
-     ],
-     "6": [
-      "druid-lands-stride"
-     ],
-     "10": [
-      "natures-ward"
-     ],
-     "14": [
-      "natures-sanctuary"
-     ]
-    }
-   }
-  },
-  {
-   "index": "fighter",
-   "name": "Fighter",
-   "hitDie": 10,
-   "saves": [
-    "strength",
-    "constitution"
-   ],
-   "spellcastingAbility": null,
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "acrobatics",
-     "animal-handling",
-     "athletics",
-     "history",
-     "insight",
-     "intimidation",
-     "perception",
-     "survival"
-    ]
-   },
-   "proficiencies": [
-    "All armor",
-    "Shields",
-    "Simple Weapons",
-    "Martial Weapons"
-   ],
-   "subclasses": [
     {
-     "index": "champion",
-     "name": "Champion"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "fighter-fighting-style",
-      "second-wind"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
+      "index": "druid",
+      "name": "Druid",
+      "hitDie": 8,
+      "saves": ["intelligence", "wisdom"],
+      "spellcastingAbility": "wisdom",
+      "skillChoices": {
+        "choose": 2,
+        "from": ["arcana", "animal-handling", "insight", "medicine", "nature", "perception", "religion", "survival"]
+      },
+      "proficiencies": [
+        "Light Armor",
+        "Medium Armor",
+        "Shields",
+        "Clubs",
+        "Daggers",
+        "Javelins",
+        "Maces",
+        "Quarterstaffs",
+        "Sickles",
+        "Spears",
+        "Darts",
+        "Slings",
+        "Scimitars",
+        "Herbalism Kit"
+      ],
+      "subclasses": [
+        {
+          "index": "land",
+          "name": "Land"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["spellcasting-druid", "druidic"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["wild-shape-cr-1-4-or-below-no-flying-or-swim-speed", "druid-circle"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2
+        },
+        "3": {
+          "profBonus": 2,
+          "features": [],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["wild-shape-cr-1-2-or-below-no-flying-speed", "druid-ability-score-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "5": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["druid-circle-improvement-1"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "7": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["wild-shape-cr-1-or-below", "druid-ability-score-improvement-2"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "9": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["druid-circle-improvement-2"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "11": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["druid-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "13": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 4
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["druid-circle-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 4
+        },
+        "15": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 4
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["druid-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 4
+        },
+        "17": {
+          "profBonus": 6,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 1],
+          "cantripsKnown": 4
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["druid-timeless-body", "beast-spells"],
+          "slots": [4, 3, 3, 3, 3, 1, 1, 1, 1],
+          "cantripsKnown": 4
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["druid-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 3, 2, 1, 1, 1],
+          "cantripsKnown": 4
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["archdruid"],
+          "slots": [4, 3, 3, 3, 3, 2, 2, 1, 1],
+          "cantripsKnown": 4
+        }
+      },
+      "subclassFeatures": {
+        "land": {
+          "2": ["bonus-cantrip", "natural-recovery"],
+          "6": ["druid-lands-stride"],
+          "10": ["natures-ward"],
+          "14": ["natures-sanctuary"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "action-surge-1-use"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "martial-archetype"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "fighter-ability-score-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "extra-attack-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "fighter-ability-score-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "martial-archetype-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "fighter-ability-score-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [
-      "indomitable-1-use"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "martial-archetype-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "extra-attack-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "fighter-ability-score-improvement-4"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [
-      "indomitable-2-uses"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "fighter-ability-score-improvement-5"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "martial-archetype-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "fighter-ability-score-improvement-6"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "action-surge-2-uses",
-      "indomitable-3-uses"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "martial-archetype-improvement-4"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "fighter-ability-score-improvement-7"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "extra-attack-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    }
-   },
-   "subclassFeatures": {
-    "champion": {
-     "3": [
-      "improved-critical"
-     ],
-     "7": [
-      "remarkable-athlete"
-     ],
-     "10": [
-      "additional-fighting-style"
-     ],
-     "15": [
-      "superior-critical"
-     ],
-     "18": [
-      "survivor"
-     ]
-    }
-   }
-  },
-  {
-   "index": "monk",
-   "name": "Monk",
-   "hitDie": 8,
-   "saves": [
-    "strength",
-    "dexterity"
-   ],
-   "spellcastingAbility": null,
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "acrobatics",
-     "athletics",
-     "history",
-     "insight",
-     "religion",
-     "stealth"
-    ]
-   },
-   "proficiencies": [
-    "Simple Weapons",
-    "Shortswords"
-   ],
-   "subclasses": [
     {
-     "index": "open-hand",
-     "name": "Open Hand"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "monk-unarmored-defense",
-      "martial-arts"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
+      "index": "fighter",
+      "name": "Fighter",
+      "hitDie": 10,
+      "saves": ["strength", "constitution"],
+      "spellcastingAbility": null,
+      "skillChoices": {
+        "choose": 2,
+        "from": [
+          "acrobatics",
+          "animal-handling",
+          "athletics",
+          "history",
+          "insight",
+          "intimidation",
+          "perception",
+          "survival"
+        ]
+      },
+      "proficiencies": ["All armor", "Shields", "Simple Weapons", "Martial Weapons"],
+      "subclasses": [
+        {
+          "index": "champion",
+          "name": "Champion"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["fighter-fighting-style", "second-wind"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["action-surge-1-use"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["martial-archetype"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["fighter-ability-score-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["extra-attack-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["fighter-ability-score-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["martial-archetype-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["fighter-ability-score-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "9": {
+          "profBonus": 4,
+          "features": ["indomitable-1-use"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["martial-archetype-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["extra-attack-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["fighter-ability-score-improvement-4"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "13": {
+          "profBonus": 5,
+          "features": ["indomitable-2-uses"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["fighter-ability-score-improvement-5"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["martial-archetype-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["fighter-ability-score-improvement-6"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["action-surge-2-uses", "indomitable-3-uses"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["martial-archetype-improvement-4"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["fighter-ability-score-improvement-7"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["extra-attack-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      "subclassFeatures": {
+        "champion": {
+          "3": ["improved-critical"],
+          "7": ["remarkable-athlete"],
+          "10": ["additional-fighting-style"],
+          "15": ["superior-critical"],
+          "18": ["survivor"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "ki",
-      "flurry-of-blows",
-      "patient-defense",
-      "step-of-the-wind",
-      "unarmored-movement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "monastic-tradition",
-      "deflect-missiles"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "monk-ability-score-improvement-1",
-      "slow-fall"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "monk-extra-attack",
-      "stunning-strike"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "ki-empowered-strikes",
-      "monastic-tradition-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "monk-evasion",
-      "stillness-of-mind"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "monk-ability-score-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [
-      "unarmored-movement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "purity-of-body"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "monastic-tradition-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "monk-ability-score-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [
-      "tongue-of-the-sun-and-moon"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "diamond-soul"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "monk-timeless-body"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "monk-ability-score-improvement-4"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "monastic-tradition-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "empty-body"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "monk-ability-score-improvement-5"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "perfect-self"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    }
-   },
-   "subclassFeatures": {
-    "open-hand": {
-     "3": [
-      "open-hand-technique"
-     ],
-     "6": [
-      "wholeness-of-body"
-     ],
-     "11": [
-      "tranquility"
-     ],
-     "17": [
-      "quivering-palm"
-     ]
-    }
-   }
-  },
-  {
-   "index": "paladin",
-   "name": "Paladin",
-   "hitDie": 10,
-   "saves": [
-    "wisdom",
-    "charisma"
-   ],
-   "spellcastingAbility": "charisma",
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "athletics",
-     "insight",
-     "intimidation",
-     "medicine",
-     "persuasion",
-     "religion"
-    ]
-   },
-   "proficiencies": [
-    "All armor",
-    "Shields",
-    "Simple Weapons",
-    "Martial Weapons"
-   ],
-   "subclasses": [
     {
-     "index": "devotion",
-     "name": "Devotion"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "divine-sense",
-      "lay-on-hands"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
+      "index": "monk",
+      "name": "Monk",
+      "hitDie": 8,
+      "saves": ["strength", "dexterity"],
+      "spellcastingAbility": null,
+      "skillChoices": {
+        "choose": 2,
+        "from": ["acrobatics", "athletics", "history", "insight", "religion", "stealth"]
+      },
+      "proficiencies": ["Simple Weapons", "Shortswords"],
+      "subclasses": [
+        {
+          "index": "open-hand",
+          "name": "Open Hand"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["monk-unarmored-defense", "martial-arts"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["ki", "flurry-of-blows", "patient-defense", "step-of-the-wind", "unarmored-movement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["monastic-tradition", "deflect-missiles"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["monk-ability-score-improvement-1", "slow-fall"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["monk-extra-attack", "stunning-strike"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["ki-empowered-strikes", "monastic-tradition-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["monk-evasion", "stillness-of-mind"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["monk-ability-score-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "9": {
+          "profBonus": 4,
+          "features": ["unarmored-movement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["purity-of-body"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["monastic-tradition-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["monk-ability-score-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "13": {
+          "profBonus": 5,
+          "features": ["tongue-of-the-sun-and-moon"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["diamond-soul"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["monk-timeless-body"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["monk-ability-score-improvement-4"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["monastic-tradition-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["empty-body"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["monk-ability-score-improvement-5"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["perfect-self"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      "subclassFeatures": {
+        "open-hand": {
+          "3": ["open-hand-technique"],
+          "6": ["wholeness-of-body"],
+          "11": ["tranquility"],
+          "17": ["quivering-palm"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "paladin-fighting-style",
-      "spellcasting-paladin",
-      "divine-smite"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "divine-health",
-      "sacred-oath",
-      "oath-spells",
-      "channel-divinity"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "paladin-ability-score-improvement-1"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "paladin-extra-attack"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "aura-of-protection"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "sacred-oath-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "paladin-ability-score-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "aura-of-courage"
-     ],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "improved-divine-smite"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "paladin-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "cleansing-touch"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "sacred-oath-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "paladin-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "aura-improvements"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "paladin-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "sacred-oath-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ]
-    }
-   },
-   "subclassFeatures": {
-    "devotion": {
-     "3": [
-      "channel-divinity-sacred-weapon",
-      "channel-divinity-turn-the-unholy"
-     ],
-     "7": [
-      "aura-of-devotion"
-     ],
-     "15": [
-      "purity-of-spirit"
-     ],
-     "18": [],
-     "20": [
-      "holy-nimbus"
-     ]
-    }
-   }
-  },
-  {
-   "index": "ranger",
-   "name": "Ranger",
-   "hitDie": 10,
-   "saves": [
-    "strength",
-    "dexterity"
-   ],
-   "spellcastingAbility": "wisdom",
-   "skillChoices": {
-    "choose": 3,
-    "from": [
-     "animal-handling",
-     "athletics",
-     "insight",
-     "investigation",
-     "nature",
-     "perception",
-     "stealth",
-     "survival"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Medium Armor",
-    "Shields",
-    "Simple Weapons",
-    "Martial Weapons"
-   ],
-   "subclasses": [
     {
-     "index": "hunter",
-     "name": "Hunter"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "favored-enemy-1-type",
-      "natural-explorer-1-terrain-type"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 0
+      "index": "paladin",
+      "name": "Paladin",
+      "hitDie": 10,
+      "saves": ["wisdom", "charisma"],
+      "spellcastingAbility": "charisma",
+      "skillChoices": {
+        "choose": 2,
+        "from": ["athletics", "insight", "intimidation", "medicine", "persuasion", "religion"]
+      },
+      "proficiencies": ["All armor", "Shields", "Simple Weapons", "Martial Weapons"],
+      "subclasses": [
+        {
+          "index": "devotion",
+          "name": "Devotion"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["divine-sense", "lay-on-hands"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["paladin-fighting-style", "spellcasting-paladin", "divine-smite"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["divine-health", "sacred-oath", "oath-spells", "channel-divinity"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["paladin-ability-score-improvement-1"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["paladin-extra-attack"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["aura-of-protection"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["sacred-oath-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["paladin-ability-score-improvement-2"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "9": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0]
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["aura-of-courage"],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0]
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["improved-divine-smite"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0]
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["paladin-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0]
+        },
+        "13": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0]
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["cleansing-touch"],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0]
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["sacred-oath-improvement-2"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0]
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["paladin-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0]
+        },
+        "17": {
+          "profBonus": 6,
+          "features": [],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0]
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["aura-improvements"],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0]
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["paladin-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0]
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["sacred-oath-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0]
+        }
+      },
+      "subclassFeatures": {
+        "devotion": {
+          "3": ["channel-divinity-sacred-weapon", "channel-divinity-turn-the-unholy"],
+          "7": ["aura-of-devotion"],
+          "15": ["purity-of-spirit"],
+          "18": [],
+          "20": ["holy-nimbus"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "ranger-fighting-style",
-      "spellcasting-ranger"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 2
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "ranger-archetype",
-      "primeval-awareness"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 3
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "ranger-ability-score-improvement-1"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 3
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "ranger-extra-attack"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 4
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "favored-enemy-2-types",
-      "natural-explorer-2-terrain-types"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 4
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "ranger-archetype-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 5
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "ranger-ability-score-improvement-2",
-      "ranger-lands-stride"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 5
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 6
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "natural-explorer-3-terrain-types",
-      "hide-in-plain-sight"
-     ],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 6
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "ranger-archetype-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 7
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "ranger-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 7
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 8
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "favored-enemy-3-enemies",
-      "vanish"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 8
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "ranger-archetype-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 9
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "ranger-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 9
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 10
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "feral-senses"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 10
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "ranger-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 11
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "foe-slayer"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "spellsKnown": 11
-    }
-   },
-   "subclassFeatures": {
-    "hunter": {
-     "3": [
-      "hunters-prey"
-     ],
-     "7": [
-      "defensive-tactics"
-     ],
-     "11": [
-      "multiattack"
-     ],
-     "15": [
-      "superior-hunters-defense"
-     ]
-    }
-   }
-  },
-  {
-   "index": "rogue",
-   "name": "Rogue",
-   "hitDie": 8,
-   "saves": [
-    "dexterity",
-    "intelligence"
-   ],
-   "spellcastingAbility": null,
-   "skillChoices": {
-    "choose": 4,
-    "from": [
-     "acrobatics",
-     "athletics",
-     "deception",
-     "insight",
-     "intimidation",
-     "investigation",
-     "perception",
-     "performance",
-     "persuasion",
-     "sleight-of-hand",
-     "stealth"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Simple Weapons",
-    "Longswords",
-    "Rapiers",
-    "Shortswords",
-    "Hand crossbows",
-    "Thieves' Tools"
-   ],
-   "subclasses": [
     {
-     "index": "thief",
-     "name": "Thief"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "rogue-expertise-1",
-      "sneak-attack",
-      "thieves-cant"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
+      "index": "ranger",
+      "name": "Ranger",
+      "hitDie": 10,
+      "saves": ["strength", "dexterity"],
+      "spellcastingAbility": "wisdom",
+      "skillChoices": {
+        "choose": 3,
+        "from": [
+          "animal-handling",
+          "athletics",
+          "insight",
+          "investigation",
+          "nature",
+          "perception",
+          "stealth",
+          "survival"
+        ]
+      },
+      "proficiencies": ["Light Armor", "Medium Armor", "Shields", "Simple Weapons", "Martial Weapons"],
+      "subclasses": [
+        {
+          "index": "hunter",
+          "name": "Hunter"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["favored-enemy-1-type", "natural-explorer-1-terrain-type"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 0
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["ranger-fighting-style", "spellcasting-ranger"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 2
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["ranger-archetype", "primeval-awareness"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 3
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["ranger-ability-score-improvement-1"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 3
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["ranger-extra-attack"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 4
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["favored-enemy-2-types", "natural-explorer-2-terrain-types"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 4
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["ranger-archetype-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 5
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["ranger-ability-score-improvement-2", "ranger-lands-stride"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 5
+        },
+        "9": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 6
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["natural-explorer-3-terrain-types", "hide-in-plain-sight"],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 6
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["ranger-archetype-improvement-2"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 7
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["ranger-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "spellsKnown": 7
+        },
+        "13": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "spellsKnown": 8
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["favored-enemy-3-enemies", "vanish"],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "spellsKnown": 8
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["ranger-archetype-improvement-3"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "spellsKnown": 9
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["ranger-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "spellsKnown": 9
+        },
+        "17": {
+          "profBonus": 6,
+          "features": [],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "spellsKnown": 10
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["feral-senses"],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "spellsKnown": 10
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["ranger-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "spellsKnown": 11
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["foe-slayer"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "spellsKnown": 11
+        }
+      },
+      "subclassFeatures": {
+        "hunter": {
+          "3": ["hunters-prey"],
+          "7": ["defensive-tactics"],
+          "11": ["multiattack"],
+          "15": ["superior-hunters-defense"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "cunning-action"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "roguish-archetype"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "rogue-ability-score-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [
-      "uncanny-dodge"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "rogue-expertise-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [
-      "rogue-evasion"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "rogue-ability-score-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [
-      "roguish-archetype-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "rogue-ability-score-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "reliable-talent"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "rogue-ability-score-improvement-4"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [
-      "roguish-archetype-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "blindsense"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "slippery-mind"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "rogue-ability-score-improvement-5"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "roguish-archetype-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "elusive"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "rogue-ability-score-improvement-6"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "stroke-of-luck"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ]
-    }
-   },
-   "subclassFeatures": {
-    "thief": {
-     "3": [
-      "fast-hands",
-      "second-story-work"
-     ],
-     "9": [
-      "supreme-sneak"
-     ],
-     "13": [
-      "use-magic-device"
-     ],
-     "17": [
-      "thiefs-reflexes"
-     ]
-    }
-   }
-  },
-  {
-   "index": "sorcerer",
-   "name": "Sorcerer",
-   "hitDie": 6,
-   "saves": [
-    "constitution",
-    "charisma"
-   ],
-   "spellcastingAbility": "charisma",
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "arcana",
-     "deception",
-     "insight",
-     "intimidation",
-     "persuasion",
-     "religion"
-    ]
-   },
-   "proficiencies": [
-    "Daggers",
-    "Darts",
-    "Slings",
-    "Quarterstaffs",
-    "Crossbows, light"
-   ],
-   "subclasses": [
     {
-     "index": "draconic",
-     "name": "Draconic"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "spellcasting-sorcerer",
-      "sorcerous-origin"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 2
+      "index": "rogue",
+      "name": "Rogue",
+      "hitDie": 8,
+      "saves": ["dexterity", "intelligence"],
+      "spellcastingAbility": null,
+      "skillChoices": {
+        "choose": 4,
+        "from": [
+          "acrobatics",
+          "athletics",
+          "deception",
+          "insight",
+          "intimidation",
+          "investigation",
+          "perception",
+          "performance",
+          "persuasion",
+          "sleight-of-hand",
+          "stealth"
+        ]
+      },
+      "proficiencies": [
+        "Light Armor",
+        "Simple Weapons",
+        "Longswords",
+        "Rapiers",
+        "Shortswords",
+        "Hand crossbows",
+        "Thieves' Tools"
+      ],
+      "subclasses": [
+        {
+          "index": "thief",
+          "name": "Thief"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["rogue-expertise-1", "sneak-attack", "thieves-cant"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["cunning-action"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["roguish-archetype"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["rogue-ability-score-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "5": {
+          "profBonus": 3,
+          "features": ["uncanny-dodge"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["rogue-expertise-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "7": {
+          "profBonus": 3,
+          "features": ["rogue-evasion"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["rogue-ability-score-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "9": {
+          "profBonus": 4,
+          "features": ["roguish-archetype-improvement-1"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["rogue-ability-score-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["reliable-talent"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["rogue-ability-score-improvement-4"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "13": {
+          "profBonus": 5,
+          "features": ["roguish-archetype-improvement-2"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["blindsense"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["slippery-mind"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["rogue-ability-score-improvement-5"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["roguish-archetype-improvement-3"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["elusive"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["rogue-ability-score-improvement-6"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["stroke-of-luck"],
+          "slots": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      "subclassFeatures": {
+        "thief": {
+          "3": ["fast-hands", "second-story-work"],
+          "9": ["supreme-sneak"],
+          "13": ["use-magic-device"],
+          "17": ["thiefs-reflexes"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "font-of-magic",
-      "flexible-casting-creating-spell-slots",
-      "flexible-casting-converting-spell-slot"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 3
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "metamagic-1"
-     ],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 4
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "sorcerer-ability-score-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5,
-     "spellsKnown": 5
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5,
-     "spellsKnown": 6
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "sorcerous-origin-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5,
-     "spellsKnown": 7
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5,
-     "spellsKnown": 8
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "sorcerer-ability-score-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5,
-     "spellsKnown": 9
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5,
-     "spellsKnown": 10
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "metamagic-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 11
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 12
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "sorcerer-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 12
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 13
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "sorcerous-origin-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 13
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 14
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "sorcerer-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 14
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "metamagic-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 15
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "sorcerous-origin-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 15
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "sorcerer-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 15
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "sorcerous-restoration"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      2,
-      1,
-      1
-     ],
-     "cantripsKnown": 6,
-     "spellsKnown": 15
-    }
-   },
-   "subclassFeatures": {
-    "draconic": {
-     "1": [
-      "dragon-ancestor",
-      "draconic-resilience"
-     ],
-     "6": [
-      "elemental-affinity"
-     ],
-     "14": [
-      "dragon-wings"
-     ],
-     "18": [
-      "draconic-presence"
-     ]
-    }
-   }
-  },
-  {
-   "index": "warlock",
-   "name": "Warlock",
-   "hitDie": 8,
-   "saves": [
-    "wisdom",
-    "charisma"
-   ],
-   "spellcastingAbility": "charisma",
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "arcana",
-     "deception",
-     "history",
-     "intimidation",
-     "investigation",
-     "nature",
-     "religion"
-    ]
-   },
-   "proficiencies": [
-    "Light Armor",
-    "Simple Weapons"
-   ],
-   "subclasses": [
     {
-     "index": "fiend",
-     "name": "Fiend"
-    }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "otherworldly-patron",
-      "pact-magic"
-     ],
-     "slots": [
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2,
-     "spellsKnown": 2
+      "index": "sorcerer",
+      "name": "Sorcerer",
+      "hitDie": 6,
+      "saves": ["constitution", "charisma"],
+      "spellcastingAbility": "charisma",
+      "skillChoices": {
+        "choose": 2,
+        "from": ["arcana", "deception", "insight", "intimidation", "persuasion", "religion"]
+      },
+      "proficiencies": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Crossbows, light"],
+      "subclasses": [
+        {
+          "index": "draconic",
+          "name": "Draconic"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["spellcasting-sorcerer", "sorcerous-origin"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 2
+        },
+        "2": {
+          "profBonus": 2,
+          "features": [
+            "font-of-magic",
+            "flexible-casting-creating-spell-slots",
+            "flexible-casting-converting-spell-slot"
+          ],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 3
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["metamagic-1"],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 4
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["sorcerer-ability-score-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 5,
+          "spellsKnown": 5
+        },
+        "5": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 5,
+          "spellsKnown": 6
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["sorcerous-origin-improvement-1"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 5,
+          "spellsKnown": 7
+        },
+        "7": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "cantripsKnown": 5,
+          "spellsKnown": 8
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["sorcerer-ability-score-improvement-2"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 5,
+          "spellsKnown": 9
+        },
+        "9": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "cantripsKnown": 5,
+          "spellsKnown": 10
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["metamagic-2"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 11
+        },
+        "11": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 12
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["sorcerer-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 12
+        },
+        "13": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 13
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["sorcerous-origin-improvement-2"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 13
+        },
+        "15": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 14
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["sorcerer-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 6,
+          "spellsKnown": 14
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["metamagic-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 1],
+          "cantripsKnown": 6,
+          "spellsKnown": 15
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["sorcerous-origin-improvement-3"],
+          "slots": [4, 3, 3, 3, 3, 1, 1, 1, 1],
+          "cantripsKnown": 6,
+          "spellsKnown": 15
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["sorcerer-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 3, 2, 1, 1, 1],
+          "cantripsKnown": 6,
+          "spellsKnown": 15
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["sorcerous-restoration"],
+          "slots": [4, 3, 3, 3, 3, 2, 2, 1, 1],
+          "cantripsKnown": 6,
+          "spellsKnown": 15
+        }
+      },
+      "subclassFeatures": {
+        "draconic": {
+          "1": ["dragon-ancestor", "draconic-resilience"],
+          "6": ["elemental-affinity"],
+          "14": ["dragon-wings"],
+          "18": ["draconic-presence"]
+        }
+      }
     },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "eldritch-invocations"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2,
-     "spellsKnown": 3
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [
-      "pact-boon"
-     ],
-     "slots": [
-      0,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 2,
-     "spellsKnown": 4
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "warlock-ability-score-improvement-1"
-     ],
-     "slots": [
-      0,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 5
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      0,
-      0,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 6
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "otherworldly-patron-improvement-1"
-     ],
-     "slots": [
-      0,
-      0,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 7
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      0,
-      0,
-      0,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 8
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "warlock-ability-score-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 9
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3,
-     "spellsKnown": 10
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "otherworldly-patron-improvement-2"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 10
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [
-      "mystic-arcanum-6th-level"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 11
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "warlock-ability-score-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 11
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [
-      "mystic-arcanum-7th-level"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 12
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "otherworldly-patron-improvement-3"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 12
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [
-      "mystic-arcanum-8th-level"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 13
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "warlock-ability-score-improvement-4"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 13
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [
-      "mystic-arcanum-9th-level"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      4,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 14
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      4,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 14
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "warlock-ability-score-improvement-5"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      4,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 15
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "eldritch-master"
-     ],
-     "slots": [
-      0,
-      0,
-      0,
-      0,
-      4,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4,
-     "spellsKnown": 15
-    }
-   },
-   "subclassFeatures": {
-    "fiend": {
-     "1": [
-      "dark-ones-blessing"
-     ],
-     "6": [
-      "dark-ones-own-luck"
-     ],
-     "10": [
-      "fiendish-resilience"
-     ],
-     "14": [
-      "hurl-through-hell"
-     ]
-    }
-   }
-  },
-  {
-   "index": "wizard",
-   "name": "Wizard",
-   "hitDie": 6,
-   "saves": [
-    "intelligence",
-    "wisdom"
-   ],
-   "spellcastingAbility": "intelligence",
-   "skillChoices": {
-    "choose": 2,
-    "from": [
-     "arcana",
-     "history",
-     "insight",
-     "investigation",
-     "medicine",
-     "religion"
-    ]
-   },
-   "proficiencies": [
-    "Daggers",
-    "Darts",
-    "Slings",
-    "Quarterstaffs",
-    "Crossbows, light"
-   ],
-   "subclasses": [
     {
-     "index": "evocation",
-     "name": "Evocation"
+      "index": "warlock",
+      "name": "Warlock",
+      "hitDie": 8,
+      "saves": ["wisdom", "charisma"],
+      "spellcastingAbility": "charisma",
+      "skillChoices": {
+        "choose": 2,
+        "from": ["arcana", "deception", "history", "intimidation", "investigation", "nature", "religion"]
+      },
+      "proficiencies": ["Light Armor", "Simple Weapons"],
+      "subclasses": [
+        {
+          "index": "fiend",
+          "name": "Fiend"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["otherworldly-patron", "pact-magic"],
+          "slots": [1, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2,
+          "spellsKnown": 2
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["eldritch-invocations"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2,
+          "spellsKnown": 3
+        },
+        "3": {
+          "profBonus": 2,
+          "features": ["pact-boon"],
+          "slots": [0, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 2,
+          "spellsKnown": 4
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["warlock-ability-score-improvement-1"],
+          "slots": [0, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 5
+        },
+        "5": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [0, 0, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 6
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["otherworldly-patron-improvement-1"],
+          "slots": [0, 0, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 7
+        },
+        "7": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [0, 0, 0, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 8
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["warlock-ability-score-improvement-2"],
+          "slots": [0, 0, 0, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 9
+        },
+        "9": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [0, 0, 0, 0, 2, 0, 0, 0, 0],
+          "cantripsKnown": 3,
+          "spellsKnown": 10
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["otherworldly-patron-improvement-2"],
+          "slots": [0, 0, 0, 0, 2, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 10
+        },
+        "11": {
+          "profBonus": 4,
+          "features": ["mystic-arcanum-6th-level"],
+          "slots": [0, 0, 0, 0, 3, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 11
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["warlock-ability-score-improvement-3"],
+          "slots": [0, 0, 0, 0, 3, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 11
+        },
+        "13": {
+          "profBonus": 5,
+          "features": ["mystic-arcanum-7th-level"],
+          "slots": [0, 0, 0, 0, 3, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 12
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["otherworldly-patron-improvement-3"],
+          "slots": [0, 0, 0, 0, 3, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 12
+        },
+        "15": {
+          "profBonus": 5,
+          "features": ["mystic-arcanum-8th-level"],
+          "slots": [0, 0, 0, 0, 3, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 13
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["warlock-ability-score-improvement-4"],
+          "slots": [0, 0, 0, 0, 3, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 13
+        },
+        "17": {
+          "profBonus": 6,
+          "features": ["mystic-arcanum-9th-level"],
+          "slots": [0, 0, 0, 0, 4, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 14
+        },
+        "18": {
+          "profBonus": 6,
+          "features": [],
+          "slots": [0, 0, 0, 0, 4, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 14
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["warlock-ability-score-improvement-5"],
+          "slots": [0, 0, 0, 0, 4, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 15
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["eldritch-master"],
+          "slots": [0, 0, 0, 0, 4, 0, 0, 0, 0],
+          "cantripsKnown": 4,
+          "spellsKnown": 15
+        }
+      },
+      "subclassFeatures": {
+        "fiend": {
+          "1": ["dark-ones-blessing"],
+          "6": ["dark-ones-own-luck"],
+          "10": ["fiendish-resilience"],
+          "14": ["hurl-through-hell"]
+        }
+      }
+    },
+    {
+      "index": "wizard",
+      "name": "Wizard",
+      "hitDie": 6,
+      "saves": ["intelligence", "wisdom"],
+      "spellcastingAbility": "intelligence",
+      "skillChoices": {
+        "choose": 2,
+        "from": ["arcana", "history", "insight", "investigation", "medicine", "religion"]
+      },
+      "proficiencies": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Crossbows, light"],
+      "subclasses": [
+        {
+          "index": "evocation",
+          "name": "Evocation"
+        }
+      ],
+      "levels": {
+        "1": {
+          "profBonus": 2,
+          "features": ["spellcasting-wizard", "arcane-recovery"],
+          "slots": [2, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "2": {
+          "profBonus": 2,
+          "features": ["arcane-tradition"],
+          "slots": [3, 0, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "3": {
+          "profBonus": 2,
+          "features": [],
+          "slots": [4, 2, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 3
+        },
+        "4": {
+          "profBonus": 2,
+          "features": ["wizard-ability-score-improvement-1"],
+          "slots": [4, 3, 0, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "5": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 2, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "6": {
+          "profBonus": 3,
+          "features": ["arcane-tradition-improvement-1"],
+          "slots": [4, 3, 3, 0, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "7": {
+          "profBonus": 3,
+          "features": [],
+          "slots": [4, 3, 3, 1, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "8": {
+          "profBonus": 3,
+          "features": ["wizard-ability-score-improvement-2"],
+          "slots": [4, 3, 3, 2, 0, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "9": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 1, 0, 0, 0, 0],
+          "cantripsKnown": 4
+        },
+        "10": {
+          "profBonus": 4,
+          "features": ["arcane-tradition-improvement-2"],
+          "slots": [4, 3, 3, 3, 2, 0, 0, 0, 0],
+          "cantripsKnown": 5
+        },
+        "11": {
+          "profBonus": 4,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 5
+        },
+        "12": {
+          "profBonus": 4,
+          "features": ["wizard-ability-score-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 0, 0, 0],
+          "cantripsKnown": 5
+        },
+        "13": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 5
+        },
+        "14": {
+          "profBonus": 5,
+          "features": ["arcane-tradition-improvement-3"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 0, 0],
+          "cantripsKnown": 5
+        },
+        "15": {
+          "profBonus": 5,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 5
+        },
+        "16": {
+          "profBonus": 5,
+          "features": ["wizard-ability-score-improvement-4"],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 0],
+          "cantripsKnown": 5
+        },
+        "17": {
+          "profBonus": 6,
+          "features": [],
+          "slots": [4, 3, 3, 3, 2, 1, 1, 1, 1],
+          "cantripsKnown": 5
+        },
+        "18": {
+          "profBonus": 6,
+          "features": ["spell-mastery"],
+          "slots": [4, 3, 3, 3, 3, 1, 1, 1, 1],
+          "cantripsKnown": 5
+        },
+        "19": {
+          "profBonus": 6,
+          "features": ["wizard-ability-score-improvement-5"],
+          "slots": [4, 3, 3, 3, 3, 2, 1, 1, 1],
+          "cantripsKnown": 5
+        },
+        "20": {
+          "profBonus": 6,
+          "features": ["signature-spell"],
+          "slots": [4, 3, 3, 3, 3, 2, 2, 1, 1],
+          "cantripsKnown": 5
+        }
+      },
+      "subclassFeatures": {
+        "evocation": {
+          "2": ["evocation-savant", "sculpt-spells"],
+          "6": ["potent-cantrip"],
+          "10": ["empowered-evocation"],
+          "14": ["overchannel"]
+        }
+      }
     }
-   ],
-   "levels": {
-    "1": {
-     "profBonus": 2,
-     "features": [
-      "spellcasting-wizard",
-      "arcane-recovery"
-     ],
-     "slots": [
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "2": {
-     "profBonus": 2,
-     "features": [
-      "arcane-tradition"
-     ],
-     "slots": [
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "3": {
-     "profBonus": 2,
-     "features": [],
-     "slots": [
-      4,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 3
-    },
-    "4": {
-     "profBonus": 2,
-     "features": [
-      "wizard-ability-score-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "5": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "6": {
-     "profBonus": 3,
-     "features": [
-      "arcane-tradition-improvement-1"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "7": {
-     "profBonus": 3,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "8": {
-     "profBonus": 3,
-     "features": [
-      "wizard-ability-score-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "9": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      1,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 4
-    },
-    "10": {
-     "profBonus": 4,
-     "features": [
-      "arcane-tradition-improvement-2"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      0,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "11": {
-     "profBonus": 4,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "12": {
-     "profBonus": 4,
-     "features": [
-      "wizard-ability-score-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      0,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "13": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "14": {
-     "profBonus": 5,
-     "features": [
-      "arcane-tradition-improvement-3"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      0,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "15": {
-     "profBonus": 5,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "16": {
-     "profBonus": 5,
-     "features": [
-      "wizard-ability-score-improvement-4"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      0
-     ],
-     "cantripsKnown": 5
-    },
-    "17": {
-     "profBonus": 6,
-     "features": [],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    },
-    "18": {
-     "profBonus": 6,
-     "features": [
-      "spell-mastery"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      1,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    },
-    "19": {
-     "profBonus": 6,
-     "features": [
-      "wizard-ability-score-improvement-5"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      1,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    },
-    "20": {
-     "profBonus": 6,
-     "features": [
-      "signature-spell"
-     ],
-     "slots": [
-      4,
-      3,
-      3,
-      3,
-      3,
-      2,
-      2,
-      1,
-      1
-     ],
-     "cantripsKnown": 5
-    }
-   },
-   "subclassFeatures": {
-    "evocation": {
-     "2": [
-      "evocation-savant",
-      "sculpt-spells"
-     ],
-     "6": [
-      "potent-cantrip"
-     ],
-     "10": [
-      "empowered-evocation"
-     ],
-     "14": [
-      "overchannel"
-     ]
-    }
-   }
-  }
- ]
+  ]
 }

@@ -1,0 +1,388 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type { Character } from '../rules/character.ts'
+import { nextTurn, type HealthState } from '../rules/combat.ts'
+import type { RollRequest } from '../rules/dice.ts'
+import type { SrdMonster } from '../rules/srd/index.ts'
+import {
+  broadcastPointer,
+  usePointerBroadcasts,
+  useTableChanges,
+  type MapPointer,
+  type RowChange,
+} from './campaignChannel.ts'
+import {
+  addMonsters,
+  endFight,
+  getActiveFight,
+  listTokens,
+  moveToken,
+  placeTokens,
+  removeCombatant,
+  removeToken,
+  rollInitiative,
+  rowToCombatant,
+  rowToEncounter,
+  rowToToken,
+  setMonsterHp,
+  setTokenHidden,
+  endTurn,
+  startFight,
+  updateCombatant,
+  type Combatant,
+  type CombatantSecret,
+  type FightState,
+  type NewToken,
+  type Token,
+} from './combat.ts'
+import { messageFor } from './errors.ts'
+import type { Roll } from './rolls.ts'
+
+type Fight = NonNullable<FightState>
+
+export type FightControls = {
+  fight: Fight | null
+  status: 'loading' | 'ready'
+  error: string | null
+  /** DM: starts a fight with these characters. */
+  start: (characters: Character[]) => Promise<Fight | null>
+  /** DM: adds monsters of one kind, each rolling initiative behind the screen. */
+  addMonsters: (monster: SrdMonster, count: number) => Promise<{ combatants: Combatant[]; rolls: Roll[] } | null>
+  /** Rolls initiative for a combatant (players their own; the DM anyone). */
+  rollInitiative: (combatant: Combatant, request: RollRequest) => Promise<Roll | null>
+  next: () => void
+  setMonsterHp: (secret: CombatantSecret, hp: number) => void
+  reveal: (combatant: Combatant) => void
+  setConditions: (combatant: Combatant, conditions: string[]) => void
+  remove: (combatant: Combatant) => void
+  end: () => void
+}
+
+function withRow<T extends { id: string }>(list: T[], item: T): T[] {
+  return list.some((x) => x.id === item.id) ? list.map((x) => (x.id === item.id ? item : x)) : [...list, item]
+}
+
+/** The fight at this table, kept up to date live, with what the DM can do. */
+export function useFight(campaignId: string, userId: string): FightControls {
+  const [fight, setFight] = useState<Fight | null>(null)
+  const [status, setStatus] = useState<FightControls['status']>('loading')
+  const [error, setError] = useState<string | null>(null)
+  const current = useRef<Fight | null>(null)
+
+  useEffect(() => {
+    current.current = fight
+  }, [fight])
+
+  const reload = useCallback(() => {
+    getActiveFight(campaignId).then(
+      (loaded) => {
+        setFight(loaded)
+        setStatus('ready')
+      },
+      (caught: unknown) => {
+        setError(messageFor(caught))
+        setStatus('ready')
+      },
+    )
+  }, [campaignId])
+
+  useEffect(reload, [reload])
+
+  const onEncounter = useCallback(
+    (change: RowChange<'encounters'>) => {
+      if (change.type === 'delete') return
+      const encounter = rowToEncounter(change.row)
+      const now = current.current
+      if (encounter.status === 'ended') {
+        if (now?.encounter.id === encounter.id) setFight(null)
+      } else if (now?.encounter.id === encounter.id) {
+        setFight({ ...now, encounter })
+      } else {
+        reload()
+      }
+    },
+    [reload],
+  )
+  useTableChanges(campaignId, userId, 'encounters', onEncounter)
+
+  const onCombatant = useCallback((change: RowChange<'combatants'>) => {
+    setFight((now) => {
+      if (!now) return now
+      if (change.type === 'delete') return { ...now, combatants: now.combatants.filter((c) => c.id !== change.id) }
+      const combatant = rowToCombatant(change.row)
+      if (combatant.encounterId !== now.encounter.id) return now
+      return { ...now, combatants: withRow(now.combatants, combatant) }
+    })
+  }, [])
+  useTableChanges(campaignId, userId, 'combatants', onCombatant)
+
+  const attempt = useCallback(async <T>(work: () => Promise<T>): Promise<T | null> => {
+    setError(null)
+    try {
+      return await work()
+    } catch (caught) {
+      setError(messageFor(caught))
+      return null
+    }
+  }, [])
+
+  // Changes the fight on screen at once. The ref changes straight away too, so actions taken one
+  // after another (starting a fight, then adding monsters) each see the last one's result.
+  const patchLocal = useCallback((patch: (fight: Fight) => Fight) => {
+    if (current.current) current.current = patch(current.current)
+    setFight((now) => (now ? patch(now) : now))
+  }, [])
+
+  const start = useCallback(
+    async (characters: Character[]) => {
+      const started = await attempt(() => startFight(campaignId, characters))
+      if (started) {
+        current.current = started
+        setFight(started)
+      }
+      return started
+    },
+    [attempt, campaignId],
+  )
+
+  const addMonstersTo = useCallback(
+    async (monster: SrdMonster, count: number) => {
+      const now = current.current
+      if (!now) return null
+      const added = await attempt(() => addMonsters(now.encounter, monster, count, now))
+      if (added) {
+        patchLocal((f) => ({
+          ...f,
+          combatants: added.combatants.reduce(withRow, f.combatants),
+          secrets: [...f.secrets, ...added.secrets],
+        }))
+      }
+      return added
+    },
+    [attempt, patchLocal],
+  )
+
+  const rollFor = useCallback(
+    async (combatant: Combatant, request: RollRequest) => {
+      const roll = await attempt(() => rollInitiative(combatant.id, request))
+      if (roll) {
+        patchLocal((f) => ({
+          ...f,
+          combatants: f.combatants.map((c) => (c.id === combatant.id ? { ...c, initiative: roll.total } : c)),
+        }))
+      }
+      return roll
+    },
+    [attempt, patchLocal],
+  )
+
+  // Moves on at once on screen; the server has the final word on whose turn it is.
+  const next = useCallback(() => {
+    const now = current.current
+    if (!now) return
+    const entries = now.combatants.map((c) => ({ ...c, out: c.kind === 'monster' && c.health === 'down' }))
+    const turn = nextTurn(entries, now.encounter.currentId, now.encounter.round)
+    patchLocal((f) => ({ ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }))
+    void attempt(async () => {
+      const encounter = await endTurn(now.encounter.id)
+      patchLocal((f) => (f.encounter.id === encounter.id ? { ...f, encounter } : f))
+    })
+  }, [attempt, patchLocal])
+
+  const setHp = useCallback(
+    (secret: CombatantSecret, hp: number) => {
+      const clamped = Math.max(0, Math.min(secret.maxHp, hp))
+      patchLocal((f) => ({
+        ...f,
+        secrets: f.secrets.map((s) => (s.combatantId === secret.combatantId ? { ...s, hp: clamped } : s)),
+      }))
+      void attempt(() => setMonsterHp(secret, clamped))
+    },
+    [attempt, patchLocal],
+  )
+
+  const update = useCallback(
+    (combatant: Combatant, patch: Partial<Combatant>) => {
+      patchLocal((f) => ({
+        ...f,
+        combatants: f.combatants.map((c) => (c.id === combatant.id ? { ...c, ...patch } : c)),
+      }))
+      void attempt(() => updateCombatant(combatant.id, patch))
+    },
+    [attempt, patchLocal],
+  )
+
+  const reveal = useCallback(
+    (combatant: Combatant) => {
+      const secret = current.current?.secrets.find((s) => s.combatantId === combatant.id)
+      if (secret) update(combatant, { shownName: secret.name, revealed: true })
+    },
+    [update],
+  )
+
+  const setConditions = useCallback(
+    (combatant: Combatant, conditions: string[]) => update(combatant, { conditions }),
+    [update],
+  )
+
+  const remove = useCallback(
+    (combatant: Combatant) => {
+      patchLocal((f) => ({ ...f, combatants: f.combatants.filter((c) => c.id !== combatant.id) }))
+      void attempt(() => removeCombatant(combatant.id))
+    },
+    [attempt, patchLocal],
+  )
+
+  const end = useCallback(() => {
+    const now = current.current
+    if (!now) return
+    setFight(null)
+    void attempt(() => endFight(now.encounter, now.combatants))
+  }, [attempt])
+
+  return {
+    fight,
+    status,
+    error,
+    start,
+    addMonsters: addMonstersTo,
+    rollInitiative: rollFor,
+    next,
+    setMonsterHp: setHp,
+    reveal,
+    setConditions,
+    remove,
+    end,
+  }
+}
+
+/** A word for how a combatant looks: from a monster's health, or a character's real hit points. */
+export type { HealthState }
+
+export type TokenControls = {
+  tokens: Token[]
+  move: (token: Token, x: number, y: number) => void
+  place: (tokens: NewToken[]) => Promise<void>
+  setHidden: (token: Token, hidden: boolean) => void
+  remove: (token: Token) => void
+  error: string | null
+}
+
+/** The tokens on one battle map, kept up to date live. */
+export function useTokens(campaignId: string, userId: string, mapId: string | null): TokenControls {
+  const [loaded, setLoaded] = useState<{ mapId: string; tokens: Token[] } | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const tokens = loaded && loaded.mapId === mapId ? loaded.tokens : []
+
+  useEffect(() => {
+    if (!mapId) return
+    let live = true
+    listTokens(campaignId, mapId).then(
+      (list) => live && setLoaded({ mapId, tokens: list }),
+      (caught: unknown) => live && setError(messageFor(caught)),
+    )
+    return () => {
+      live = false
+    }
+  }, [campaignId, mapId])
+
+  const set = useCallback(
+    (change: (tokens: Token[]) => Token[]) =>
+      setLoaded((now) => (now && now.mapId === mapId ? { ...now, tokens: change(now.tokens) } : now)),
+    [mapId],
+  )
+
+  const onChange = useCallback(
+    (change: RowChange<'tokens'>) => {
+      if (change.type === 'delete') set((list) => list.filter((t) => t.id !== change.id))
+      else {
+        const token = rowToToken(change.row)
+        if (token.mapId === mapId) set((list) => withRow(list, token))
+      }
+    },
+    [mapId, set],
+  )
+  useTableChanges(campaignId, userId, 'tokens', onChange)
+
+  const attempt = (work: () => Promise<unknown>) => {
+    setError(null)
+    work().catch((caught: unknown) => setError(messageFor(caught)))
+  }
+
+  return {
+    tokens,
+    error,
+    move: (token, x, y) => {
+      set((list) => list.map((t) => (t.id === token.id ? { ...t, x, y } : t)))
+      attempt(() => moveToken(token.id, x, y))
+    },
+    place: async (list) => {
+      if (!mapId) return
+      try {
+        const placed = await placeTokens(campaignId, mapId, list)
+        set((now) => placed.reduce(withRow, now))
+      } catch (caught) {
+        setError(messageFor(caught))
+      }
+    },
+    setHidden: (token, hidden) => {
+      set((list) => list.map((t) => (t.id === token.id ? { ...t, hidden } : t)))
+      attempt(() => setTokenHidden(token.id, hidden))
+    },
+    remove: (token) => {
+      set((list) => list.filter((t) => t.id !== token.id))
+      attempt(() => removeToken(token.id))
+    },
+  }
+}
+
+export type Pointer = MapPointer & { at: number }
+
+const HAND_EVERY_MS = 250
+const HAND_FADES_MS = 3000
+const PING_FADES_MS = 2500
+
+/** Everyone's hands over the map and their pings, sent at most four times a second while moving. */
+export function useMapPointers(campaignId: string, me: { userId: string; name: string }) {
+  const [hands, setHands] = useState<Pointer[]>([])
+  const [pings, setPings] = useState<(Pointer & { id: number })[]>([])
+  const lastSent = useRef(0)
+  const pingCount = useRef(0)
+
+  const onPointer = useCallback((kind: 'hand' | 'ping', pointer: MapPointer) => {
+    const at = Date.now()
+    if (kind === 'hand') setHands((now) => [...now.filter((h) => h.userId !== pointer.userId), { ...pointer, at }])
+    else {
+      pingCount.current += 1
+      const id = pingCount.current
+      setPings((now) => [...now, { ...pointer, at, id }])
+      setTimeout(() => setPings((now) => now.filter((p) => p.id !== id)), PING_FADES_MS)
+    }
+  }, [])
+  usePointerBroadcasts(campaignId, me.userId, onPointer)
+
+  // Hands that stop moving fade away.
+  useEffect(() => {
+    const timer = setInterval(() => setHands((now) => now.filter((h) => Date.now() - h.at < HAND_FADES_MS)), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const sendHand = useCallback(
+    (x: number, y: number) => {
+      const now = Date.now()
+      if (now - lastSent.current < HAND_EVERY_MS) return
+      lastSent.current = now
+      broadcastPointer(campaignId, 'hand', { ...me, x, y })
+    },
+    [campaignId, me],
+  )
+
+  const sendPing = useCallback(
+    (x: number, y: number) => {
+      broadcastPointer(campaignId, 'ping', { ...me, x, y })
+      onPointer('ping', { ...me, x, y })
+    },
+    [campaignId, me, onPointer],
+  )
+
+  return { hands: hands.filter((h) => h.userId !== me.userId), pings, sendHand, sendPing }
+}

@@ -1,21 +1,18 @@
 {
- "source": {
-  "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
-  "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
-  "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
- },
- "backgrounds": [
-  {
-   "index": "acolyte",
-   "name": "Acolyte",
-   "skills": [
-    "insight",
-    "religion"
-   ],
-   "feature": {
-    "name": "Shelter of the Faithful",
-    "desc": "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.\n\nYou might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple."
-   }
-  }
- ]
+  "source": {
+    "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
+    "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
+    "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
+  },
+  "backgrounds": [
+    {
+      "index": "acolyte",
+      "name": "Acolyte",
+      "skills": ["insight", "religion"],
+      "feature": {
+        "name": "Shelter of the Faithful",
+        "desc": "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.\n\nYou might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple."
+      }
+    }
+  ]
 }

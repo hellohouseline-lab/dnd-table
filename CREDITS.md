@@ -12,6 +12,10 @@ The rules data was prepared by the [5e-database project](https://github.com/5e-b
 
 The 3D dice are thrown by [dice-box-threejs](https://github.com/3d-dice/dice-box-threejs) from the 3D Dice project by Frank Ali (based on Major Victory's 3D Dice Roller and Teall Dice), running on [three.js](https://threejs.org) and [cannon-es](https://github.com/pmndrs/cannon-es). All three are under the MIT License. None of the library's texture images or sounds are used: the metal and stone finishes are drawn by this project's own code (`src/dice/textures.ts`).
 
+## Battle maps
+
+Battle maps are drawn with [Konva](https://konvajs.org) and react-konva by Anton Lavrenov, under the MIT License. Monster stat blocks come from the SRD 5.1 data above. The map pictures are the DM's own and live only in the private database.
+
 ## Sound
 
 Music, ambience and sound effects play through [Howler.js](https://howlerjs.com) by James Simpson and GoldFire Studios, under the MIT License. The sound files are the DM's own (Envato Elements, licensed for streaming) and live only in the private database, never in this repository.

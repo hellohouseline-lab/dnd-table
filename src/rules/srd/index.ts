@@ -36,7 +36,12 @@ export type SrdClass = {
   subclassFeatures: Record<string, Record<string, string[]>>
 }
 
-export type SrdSubrace = { index: string; name: string; abilityBonuses: Partial<Record<Ability, number>>; traits: string[] }
+export type SrdSubrace = {
+  index: string
+  name: string
+  abilityBonuses: Partial<Record<Ability, number>>
+  traits: string[]
+}
 export type SrdRace = {
   index: string
   name: string
@@ -49,7 +54,12 @@ export type SrdRace = {
 }
 export type SrdRaces = { races: SrdRace[]; traits: Record<string, { name: string; desc: string }> }
 
-export type SrdBackground = { index: string; name: string; skills: string[]; feature: { name: string; desc: string } | null }
+export type SrdBackground = {
+  index: string
+  name: string
+  skills: string[]
+  feature: { name: string; desc: string } | null
+}
 
 export type SrdFeature = { name: string; class: string | null; subclass: string | null; level: number; desc: string }
 
@@ -69,6 +79,35 @@ export type SrdSpell = {
   higherLevel?: string
   attackType?: string
   save?: Ability
+}
+
+export type SrdMonsterAction = {
+  name: string
+  desc: string
+  attackBonus?: number
+  damage: { dice: string; type: string }[]
+  dc?: { ability: Ability; value: number; success: string }
+}
+
+export type SrdMonster = {
+  index: string
+  name: string
+  size: string
+  type: string
+  ac: number
+  hp: number
+  hitDice: string
+  /** Walking speed in feet. */
+  speed: number
+  speedText: string
+  scores: Record<Ability, number>
+  cr: number
+  xp: number
+  passivePerception: number
+  traits: { name: string; desc: string }[]
+  actions: SrdMonsterAction[]
+  reactions: SrdMonsterAction[]
+  legendary: SrdMonsterAction[]
 }
 
 export const SKILLS = basics.skills as SrdSkill[]
@@ -104,3 +143,7 @@ export const loadFeatures = once(
   async () => (await import('./features.json')).default.features as unknown as Record<string, SrdFeature>,
 )
 export const loadSpells = once(async () => (await import('./spells.json')).default.spells as unknown as SrdSpell[])
+/** Monsters are only loaded on the DM's screens. */
+export const loadMonsters = once(
+  async () => (await import('./monsters.json')).default.monsters as unknown as SrdMonster[],
+)

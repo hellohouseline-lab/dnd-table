@@ -49,9 +49,9 @@ const bonuses = (list: Raw[] = []): Record<string, number> =>
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true })
-  const [skills, conditions, equipment, classes, levels, races, subraces, traits, backgrounds, features, spells] =
+  const [skills, conditions, equipment, classes, levels, races, subraces, traits, backgrounds, features, spells, monsters] =
     await Promise.all(
-      ['Skills', 'Conditions', 'Equipment', 'Classes', 'Levels', 'Races', 'Subraces', 'Traits', 'Backgrounds', 'Features', 'Spells'].map(
+      ['Skills', 'Conditions', 'Equipment', 'Classes', 'Levels', 'Races', 'Subraces', 'Traits', 'Backgrounds', 'Features', 'Spells', 'Monsters'].map(
         load,
       ),
     )
@@ -188,6 +188,41 @@ async function main(): Promise<void> {
       higherLevel: s.higher_level ? text(s.higher_level) : undefined,
       attackType: s.attack_type,
       save: s.dc ? ABILITY[s.dc.dc_type.index] : undefined,
+    })),
+  })
+
+  // Monsters, for the DM's Add a monster and Acting now card. Loaded only on the DM's screens.
+  const feet = (value: string | undefined): number => Number.parseInt(value ?? '0', 10) || 0
+  const action = (a: Raw) => ({
+    name: a.name,
+    desc: a.desc ?? '',
+    attackBonus: typeof a.attack_bonus === 'number' ? a.attack_bonus : undefined,
+    damage: ((a.damage ?? []) as Raw[])
+      .filter((d) => d.damage_dice && d.damage_type)
+      .map((d) => ({ dice: d.damage_dice as string, type: (d.damage_type.name as string).toLowerCase() })),
+    dc: a.dc ? { ability: ABILITY[a.dc.dc_type.index], value: a.dc.dc_value, success: a.dc.success_type } : undefined,
+  })
+  write('monsters.json', {
+    monsters: monsters.map((m) => ({
+      index: m.index,
+      name: m.name,
+      size: m.size,
+      type: m.type,
+      ac: (m.armor_class as Raw[])[0]?.value ?? 10,
+      hp: m.hit_points,
+      hitDice: m.hit_dice,
+      speed: feet(m.speed?.walk),
+      speedText: Object.entries((m.speed ?? {}) as Record<string, string>)
+        .map(([how, value]) => (how === 'walk' ? value : `${how} ${value}`))
+        .join(', '),
+      scores: Object.fromEntries(Object.values(ABILITY).map((ability) => [ability, m[ability]])),
+      cr: m.challenge_rating,
+      xp: m.xp,
+      passivePerception: m.senses?.passive_perception ?? 10,
+      traits: ((m.special_abilities ?? []) as Raw[]).map((t) => ({ name: t.name, desc: t.desc ?? '' })),
+      actions: ((m.actions ?? []) as Raw[]).map(action),
+      reactions: ((m.reactions ?? []) as Raw[]).map(action),
+      legendary: ((m.legendary_actions ?? []) as Raw[]).map(action),
     })),
   })
 }

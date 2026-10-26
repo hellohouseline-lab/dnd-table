@@ -17,6 +17,7 @@ import { useRollRequest } from '../../live/useRollRequest.ts'
 import { useNotebook } from '../../live/useNotebook.ts'
 import { useLibrary, useLogEvents, useStage } from '../../live/useStage.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
+import { useFight } from '../../live/useFight.ts'
 import { DmView } from './DmView.tsx'
 
 /** The DM's screen. Players who open it are sent to their own table screen. */
@@ -33,6 +34,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   const { stage } = useStage(campaignId, user.id)
   const library = useLibrary(campaignId, user.id)
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
+  const fight = useFight(campaignId, user.id)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
@@ -99,6 +101,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       events={events}
       sceneName={stage.sceneName}
       audio={audio}
+      fight={fight}
     />
   )
 }

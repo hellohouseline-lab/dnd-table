@@ -87,3 +87,41 @@ test('the DM writes in the notebook, rests the party and sees it in the log', as
   await expect(log).toContainText('The innkeeper flinched at the word ruins')
   await expect(log).toContainText('Long rest.')
 })
+
+test('the DM starts a fight with two goblins, runs a turn and reveals one', async ({ page }) => {
+  await page.goto('#/dev/dm/party')
+  await page.getByRole('button', { name: 'Start combat' }).click()
+  const dialog = page.getByRole('dialog', { name: 'Start combat' })
+  await dialog.getByLabel('Find a monster').fill('goblin')
+  await dialog.getByRole('button', { name: /^Goblin CR 1\/4/ }).click()
+  await dialog.getByRole('button', { name: 'One more' }).click()
+  await dialog.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect(dialog).toContainText('2 × Goblin')
+  await dialog.getByRole('button', { name: 'Start the fight' }).click()
+
+  const order = page.getByRole('region', { name: 'Turn order' })
+  await expect(order).toContainText('Goblin A')
+  await expect(order).toContainText('Goblin B')
+  await expect(order).toContainText('players see “Unknown creature 1”')
+  await expect(page.getByText('In combat · Round 1')).toBeVisible()
+
+  await order.getByRole('button', { name: /^Goblin A/ }).click()
+  const acting = page.getByRole('region', { name: 'Acting now' })
+  await expect(acting).toContainText('Scimitar')
+  await acting.getByRole('button', { name: /Reveal name/ }).click()
+  await expect(acting).toContainText('Players see its name.')
+
+  await page.getByRole('button', { name: 'End fight' }).click({ trial: true })
+})
+
+test('a player takes their turn in a fight and ends it', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  await expect(page.getByText('Your turn · Round 1')).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Turn order' })).toContainText('Unknown creature 2')
+  const turn = page.getByRole('region', { name: 'This turn' })
+  await expect(turn).toContainText('25 of 25 ft')
+  await turn.getByRole('button', { name: /Action Ready/ }).click()
+  await expect(turn).toContainText('Used')
+  await turn.getByRole('button', { name: 'End turn' }).click()
+  await expect(page.getByText('Round 1 · Goblin A is acting')).toBeVisible()
+})

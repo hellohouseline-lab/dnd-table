@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
@@ -13,6 +13,7 @@ import { deleteAsset, updateAsset, uploadArt, uploadSound } from '../../live/lib
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useLibrary, useStage } from '../../live/useStage.ts'
+import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { StageView, type LibraryActions } from './StageView.tsx'
 
 /** The DM's second screen, the stage. Players who open it are sent to their own table screen. */
@@ -25,8 +26,12 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const stage = useStage(campaignId, user.id)
   const library = useLibrary(campaignId, user.id)
   const audio = useTableAudio(campaignId, user.id, stage.stage, library.assets)
+  const fight = useFight(campaignId, user.id)
+  const tokens = useTokens(campaignId, user.id, stage.stage.mapId)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
+  const pointerName = useMemo(() => ({ userId: user.id, name: me ? `${me.display_name} (DM)` : 'DM' }), [user.id, me])
+  const pointers = useMapPointers(campaignId, pointerName)
   const ready = campaign.status === 'ready' && members.status === 'ready' && party.status === 'ready'
 
   useEffect(() => {
@@ -81,6 +86,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
       actions={actions}
       audio={audio}
       now={serverNow}
+      map={{ tokens, fight: fight.fight, pointers }}
     />
   )
 }
