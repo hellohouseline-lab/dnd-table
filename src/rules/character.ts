@@ -67,6 +67,8 @@ export type InventoryItem = {
   /** Needs attuning to work; and whether it is (three at most). */
   attune?: boolean
   attuned?: boolean
+  /** What it is, for something the DM made or an odd find ("To someone called Merra…"). */
+  note?: string
 }
 
 /** Coins: copper, silver, electrum, gold and platinum pieces. */

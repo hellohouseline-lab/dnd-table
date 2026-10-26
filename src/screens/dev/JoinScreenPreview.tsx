@@ -15,9 +15,9 @@ import { CharacterForm } from '../character/CharacterForm.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { TableView, type Arrival } from '../table/TableView.tsx'
-import type { HandOver } from '../../live/giving.ts'
+import type { HandOver, Offer } from '../../live/giving.ts'
 import { mergeItems } from '../../rules/magic.ts'
-import { addWallets, subtractCoins } from '../../rules/money.ts'
+import { addWallets, coinsFor, subtractCoins } from '../../rules/money.ts'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { previewMap, previewMapTokens, usePreviewTokens } from './previewTokens.ts'
@@ -202,6 +202,48 @@ export function TablePreview({
   const [arrivals, setArrivals] = useState<Arrival[]>(() =>
     variant === 'gift' ? [{ id: 1, text: 'You got Longsword +1 and 5 gp' }] : [],
   )
+  // ...and an offer from the DM for one of his handaxes.
+  const [offers, setOffers] = useState<Offer[]>(() =>
+    variant === 'gift'
+      ? [
+          {
+            id: 'offer-1',
+            characterId: sampleCharacters[0].id,
+            itemId: 'i4',
+            itemName: 'Handaxe',
+            quantity: 1,
+            copper: 300,
+            status: 'open',
+            createdAt: new Date().toISOString(),
+          },
+        ]
+      : [],
+  )
+  const answerOffer = async (offerId: string, sell: boolean) => {
+    const offer = offers.find((o) => o.id === offerId)
+    if (!offer) return 'That offer has gone'
+    if (sell) {
+      setCharacters((list) =>
+        list.map((c) =>
+          c.id === offer.characterId
+            ? {
+                ...c,
+                inventory: c.inventory.flatMap((i) =>
+                  i.id !== offer.itemId
+                    ? [i]
+                    : i.quantity > offer.quantity
+                      ? [{ ...i, quantity: i.quantity - offer.quantity }]
+                      : [],
+                ),
+                wallet: addWallets(c.wallet, coinsFor(offer.copper)),
+              }
+            : c,
+        ),
+      )
+    }
+    setOffers((now) => now.filter((o) => o.id !== offerId))
+    return null
+  }
   // Handing things over, as the server does it (outside a fight).
   const handOver: HandOver = async (to, what) => {
     const from = characters[caster ? 1 : 0]
@@ -249,6 +291,8 @@ export function TablePreview({
         handOver={handOver}
         arrivals={arrivals}
         onArrivalSeen={(id) => setArrivals((now) => now.filter((a) => a.id !== id))}
+        offers={offers}
+        onAnswerOffer={answerOffer}
         combat={
           fighting
             ? {

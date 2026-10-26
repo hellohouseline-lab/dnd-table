@@ -5,6 +5,8 @@
 import { entryId, type InventoryItem } from './character.ts'
 import { itemName } from './build/gearStep.ts'
 import { POTIONS } from './items.ts'
+import type { Bit } from './bits.ts'
+import type { DmItem } from './catalogue.ts'
 import type { SrdItem, SrdMagicItem } from './srd/index.ts'
 
 export const ATTUNE_LIMIT = 3
@@ -13,6 +15,8 @@ export type Gift =
   | { kind: 'gear'; item: SrdItem }
   | { kind: 'magic'; magic: SrdMagicItem; base: SrdItem | null }
   | { kind: 'typed'; name: string }
+  | { kind: 'bit'; bit: Bit }
+  | { kind: 'yours'; item: DmItem }
 
 /** A magic +1 weapon or armour needs a weapon or a suit of armour (or a shield) to go with. */
 export function needsBase(magic: SrdMagicItem): 'weapon' | 'armor' | null {
@@ -25,6 +29,8 @@ export function needsBase(magic: SrdMagicItem): 'weapon' | 'armor' | null {
 /** What a gift is called on the sheet: "Longsword +1", "Cloak of Protection". */
 export function giftName(gift: Gift): string {
   if (gift.kind === 'typed') return gift.name.trim().slice(0, 60)
+  if (gift.kind === 'bit') return gift.bit.name
+  if (gift.kind === 'yours') return gift.item.name
   if (gift.kind === 'gear') return itemName(gift.item.name)
   if (gift.base && gift.magic.bonus) return `${itemName(gift.base.name)} +${gift.magic.bonus}`
   return gift.magic.name
@@ -34,6 +40,16 @@ export function giftName(gift: Gift): string {
 export function giftItem(gift: Gift, quantity: number): InventoryItem {
   const base = { id: entryId(), name: giftName(gift), quantity, worn: false }
   if (gift.kind === 'typed') return { ...base, item: null, weight: 0, uses: null }
+  if (gift.kind === 'bit') return { ...base, item: null, weight: gift.bit.weight, uses: null, note: gift.bit.note }
+  if (gift.kind === 'yours') {
+    return {
+      ...base,
+      item: null,
+      weight: 0,
+      uses: null,
+      ...(gift.item.description ? { note: gift.item.description } : {}),
+    }
+  }
   if (gift.kind === 'gear') {
     return {
       ...base,

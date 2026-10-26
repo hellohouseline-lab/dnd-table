@@ -59,6 +59,7 @@ import { NotebookPanel } from './NotebookPanel.tsx'
 import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { GiveDialog } from './GiveDialog.tsx'
+import { entryId } from '../../rules/character.ts'
 import { ItemsTab } from './ItemsTab.tsx'
 import type { GivingControls } from '../../live/giving.ts'
 import { useSessionClock } from './useSessionClock.ts'
@@ -477,7 +478,7 @@ export function DmView({
           ) : tab === 'items' ? (
             <ItemsTab
               characters={characters}
-              stash={giving.stash}
+              giving={giving}
               onGive={(character) => setGiveTo({ only: character?.id ?? null })}
             />
           ) : tab === 'party' ? (
@@ -591,6 +592,16 @@ export function DmView({
                 equipment={equipment}
                 magicItems={magicItems}
                 giving={giving}
+                onKeyItem={(name, holder) => {
+                  const keyItems = notebook.notebook.keyItems
+                  const known = keyItems.find((k) => k.name.trim().toLowerCase() === name.trim().toLowerCase())
+                  notebook.change({
+                    ...notebook.notebook,
+                    keyItems: known
+                      ? keyItems.map((k) => (k.id === known.id ? { ...k, holder } : k))
+                      : [...keyItems, { id: entryId(), name, holder }],
+                  })
+                }}
                 onClose={() => setGiveTo(null)}
               />
             ) : null

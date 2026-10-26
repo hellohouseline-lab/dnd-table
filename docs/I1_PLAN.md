@@ -1,6 +1,6 @@
 # I1: items, money, loot and shops
 
-Written after C2 and the levelling-up fix. **Approved by Matt with decisions 38 to 50 as recommended.** It builds sections 3 and 4 of `TABLE_TOOLS_PLAN.md` in their simplest form, on top of the wallet and inventory C2 already added, and keeps the test one-shot on 21 to 22 November in view.
+Written after C2 and the levelling-up fix. **Approved by Matt with decisions 38 to 54 as recommended.** It builds sections 3 and 4 of `TABLE_TOOLS_PLAN.md` in their simplest form, on top of the wallet and inventory C2 already added, and keeps the test one-shot on 21 to 22 November in view.
 
 ## In plain words
 
@@ -19,6 +19,29 @@ Three things arrive, one milestone each:
 - Potions, a healer's kit, alchemist's fire and the like can be used in a fight.
 - The DM's notebook has **Key items to collect**, with who has each.
 - On Screen 1, the **Items and loot** tab and the **Give an item** button are there but greyed out. I1 brings them to life.
+
+## After I1a: Matt's notes
+
+Having tried I1a, Matt asked for more before searching and shops. This adds a milestone, **I1a+**, and changes I1b from "search with a roll" to "open a box".
+
+**Browse, don't search.** The Give window becomes a scrollable grid of cards with toggle tags, so you can skim and tick:
+
+- **Rarity:** Common, Uncommon, Rare, Very rare, Legendary. (The free rules have only 4 common magic items; most low-level treasure is uncommon.)
+- **Type:** Weapons, Armour, Potions, Rings, Amulets, Cloaks, Boots and gloves, Belts, Headwear, Bags, Wands, Staffs and rods, Scrolls, Other. The free rules lump 167 items together as "wondrous items", so the table sorts them into these by name.
+- **Where from:** Magic items, Everyday gear, Bits and bobs, Your items.
+- Tick several cards and give them all to one person at once.
+
+**Your items.** You make your own items once (a name, what it is, a description, tags, and **Key item** if it matters to the story) and give them whenever. They're kept privately in your campaign; players see the name and description only once they're given it. Giving a key item fills in who has it in your notebook.
+
+**Bits and bobs.** Ordinary odds and ends written for this table: a bent spoon, a ball of string, a scrap of cloth, a chipped cup, a candle stub, a wooden comb, a tarnished button. They're in the browser and in boxes.
+
+**Coins at a glance.** On the Items and loot tab each character's purse is drawn as coins (platinum, gold, silver, copper), with quick buttons to add or take **1, 5, 10, 50 or 100 gp** in one click (change made when taking).
+
+**Buying from a player.** **Offer** next to any item on a character's card: you set a price in gold, the player gets the offer on their screen and presses **Sell** or **No thanks**. If they sell, the item leaves their pack and the coins arrive.
+
+**Open a box** (I1b, replacing Search). Pick the container (a chest, a sack, a body, a desk or cupboard, a hoard) and how rich it is (junk, ordinary, valuable, treasure), and press **Open it**. The table rolls a mix of bits and bobs, coins, gear and, at the richer end, magic items. You can re-roll, swap or remove any item and add your own, then **Give** it to one person or **Put it on the table** for the party to take from. An Investigation roll first is optional: open it straight away, or let the roll decide how much they find.
+
+**How rare, by level.** The free rules don't include the DMG's treasure tables, so ours follow the well-known guide to which rarities suit which levels: up to uncommon at levels 1 to 4, rare from 5, very rare from 11, legendary from 17. A box only rolls magic items up to the party's band; richness changes how many. You can always hand-pick anything.
 
 ## 1. Giving items and gold (I1a)
 
@@ -99,7 +122,8 @@ Three things arrive, one milestone each:
 | | What | You can try |
 |---|---|---|
 | **I1a** | Magic items, Give an item, Give and Take gold, Split across the party, players handing things over, attunement, +1 weapons and armour, the Items and loot tab | Give Thorin a Longsword +1 and see his attack card change; split 47 gp across the party |
-| **I1b** | Search with the roll, our loot tables and their editor, checking finds before Give, the party stash | Have a player search a body, swap one find, put the rest on the table, and let the players share it |
+| **I1a+** | The Give browser with rarity and type tags and ticking several; Your items (with key items); bits and bobs; coins drawn with 1, 5, 10, 50 and 100 gp buttons; Offer to buy from a player | Tick two uncommon rings and a key item you made, give them to Wren; add 50 gp with one click; offer 20 gp for a dagger |
+| **I1b** | Open a box: container and richness, the roll by party level, re-roll, swap and add before Give or Put it on the table; the optional Investigation roll; the party stash with Take and Split the coins; editing the tables | Open a valuable chest for a level 3 party, swap one find, put it on the table, and let the players share it |
 | **I1c** | Shops: make, stock, price, open and close; players buy and sell; each sale on Screen 1 with Undo; the free-adding setting | Open a blacksmith and have a player buy chain mail, then undo it |
 
 Each milestone gets its own preview with made-up data, browser tests, and a line in `PROGRESS.md`. That leaves S1 (story mode) for the week before the one-shot.
@@ -119,6 +143,11 @@ Each milestone gets its own preview with made-up data, browser tests, and a line
 48. **NPCs:** shops get a shopkeeper's name and one line for now; the full NPCs tab (portraits, Show an NPC, a random NPC) comes with S1, where your campaign's people live. *Recommended.* Or build the NPCs tab in I1.
 49. **Work that takes time** (repairs, upgrades that are "ready in 3 days"): leave out of I1. *Recommended.* Or add it to I1c.
 50. **Locks and traps:** leave to C3 lite; **Ask for a roll** with a DC covers them for now. *Recommended.* Or add them to I1b.
+
+51. **Your items** are private to your campaign, and players see an item's description once they have it. *Recommended.* Or players see only its name.
+52. **Buying from a player:** the player accepts or turns down your offer on their screen. *Recommended,* as it's their item. Or you take it and pay at once.
+53. **Rarity by party level** (up to uncommon at 1 to 4, rare from 5, very rare from 11, legendary from 17), with richness setting how many. *Recommended.* Or richness alone decides.
+54. **Quick coin buttons** in gold only (1, 5, 10, 50, 100 gp), with the purse drawn as coins. *Recommended.* Or a button for each kind of coin.
 
 ## What stays out (for now)
 

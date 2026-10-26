@@ -2,7 +2,9 @@
 // and every kind of result card side by side (#/dev/dm/moments).
 import type { User } from '@supabase/supabase-js'
 import { useState, type Dispatch, type SetStateAction } from 'react'
-import { EMPTY_STASH, type GivingControls, type PartyStash } from '../../live/giving.ts'
+import { EMPTY_STASH, type GivingControls, type Offer, type PartyStash } from '../../live/giving.ts'
+import type { DmItem } from '../../rules/catalogue.ts'
+import { entryId } from '../../rules/character.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { mergeItems } from '../../rules/magic.ts'
 import { syncAttacks } from '../../rules/manage.ts'
@@ -209,10 +211,68 @@ function usePreviewGiving(
 ): GivingControls {
   const equipment = useSrd(loadEquipment)
   const [stash, setStash] = useState<PartyStash>(EMPTY_STASH)
+  const [yours, setYours] = useState<DmItem[]>([
+    {
+      id: 'raven-seal',
+      name: 'The Raven Seal',
+      description: 'A black wax seal stamped with a raven. The mayor would give anything to have it back.',
+      type: 'other',
+      rarity: null,
+      key: true,
+    },
+  ])
+  const [offers, setOffers] = useState<Offer[]>([])
   const change = (id: string, edit: (c: Character) => Character) =>
     setCharacters((list) => list.map((c) => (c.id === id ? edit(c) : c)))
   return {
     stash,
+    yours,
+    saveItem: async (item) => {
+      setYours((now) =>
+        now.some((y) => y.id === item.id)
+          ? now.map((y) => (y.id === item.id ? item : y))
+          : [...now, { ...item, id: entryId() }],
+      )
+      return null
+    },
+    deleteItem: async (id) => {
+      setYours((now) => now.filter((y) => y.id !== id))
+      return null
+    },
+    offers,
+    // In the preview the player sells after a moment.
+    offer: async (characterId, itemId, quantity, copper) => {
+      const who = characters.find((c) => c.id === characterId)
+      const item = who?.inventory.find((i) => i.id === itemId)
+      if (!who || !item) return 'They don’t have that'
+      const id = entryId()
+      const made: Offer = {
+        id,
+        characterId,
+        itemId,
+        itemName: item.name,
+        quantity,
+        copper,
+        status: 'open',
+        createdAt: new Date().toISOString(),
+      }
+      setOffers((now) => [made, ...now])
+      window.setTimeout(() => {
+        setOffers((now) => now.map((o) => (o.id === id && o.status === 'open' ? { ...o, status: 'sold' } : o)))
+        change(characterId, (c) => ({
+          ...c,
+          inventory: c.inventory.flatMap((i) =>
+            i.id !== itemId ? [i] : i.quantity > quantity ? [{ ...i, quantity: i.quantity - quantity }] : [],
+          ),
+          wallet: addWallets(c.wallet, coinsFor(copper)),
+        }))
+      }, 1500)
+      return null
+    },
+    withdraw: async (offerId) => {
+      setOffers((now) => now.map((o) => (o.id === offerId ? { ...o, status: 'withdrawn' } : o)))
+      return null
+    },
     give: async (id, items, _weapons, copper) => {
       change(id, (c) => {
         const inventory = mergeItems(c.inventory, items)

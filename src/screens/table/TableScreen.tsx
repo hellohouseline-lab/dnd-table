@@ -18,7 +18,7 @@ import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { useAreas } from '../../live/areas.ts'
 import { TableView, type Arrival } from './TableView.tsx'
-import { handOver, useGiftArrivals } from '../../live/giving.ts'
+import { answerOffer, handOver, useGiftArrivals, useOffers } from '../../live/giving.ts'
 import type { Gift } from '../../live/notebook.ts'
 import { giftWords } from '../../rules/money.ts'
 import { playChime } from '../../audio/chime.ts'
@@ -60,6 +60,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
     [setGifts],
   )
   useGiftArrivals(campaignId, user.id, character?.id ?? null, onGift)
+  const allOffers = useOffers(campaignId, user.id)
   const ready = members.status === 'ready' && party.status === 'ready'
 
   useEffect(() => {
@@ -113,6 +114,8 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       handOver={handOver(character.id)}
       arrivals={arrivals}
       onArrivalSeen={(id) => setGifts((now) => now.filter((a) => a.id !== id))}
+      offers={allOffers.filter((o) => o.characterId === character.id && o.status === 'open')}
+      onAnswerOffer={answerOffer}
       combat={{
         fight: fight.fight,
         rollInitiative: fight.rollInitiative,

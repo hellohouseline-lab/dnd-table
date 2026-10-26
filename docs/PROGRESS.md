@@ -3,6 +3,12 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **I1a+: giving made easier (live).** Matt's notes after trying I1a, added to `docs/I1_PLAN.md` with decisions 51 to 54 (approved as recommended).
+  - **The Give window is a browser:** every item as a card in a scrolling grid, narrowed with toggle tags: **Where from** (Magic items, Everyday gear, Bits and bobs, Your items), **Rarity** (Common to Legendary) and **Type** (Weapons, Armour, Potions, Rings, Amulets, Cloaks, Boots and gloves, Belts, Headwear, Bags, Wands, Staffs and rods, Scrolls, Kits and tools, Gear, Other), plus words. **Tick** as many as you like, set how many, pick who, and **Give all** at once. A +1 weapon or armour asks which weapon or armour in the ticked list. Open **All of it** on a card for the full text.
+  - **Make your own:** your own items (name, what it is, type, rarity, and **Key item**), kept privately in your campaign (`dm_items`). Giving a key item fills in who has it in your notebook. Players see the description on their Items once it's theirs.
+  - **Bits and bobs:** 45 ordinary odds and ends written for this table (a bent spoon, a ball of string, a scrap of cloth, an unsent letter, a silver ring worth about 10 gp), in the browser now and in boxes later.
+  - **Items and loot tab:** each purse drawn as coins, with **Add** or **Take** and one-click **1, 5, 10, 50, 100 gp** (clicks add up for a moment and go as one, so the log isn't flooded). **Offer** next to anything a character carries: set a price, the player gets a card on their screen with **Sell** or **No thanks**, and you see the answer on their card.
+  - Server: `20261027190000_your_items_offers.sql` (`dm_items`, notes kept on gifts, `offers` with `make_offer`, `answer_offer`, `withdraw_offer`). Previews: `#/dev/dm/party` (Give an item), `#/dev/dm/items`, `#/dev/table/gift` (an offer to answer). Tests: 479 database (13 new), 425 unit (3 new), 44 preview browser tests (4 new).
 - **I1a: giving items and gold (live).** The plan is in `docs/I1_PLAN.md`, approved with decisions 38 to 50 as recommended.
   - **Magic items:** the free rules' 341 magic items are in (rarity, whether they need attuning, what they do), loaded only when needed.
   - **Give an item** (the bottom button on Screen 1, and **Give item** on each Party card): search gear, weapons, armour and magic items, or type in something of your own; pick who and how many; **Give**. A +1, +2 or +3 weapon or armour asks which weapon or armour ("Longsword +1"); its bonus goes on the attack card and the AC by itself.
@@ -231,7 +237,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **I1b next:** searching and loot (the Search button with a roll, our loot tables and their editor, checking finds before Give, the party stash), then **I1c** shops, then S1 (story mode).
+- **I1b next:** open a box (container and richness, rarity by party level, re-roll, swap and add before Give or Put it on the table, the optional Investigation roll, the party stash with Take and Split the coins), then **I1c** shops, then S1 (story mode).
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -239,6 +245,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try the new Give** (refresh first): press **Give an item**, tap **Uncommon** and **Rings**, tick two, and give them; under **Make your own** make a key item from your story and give it; on **Items and loot** add 50 gp with one click and **Offer** to buy something from a player.
 - **Try giving** (refresh first): on Screen 1 press **Give an item**, give a player a Longsword +1 and watch the card land on their screen; split some gold across the party; then as the player open **Items** and **Give to…** a friend.
 - **Try levelling up a caster:** as the DM press **Level up** on a spellcaster's card, then as that player take the level and try **Swap a spell** or **Prepare more today**.
 - **Try Change your character** (refresh first): open your sheet and press **Edit character**. Learn or prepare a spell, add a weapon and some armour and press **Wear**, then **Save changes** and check the hand of cards and AC on the table.

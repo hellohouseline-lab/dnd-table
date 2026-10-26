@@ -124,6 +124,7 @@ export function InventoryTab({ character, canEdit, onUpdate, handing }: TabProps
                       {item.name}
                       {item.uses !== null && <span className={styles.muted}> ({item.uses} uses left)</span>}
                       {usable && <div className={styles.itemUse}>{usable.what}</div>}
+                      {item.note && <div className={styles.itemUse}>{item.note}</div>}
                     </th>
                     <td>
                       {canEdit ? (
