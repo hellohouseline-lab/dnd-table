@@ -6,7 +6,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(31);
+select plan(32);
 
 insert into auth.users (id, email) values
   ('ffffffff-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -248,6 +248,11 @@ select ok(
 select is(
   (select kind from public.combat_events where id = (current_setting('test.save')::jsonb -> 'event' ->> 'id')::uuid), 'death_save',
   'Everyone sees the death save in the feed'
+);
+select throws_ok(
+  $$ select public.death_save(current_setting('test.mira')::uuid) $$,
+  '22023', null,
+  'One death save a turn'
 );
 
 set local request.jwt.claims = '{"sub": "ffffffff-0000-4000-8000-000000000001", "role": "authenticated"}';

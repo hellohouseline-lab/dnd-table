@@ -9,6 +9,7 @@ import { combineModes, type RollRequest } from '../../rules/dice.ts'
 import { findWeapon, type SrdMonsterAction } from '../../rules/srd/index.ts'
 import { actionReach, attackMode, inReach, weaponReach, type Reach } from '../../rules/turn.ts'
 import type { FightRow } from './fightRows.ts'
+import { targetState } from './strikes.ts'
 
 type Aim = {
   label: string
@@ -22,7 +23,9 @@ type Aim = {
 export type Aiming = { label: string; attackerId: string; reach: Reach; onPick: (target: FightRow) => void } | null
 
 function tokenOf(tokens: Token[], combatant: Combatant): Token | undefined {
-  return tokens.find((t) => (combatant.characterId ? t.characterId === combatant.characterId : t.combatantId === combatant.id))
+  return tokens.find((t) =>
+    combatant.characterId ? t.characterId === combatant.characterId : t.combatantId === combatant.id,
+  )
 }
 
 /**
@@ -89,9 +92,4 @@ export function useAiming(
 
   const aiming: Aiming = aim ? { label: aim.label, attackerId: aim.attacker.id, reach: aim.reach, onPick: pick } : null
   return { aiming, aimMonster, aimCharacter, cancel: () => setAim(null) }
-}
-
-/** What about the target changes the roll: its conditions, and whether it's Dodging. */
-function targetState(target: FightRow) {
-  return { conditions: target.character?.conditions ?? target.combatant.conditions, dodging: target.combatant.turn.dodging }
 }

@@ -72,4 +72,34 @@ describe('the feed in plain words', () => {
     )
     expect(eventWords({ ...dash, shown: { what: 'bonus' } }, { nameOf })).toBe('Thorin uses their bonus action.')
   })
+
+  it('says an opportunity attack was made as the target moved away', () => {
+    expect(
+      eventWords(attack({ label: 'Glaive', hit: true, damage: 7, damageType: 'slashing', total: 15, reaction: true }), {
+        nameOf,
+      }),
+    ).toBe('Thorin hits Goblin A with Glaive as they move away for 7 slashing (rolled 15).')
+  })
+
+  it('says how death saves went', () => {
+    const save = (shown: CombatEvent['shown']) => ({
+      ...attack(shown, 'thorin', 'thorin'),
+      kind: 'death_save' as const,
+    })
+    expect(eventWords(save({ result: 'failure', rolled: 6, successes: 0, failures: 1 }), { nameOf })).toBe(
+      'Thorin fails a death save (rolled 6): 0 of 3 successes, 1 of 3 failures.',
+    )
+    expect(
+      eventWords(save({ result: 'success', rolled: 12, successes: 1, failures: 1 }), { nameOf, youId: 'thorin' }),
+    ).toBe('You succeed on a death save (rolled 12): 1 of 3 successes, 1 of 3 failures.')
+    expect(eventWords(save({ result: 'stable', rolled: 14, successes: 3, failures: 1 }), { nameOf })).toBe(
+      'Thorin succeeds on a third death save (rolled 14) and is stable.',
+    )
+    expect(eventWords(save({ result: 'awake', rolled: 20 }), { nameOf, youId: 'thorin' })).toBe(
+      'You roll a 20 on a death save and are back up with 1 hit point!',
+    )
+    expect(eventWords(save({ result: 'dead', rolled: 1 }), { nameOf })).toBe(
+      'Thorin fails a third death save (rolled 1). Thorin dies.',
+    )
+  })
 })

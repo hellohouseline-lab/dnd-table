@@ -1,12 +1,14 @@
 // Local development only: Screen 2 in a fight (#/dev/battle), with made-up people, two goblins and a
-// made-up map. Attacks, actions, Undo and moves follow the server's rules closely enough to try.
+// made-up map. Attacks, actions, Undo, moves and opportunity attacks follow the server's rules
+// closely enough to try: it's Thorin's turn, and walking him away from Goblin A gives it a chance.
 
 import type { User } from '@supabase/supabase-js'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
+import type { Token } from '../../live/combat.ts'
 import { emptyStage, type Stage, type StagePatch } from '../../live/stage.ts'
 import type { Character } from '../../rules/character.ts'
 import { feetBetween } from '../../rules/combat.ts'
@@ -32,16 +34,25 @@ export function BattlePreview() {
   // Made-up players answer a roll the DM asks for a moment after it's sent.
   const asking = usePreviewAsking(characters, { answerFor: sampleCharacters.map((c) => c.id) })
   // Moving the creature whose turn it is counts its feet, as on the server; the DM is never stopped.
+  // Where everyone stands, for working out who a move leaves behind.
+  const placed = useRef<Token[]>([])
   const tokens = usePreviewTokens(map.id, previewMapTokens(map.id, fightStart), (token, x, y) => {
     const now = fight.fight
     const who = now?.combatants.find((c) =>
       token.characterId ? c.characterId === token.characterId : c.id === token.combatantId,
     )
-    if (now && who && now.encounter.currentId === who.id) fight.walk(who.id, feetBetween(token, { x, y }))
+    if (now && who && now.encounter.currentId === who.id) {
+      fight.walk(who.id, feetBetween(token, { x, y }))
+      fight.provoke(who.id, token, { x, y }, placed.current)
+    }
     return true
   })
+  useEffect(() => {
+    placed.current = tokens.tokens
+  }, [tokens.tokens])
   const thrower = useCallback(
-    async (request: RollRequest) => localRoll(request, { campaignId: 'preview', rollerId: 'dm', style: DEFAULT_DICE_STYLE }),
+    async (request: RollRequest) =>
+      localRoll(request, { campaignId: 'preview', rollerId: 'dm', style: DEFAULT_DICE_STYLE }),
     [],
   )
 

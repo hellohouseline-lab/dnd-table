@@ -29,6 +29,8 @@ import { AddMonsterDialog } from '../fight/FightDialogs.tsx'
 import { cameraTurn, fightRows, type FightRow } from '../fight/fightRows.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { useAiming } from '../fight/useAiming.ts'
+import { ChanceStrip, type OpenChance } from '../fight/Reactions.tsx'
+import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { MapStage } from '../stage/MapStage.tsx'
 import { CameraColumn } from '../table/TableView.tsx'
 import styles from './BattleView.module.css'
@@ -113,6 +115,32 @@ export function BattleView({
   const focus = rows.find((r) => r.combatant.id === (selected ?? fight.encounter.currentId)) ?? null
   const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
   const map = stage.stage.mode === 'map' ? (maps.find((m) => m.id === stage.stage.mapId) ?? null) : null
+
+  // Opportunity attacks: someone moved out of reach without Disengaging. A monster's chance is the
+  // DM's to take; a character's their player decides, though the DM can take it for them.
+  const chances: OpenChance[] = controls.prompts.flatMap((prompt) => {
+    const reactor = rows.find((r) => r.combatant.id === prompt.combatantId)
+    const provoker = rows.find((r) => r.combatant.id === prompt.provokerId)
+    if (!reactor || !provoker) return []
+    const owner = reactor.character ? members.find((m) => m.user_id === reactor.character?.ownerId) : undefined
+    return [
+      {
+        id: prompt.id,
+        reactor: reactor.name,
+        provoker: provoker.name,
+        player: owner && owner.user_id !== me.user_id ? owner.display_name : null,
+        strikes: strikesFor(reactor, monsters),
+      },
+    ]
+  })
+
+  function strikeFor(promptId: string, strike: Strike) {
+    const prompt = controls.prompts.find((p) => p.id === promptId)
+    const provoker = rows.find((r) => r.combatant.id === prompt?.provokerId)
+    if (!prompt || !provoker) return
+    const request = strike.build(provoker)
+    void table.rollWith(() => controls.strike(prompt, request))
+  }
 
   function rowOfToken(token: Token): FightRow | undefined {
     return rows.find((r) =>
@@ -253,6 +281,8 @@ export function BattleView({
             onAttack={aimMonster}
             onCharacterAttack={aimCharacter}
             onOpenSheet={(character) => window.open(href(`/c/${campaignId}/sheet/${character.id}`), '_blank')}
+            onDeathSave={(row) => void table.rollWith(() => controls.deathSave(row.combatant))}
+            onUpdate={onUpdate}
             numbered
             rolling={table.rolling}
           />
@@ -276,6 +306,15 @@ export function BattleView({
         </div>
 
         <div className={styles.centre}>
+          <ChanceStrip
+            chances={chances}
+            onStrike={strikeFor}
+            onLetGo={(id) => {
+              const prompt = controls.prompts.find((p) => p.id === id)
+              if (prompt) controls.letGo(prompt)
+            }}
+            rolling={table.rolling}
+          />
           {aiming && (
             <div className={styles.aiming} role="status">
               Pick a target for {aiming.label}: click a miniature or a name in the turn order.

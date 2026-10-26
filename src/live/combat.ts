@@ -12,7 +12,7 @@ import {
   type HealthState,
 } from '../rules/combat.ts'
 import type { RollRequest } from '../rules/dice.ts'
-import type { TurnRecord } from '../rules/turn.ts'
+import { threatReach, type TurnRecord } from '../rules/turn.ts'
 import type { Defences } from '../rules/damage.ts'
 import type { SrdMonster } from '../rules/srd/index.ts'
 import type { Tables } from './database.types.ts'
@@ -44,6 +44,8 @@ export type Combatant = {
   conditions: string[]
   /** Walking speed in feet: a monster's own; a character's sheet has the one that counts. */
   speed: number
+  /** How far it threatens for opportunity attacks: 5 feet, or more with a reach weapon. */
+  reachFt: number
   /** What's used of this creature's turn, kept by the server and reset when its turn starts. */
   turn: TurnRecord
   createdAt: string
@@ -56,7 +58,7 @@ export type CombatEvent = {
   round: number
   actorId: string | null
   targetId: string | null
-  kind: 'attack' | 'action'
+  kind: 'attack' | 'action' | 'death_save'
   rollId: string | null
   shown: {
     label?: string
@@ -72,9 +74,31 @@ export type CombatEvent = {
     adjust?: 'resisted' | 'vulnerable' | 'immune' | null
     /** For actions: 'dash', 'disengage', 'dodge', 'action', 'bonus' or 'reaction'. */
     what?: string
+    /** An attack made with the reaction: an opportunity attack. */
+    reaction?: boolean
+    /** For death saves: what came of it, the die, and the count afterwards. */
+    result?: 'success' | 'failure' | 'stable' | 'dead' | 'awake'
+    rolled?: number
+    successes?: number
+    failures?: number
   }
   undone: boolean
   seq: number
+  createdAt: string
+}
+
+/**
+ * A chance to react: someone moved out of this combatant's reach without Disengaging, so it may make
+ * an opportunity attack. Players see their side's chances; a monster's are the DM's alone.
+ */
+export type ReactionPrompt = {
+  id: string
+  encounterId: string
+  /** Who may strike. */
+  combatantId: string
+  /** Who moved away. */
+  provokerId: string
+  status: 'open' | 'taken' | 'passed'
   createdAt: string
 }
 
@@ -131,6 +155,7 @@ export function rowToCombatant(row: Tables<'combatants'>): Combatant {
     health: HEALTH.find((h) => h === row.health) ?? 'healthy',
     conditions: row.conditions,
     speed: row.speed,
+    reachFt: row.reach_ft,
     turn: {
       actionUsed: row.action_used,
       attacksMade: row.attacks_made,
@@ -153,11 +178,22 @@ export function rowToEvent(row: Tables<'combat_events'>): CombatEvent {
     round: row.round,
     actorId: row.actor_id,
     targetId: row.target_id,
-    kind: row.kind === 'attack' ? 'attack' : 'action',
+    kind: row.kind === 'attack' || row.kind === 'death_save' ? row.kind : 'action',
     rollId: row.roll_id,
     shown: shown as CombatEvent['shown'],
     undone: row.undone,
     seq: Number(row.seq),
+    createdAt: row.created_at,
+  }
+}
+
+export function rowToPrompt(row: Tables<'reaction_prompts'>): ReactionPrompt {
+  return {
+    id: row.id,
+    encounterId: row.encounter_id,
+    combatantId: row.combatant_id,
+    provokerId: row.provoker_id,
+    status: row.status === 'taken' || row.status === 'passed' ? row.status : 'open',
     createdAt: row.created_at,
   }
 }
@@ -219,7 +255,11 @@ export async function getActiveFight(campaignId: string): Promise<FightState> {
  * The DM starts a fight with these characters, and puts this battle map on stage (or none), in one
  * go on the server; everyone is then asked for initiative. Returns the whole fight as it now stands.
  */
-export async function startFight(campaignId: string, characters: Character[], mapId: string | null): Promise<FightState> {
+export async function startFight(
+  campaignId: string,
+  characters: Character[],
+  mapId: string | null,
+): Promise<FightState> {
   const { error } = await db().rpc('start_fight', {
     p_campaign_id: campaignId,
     p_character_ids: characters.map((c) => c.id),
@@ -261,6 +301,7 @@ export async function addMonsters(
         revealed: known,
         tiebreak: monster.scores.dexterity,
         speed: Math.max(0, Math.min(200, monster.speed)),
+        reach_ft: threatReach(monster.actions),
       })),
     )
     .select('*')
@@ -373,6 +414,46 @@ export async function resolveAttack(
     p_target_id: targetId,
     p_roll: requestToJson(request),
   })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }
+}
+
+/** Takes a chance to strike someone moving away: an attack with the reaction. */
+export async function opportunityAttack(
+  promptId: string,
+  request: RollRequest,
+): Promise<{ roll: Roll; event: CombatEvent }> {
+  const { data, error } = await db().rpc('opportunity_attack', {
+    p_prompt_id: promptId,
+    p_roll: requestToJson(request),
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }
+}
+
+/** Lets a chance to strike go. */
+export async function passReaction(promptId: string): Promise<void> {
+  const { error } = await db().rpc('pass_reaction', { p_prompt_id: promptId })
+  if (error) throw fromServerRule(error)
+}
+
+/** The chances to strike still open in a fight. */
+export async function listPrompts(encounterId: string): Promise<ReactionPrompt[]> {
+  const { data, error } = await db()
+    .from('reaction_prompts')
+    .select('*')
+    .eq('encounter_id', encounterId)
+    .eq('status', 'open')
+    .order('created_at', { ascending: true })
+  if (error) throw fromDatabaseError(error)
+  return data.map(rowToPrompt)
+}
+
+/** Rolls a death save for a character at 0 hit points, on the server. */
+export async function rollDeathSave(combatantId: string): Promise<{ roll: Roll; event: CombatEvent }> {
+  const { data, error } = await db().rpc('death_save', { p_combatant_id: combatantId })
   if (error) throw fromServerRule(error)
   const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }
   return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }

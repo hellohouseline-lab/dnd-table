@@ -56,6 +56,8 @@ const trackers = {
   hitDiceUsed: 0,
   deathSaveSuccesses: 0,
   deathSaveFailures: 0,
+  stable: false,
+  dead: false,
   conditions: [],
   resistances: [],
   vulnerabilities: [],

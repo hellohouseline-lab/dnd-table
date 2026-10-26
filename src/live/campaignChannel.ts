@@ -36,12 +36,22 @@ type LiveCampaign = {
 }
 
 /** Tables whose changes reach the screens as they are, row by row. */
-export type WatchedTable = 'stage' | 'log_events' | 'assets' | 'encounters' | 'combatants' | 'tokens' | 'combat_events'
+export type WatchedTable =
+  'stage' | 'log_events' | 'assets' | 'encounters' | 'combatants' | 'tokens' | 'combat_events' | 'reaction_prompts'
 
 /** A row added or changed, or the id of one removed. */
 export type RowChange<T extends WatchedTable> = { type: 'upsert'; row: Tables<T> } | { type: 'delete'; id: string }
 
-const WATCHED: WatchedTable[] = ['stage', 'log_events', 'assets', 'encounters', 'combatants', 'tokens', 'combat_events']
+const WATCHED: WatchedTable[] = [
+  'stage',
+  'log_events',
+  'assets',
+  'encounters',
+  'combatants',
+  'tokens',
+  'combat_events',
+  'reaction_prompts',
+]
 
 /** A hand over the battle map (in grid squares), or a ping: sent to everyone, never saved. */
 export type MapPointer = { userId: string; name: string; x: number; y: number }

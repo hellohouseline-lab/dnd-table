@@ -178,3 +178,27 @@ test('the DM asks for a roll in the middle of a fight, from the Battle screen', 
   await results.getByRole('button', { name: 'Done, play on' }).click()
   await expect(results).toBeHidden()
 })
+
+test('a player strikes a goblin slipping out of reach, with their reaction', async ({ page }) => {
+  await page.goto('#/dev/table/reaction')
+  const chance = page.getByRole('dialog', { name: 'Goblin A is getting away' })
+  await expect(chance).toContainText('use your reaction to make one melee attack')
+  await chance.getByRole('button', { name: 'Attack with Longsword' }).click()
+  await expect(chance).toBeHidden()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    /You (hit|miss) Goblin A with Longsword as they move away/,
+  )
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Reaction\s*Used/)
+})
+
+test('a player at 0 hit points rolls one death save on their turn', async ({ page }) => {
+  await page.goto('#/dev/table/dying')
+  const saves = page.getByRole('region', { name: 'Death saves' })
+  await expect(saves).toContainText('Dying')
+  await expect(page.getByRole('button', { name: 'Dash' })).toBeDisabled()
+  await saves.getByRole('button', { name: 'Roll a death save' }).click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    /You (succeed on|fail|roll a 20 on) a death save/,
+  )
+  await expect(saves.getByRole('button', { name: 'Roll a death save' })).toBeHidden()
+})

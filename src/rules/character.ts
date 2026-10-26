@@ -75,6 +75,10 @@ export type Character = {
   spellcasting: Spellcasting
   deathSaveSuccesses: number
   deathSaveFailures: number
+  /** At 0 hit points but no longer rolling death saves (three successes, or the DM stabilised them). */
+  stable: boolean
+  /** Three death save failures. The DM can undo it. */
+  dead: boolean
   conditions: string[]
   /** Damage types this character resists, is vulnerable to or immune to. */
   resistances: string[]
@@ -98,6 +102,8 @@ export type CharacterBuild = Omit<
   | 'hitDiceUsed'
   | 'deathSaveSuccesses'
   | 'deathSaveFailures'
+  | 'stable'
+  | 'dead'
   | 'conditions'
   | 'resistances'
   | 'vulnerabilities'

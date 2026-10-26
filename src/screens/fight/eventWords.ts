@@ -29,9 +29,28 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
     return `${actor} ${verb(they, yourself)}.`
   }
 
+  if (event.kind === 'death_save') {
+    const rolled = typeof event.shown.rolled === 'number' ? ` (rolled ${event.shown.rolled})` : ''
+    const count = `${event.shown.successes ?? 0} of 3 successes, ${event.shown.failures ?? 0} of 3 failures`
+    switch (event.shown.result) {
+      case 'awake':
+        return `${actor} ${verb('rolls', 'roll')} a 20 on a death save and ${verb('is', 'are')} back up with 1 hit point!`
+      case 'stable':
+        return `${actor} ${verb('succeeds', 'succeed')} on a third death save${rolled} and ${verb('is', 'are')} stable.`
+      case 'dead':
+        return `${actor} ${verb('fails', 'fail')} a third death save${rolled}. ${you ? 'Your character dies.' : `${actor} dies.`}`
+      case 'success':
+        return `${actor} ${verb('succeeds', 'succeed')} on a death save${rolled}: ${count}.`
+      default:
+        return `${actor} ${verb('fails', 'fail')} a death save${rolled}: ${count}.`
+    }
+  }
+
   const targetIsYou = event.targetId !== null && event.targetId === youId
   const target = targetIsYou ? 'you' : nameOf(event.targetId)
-  const weapon = event.shown.label ? ` with ${event.shown.label}` : ''
+  // An opportunity attack, made with the reaction as the target moves away.
+  const weapon =
+    (event.shown.label ? ` with ${event.shown.label}` : '') + (event.shown.reaction ? ' as they move away' : '')
   const rolled = typeof event.shown.total === 'number' ? ` (rolled ${event.shown.total})` : ''
   if (!event.shown.hit) return `${actor} ${verb('misses', 'miss')} ${target}${weapon}${rolled}.`
 

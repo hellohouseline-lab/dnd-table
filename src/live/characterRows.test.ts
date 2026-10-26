@@ -44,6 +44,8 @@ const row: CharacterRow = {
   spellcasting: {},
   death_save_successes: 0,
   death_save_failures: 0,
+  stable: false,
+  dead: false,
   conditions: [],
   resistances: [],
   vulnerabilities: [],

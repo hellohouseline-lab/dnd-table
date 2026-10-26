@@ -9,6 +9,8 @@ import { CONDITIONS, findCondition, type SrdMonster, type SrdMonsterAction } fro
 import { fightRows, turnLimits, type FightRow } from './fightRows.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
+import { DeathSaves } from './Reactions.tsx'
+import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Aiming } from './useAiming.ts'
 
 type Fight = NonNullable<FightControls['fight']>
@@ -67,7 +69,9 @@ export function TurnOrder({
           everyone has rolled, or press Next turn to start now.
         </p>
       )}
-      {aiming && <p className={styles.aimHint}>Pick a target for {aiming.label}: click a name below, or a miniature.</p>}
+      {aiming && (
+        <p className={styles.aimHint}>Pick a target for {aiming.label}: click a name below, or a miniature.</p>
+      )}
       <ol className={styles.rows}>
         {rows.map((row) => {
           const pickable = aiming !== null && row.combatant.id !== aiming.attackerId
@@ -159,6 +163,10 @@ type ActingNowProps = {
   /** Acting for a player: one of their attacks, then its target. */
   onCharacterAttack: (row: FightRow, attack: AttackEntry) => void
   onOpenSheet: (character: Character) => void
+  /** A character at 0 hit points: roll their death save. */
+  onDeathSave?: (row: FightRow) => void
+  /** Changes a character's sheet: Stabilise, or up with 1 hit point. */
+  onUpdate?: (characterId: string, patch: TrackerPatch) => void
   /** Show the number key for each attack (the Battle screen's keyboard). */
   numbered?: boolean
   rolling?: boolean
@@ -173,6 +181,8 @@ export function ActingNow({
   onAttack,
   onCharacterAttack,
   onOpenSheet,
+  onDeathSave,
+  onUpdate,
   numbered = false,
   rolling,
   className,
@@ -181,7 +191,9 @@ export function ActingNow({
     return (
       <section className={cx(styles.actingCard, className)} aria-label="Acting now">
         <div className={styles.eyebrow}>Acting now</div>
-        <p className={styles.hint}>Nobody yet. The first turn starts once everyone has initiative, or press Next turn.</p>
+        <p className={styles.hint}>
+          Nobody yet. The first turn starts once everyone has initiative, or press Next turn.
+        </p>
       </section>
     )
   }
@@ -213,6 +225,21 @@ export function ActingNow({
 
       {row.character ? (
         <>
+          {row.character.currentHp === 0 && (
+            <DeathSaves
+              who={row.character.name}
+              saves={{
+                successes: row.character.deathSaveSuccesses,
+                failures: row.character.deathSaveFailures,
+                stable: row.character.stable,
+                dead: row.character.dead,
+              }}
+              onRoll={onDeathSave && (() => onDeathSave(row))}
+              onStabilise={onUpdate && (() => row.character && onUpdate(row.character.id, { stable: true }))}
+              onWake={onUpdate && (() => row.character && onUpdate(row.character.id, { currentHp: 1 }))}
+              rolling={rolling}
+            />
+          )}
           <p className={styles.hint}>
             {row.character.name} acts from their own screen. If they&rsquo;ve stepped away, act for them:
           </p>
@@ -234,7 +261,11 @@ export function ActingNow({
               </li>
             ))}
           </ul>
-          <button type="button" className={styles.secondary} onClick={() => row.character && onOpenSheet(row.character)}>
+          <button
+            type="button"
+            className={styles.secondary}
+            onClick={() => row.character && onOpenSheet(row.character)}
+          >
             Open their sheet
           </button>
         </>
@@ -399,4 +430,3 @@ export function EncounterTab({
     </div>
   )
 }
-

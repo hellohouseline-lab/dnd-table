@@ -26,6 +26,10 @@ const noFight: FightControls = {
   attack: () => Promise.reject(new Error('No fight')),
   act: noop,
   undo: noop,
+  prompts: [],
+  strike: () => Promise.reject(new Error('No fight')),
+  letGo: noop,
+  deathSave: () => Promise.reject(new Error('No fight')),
 }
 const nobodyAsked: RequestControls = {
   request: null,

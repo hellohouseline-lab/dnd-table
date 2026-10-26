@@ -98,6 +98,8 @@ function toBuild(character: Character): CharacterBuild {
     hitDiceUsed: _hitDiceUsed,
     deathSaveSuccesses: _deathSaveSuccesses,
     deathSaveFailures: _deathSaveFailures,
+    stable: _stable,
+    dead: _dead,
     conditions: _conditions,
     exhaustion: _exhaustion,
     inspiration: _inspiration,

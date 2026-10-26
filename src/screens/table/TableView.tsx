@@ -51,6 +51,9 @@ import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
 import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/fightRows.ts'
 import { InitiativePrompt, InitiativeRibbon, InspectCard, TurnBanner, YourTurn } from '../fight/PlayerCombat.tsx'
+import { DeathSaves, StrikePrompt } from '../fight/Reactions.tsx'
+import { strikesFor, type Strike } from '../fight/strikes.ts'
+import { isDying } from '../../rules/dying.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
@@ -90,6 +93,11 @@ export type PlayerCombatProps = {
   events: CombatEvent[]
   attack: FightControls['attack']
   act: FightControls['act']
+  /** Chances to strike someone moving out of your reach (opportunity attacks). */
+  prompts: FightControls['prompts']
+  strike: FightControls['strike']
+  letGo: FightControls['letGo']
+  deathSave: FightControls['deathSave']
   /** The battle map on stage, or null when the stage shows a picture. */
   map: Asset | null
   tokens: TokenControls
@@ -181,12 +189,25 @@ export function TableView({
           userId: me.user_id,
           isDm: false,
           playersMove: combat.playersMove,
-          // Before the first turn everyone places their miniature; after that, on your own turn.
-          moveNow: !mine || myTurn || fight?.encounter.currentId === null,
+          // Before the first turn everyone places their miniature; after that, on your own turn
+          // (not while unconscious at 0 hit points).
+          moveNow: !mine || (myTurn && character.currentHp > 0) || fight?.encounter.currentId === null,
         },
       )
     : []
   const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
+
+  // A chance to strike someone moving away, and death saves at 0 hit points.
+  const myChance = (mine && combat?.prompts.find((p) => p.combatantId === mine.id)) || null
+  const myRow = rows.find((r) => r.combatant.id === mine?.id)
+  const provokerRow = rows.find((r) => r.combatant.id === myChance?.provokerId)
+  const myStrikes = myRow ? strikesFor(myRow, null) : []
+  function strikeBack(strike: Strike) {
+    if (!myChance || !provokerRow || !combat) return
+    const request = strike.build(provokerRow)
+    void table.rollWith(() => combat.strike(myChance, request))
+  }
+  const dyingNow = Boolean(fight && mine && character.currentHp === 0)
 
   // Attacking in a fight: pick the attack, then its target; the server does the rest.
   function attackWith(attack: AttackEntry) {
@@ -325,7 +346,7 @@ export function TableView({
                 const token = tokens.find((t) => t.id === id)
                 if (token) combat.tokens.move(token, x, y)
               }}
-              reach={myTurn && myToken ? { tokenId: myToken.id, feet: feetLeft } : null}
+              reach={myTurn && myToken && !dyingNow ? { tokenId: myToken.id, feet: feetLeft } : null}
               aim={
                 aiming && myToken
                   ? (() => {
@@ -449,6 +470,23 @@ export function TableView({
           </div>
         </section>
 
+        {fight && mine && combat && dyingNow && (
+          <DeathSaves
+            saves={{
+              successes: character.deathSaveSuccesses,
+              failures: character.deathSaveFailures,
+              stable: character.stable,
+              dead: character.dead,
+            }}
+            onRoll={
+              myTurn && isDying(character) && !mine.turn.actionUsed
+                ? () => void table.rollWith(() => combat.deathSave(mine))
+                : undefined
+            }
+            rolling={table.rolling}
+          />
+        )}
+
         {fight && mine && combat && (
           <YourTurn
             turn={mine.turn}
@@ -456,6 +494,7 @@ export function TableView({
             perAction={perAction}
             myTurn={myTurn}
             started={fight.encounter.currentId !== null}
+            canAct={!dyingNow}
             onAct={(what) => combat.act(mine, what)}
             onEndTurn={combat.endTurn}
           />
@@ -552,6 +591,17 @@ export function TableView({
             character={character}
             mode={mode}
             onRoll={() => void rollMyInitiative()}
+            rolling={table.rolling}
+          />
+        </div>
+      )}
+      {myChance && combat && !(request && askedMe && !myAnswer) && (
+        <div className={styles.asked}>
+          <StrikePrompt
+            provoker={provokerRow?.name ?? 'Someone'}
+            strikes={myStrikes}
+            onStrike={strikeBack}
+            onLetGo={() => combat.letGo(myChance)}
             rolling={table.rolling}
           />
         </div>
