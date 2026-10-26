@@ -23,7 +23,14 @@ export const ROADMAP: Milestone[] = [
     detail: 'Spells with slots and concentration, areas on the map, opportunity attacks and death saves',
     status: 'ready',
   },
+  {
+    name: 'Cards that explain themselves',
+    detail: 'What each attack, spell and feature does, and quick checks for the DM',
+    status: 'ready',
+  },
   { name: 'Character builder', detail: 'Build a character step by step: scores, gear and spells', status: 'next' },
+  { name: 'Items, money and shops', detail: 'Wallets, loot when you search, shopkeepers and NPCs', status: 'later' },
+  { name: 'Story mode', detail: 'Your campaign on the DM’s screen, scene by scene', status: 'later' },
   {
     name: 'The rest of the combat rules',
     detail: 'Talking your way out, two weapons, hiding and searching',
