@@ -166,6 +166,7 @@ export type Database = {
           constitution: number
           created_at: string
           current_hp: number
+          dead: boolean
           death_save_failures: number
           death_save_successes: number
           dexterity: number
@@ -191,6 +192,7 @@ export type Database = {
           skill_proficiencies: string[]
           speed: number
           spellcasting: Json
+          stable: boolean
           strength: number
           subclass: string
           subrace: string
@@ -211,6 +213,7 @@ export type Database = {
           constitution?: number
           created_at?: string
           current_hp?: number
+          dead?: boolean
           death_save_failures?: number
           death_save_successes?: number
           dexterity?: number
@@ -236,6 +239,7 @@ export type Database = {
           skill_proficiencies?: string[]
           speed?: number
           spellcasting?: Json
+          stable?: boolean
           strength?: number
           subclass?: string
           subrace?: string
@@ -256,6 +260,7 @@ export type Database = {
           constitution?: number
           created_at?: string
           current_hp?: number
+          dead?: boolean
           death_save_failures?: number
           death_save_successes?: number
           dexterity?: number
@@ -281,6 +286,7 @@ export type Database = {
           skill_proficiencies?: string[]
           speed?: number
           spellcasting?: Json
+          stable?: boolean
           strength?: number
           subclass?: string
           subrace?: string
@@ -494,6 +500,7 @@ export type Database = {
           id: string
           initiative: number | null
           kind: string
+          reach_ft: number
           reaction_used: boolean
           revealed: boolean
           shown_name: string
@@ -517,6 +524,7 @@ export type Database = {
           id?: string
           initiative?: number | null
           kind: string
+          reach_ft?: number
           reaction_used?: boolean
           revealed?: boolean
           shown_name: string
@@ -540,6 +548,7 @@ export type Database = {
           id?: string
           initiative?: number | null
           kind?: string
+          reach_ft?: number
           reaction_used?: boolean
           revealed?: boolean
           shown_name?: string
@@ -681,6 +690,68 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reaction_prompts: {
+        Row: {
+          campaign_id: string
+          combatant_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          provoker_id: string
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          combatant_id: string
+          created_at?: string
+          encounter_id: string
+          id?: string
+          kind?: string
+          provoker_id: string
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          combatant_id?: string
+          created_at?: string
+          encounter_id?: string
+          id?: string
+          kind?: string
+          provoker_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reaction_prompts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reaction_prompts_combatant_id_fkey"
+            columns: ["combatant_id"]
+            isOneToOne: false
+            referencedRelation: "combatants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reaction_prompts_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reaction_prompts_provoker_id_fkey"
+            columns: ["provoker_id"]
+            isOneToOne: false
+            referencedRelation: "combatants"
             referencedColumns: ["id"]
           },
         ]
@@ -1039,6 +1110,7 @@ export type Database = {
         }
         Returns: string
       }
+      death_save: { Args: { p_combatant_id: string }; Returns: Json }
       end_turn: {
         Args: { p_encounter_id: string }
         Returns: {
@@ -1081,6 +1153,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      opportunity_attack: {
+        Args: { p_prompt_id: string; p_roll: Json }
+        Returns: Json
+      }
       override_roll: {
         Args: { p_passed: boolean; p_roll_id: string }
         Returns: {
@@ -1107,6 +1183,25 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "rolls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      pass_reaction: {
+        Args: { p_prompt_id: string }
+        Returns: {
+          campaign_id: string
+          combatant_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          provoker_id: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reaction_prompts"
           isOneToOne: true
           isSetofReturn: false
         }
