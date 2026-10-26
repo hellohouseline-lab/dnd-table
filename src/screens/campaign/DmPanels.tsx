@@ -207,19 +207,22 @@ export function DmDetailsPanel({ campaign, onSaved }: { campaign: Campaign; onSa
     party_size: campaign.party_size,
     starting_level: campaign.starting_level,
   })
+  // Gold for every new character's purse, on top of their background's.
+  const [gold, setGold] = useState(campaign.starting_gold)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
   const changed =
     form.name !== campaign.name ||
     form.party_size !== campaign.party_size ||
-    form.starting_level !== campaign.starting_level
+    form.starting_level !== campaign.starting_level ||
+    gold !== campaign.starting_gold
 
   async function save(event: FormEvent) {
     event.preventDefault()
     setSaving(true)
     setMessage(null)
     try {
-      await updateCampaign(campaign.id, form)
+      await updateCampaign(campaign.id, { ...form, starting_gold: gold })
       setMessage({ tone: 'success', text: 'Saved.' })
       onSaved()
     } catch (caught) {
@@ -239,6 +242,22 @@ export function DmDetailsPanel({ campaign, onSaved }: { campaign: Campaign; onSa
             setMessage(null)
           }}
         />
+        <label className={styles.goldField}>
+          <span>Starting gold (gp), on top of each background&rsquo;s</span>
+          <input
+            type="number"
+            min={0}
+            max={100000}
+            value={gold}
+            onChange={(event) => {
+              setGold(Math.max(0, Math.min(100000, Math.round(Number(event.target.value) || 0))))
+              setMessage(null)
+            }}
+          />
+        </label>
+        <p className={styles.goldNote}>
+          A character made below the starting level levels up to it straight away, one level at a time.
+        </p>
         <div>
           <button type="submit" className={buttonClassName('primary', { size: 'small' })} disabled={saving || !changed}>
             {saving ? 'Saving…' : 'Save changes'}

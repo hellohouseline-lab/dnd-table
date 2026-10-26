@@ -580,3 +580,74 @@
   font-size: 15px;
   color: var(--fail-light);
 }
+
+/* Your path. */
+.pathColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.pathList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pathList > li {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(58, 47, 56, 0.8);
+}
+
+.pathNext {
+  border-color: var(--gold) !important;
+  background: rgba(212, 175, 90, 0.08);
+}
+
+.pathLevel {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold-light);
+}
+
+.pathTag {
+  margin-left: 8px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pathItems {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.pathItems strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.beasts {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 15px;
+  color: var(--text-2);
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.beasts strong {
+  color: var(--text);
+}

@@ -3,6 +3,13 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C2e: quick starts, starting level and gold, characters for players, Your path (live). The character builder (C2) is complete.**
+  - **Three ways in:** the builder opens with **Surprise me**, **Build my own**, and twelve **ready-made characters**, one for each class (Ruk Ironjaw the half-orc barbarian, Bruenna Stonehelm the hill dwarf cleric, Tinka Gearwhistle the rock gnome wizard and the rest), each with a line on how it plays. Picking one fills every step (scores, skills, fighting style, gear, spells, looks and personality) and opens Who they are to change the name; Surprise me does the same with random but sensible picks. Every ready-made and random character is tested to come out complete.
+  - **Starting level and gold** for the table, on the campaign screen's details. Gold goes in every new character's purse on top of the background's. A character made below the starting level gets a gold Level up! straight away and takes each level with the walk-through (server: `20261027170000_starting_level_gold.sql`).
+  - **Characters for players:** **Make a character for a player** on the Party tab opens the builder; on Review the DM picks the player (anyone without a character yet) and presses **Give it to …**.
+  - **Your path** tab on every sheet: each level from the next to 20, with its features, the choices coming (subclass, ability score increases, fighting styles, invocations), the numbers that grow and new spells, the next level highlighted. A druid also sees the beasts they can Wild Shape into now (challenge, hit points, AC, speeds, attacks on hover) and what the next Wild Shape level adds.
+  - The portrait text says "an 87-year-old".
+  - Tests: 443 database (4 new), 407 unit (4 new), 34 preview browser tests (3 new).
 - **Height and weight pickers, and the character sheet as text (live).**
   - **Who they are** picks height in centimetres, or feet and inches, and weight in kilograms or pounds (a switch between the two), always saved with both ("5 ft 2 in (157 cm)", "150 lb (68 kg)"), with a guide to what's usual for the race ("Most dwarves are 4 ft to 5 ft").
   - **Copy as text** and **Download** on every character sheet, and **Copy everyone's sheets** on the DM's Party tab. The text has the whole sheet (scores, hit points, AC, saves, skills, attacks, spells, features, equipment, coins, who they are) with a **picture description** at the top, built from the race, class, age, looks, armour, weapons and personality, ready to paste into an image generator for a portrait of each character.
@@ -204,7 +211,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C2e next:** quick starts (twelve ready-made characters and Surprise me), Your path (looking ahead, a druid's beasts), giving characters to players, and the DM's starting level and gold.
+- **I1 next:** items, money and loot: shops at SRD prices, giving items and gold, searching and loot, then S1 (story mode).
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets

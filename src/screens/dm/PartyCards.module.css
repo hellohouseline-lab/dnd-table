@@ -257,3 +257,9 @@
   font-size: 14px;
   color: var(--gold-light);
 }
+
+.makeLink {
+  margin-right: auto;
+  font-size: 15px;
+  color: var(--gold);
+}

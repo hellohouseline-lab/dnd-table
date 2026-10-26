@@ -202,6 +202,7 @@ export type Database = {
           join_code: string
           name: string
           party_size: number
+          starting_gold: number
           starting_level: number
         }
         Insert: {
@@ -212,6 +213,7 @@ export type Database = {
           join_code: string
           name: string
           party_size?: number
+          starting_gold?: number
           starting_level?: number
         }
         Update: {
@@ -222,6 +224,7 @@ export type Database = {
           join_code?: string
           name?: string
           party_size?: number
+          starting_gold?: number
           starting_level?: number
         }
         Relationships: []
