@@ -17,6 +17,7 @@ import { useRollLog } from '../../live/useRollLog.ts'
 import { useRollRequest } from '../../live/useRollRequest.ts'
 import { useNotebook } from '../../live/useNotebook.ts'
 import { useLibrary, useLogEvents, useStage } from '../../live/useStage.ts'
+import { useGivingControls } from '../../live/giving.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight } from '../../live/useFight.ts'
 import { DmView } from './DmView.tsx'
@@ -32,6 +33,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   const asking = useRollRequest(campaignId, user.id, true)
   const notebook = useNotebook(campaignId)
   const events = useLogEvents(campaignId, user.id)
+  const giving = useGivingControls(campaignId, user.id)
   const { stage } = useStage(campaignId, user.id)
   const library = useLibrary(campaignId, user.id)
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
@@ -87,6 +89,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
 
   return (
     <DmView
+      giving={giving}
       campaign={campaign.data}
       me={me}
       members={members.data}

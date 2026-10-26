@@ -34,6 +34,7 @@ const EVENT_NAMES: Record<LogKind, string> = {
   rest: 'Rest',
   condition: 'Condition',
   stage: 'Stage',
+  gift: 'Given',
 }
 
 type Entry = { at: string; roll: Roll; event?: never } | { at: string; event: LogEvent; roll?: never }

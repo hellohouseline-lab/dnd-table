@@ -9,7 +9,7 @@ export type NextStep = { id: string; text: string; done: boolean }
 export type KeyItem = { id: string; name: string; holder: string }
 export type Notebook = { whereWeAre: string; nextSteps: NextStep[]; keyItems: KeyItem[] }
 
-export type LogKind = 'note' | 'damage' | 'heal' | 'rest' | 'condition' | 'stage'
+export type LogKind = 'note' | 'damage' | 'heal' | 'rest' | 'condition' | 'stage' | 'gift'
 export type LogEvent = {
   id: string
   campaignId: string
@@ -17,7 +17,11 @@ export type LogEvent = {
   text: string
   visible: boolean
   createdAt: string
+  /** Something given: to whom (character ids), from whom, what, and coins in copper. */
+  gift?: Gift
 }
+
+export type Gift = { to: string[]; from: string | null; items: { name: string; quantity: number }[]; copper: number }
 
 export const EMPTY_NOTEBOOK: Notebook = { whereWeAre: '', nextSteps: [], keyItems: [] }
 const LOG_LENGTH = 150
@@ -78,7 +82,7 @@ export async function saveNotebook(campaignId: string, notebook: Notebook): Prom
   if (error) throw fromDatabaseError(error)
 }
 
-const KINDS: LogKind[] = ['note', 'damage', 'heal', 'rest', 'condition', 'stage']
+const KINDS: LogKind[] = ['note', 'damage', 'heal', 'rest', 'condition', 'stage', 'gift']
 
 export function rowToLogEvent(row: Tables<'log_events'>): LogEvent {
   return {
@@ -88,6 +92,20 @@ export function rowToLogEvent(row: Tables<'log_events'>): LogEvent {
     text: row.text,
     visible: row.visible,
     createdAt: row.created_at,
+    ...(row.kind === 'gift' ? { gift: parseGift(row.data) } : {}),
+  }
+}
+
+function parseGift(data: Json): Gift {
+  const d = data && typeof data === 'object' && !Array.isArray(data) ? data : {}
+  const ids = (value: Json | undefined) => (Array.isArray(value) ? value.filter((v) => typeof v === 'string') : [])
+  return {
+    to: ids(d.to),
+    from: typeof d.from === 'string' ? d.from : null,
+    items: list(d.items ?? null, (i) =>
+      typeof i.name === 'string' ? { name: i.name, quantity: typeof i.quantity === 'number' ? i.quantity : 1 } : null,
+    ),
+    copper: typeof d.copper === 'number' ? d.copper : 0,
   }
 }
 

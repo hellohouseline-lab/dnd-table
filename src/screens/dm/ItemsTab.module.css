@@ -1,0 +1,48 @@
+/* Items and loot: each character's pack, then the party stash. */
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pack {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 16px;
+}
+
+.magic {
+  color: var(--gold-light);
+}
+
+.count {
+  color: var(--text-3);
+}
+
+.tag {
+  margin-left: 6px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--label);
+}
+
+.nothing {
+  margin: 0;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.stash {
+  min-height: 0;
+}
+
+.coins {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--gold-light);
+}

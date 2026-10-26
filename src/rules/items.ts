@@ -122,15 +122,22 @@ export function usableItems(inventory: InventoryItem[]): { item: InventoryItem; 
   })
 }
 
-/** The AC from what's worn, if any of it is SRD armour (otherwise the sheet's AC stands). */
+/** The AC from what's worn, if any of it is SRD armour (otherwise the sheet's AC stands). Magic armour adds its +1. */
 export function wornArmourClass(
   character: Pick<Character, 'scores' | 'className'>,
   inventory: InventoryItem[],
   equipment: SrdEquipment,
 ): number | null {
-  const owned = inventory.filter((i) => i.item).map((i) => ({ worn: i.worn, srd: findItem(equipment, i.item ?? '') }))
+  const owned = inventory
+    .filter((i) => i.item)
+    .map((i) => ({ worn: i.worn, bonus: i.bonus ?? 0, srd: findItem(equipment, i.item ?? '') }))
   if (!owned.some((o) => o.srd?.armour)) return null
-  const armour = owned.find((o) => o.worn && o.srd?.armour && o.srd.sub !== 'Shield')?.srd ?? null
-  const shield = owned.some((o) => o.worn && o.srd?.sub === 'Shield')
-  return armourClass(character.scores, { armour, shield }, character.className.toLowerCase()).ac
+  const suit = owned.find((o) => o.worn && o.srd?.armour && o.srd.sub !== 'Shield') ?? null
+  const shield = owned.find((o) => o.worn && o.srd?.sub === 'Shield') ?? null
+  const ac = armourClass(
+    character.scores,
+    { armour: suit?.srd ?? null, shield: Boolean(shield) },
+    character.className.toLowerCase(),
+  ).ac
+  return ac + (suit?.bonus ?? 0) + (shield?.bonus ?? 0)
 }

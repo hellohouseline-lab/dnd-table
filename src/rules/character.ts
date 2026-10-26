@@ -60,6 +60,13 @@ export type InventoryItem = {
   worn: boolean
   /** Uses left, for a kit (a healer's kit has 10). */
   uses: number | null
+  /** A magic item from the free rules ('cloak-of-protection', or 'weapon-1' for a Longsword +1). */
+  magic?: string | null
+  /** A +1, +2 or +3 on a weapon's attack and damage, or on armour's AC. */
+  bonus?: number
+  /** Needs attuning to work; and whether it is (three at most). */
+  attune?: boolean
+  attuned?: boolean
 }
 
 /** Coins: copper, silver, electrum, gold and platinum pieces. */

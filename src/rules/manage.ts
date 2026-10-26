@@ -130,23 +130,37 @@ export function syncAttacks(
   equipment: SrdEquipment,
   proficiencies: string,
 ): AttackEntry[] {
-  const carried = new Set(inventory.filter((i) => i.quantity > 0 && i.item).map((i) => i.item as string))
+  const held = inventory.filter((i) => i.quantity > 0 && i.item)
+  const carried = new Set(held.map((i) => i.item as string))
   const kept = attacks.filter((a) => !a.weapon || carried.has(a.weapon) || !findItem(equipment, a.weapon))
-  const have = new Set(kept.map((a) => a.weapon))
-  const added = [...carried]
-    .map((index) => findItem(equipment, index))
-    .filter((item): item is SrdItem => item?.kind === 'weapon' && !have.has(item.index))
-    .map((weapon) => ({
-      id: `weapon-${weapon.index}`,
-      name: itemName(weapon.name),
-      weapon: weapon.index,
-      proficient: weaponProficient(weapon, proficiencies.split(/,\s*/)),
-      magicBonus: 0,
-      ability: 'strength' as const,
-      damageDice: '',
-      damageType: '',
-    }))
+  const have = new Set(kept.map((a) => `${a.weapon}:${a.magicBonus}`))
+  const added: AttackEntry[] = []
+  for (const i of held) {
+    const attack = attackFor(i, equipment, proficiencies)
+    const key = attack ? `${attack.weapon}:${attack.magicBonus}` : ''
+    if (attack && !have.has(key)) {
+      have.add(key)
+      added.push(attack)
+    }
+  }
   return [...kept, ...added]
+}
+
+/** A carried weapon as a card in the hand, with its +1 if it's magic; null for anything else. */
+export function attackFor(item: InventoryItem, equipment: SrdEquipment, proficiencies: string): AttackEntry | null {
+  const weapon = item.item ? findItem(equipment, item.item) : undefined
+  if (weapon?.kind !== 'weapon') return null
+  const bonus = item.bonus ?? 0
+  return {
+    id: `weapon-${weapon.index}${bonus ? `-${bonus}` : ''}`,
+    name: bonus ? `${itemName(weapon.name)} +${bonus}` : itemName(weapon.name),
+    weapon: weapon.index,
+    proficient: weaponProficient(weapon, proficiencies.split(/,\s*/)),
+    magicBonus: bonus,
+    ability: 'strength',
+    damageDice: '',
+    damageType: '',
+  }
 }
 
 /** A wizard copying a spell into their book: 50 gp and 2 hours a spell level (2014 rules). */

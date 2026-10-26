@@ -112,6 +112,7 @@ async function main(): Promise<void> {
     monsters,
     categories,
     subclassRows,
+    magicItems,
   ] = await Promise.all(
     [
       'Skills',
@@ -128,6 +129,7 @@ async function main(): Promise<void> {
       'Monsters',
       'Equipment-Categories',
       'Subclasses',
+      'Magic-Items',
     ].map(load),
   )
 
@@ -494,6 +496,26 @@ async function main(): Promise<void> {
           .map((p) => [ABILITY[String(p.proficiency.index).slice('saving-throw-'.length)], p.value as number]),
       ),
     })),
+  })
+  // Magic items: the real items, not the "any potion of healing" parents with variants. A +1
+  // weapon, armour or ammunition is one item here; the table pairs it with a weapon or armour.
+  write('magic-items.json', {
+    items: magicItems
+      .filter((m) => !(m.variants as Raw[] | undefined)?.length)
+      .map((m) => {
+        const [line, ...rest] = m.desc as string[]
+        const plus = /^(weapon|armor|ammunition)-(\d)$/.exec(m.index)
+        return {
+          index: m.index,
+          name: m.name,
+          kind: m.equipment_category.index,
+          rarity: m.rarity.name,
+          attune: /requires attunement/i.test(line ?? ''),
+          ...(plus ? { bonus: Number(plus[2]) } : {}),
+          line: line ?? '',
+          desc: rest.join('\n\n'),
+        }
+      }),
   })
 }
 

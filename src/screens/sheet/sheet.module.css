@@ -651,3 +651,36 @@
 .beasts strong {
   color: var(--text);
 }
+
+/* Handing things to someone else, and magic items in gold. */
+.handOver {
+  margin-top: 6px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.handOver select,
+.handOver input {
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.handOver input {
+  width: 64px;
+}
+
+.handedOk {
+  margin: 8px 0 0;
+  color: var(--pass);
+}
+
+.magicItem {
+  color: var(--gold-light);
+}

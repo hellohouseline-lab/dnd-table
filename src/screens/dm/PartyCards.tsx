@@ -30,6 +30,8 @@ type PartyCardsProps = {
   characters: Character[]
   onOpenSheet: (character: Character) => void
   onAsk: (character: Character) => void
+  /** Opens Give for this character. */
+  onGive?: (character: Character) => void
   onHitPoints: (character: Character, change: HitPointChange, amount: number) => void
   /** The quick checks along the top: sends a roll to everyone ticked. */
   onQuickCheck?: (input: AskInput) => Promise<boolean>
@@ -56,6 +58,7 @@ export function PartyCards({
   characters,
   onOpenSheet,
   onAsk,
+  onGive,
   onHitPoints,
   onQuickCheck,
   quickError = null,
@@ -292,6 +295,11 @@ export function PartyCards({
                 <button type="button" className={styles.action} onClick={() => onAsk(character)}>
                   Ask to roll
                 </button>
+                {onGive && (
+                  <button type="button" className={styles.action} onClick={() => onGive(character)}>
+                    Give item
+                  </button>
+                )}
                 {onLevelUp && (
                   <button
                     type="button"

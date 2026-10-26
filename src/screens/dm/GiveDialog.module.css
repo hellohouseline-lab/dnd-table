@@ -1,0 +1,117 @@
+/* Give an item: the Rest card's look, with a search list. */
+.card {
+  width: 680px;
+}
+
+.sides {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.side {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 16px;
+}
+
+.sideOn {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field input,
+.field select {
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 17px;
+}
+
+.small {
+  width: 100px;
+}
+
+.results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: var(--chip-fill);
+  color: var(--text);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.result:hover {
+  border-color: var(--gold-rule);
+}
+
+.picked {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gold-light);
+}
+
+.words {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.link {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 15px;
+  text-decoration: underline;
+}
+
+.ok {
+  margin: 0;
+  font-size: 16px;
+  color: var(--pass);
+}
+
+.problem {
+  margin: 0;
+  font-size: 16px;
+  color: var(--fail-light);
+}
