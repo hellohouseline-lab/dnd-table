@@ -35,6 +35,9 @@ describe('the stage', () => {
       music_position: 0,
       music_volume: 0.7,
       ambience: { fire: 0.5, rain: 0, crowd: 3, bad: 'loud' },
+      map_id: null,
+      mode: 'scene',
+      players_move_tokens: true,
       updated_at: '2026-10-26T20:00:00Z',
     })
     expect(stage).toMatchObject({

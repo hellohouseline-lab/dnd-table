@@ -23,17 +23,21 @@ type LiveCampaign = {
   requestListeners: Set<(request: AskedRoll) => void>
   tableListeners: Map<WatchedTable, Set<(change: RowChange<WatchedTable>) => void>>
   effectListeners: Set<(assetId: string) => void>
+  pointerListeners: Set<(kind: 'hand' | 'ping', pointer: MapPointer) => void>
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
 
 /** Tables whose changes reach the screens as they are, row by row. */
-export type WatchedTable = 'stage' | 'log_events' | 'assets'
+export type WatchedTable = 'stage' | 'log_events' | 'assets' | 'encounters' | 'combatants' | 'tokens'
 
 /** A row added or changed, or the id of one removed. */
 export type RowChange<T extends WatchedTable> = { type: 'upsert'; row: Tables<T> } | { type: 'delete'; id: string }
 
-const WATCHED: WatchedTable[] = ['stage', 'log_events', 'assets']
+const WATCHED: WatchedTable[] = ['stage', 'log_events', 'assets', 'encounters', 'combatants', 'tokens']
+
+/** A hand over the battle map (in grid squares), or a ping: sent to everyone, never saved. */
+export type MapPointer = { userId: string; name: string; x: number; y: number }
 const CLOSE_DELAY_MS = 1000
 const NOBODY: ReadonlySet<string> = new Set()
 const open = new Map<string, LiveCampaign>()
@@ -60,6 +64,7 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     requestListeners: new Set(),
     tableListeners: new Map(WATCHED.map((table) => [table, new Set()])),
     effectListeners: new Set(),
+    pointerListeners: new Set(),
     users: 1,
   }
 
@@ -130,6 +135,16 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     const assetId = (payload as { assetId?: unknown }).assetId
     if (typeof assetId === 'string') live.effectListeners.forEach((listener) => listener(assetId))
   })
+
+  for (const kind of ['hand', 'ping'] as const) {
+    channel.on('broadcast', { event: kind }, ({ payload }) => {
+      const p = payload as Partial<MapPointer>
+      if (typeof p.userId === 'string' && typeof p.x === 'number' && typeof p.y === 'number') {
+        const pointer = { userId: p.userId, name: String(p.name ?? ''), x: p.x, y: p.y }
+        live.pointerListeners.forEach((listener) => listener(kind, pointer))
+      }
+    })
+  }
 
   channel.subscribe((status) => {
     if (status === 'SUBSCRIBED') void channel.track({ since: new Date().toISOString() })
@@ -259,4 +274,26 @@ export function useEffectBroadcasts(campaignId: string, userId: string, onEffect
 /** Tells everyone at the table to play a sound effect now. (It isn't saved anywhere.) */
 export function broadcastEffect(campaignId: string, assetId: string): void {
   void open.get(campaignId)?.channel.send({ type: 'broadcast', event: 'effect', payload: { assetId } })
+}
+
+/** Calls `onPointer` when someone else moves their hand over the battle map or pings it. */
+export function usePointerBroadcasts(
+  campaignId: string,
+  userId: string,
+  onPointer: (kind: 'hand' | 'ping', pointer: MapPointer) => void,
+): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.pointerListeners.add(onPointer)
+    return () => {
+      live.pointerListeners.delete(onPointer)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onPointer])
+}
+
+/** Shows everyone your hand on the map, or a ping. (Hands are sent at most 4 times a second; see useMapPointers.) */
+export function broadcastPointer(campaignId: string, kind: 'hand' | 'ping', pointer: MapPointer): void {
+  void open.get(campaignId)?.channel.send({ type: 'broadcast', event: kind, payload: pointer })
 }

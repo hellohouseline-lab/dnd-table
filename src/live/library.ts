@@ -42,6 +42,8 @@ export type Asset = {
   credit: string
   hotkey: number | null
   createdAt: string
+  /** For battle maps: the size of one 5-foot square in the picture's pixels, and where the grid starts. */
+  grid: { size: number; offsetX: number; offsetY: number }
 }
 
 type AssetRow = Tables<'assets'>
@@ -71,6 +73,7 @@ export function rowToAsset(row: AssetRow): Asset {
     credit: row.credit,
     hotkey: row.hotkey,
     createdAt: row.created_at,
+    grid: { size: row.grid_size, offsetX: row.grid_offset_x, offsetY: row.grid_offset_y },
   }
 }
 
@@ -177,7 +180,9 @@ async function insert(row: TablesInsert<'assets'>): Promise<Asset> {
   return rowToAsset(data)
 }
 
-export type AssetPatch = Partial<Pick<Asset, 'name' | 'category' | 'mood' | 'streamSafe' | 'credit' | 'hotkey'>>
+export type AssetPatch = Partial<
+  Pick<Asset, 'name' | 'category' | 'mood' | 'streamSafe' | 'credit' | 'hotkey' | 'grid'>
+>
 
 export async function updateAsset(id: string, patch: AssetPatch): Promise<Asset> {
   const row: TablesUpdate<'assets'> = {}
@@ -187,6 +192,11 @@ export async function updateAsset(id: string, patch: AssetPatch): Promise<Asset>
   if (patch.streamSafe !== undefined) row.stream_safe = patch.streamSafe
   if (patch.credit !== undefined) row.credit = patch.credit.trim().slice(0, 200)
   if (patch.hotkey !== undefined) row.hotkey = patch.hotkey
+  if (patch.grid !== undefined) {
+    row.grid_size = Math.round(Math.min(400, Math.max(10, patch.grid.size)))
+    row.grid_offset_x = Math.round(Math.min(400, Math.max(-400, patch.grid.offsetX)))
+    row.grid_offset_y = Math.round(Math.min(400, Math.max(-400, patch.grid.offsetY)))
+  }
   const { data, error } = await db().from('assets').update(row).eq('id', id).select('*').single()
   if (error) throw fromDatabaseError(error)
   return rowToAsset(data)

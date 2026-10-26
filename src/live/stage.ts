@@ -18,6 +18,10 @@ export type Stage = {
   musicVolume: number
   /** Ambience loops and their levels, 0 to 1. */
   ambience: Record<string, number>
+  /** The battle map, shown instead of the picture while `mode` is 'map'. */
+  mapId: string | null
+  mode: 'scene' | 'map'
+  playersMoveTokens: boolean
 }
 
 export type StagePatch = Partial<Omit<Stage, 'campaignId'>>
@@ -35,6 +39,9 @@ export function emptyStage(campaignId: string): Stage {
     musicPosition: 0,
     musicVolume: 0.8,
     ambience: {},
+    mapId: null,
+    mode: 'scene',
+    playersMoveTokens: true,
   }
 }
 
@@ -61,6 +68,9 @@ export function rowToStage(row: StageRow): Stage {
     musicPosition: row.music_position,
     musicVolume: row.music_volume,
     ambience,
+    mapId: row.map_id,
+    mode: row.mode === 'map' ? 'map' : 'scene',
+    playersMoveTokens: row.players_move_tokens,
   }
 }
 
@@ -76,6 +86,9 @@ function patchToRow(patch: StagePatch): TablesUpdate<'stage'> {
   if (patch.musicPosition !== undefined) row.music_position = Math.max(0, patch.musicPosition)
   if (patch.musicVolume !== undefined) row.music_volume = Math.min(1, Math.max(0, patch.musicVolume))
   if (patch.ambience !== undefined) row.ambience = patch.ambience
+  if (patch.mapId !== undefined) row.map_id = patch.mapId
+  if (patch.mode !== undefined) row.mode = patch.mode
+  if (patch.playersMoveTokens !== undefined) row.players_move_tokens = patch.playersMoveTokens
   return row
 }
 

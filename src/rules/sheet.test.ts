@@ -45,8 +45,16 @@ describe('deriveSheet', () => {
   })
 
   it('adds proficiency to the class’s saves only', () => {
-    expect(sheet.saves.find((s) => s.ability === 'strength')).toEqual({ ability: 'strength', proficient: true, bonus: 5 })
-    expect(sheet.saves.find((s) => s.ability === 'dexterity')).toEqual({ ability: 'dexterity', proficient: false, bonus: 1 })
+    expect(sheet.saves.find((s) => s.ability === 'strength')).toEqual({
+      ability: 'strength',
+      proficient: true,
+      bonus: 5,
+    })
+    expect(sheet.saves.find((s) => s.ability === 'dexterity')).toEqual({
+      ability: 'dexterity',
+      proficient: false,
+      bonus: 1,
+    })
   })
 
   it('works out skills, passive Perception and initiative', () => {

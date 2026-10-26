@@ -30,6 +30,7 @@ function previewAsset(file: File, patch: Partial<Asset>): Asset {
     credit: '',
     hotkey: null,
     createdAt: new Date().toISOString(),
+    grid: { size: 70, offsetX: 0, offsetY: 0 },
     ...patch,
   }
 }

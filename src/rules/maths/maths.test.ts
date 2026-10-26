@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import type { AbilityScores } from '../abilities.ts'
-import { customAttack, damageText, spellAttackBonus, spellSaveDc, weaponAbility, weaponAttack, type WeaponStats } from './attacks.ts'
+import {
+  customAttack,
+  damageText,
+  spellAttackBonus,
+  spellSaveDc,
+  weaponAbility,
+  weaponAttack,
+  type WeaponStats,
+} from './attacks.ts'
 import { initiativeBonus, passiveScore, saveBonus, skillBonus } from './checks.ts'
 import { abilityModifier, formatBonus, proficiencyBonus } from './core.ts'
 import { gainTempHp, heal, suggestedMaxHp, takeDamage } from './hitPoints.ts'
@@ -36,7 +44,13 @@ const longsword: WeaponStats = {
   properties: ['versatile'],
   versatileDice: '1d10',
 }
-const rapier: WeaponStats = { name: 'Rapier', range: 'Melee', damageDice: '1d8', damageType: 'Piercing', properties: ['finesse'] }
+const rapier: WeaponStats = {
+  name: 'Rapier',
+  range: 'Melee',
+  damageDice: '1d8',
+  damageType: 'Piercing',
+  properties: ['finesse'],
+}
 const longbow: WeaponStats = {
   name: 'Longbow',
   range: 'Ranged',

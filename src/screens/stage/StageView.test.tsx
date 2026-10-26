@@ -23,6 +23,7 @@ function asset(id: string, patch: Partial<Asset>): Asset {
     credit: '',
     hotkey: null,
     createdAt: '2026-10-26T20:00:00Z',
+    grid: { size: 70, offsetX: 0, offsetY: 0 },
     ...patch,
   }
 }

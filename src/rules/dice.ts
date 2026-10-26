@@ -57,21 +57,36 @@ export function isDieSides(n: number): n is DieSides {
 
 /**
  * Reads dice from text: '2d6' is two six-sided dice, 'd20' one twenty-sided die, '1d8+1d6' both.
- * Flat numbers ('+3') are left out: bonuses are worked out separately. Anything else gives [].
+ * Flat numbers ('+3') are left out: bonuses are worked out separately (see parseDamage). Anything
+ * else gives [].
  */
 export function parseDice(text: string): DiceGroup[] {
-  const groups: DiceGroup[] = []
-  for (const term of text.replace(/\s+/g, '').toLowerCase().split('+')) {
-    const match = /^(\d*)d(\d+)$/.exec(term)
-    if (!match) continue
-    const count = match[1] === '' ? 1 : Number(match[1])
-    const sides = Number(match[2])
-    if (!isDieSides(sides) || count < 1) continue
-    const same = groups.find((group) => group.sides === sides)
-    if (same) same.count += count
-    else groups.push({ sides, count })
+  return parseDamage(text).dice
+}
+
+/** Dice and a flat bonus from text such as '1d6+2', '2d8 - 1' or '3'. */
+export function parseDamage(text: string): { dice: DiceGroup[]; bonus: number } {
+  const dice: DiceGroup[] = []
+  let bonus = 0
+  for (const term of text
+    .replace(/\s+/g, '')
+    .toLowerCase()
+    .match(/[+-]?[^+-]+/g) ?? []) {
+    const sign = term.startsWith('-') ? -1 : 1
+    const body = term.replace(/^[+-]/, '')
+    const match = /^(\d*)d(\d+)$/.exec(body)
+    if (match) {
+      const count = match[1] === '' ? 1 : Number(match[1])
+      const sides = Number(match[2])
+      if (sign < 0 || !isDieSides(sides) || count < 1) continue
+      const same = dice.find((group) => group.sides === sides)
+      if (same) same.count += count
+      else dice.push({ sides, count })
+    } else if (/^\d+$/.test(body)) {
+      bonus += sign * Number(body)
+    }
   }
-  return groups
+  return { dice, bonus }
 }
 
 /** [{6, 2}, {4, 1}] gives '2d6+1d4'. */

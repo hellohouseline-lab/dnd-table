@@ -1,642 +1,536 @@
 {
- "source": {
-  "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
-  "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
-  "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
- },
- "skills": [
-  {
-   "index": "acrobatics",
-   "name": "Acrobatics",
-   "ability": "dexterity"
-  },
-  {
-   "index": "animal-handling",
-   "name": "Animal Handling",
-   "ability": "wisdom"
-  },
-  {
-   "index": "arcana",
-   "name": "Arcana",
-   "ability": "intelligence"
-  },
-  {
-   "index": "athletics",
-   "name": "Athletics",
-   "ability": "strength"
-  },
-  {
-   "index": "deception",
-   "name": "Deception",
-   "ability": "charisma"
-  },
-  {
-   "index": "history",
-   "name": "History",
-   "ability": "intelligence"
-  },
-  {
-   "index": "insight",
-   "name": "Insight",
-   "ability": "wisdom"
-  },
-  {
-   "index": "intimidation",
-   "name": "Intimidation",
-   "ability": "charisma"
-  },
-  {
-   "index": "investigation",
-   "name": "Investigation",
-   "ability": "intelligence"
-  },
-  {
-   "index": "medicine",
-   "name": "Medicine",
-   "ability": "wisdom"
-  },
-  {
-   "index": "nature",
-   "name": "Nature",
-   "ability": "intelligence"
-  },
-  {
-   "index": "perception",
-   "name": "Perception",
-   "ability": "wisdom"
-  },
-  {
-   "index": "performance",
-   "name": "Performance",
-   "ability": "charisma"
-  },
-  {
-   "index": "persuasion",
-   "name": "Persuasion",
-   "ability": "charisma"
-  },
-  {
-   "index": "religion",
-   "name": "Religion",
-   "ability": "intelligence"
-  },
-  {
-   "index": "sleight-of-hand",
-   "name": "Sleight of Hand",
-   "ability": "dexterity"
-  },
-  {
-   "index": "stealth",
-   "name": "Stealth",
-   "ability": "dexterity"
-  },
-  {
-   "index": "survival",
-   "name": "Survival",
-   "ability": "wisdom"
-  }
- ],
- "conditions": [
-  {
-   "index": "blinded",
-   "name": "Blinded",
-   "desc": "- A blinded creature can't see and automatically fails any ability check that requires sight.\n\n- Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage."
-  },
-  {
-   "index": "charmed",
-   "name": "Charmed",
-   "desc": "- A charmed creature can't attack the charmer or target the charmer with harmful abilities or magical effects.\n\n- The charmer has advantage on any ability check to interact socially with the creature."
-  },
-  {
-   "index": "deafened",
-   "name": "Deafened",
-   "desc": "- A deafened creature can't hear and automatically fails any ability check that requires hearing."
-  },
-  {
-   "index": "frightened",
-   "name": "Frightened",
-   "desc": "- A frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight.\n\n- The creature can't willingly move closer to the source of its fear."
-  },
-  {
-   "index": "grappled",
-   "name": "Grappled",
-   "desc": "- A grappled creature's speed becomes 0, and it can't benefit from any bonus to its speed.\n\n- The condition ends if the grappler is incapacitated (see the condition).\n\n- The condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect, such as when a creature is hurled away by the thunderwave spell."
-  },
-  {
-   "index": "incapacitated",
-   "name": "Incapacitated",
-   "desc": "- An incapacitated creature can't take actions or reactions."
-  },
-  {
-   "index": "invisible",
-   "name": "Invisible",
-   "desc": "- An invisible creature is impossible to see without the aid of magic or a special sense. For the purpose of hiding, the creature is heavily obscured. The creature's location can be detected by any noise it makes or any tracks it leaves.\n\n- Attack rolls against the creature have disadvantage, and the creature's attack rolls have advantage."
-  },
-  {
-   "index": "paralyzed",
-   "name": "Paralyzed",
-   "desc": "- A paralyzed creature is incapacitated (see the condition) and can't move or speak.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- Attack rolls against the creature have advantage.\n\n- Any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature."
-  },
-  {
-   "index": "petrified",
-   "name": "Petrified",
-   "desc": "- A petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone). Its weight increases by a factor of ten, and it ceases aging.\n\n- The creature is incapacitated (see the condition), can't move or speak, and is unaware of its surroundings.\n\n- Attack rolls against the creature have advantage.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- The creature has resistance to all damage.\n\n- The creature is immune to poison and disease, although a poison or disease already in its system is suspended, not neutralized."
-  },
-  {
-   "index": "poisoned",
-   "name": "Poisoned",
-   "desc": "- A poisoned creature has disadvantage on attack rolls and ability checks."
-  },
-  {
-   "index": "prone",
-   "name": "Prone",
-   "desc": "- A prone creature's only movement option is to crawl, unless it stands up and thereby ends the condition.\n\n- The creature has disadvantage on attack rolls.\n\n- An attack roll against the creature has advantage if the attacker is within 5 feet of the creature. Otherwise, the attack roll has disadvantage."
-  },
-  {
-   "index": "restrained",
-   "name": "Restrained",
-   "desc": "- A restrained creature's speed becomes 0, and it can't benefit from any bonus to its speed.\n\n- Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage.\n\n- The creature has disadvantage on Dexterity saving throws."
-  },
-  {
-   "index": "stunned",
-   "name": "Stunned",
-   "desc": "- A stunned creature is incapacitated (see the condition), can't move, and can speak only falteringly.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- Attack rolls against the creature have advantage."
-  },
-  {
-   "index": "unconscious",
-   "name": "Unconscious",
-   "desc": "- An unconscious creature is incapacitated (see the condition), can't move or speak, and is unaware of its surroundings.\n\n- The creature drops whatever it's holding and falls prone.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- Attack rolls against the creature have advantage.\n\n- Any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature."
-  },
-  {
-   "index": "exhaustion",
-   "name": "Exhaustion",
-   "desc": "Some special abilities and environmental hazards, such as starvation and the long-term effects of freezing or scorching temperatures, can lead to a special condition called exhaustion. Exhaustion is measured in six levels. An effect can give a creature one or more levels of exhaustion, as specified in the effect's description.\n\n1 - Disadvantage on ability checks\n\n2 - Speed halved\n\n3 - Disadvantage on attack rolls and saving throws\n\n4 - Hit point maximum halved\n\n5 - Speed reduced to 0\n\n6 - Death\n\nIf an already exhausted creature suffers another effect that causes exhaustion, its current level of exhaustion increases by the amount specified in the effect's description.\n\nA creature suffers the effect of its current level of exhaustion as well as all lower levels. For example, a creature suffering level 2 exhaustion has its speed halved and has disadvantage on ability checks.\n\nAn effect that removes exhaustion reduces its level as specified in the effect's description, with all exhaustion effects ending if a creature's exhaustion level is reduced below 1.\n\nFinishing a long rest reduces a creature's exhaustion level by 1, provided that the creature has also ingested some food and drink."
-  }
- ],
- "weapons": [
-  {
-   "index": "club",
-   "name": "Club",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d4",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "light",
-    "monk"
-   ]
-  },
-  {
-   "index": "dagger",
-   "name": "Dagger",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d4",
-   "damageType": "Piercing",
-   "properties": [
-    "finesse",
-    "light",
-    "thrown",
-    "monk"
-   ],
-   "normalRange": 20,
-   "longRange": 60
-  },
-  {
-   "index": "greatclub",
-   "name": "Greatclub",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "two-handed"
-   ]
-  },
-  {
-   "index": "handaxe",
-   "name": "Handaxe",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Slashing",
-   "properties": [
-    "light",
-    "thrown",
-    "monk"
-   ],
-   "normalRange": 20,
-   "longRange": 60
-  },
-  {
-   "index": "javelin",
-   "name": "Javelin",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Piercing",
-   "properties": [
-    "thrown",
-    "monk"
-   ],
-   "normalRange": 30,
-   "longRange": 120
-  },
-  {
-   "index": "light-hammer",
-   "name": "Light hammer",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d4",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "light",
-    "thrown",
-    "monk"
-   ],
-   "normalRange": 20,
-   "longRange": 60
-  },
-  {
-   "index": "mace",
-   "name": "Mace",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "monk"
-   ]
-  },
-  {
-   "index": "quarterstaff",
-   "name": "Quarterstaff",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "versatile",
-    "monk"
-   ],
-   "versatileDice": "1d8"
-  },
-  {
-   "index": "sickle",
-   "name": "Sickle",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d4",
-   "damageType": "Slashing",
-   "properties": [
-    "light",
-    "monk"
-   ]
-  },
-  {
-   "index": "spear",
-   "name": "Spear",
-   "category": "Simple",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Piercing",
-   "properties": [
-    "thrown",
-    "versatile",
-    "monk"
-   ],
-   "versatileDice": "1d8",
-   "normalRange": 20,
-   "longRange": 60
-  },
-  {
-   "index": "crossbow-light",
-   "name": "Crossbow, light",
-   "category": "Simple",
-   "range": "Ranged",
-   "damageDice": "1d8",
-   "damageType": "Piercing",
-   "properties": [
-    "ammunition",
-    "loading",
-    "two-handed"
-   ],
-   "normalRange": 80,
-   "longRange": 320
-  },
-  {
-   "index": "dart",
-   "name": "Dart",
-   "category": "Simple",
-   "range": "Ranged",
-   "damageDice": "1d4",
-   "damageType": "Piercing",
-   "properties": [
-    "finesse",
-    "thrown"
-   ],
-   "normalRange": 20,
-   "longRange": 60
-  },
-  {
-   "index": "shortbow",
-   "name": "Shortbow",
-   "category": "Simple",
-   "range": "Ranged",
-   "damageDice": "1d6",
-   "damageType": "Piercing",
-   "properties": [
-    "ammunition",
-    "two-handed"
-   ],
-   "normalRange": 80,
-   "longRange": 320
-  },
-  {
-   "index": "sling",
-   "name": "Sling",
-   "category": "Simple",
-   "range": "Ranged",
-   "damageDice": "1d4",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "ammunition"
-   ],
-   "normalRange": 30,
-   "longRange": 120
-  },
-  {
-   "index": "battleaxe",
-   "name": "Battleaxe",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Slashing",
-   "properties": [
-    "versatile"
-   ],
-   "versatileDice": "1d10"
-  },
-  {
-   "index": "flail",
-   "name": "Flail",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Bludgeoning",
-   "properties": []
-  },
-  {
-   "index": "glaive",
-   "name": "Glaive",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d10",
-   "damageType": "Slashing",
-   "properties": [
-    "heavy",
-    "reach",
-    "two-handed"
-   ]
-  },
-  {
-   "index": "greataxe",
-   "name": "Greataxe",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d12",
-   "damageType": "Slashing",
-   "properties": [
-    "heavy",
-    "two-handed"
-   ]
-  },
-  {
-   "index": "greatsword",
-   "name": "Greatsword",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "2d6",
-   "damageType": "Slashing",
-   "properties": [
-    "heavy",
-    "two-handed"
-   ]
-  },
-  {
-   "index": "halberd",
-   "name": "Halberd",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d10",
-   "damageType": "Slashing",
-   "properties": [
-    "heavy",
-    "reach",
-    "two-handed"
-   ]
-  },
-  {
-   "index": "lance",
-   "name": "Lance",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d12",
-   "damageType": "Piercing",
-   "properties": [
-    "reach",
-    "special"
-   ]
-  },
-  {
-   "index": "longsword",
-   "name": "Longsword",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Slashing",
-   "properties": [
-    "versatile"
-   ],
-   "versatileDice": "1d10"
-  },
-  {
-   "index": "maul",
-   "name": "Maul",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "2d6",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "heavy",
-    "two-handed"
-   ]
-  },
-  {
-   "index": "morningstar",
-   "name": "Morningstar",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Piercing",
-   "properties": []
-  },
-  {
-   "index": "pike",
-   "name": "Pike",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d10",
-   "damageType": "Piercing",
-   "properties": [
-    "heavy",
-    "reach",
-    "two-handed"
-   ]
-  },
-  {
-   "index": "rapier",
-   "name": "Rapier",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Piercing",
-   "properties": [
-    "finesse"
-   ]
-  },
-  {
-   "index": "scimitar",
-   "name": "Scimitar",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Slashing",
-   "properties": [
-    "finesse",
-    "light"
-   ]
-  },
-  {
-   "index": "shortsword",
-   "name": "Shortsword",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Piercing",
-   "properties": [
-    "finesse",
-    "light",
-    "monk"
-   ]
-  },
-  {
-   "index": "trident",
-   "name": "Trident",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d6",
-   "damageType": "Piercing",
-   "properties": [
-    "thrown",
-    "versatile"
-   ],
-   "versatileDice": "1d8",
-   "normalRange": 20,
-   "longRange": 60
-  },
-  {
-   "index": "war-pick",
-   "name": "War pick",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Piercing",
-   "properties": []
-  },
-  {
-   "index": "warhammer",
-   "name": "Warhammer",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d8",
-   "damageType": "Bludgeoning",
-   "properties": [
-    "versatile"
-   ],
-   "versatileDice": "1d10"
-  },
-  {
-   "index": "whip",
-   "name": "Whip",
-   "category": "Martial",
-   "range": "Melee",
-   "damageDice": "1d4",
-   "damageType": "Slashing",
-   "properties": [
-    "finesse",
-    "reach"
-   ]
-  },
-  {
-   "index": "blowgun",
-   "name": "Blowgun",
-   "category": "Martial",
-   "range": "Ranged",
-   "damageDice": "1",
-   "damageType": "Piercing",
-   "properties": [
-    "ammunition",
-    "loading"
-   ],
-   "normalRange": 25,
-   "longRange": 100
-  },
-  {
-   "index": "crossbow-hand",
-   "name": "Crossbow, hand",
-   "category": "Martial",
-   "range": "Ranged",
-   "damageDice": "1d6",
-   "damageType": "Piercing",
-   "properties": [
-    "ammunition",
-    "light",
-    "loading"
-   ],
-   "normalRange": 30,
-   "longRange": 120
-  },
-  {
-   "index": "crossbow-heavy",
-   "name": "Crossbow, heavy",
-   "category": "Martial",
-   "range": "Ranged",
-   "damageDice": "1d10",
-   "damageType": "Piercing",
-   "properties": [
-    "ammunition",
-    "heavy",
-    "loading",
-    "two-handed"
-   ],
-   "normalRange": 100,
-   "longRange": 400
-  },
-  {
-   "index": "longbow",
-   "name": "Longbow",
-   "category": "Martial",
-   "range": "Ranged",
-   "damageDice": "1d8",
-   "damageType": "Piercing",
-   "properties": [
-    "ammunition",
-    "heavy",
-    "two-handed"
-   ],
-   "normalRange": 150,
-   "longRange": 600
-  }
- ]
+  "source": {
+    "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
+    "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
+    "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
+  },
+  "skills": [
+    {
+      "index": "acrobatics",
+      "name": "Acrobatics",
+      "ability": "dexterity"
+    },
+    {
+      "index": "animal-handling",
+      "name": "Animal Handling",
+      "ability": "wisdom"
+    },
+    {
+      "index": "arcana",
+      "name": "Arcana",
+      "ability": "intelligence"
+    },
+    {
+      "index": "athletics",
+      "name": "Athletics",
+      "ability": "strength"
+    },
+    {
+      "index": "deception",
+      "name": "Deception",
+      "ability": "charisma"
+    },
+    {
+      "index": "history",
+      "name": "History",
+      "ability": "intelligence"
+    },
+    {
+      "index": "insight",
+      "name": "Insight",
+      "ability": "wisdom"
+    },
+    {
+      "index": "intimidation",
+      "name": "Intimidation",
+      "ability": "charisma"
+    },
+    {
+      "index": "investigation",
+      "name": "Investigation",
+      "ability": "intelligence"
+    },
+    {
+      "index": "medicine",
+      "name": "Medicine",
+      "ability": "wisdom"
+    },
+    {
+      "index": "nature",
+      "name": "Nature",
+      "ability": "intelligence"
+    },
+    {
+      "index": "perception",
+      "name": "Perception",
+      "ability": "wisdom"
+    },
+    {
+      "index": "performance",
+      "name": "Performance",
+      "ability": "charisma"
+    },
+    {
+      "index": "persuasion",
+      "name": "Persuasion",
+      "ability": "charisma"
+    },
+    {
+      "index": "religion",
+      "name": "Religion",
+      "ability": "intelligence"
+    },
+    {
+      "index": "sleight-of-hand",
+      "name": "Sleight of Hand",
+      "ability": "dexterity"
+    },
+    {
+      "index": "stealth",
+      "name": "Stealth",
+      "ability": "dexterity"
+    },
+    {
+      "index": "survival",
+      "name": "Survival",
+      "ability": "wisdom"
+    }
+  ],
+  "conditions": [
+    {
+      "index": "blinded",
+      "name": "Blinded",
+      "desc": "- A blinded creature can't see and automatically fails any ability check that requires sight.\n\n- Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage."
+    },
+    {
+      "index": "charmed",
+      "name": "Charmed",
+      "desc": "- A charmed creature can't attack the charmer or target the charmer with harmful abilities or magical effects.\n\n- The charmer has advantage on any ability check to interact socially with the creature."
+    },
+    {
+      "index": "deafened",
+      "name": "Deafened",
+      "desc": "- A deafened creature can't hear and automatically fails any ability check that requires hearing."
+    },
+    {
+      "index": "frightened",
+      "name": "Frightened",
+      "desc": "- A frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight.\n\n- The creature can't willingly move closer to the source of its fear."
+    },
+    {
+      "index": "grappled",
+      "name": "Grappled",
+      "desc": "- A grappled creature's speed becomes 0, and it can't benefit from any bonus to its speed.\n\n- The condition ends if the grappler is incapacitated (see the condition).\n\n- The condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect, such as when a creature is hurled away by the thunderwave spell."
+    },
+    {
+      "index": "incapacitated",
+      "name": "Incapacitated",
+      "desc": "- An incapacitated creature can't take actions or reactions."
+    },
+    {
+      "index": "invisible",
+      "name": "Invisible",
+      "desc": "- An invisible creature is impossible to see without the aid of magic or a special sense. For the purpose of hiding, the creature is heavily obscured. The creature's location can be detected by any noise it makes or any tracks it leaves.\n\n- Attack rolls against the creature have disadvantage, and the creature's attack rolls have advantage."
+    },
+    {
+      "index": "paralyzed",
+      "name": "Paralyzed",
+      "desc": "- A paralyzed creature is incapacitated (see the condition) and can't move or speak.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- Attack rolls against the creature have advantage.\n\n- Any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature."
+    },
+    {
+      "index": "petrified",
+      "name": "Petrified",
+      "desc": "- A petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone). Its weight increases by a factor of ten, and it ceases aging.\n\n- The creature is incapacitated (see the condition), can't move or speak, and is unaware of its surroundings.\n\n- Attack rolls against the creature have advantage.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- The creature has resistance to all damage.\n\n- The creature is immune to poison and disease, although a poison or disease already in its system is suspended, not neutralized."
+    },
+    {
+      "index": "poisoned",
+      "name": "Poisoned",
+      "desc": "- A poisoned creature has disadvantage on attack rolls and ability checks."
+    },
+    {
+      "index": "prone",
+      "name": "Prone",
+      "desc": "- A prone creature's only movement option is to crawl, unless it stands up and thereby ends the condition.\n\n- The creature has disadvantage on attack rolls.\n\n- An attack roll against the creature has advantage if the attacker is within 5 feet of the creature. Otherwise, the attack roll has disadvantage."
+    },
+    {
+      "index": "restrained",
+      "name": "Restrained",
+      "desc": "- A restrained creature's speed becomes 0, and it can't benefit from any bonus to its speed.\n\n- Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage.\n\n- The creature has disadvantage on Dexterity saving throws."
+    },
+    {
+      "index": "stunned",
+      "name": "Stunned",
+      "desc": "- A stunned creature is incapacitated (see the condition), can't move, and can speak only falteringly.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- Attack rolls against the creature have advantage."
+    },
+    {
+      "index": "unconscious",
+      "name": "Unconscious",
+      "desc": "- An unconscious creature is incapacitated (see the condition), can't move or speak, and is unaware of its surroundings.\n\n- The creature drops whatever it's holding and falls prone.\n\n- The creature automatically fails Strength and Dexterity saving throws.\n\n- Attack rolls against the creature have advantage.\n\n- Any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature."
+    },
+    {
+      "index": "exhaustion",
+      "name": "Exhaustion",
+      "desc": "Some special abilities and environmental hazards, such as starvation and the long-term effects of freezing or scorching temperatures, can lead to a special condition called exhaustion. Exhaustion is measured in six levels. An effect can give a creature one or more levels of exhaustion, as specified in the effect's description.\n\n1 - Disadvantage on ability checks\n\n2 - Speed halved\n\n3 - Disadvantage on attack rolls and saving throws\n\n4 - Hit point maximum halved\n\n5 - Speed reduced to 0\n\n6 - Death\n\nIf an already exhausted creature suffers another effect that causes exhaustion, its current level of exhaustion increases by the amount specified in the effect's description.\n\nA creature suffers the effect of its current level of exhaustion as well as all lower levels. For example, a creature suffering level 2 exhaustion has its speed halved and has disadvantage on ability checks.\n\nAn effect that removes exhaustion reduces its level as specified in the effect's description, with all exhaustion effects ending if a creature's exhaustion level is reduced below 1.\n\nFinishing a long rest reduces a creature's exhaustion level by 1, provided that the creature has also ingested some food and drink."
+    }
+  ],
+  "weapons": [
+    {
+      "index": "club",
+      "name": "Club",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d4",
+      "damageType": "Bludgeoning",
+      "properties": ["light", "monk"]
+    },
+    {
+      "index": "dagger",
+      "name": "Dagger",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d4",
+      "damageType": "Piercing",
+      "properties": ["finesse", "light", "thrown", "monk"],
+      "normalRange": 20,
+      "longRange": 60
+    },
+    {
+      "index": "greatclub",
+      "name": "Greatclub",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Bludgeoning",
+      "properties": ["two-handed"]
+    },
+    {
+      "index": "handaxe",
+      "name": "Handaxe",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Slashing",
+      "properties": ["light", "thrown", "monk"],
+      "normalRange": 20,
+      "longRange": 60
+    },
+    {
+      "index": "javelin",
+      "name": "Javelin",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Piercing",
+      "properties": ["thrown", "monk"],
+      "normalRange": 30,
+      "longRange": 120
+    },
+    {
+      "index": "light-hammer",
+      "name": "Light hammer",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d4",
+      "damageType": "Bludgeoning",
+      "properties": ["light", "thrown", "monk"],
+      "normalRange": 20,
+      "longRange": 60
+    },
+    {
+      "index": "mace",
+      "name": "Mace",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Bludgeoning",
+      "properties": ["monk"]
+    },
+    {
+      "index": "quarterstaff",
+      "name": "Quarterstaff",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Bludgeoning",
+      "properties": ["versatile", "monk"],
+      "versatileDice": "1d8"
+    },
+    {
+      "index": "sickle",
+      "name": "Sickle",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d4",
+      "damageType": "Slashing",
+      "properties": ["light", "monk"]
+    },
+    {
+      "index": "spear",
+      "name": "Spear",
+      "category": "Simple",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Piercing",
+      "properties": ["thrown", "versatile", "monk"],
+      "versatileDice": "1d8",
+      "normalRange": 20,
+      "longRange": 60
+    },
+    {
+      "index": "crossbow-light",
+      "name": "Crossbow, light",
+      "category": "Simple",
+      "range": "Ranged",
+      "damageDice": "1d8",
+      "damageType": "Piercing",
+      "properties": ["ammunition", "loading", "two-handed"],
+      "normalRange": 80,
+      "longRange": 320
+    },
+    {
+      "index": "dart",
+      "name": "Dart",
+      "category": "Simple",
+      "range": "Ranged",
+      "damageDice": "1d4",
+      "damageType": "Piercing",
+      "properties": ["finesse", "thrown"],
+      "normalRange": 20,
+      "longRange": 60
+    },
+    {
+      "index": "shortbow",
+      "name": "Shortbow",
+      "category": "Simple",
+      "range": "Ranged",
+      "damageDice": "1d6",
+      "damageType": "Piercing",
+      "properties": ["ammunition", "two-handed"],
+      "normalRange": 80,
+      "longRange": 320
+    },
+    {
+      "index": "sling",
+      "name": "Sling",
+      "category": "Simple",
+      "range": "Ranged",
+      "damageDice": "1d4",
+      "damageType": "Bludgeoning",
+      "properties": ["ammunition"],
+      "normalRange": 30,
+      "longRange": 120
+    },
+    {
+      "index": "battleaxe",
+      "name": "Battleaxe",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Slashing",
+      "properties": ["versatile"],
+      "versatileDice": "1d10"
+    },
+    {
+      "index": "flail",
+      "name": "Flail",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Bludgeoning",
+      "properties": []
+    },
+    {
+      "index": "glaive",
+      "name": "Glaive",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d10",
+      "damageType": "Slashing",
+      "properties": ["heavy", "reach", "two-handed"]
+    },
+    {
+      "index": "greataxe",
+      "name": "Greataxe",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d12",
+      "damageType": "Slashing",
+      "properties": ["heavy", "two-handed"]
+    },
+    {
+      "index": "greatsword",
+      "name": "Greatsword",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "2d6",
+      "damageType": "Slashing",
+      "properties": ["heavy", "two-handed"]
+    },
+    {
+      "index": "halberd",
+      "name": "Halberd",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d10",
+      "damageType": "Slashing",
+      "properties": ["heavy", "reach", "two-handed"]
+    },
+    {
+      "index": "lance",
+      "name": "Lance",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d12",
+      "damageType": "Piercing",
+      "properties": ["reach", "special"]
+    },
+    {
+      "index": "longsword",
+      "name": "Longsword",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Slashing",
+      "properties": ["versatile"],
+      "versatileDice": "1d10"
+    },
+    {
+      "index": "maul",
+      "name": "Maul",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "2d6",
+      "damageType": "Bludgeoning",
+      "properties": ["heavy", "two-handed"]
+    },
+    {
+      "index": "morningstar",
+      "name": "Morningstar",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Piercing",
+      "properties": []
+    },
+    {
+      "index": "pike",
+      "name": "Pike",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d10",
+      "damageType": "Piercing",
+      "properties": ["heavy", "reach", "two-handed"]
+    },
+    {
+      "index": "rapier",
+      "name": "Rapier",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Piercing",
+      "properties": ["finesse"]
+    },
+    {
+      "index": "scimitar",
+      "name": "Scimitar",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Slashing",
+      "properties": ["finesse", "light"]
+    },
+    {
+      "index": "shortsword",
+      "name": "Shortsword",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Piercing",
+      "properties": ["finesse", "light", "monk"]
+    },
+    {
+      "index": "trident",
+      "name": "Trident",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d6",
+      "damageType": "Piercing",
+      "properties": ["thrown", "versatile"],
+      "versatileDice": "1d8",
+      "normalRange": 20,
+      "longRange": 60
+    },
+    {
+      "index": "war-pick",
+      "name": "War pick",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Piercing",
+      "properties": []
+    },
+    {
+      "index": "warhammer",
+      "name": "Warhammer",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d8",
+      "damageType": "Bludgeoning",
+      "properties": ["versatile"],
+      "versatileDice": "1d10"
+    },
+    {
+      "index": "whip",
+      "name": "Whip",
+      "category": "Martial",
+      "range": "Melee",
+      "damageDice": "1d4",
+      "damageType": "Slashing",
+      "properties": ["finesse", "reach"]
+    },
+    {
+      "index": "blowgun",
+      "name": "Blowgun",
+      "category": "Martial",
+      "range": "Ranged",
+      "damageDice": "1",
+      "damageType": "Piercing",
+      "properties": ["ammunition", "loading"],
+      "normalRange": 25,
+      "longRange": 100
+    },
+    {
+      "index": "crossbow-hand",
+      "name": "Crossbow, hand",
+      "category": "Martial",
+      "range": "Ranged",
+      "damageDice": "1d6",
+      "damageType": "Piercing",
+      "properties": ["ammunition", "light", "loading"],
+      "normalRange": 30,
+      "longRange": 120
+    },
+    {
+      "index": "crossbow-heavy",
+      "name": "Crossbow, heavy",
+      "category": "Martial",
+      "range": "Ranged",
+      "damageDice": "1d10",
+      "damageType": "Piercing",
+      "properties": ["ammunition", "heavy", "loading", "two-handed"],
+      "normalRange": 100,
+      "longRange": 400
+    },
+    {
+      "index": "longbow",
+      "name": "Longbow",
+      "category": "Martial",
+      "range": "Ranged",
+      "damageDice": "1d8",
+      "damageType": "Piercing",
+      "properties": ["ammunition", "heavy", "two-handed"],
+      "normalRange": 150,
+      "longRange": 600
+    }
+  ]
 }
