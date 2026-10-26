@@ -133,6 +133,15 @@ export function actionReach(desc: string): Reach {
 }
 
 /**
+ * How far a monster threatens for opportunity attacks: its longest melee reach ("reach 10 ft."),
+ * 5 feet if none of its actions says. Same as the server's reach_ft, between 5 and 30.
+ */
+export function threatReach(actions: { desc: string }[]): number {
+  const reaches = actions.filter((a) => /melee/i.test(a.desc)).map((a) => actionReach(a.desc).melee ?? 5)
+  return Math.min(30, Math.max(5, ...reaches))
+}
+
+/**
  * Can the attack reach a target this far away? Within melee reach, or normal range, it can; beyond
  * normal range but within long range, at disadvantage; any further, not at all.
  */

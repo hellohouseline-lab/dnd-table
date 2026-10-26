@@ -37,9 +37,10 @@ import {
   initiativeRoll,
   savingThrow,
   skillCheck,
+  spellAttackRoll,
 } from '../../rules/rolls.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
-import { findCondition, findWeapon } from '../../rules/srd/index.ts'
+import { findCondition, findWeapon, loadSpells, type SrdSpell } from '../../rules/srd/index.ts'
 import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { requestChips, type CameraChip } from '../rolls/requestStatus.ts'
@@ -51,6 +52,16 @@ import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
 import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/fightRows.ts'
 import { InitiativePrompt, InitiativeRibbon, InspectCard, TurnBanner, YourTurn } from '../fight/PlayerCombat.tsx'
+import { ConcentrationPrompt, DeathSaves, StrikePrompt } from '../fight/Reactions.tsx'
+import { ConcentrationChip } from '../fight/SpellParts.tsx'
+import { AtAGlance } from '../fight/AtAGlance.tsx'
+import { SlotPicker } from '../fight/SlotPicker.tsx'
+import { useCasting, whyNot } from '../fight/useCasting.ts'
+import type { Area } from '../../live/areas.ts'
+import { useSrd } from '../../live/useSrd.ts'
+import { slotChoices, spellEffect, spellModifier } from '../../rules/spells.ts'
+import { strikesFor, type Strike } from '../fight/strikes.ts'
+import { isDying } from '../../rules/dying.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
@@ -81,6 +92,8 @@ type TableViewProps = {
 
 const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
 
+const NO_CAST = () => Promise.reject(new Error('There’s no fight going on.'))
+
 /** A fight and the battle map, as a player sees them. */
 export type PlayerCombatProps = {
   fight: FightControls['fight']
@@ -90,6 +103,16 @@ export type PlayerCombatProps = {
   events: CombatEvent[]
   attack: FightControls['attack']
   act: FightControls['act']
+  /** Spells: casting one, and the save to keep concentrating after taking damage. */
+  cast: FightControls['cast']
+  concentrationSave: FightControls['concentrationSave']
+  /** Areas on the battle map (Darkness, a dragon's breath). */
+  areas: Area[]
+  /** Chances to strike someone moving out of your reach (opportunity attacks). */
+  prompts: FightControls['prompts']
+  strike: FightControls['strike']
+  letGo: FightControls['letGo']
+  deathSave: FightControls['deathSave']
   /** The battle map on stage, or null when the stage shows a picture. */
   map: Asset | null
   tokens: TokenControls
@@ -181,12 +204,25 @@ export function TableView({
           userId: me.user_id,
           isDm: false,
           playersMove: combat.playersMove,
-          // Before the first turn everyone places their miniature; after that, on your own turn.
-          moveNow: !mine || myTurn || fight?.encounter.currentId === null,
+          // Before the first turn everyone places their miniature; after that, on your own turn
+          // (not while unconscious at 0 hit points).
+          moveNow: !mine || (myTurn && character.currentHp > 0) || fight?.encounter.currentId === null,
         },
       )
     : []
   const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
+
+  // A chance to strike someone moving away, and death saves at 0 hit points.
+  const myChance = (mine && combat?.prompts.find((p) => p.combatantId === mine.id)) || null
+  const myRow = rows.find((r) => r.combatant.id === mine?.id)
+  const provokerRow = rows.find((r) => r.combatant.id === myChance?.provokerId)
+  const myStrikes = myRow ? strikesFor(myRow, null) : []
+  function strikeBack(strike: Strike) {
+    if (!myChance || !provokerRow || !combat) return
+    const request = strike.build(provokerRow)
+    void table.rollWith(() => combat.strike(myChance, request))
+  }
+  const dyingNow = Boolean(fight && mine && character.currentHp === 0)
 
   // Attacking in a fight: pick the attack, then its target; the server does the rest.
   function attackWith(attack: AttackEntry) {
@@ -209,7 +245,10 @@ export function TableView({
       setAiming(null)
       return
     }
-    const target = { conditions: row.character?.conditions ?? row.combatant.conditions, dodging: row.combatant.turn.dodging }
+    const target = {
+      conditions: row.character?.conditions ?? row.combatant.conditions,
+      dodging: row.combatant.turn.dodging,
+    }
     const targetMode = attackMode(mode, target, feet)
     const request = attackRoll(character, aiming, {
       ...choices,
@@ -246,6 +285,43 @@ export function TableView({
   const update = (patch: TrackerPatch) => onUpdate(character.id, patch)
   const conditions = character.conditions.map((c) => findCondition(c)?.name ?? c)
   const choices = { mode, secret }
+
+  // Spells from the hand: in a fight, a target or where it goes next (the server settles it);
+  // outside one, the slot is spent and the dice rolled here.
+  const spellList = useSrd(loadSpells)
+  const casting = useCasting(combat?.cast ?? NO_CAST, table.rollWith, tokens, rows)
+  const aimingSpell = casting.casting
+  function castSpell(spell: SrdSpell) {
+    setFightProblem(null)
+    casting.clearProblem()
+    if (fight && mine && myRow) {
+      setAiming(null)
+      casting.begin(myRow, spell)
+      return
+    }
+    const slot = slotChoices(character.spellcasting, spell.level)[0]
+    if (slot === undefined) return setFightProblem(`No slots left for ${spell.name}.`)
+    const patch: TrackerPatch = {}
+    if (slot > 0) {
+      patch.spellcasting = {
+        ...character.spellcasting,
+        slotsUsed: character.spellcasting.slotsUsed.map((used, i) => (i === slot - 1 ? used + 1 : used)),
+      }
+    }
+    if (spell.concentration) patch.concentration = spell.name
+    if (Object.keys(patch).length > 0) update(patch)
+    const effect = spellEffect(spell, slot, character.level, spellModifier(character))
+    const ability = character.spellcasting.ability
+    if (spell.attackType && ability) {
+      roll(spellAttackRoll(character, spell, ability, effect && { ...effect, type: effect.type ?? '' }, choices))
+    } else if (effect && effect.dice.length > 0) {
+      roll({
+        ...freeRoll(effect.dice, { ...choices, characterId: character.id, modifier: effect.modifier }),
+        label: `${spell.name} ${spell.heal ? 'healing' : 'damage'}`,
+      })
+    }
+  }
+  const saveConcentration = () => void table.rollWith(() => combat?.concentrationSave(character.id) ?? NO_CAST())
 
   function roll(request: RollRequest) {
     // Advantage and disadvantage are for the next d20 roll only.
@@ -310,18 +386,48 @@ export function TableView({
                 const token = tokens.find((t) => t.id === id)
                 const row = token
                   ? rows.find((r) =>
-                      token.characterId ? r.combatant.characterId === token.characterId : r.combatant.id === token.combatantId,
+                      token.characterId
+                        ? r.combatant.characterId === token.characterId
+                        : r.combatant.id === token.combatantId,
                     )
                   : undefined
-                if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
+                if (aimingSpell?.mode === 'target' && row) aimingSpell.onPick(row)
+                else if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
                 else setInspected(id)
               }}
               onMove={(id, x, y) => {
                 const token = tokens.find((t) => t.id === id)
                 if (token) combat.tokens.move(token, x, y)
               }}
-              reach={myTurn && myToken ? { tokenId: myToken.id, feet: feetLeft } : null}
-              targeting={aiming !== null}
+              reach={myTurn && myToken && !dyingNow ? { tokenId: myToken.id, feet: feetLeft } : null}
+              aim={
+                aiming && myToken
+                  ? (() => {
+                      const reach = weaponReach(findWeapon(aiming.weapon))
+                      return {
+                        tokenId: myToken.id,
+                        near: Math.max(reach.melee ?? 0, reach.normal ?? 0),
+                        long: reach.long,
+                      }
+                    })()
+                  : aimingSpell?.mode === 'target' && aimingSpell.rangeFt !== null && myToken
+                    ? { tokenId: myToken.id, near: aimingSpell.rangeFt, long: null }
+                    : null
+              }
+              targeting={aiming !== null || aimingSpell?.mode === 'target'}
+              areas={combat.areas}
+              placing={
+                aimingSpell?.mode === 'area' && aimingSpell.area
+                  ? {
+                      shape: aimingSpell.area.shape,
+                      sizeFt: aimingSpell.area.sizeFt,
+                      tone: aimingSpell.area.tone,
+                      label: aimingSpell.label,
+                      from: aimingSpell.area.fromCaster && myToken ? { x: myToken.x, y: myToken.y } : null,
+                      onPlace: aimingSpell.onPlace,
+                    }
+                  : null
+              }
               hands={combat.pointers.hands}
               pings={combat.pointers.pings}
               onHand={combat.pointers.sendHand}
@@ -349,7 +455,11 @@ export function TableView({
           <InitiativeRibbon
             rows={rows}
             picking={
-              aiming ? { canPick: (row) => row.combatant.id !== mine?.id, onPick: (row) => pickTarget(row) } : null
+              aimingSpell?.mode === 'target'
+                ? { canPick: () => true, onPick: aimingSpell.onPick }
+                : aiming
+                  ? { canPick: (row) => row.combatant.id !== mine?.id, onPick: (row) => pickTarget(row) }
+                  : null
             }
           />
         )}
@@ -357,6 +467,17 @@ export function TableView({
           <div className={styles.aiming} role="status">
             Pick a target for {aiming.name || 'your attack'}: click a miniature or a name above.
             <button type="button" className={styles.aimingCancel} onClick={() => setAiming(null)}>
+              Cancel
+            </button>
+          </div>
+        )}
+        {aimingSpell && (
+          <div className={styles.aiming} role="status">
+            {aimingSpell.mode === 'target'
+              ? `Cast ${aimingSpell.label}: click who it's for, on the map or above.`
+              : `Cast ${aimingSpell.label}: ${aimingSpell.area?.fromCaster ? 'point it with the mouse and click' : 'click where it goes'}.`}
+            <SlotPicker casting={aimingSpell} />
+            <button type="button" className={styles.aimingCancel} onClick={casting.cancel}>
               Cancel
             </button>
           </div>
@@ -377,6 +498,11 @@ export function TableView({
         character={character}
         onAttack={attackWith}
         onUseFeature={spendFeature}
+        spells={
+          character.spellcasting.spells.length > 0
+            ? { list: spellList, whyNot: (spell) => whyNot(spell, character, mine, myTurn), onCast: castSpell }
+            : null
+        }
         disabled={table.rolling}
       />
 
@@ -432,6 +558,30 @@ export function TableView({
           </div>
         </section>
 
+        {fight && mine && combat && dyingNow && (
+          <DeathSaves
+            saves={{
+              successes: character.deathSaveSuccesses,
+              failures: character.deathSaveFailures,
+              stable: character.stable,
+              dead: character.dead,
+            }}
+            onRoll={
+              myTurn && isDying(character) && !mine.turn.actionUsed
+                ? () => void table.rollWith(() => combat.deathSave(mine))
+                : undefined
+            }
+            rolling={table.rolling}
+          />
+        )}
+
+        <ConcentrationChip
+          character={character}
+          onLostIt={() => update({ concentration: null })}
+          onSave={saveConcentration}
+          rolling={table.rolling}
+        />
+
         {fight && mine && combat && (
           <YourTurn
             turn={mine.turn}
@@ -439,10 +589,12 @@ export function TableView({
             perAction={perAction}
             myTurn={myTurn}
             started={fight.encounter.currentId !== null}
+            canAct={!dyingNow}
             onAct={(what) => combat.act(mine, what)}
             onEndTurn={combat.endTurn}
           />
         )}
+        {fight && mine && <AtAGlance character={character} />}
 
         <section className={cx(styles.abilities, fight && styles.hiddenInFight)} aria-label="Abilities and conditions">
           <div className={styles.abilityRow}>
@@ -498,7 +650,7 @@ export function TableView({
         </a>
         {saveError && <Notice tone="error">{saveError}</Notice>}
         {table.error && <Notice tone="error">{table.error}</Notice>}
-        {fightProblem && <Notice tone="error">{fightProblem}</Notice>}
+        {(fightProblem ?? casting.problem) && <Notice tone="error">{fightProblem ?? casting.problem}</Notice>}
       </div>
 
       <CameraColumn
@@ -535,6 +687,31 @@ export function TableView({
             character={character}
             mode={mode}
             onRoll={() => void rollMyInitiative()}
+            rolling={table.rolling}
+          />
+        </div>
+      )}
+      {character.concentration &&
+        character.concentrationDc !== null &&
+        !myChance &&
+        !(request && askedMe && !myAnswer) && (
+          <div className={styles.asked}>
+            <ConcentrationPrompt
+              spell={character.concentration}
+              dc={character.concentrationDc}
+              onRoll={saveConcentration}
+              onLetGo={() => update({ concentration: null })}
+              rolling={table.rolling}
+            />
+          </div>
+        )}
+      {myChance && combat && !(request && askedMe && !myAnswer) && (
+        <div className={styles.asked}>
+          <StrikePrompt
+            provoker={provokerRow?.name ?? 'Someone'}
+            strikes={myStrikes}
+            onStrike={strikeBack}
+            onLetGo={() => combat.letGo(myChance)}
             rolling={table.rolling}
           />
         </div>

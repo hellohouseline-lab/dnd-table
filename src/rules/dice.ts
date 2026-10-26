@@ -35,6 +35,8 @@ export type RollRequest = {
   secret: boolean
   /** Set when this answers the DM's request for a roll. */
   requestId: string | null
+  /** A magic weapon or spell: gets past resistance to non-magical attacks. */
+  magical?: boolean
 }
 
 export type RolledDie = { sides: DieSides; value: number; dropped: boolean }

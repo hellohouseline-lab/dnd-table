@@ -119,6 +119,7 @@ export function requestToJson(request: RollRequest): Json {
     damage: request.damage,
     secret: request.secret,
     request_id: request.requestId,
+    ...(request.magical ? { magical: true } : {}),
   }
 }
 

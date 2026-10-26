@@ -14,6 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
+      areas: {
+        Row: {
+          campaign_id: string
+          character_id: string | null
+          concentration: boolean
+          created_at: string
+          direction: number
+          hidden: boolean
+          id: string
+          label: string
+          map_id: string
+          origin_x: number
+          origin_y: number
+          shape: string
+          size_ft: number
+          tone: string
+        }
+        Insert: {
+          campaign_id: string
+          character_id?: string | null
+          concentration?: boolean
+          created_at?: string
+          direction?: number
+          hidden?: boolean
+          id?: string
+          label?: string
+          map_id: string
+          origin_x: number
+          origin_y: number
+          shape: string
+          size_ft: number
+          tone?: string
+        }
+        Update: {
+          campaign_id?: string
+          character_id?: string | null
+          concentration?: boolean
+          created_at?: string
+          direction?: number
+          hidden?: boolean
+          id?: string
+          label?: string
+          map_id?: string
+          origin_x?: number
+          origin_y?: number
+          shape?: string
+          size_ft?: number
+          tone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "areas_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "areas_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "areas_map_id_fkey"
+            columns: ["map_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
           campaign_id: string
@@ -162,10 +235,12 @@ export type Database = {
           charisma: number
           class: string
           concentration: string | null
+          concentration_dc: number | null
           conditions: string[]
           constitution: number
           created_at: string
           current_hp: number
+          dead: boolean
           death_save_failures: number
           death_save_successes: number
           dexterity: number
@@ -174,6 +249,7 @@ export type Database = {
           hit_dice_used: number
           hit_die: number
           id: string
+          immunities: string[]
           inspiration: boolean
           intelligence: number
           languages: string
@@ -184,16 +260,19 @@ export type Database = {
           owner_id: string
           portrait_path: string | null
           race: string
+          resistances: string[]
           save_proficiencies: string[]
           skill_expertise: string[]
           skill_proficiencies: string[]
           speed: number
           spellcasting: Json
+          stable: boolean
           strength: number
           subclass: string
           subrace: string
           temp_hp: number
           updated_at: string
+          vulnerabilities: string[]
           wisdom: number
         }
         Insert: {
@@ -204,10 +283,12 @@ export type Database = {
           charisma?: number
           class?: string
           concentration?: string | null
+          concentration_dc?: number | null
           conditions?: string[]
           constitution?: number
           created_at?: string
           current_hp?: number
+          dead?: boolean
           death_save_failures?: number
           death_save_successes?: number
           dexterity?: number
@@ -216,6 +297,7 @@ export type Database = {
           hit_dice_used?: number
           hit_die?: number
           id?: string
+          immunities?: string[]
           inspiration?: boolean
           intelligence?: number
           languages?: string
@@ -226,16 +308,19 @@ export type Database = {
           owner_id: string
           portrait_path?: string | null
           race?: string
+          resistances?: string[]
           save_proficiencies?: string[]
           skill_expertise?: string[]
           skill_proficiencies?: string[]
           speed?: number
           spellcasting?: Json
+          stable?: boolean
           strength?: number
           subclass?: string
           subrace?: string
           temp_hp?: number
           updated_at?: string
+          vulnerabilities?: string[]
           wisdom?: number
         }
         Update: {
@@ -246,10 +331,12 @@ export type Database = {
           charisma?: number
           class?: string
           concentration?: string | null
+          concentration_dc?: number | null
           conditions?: string[]
           constitution?: number
           created_at?: string
           current_hp?: number
+          dead?: boolean
           death_save_failures?: number
           death_save_successes?: number
           dexterity?: number
@@ -258,6 +345,7 @@ export type Database = {
           hit_dice_used?: number
           hit_die?: number
           id?: string
+          immunities?: string[]
           inspiration?: boolean
           intelligence?: number
           languages?: string
@@ -268,16 +356,19 @@ export type Database = {
           owner_id?: string
           portrait_path?: string | null
           race?: string
+          resistances?: string[]
           save_proficiencies?: string[]
           skill_expertise?: string[]
           skill_proficiencies?: string[]
           speed?: number
           spellcasting?: Json
+          stable?: boolean
           strength?: number
           subclass?: string
           subrace?: string
           temp_hp?: number
           updated_at?: string
+          vulnerabilities?: string[]
           wisdom?: number
         }
         Relationships: [
@@ -415,28 +506,43 @@ export type Database = {
           ac: number
           campaign_id: string
           combatant_id: string
+          condition_immunities: string[]
           hp: number
+          immunities: string[]
           max_hp: number
           monster: string | null
           name: string
+          resistances: string[]
+          saves: Json
+          vulnerabilities: string[]
         }
         Insert: {
           ac?: number
           campaign_id: string
           combatant_id: string
+          condition_immunities?: string[]
           hp?: number
+          immunities?: string[]
           max_hp?: number
           monster?: string | null
           name: string
+          resistances?: string[]
+          saves?: Json
+          vulnerabilities?: string[]
         }
         Update: {
           ac?: number
           campaign_id?: string
           combatant_id?: string
+          condition_immunities?: string[]
           hp?: number
+          immunities?: string[]
           max_hp?: number
           monster?: string | null
           name?: string
+          resistances?: string[]
+          saves?: Json
+          vulnerabilities?: string[]
         }
         Relationships: [
           {
@@ -473,6 +579,7 @@ export type Database = {
           id: string
           initiative: number | null
           kind: string
+          reach_ft: number
           reaction_used: boolean
           revealed: boolean
           shown_name: string
@@ -496,6 +603,7 @@ export type Database = {
           id?: string
           initiative?: number | null
           kind: string
+          reach_ft?: number
           reaction_used?: boolean
           revealed?: boolean
           shown_name: string
@@ -519,6 +627,7 @@ export type Database = {
           id?: string
           initiative?: number | null
           kind?: string
+          reach_ft?: number
           reaction_used?: boolean
           revealed?: boolean
           shown_name?: string
@@ -660,6 +769,68 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reaction_prompts: {
+        Row: {
+          campaign_id: string
+          combatant_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          provoker_id: string
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          combatant_id: string
+          created_at?: string
+          encounter_id: string
+          id?: string
+          kind?: string
+          provoker_id: string
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          combatant_id?: string
+          created_at?: string
+          encounter_id?: string
+          id?: string
+          kind?: string
+          provoker_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reaction_prompts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reaction_prompts_combatant_id_fkey"
+            columns: ["combatant_id"]
+            isOneToOne: false
+            referencedRelation: "combatants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reaction_prompts_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reaction_prompts_provoker_id_fkey"
+            columns: ["provoker_id"]
+            isOneToOne: false
+            referencedRelation: "combatants"
             referencedColumns: ["id"]
           },
         ]
@@ -1008,7 +1179,19 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      cast_spell: {
+        Args: {
+          p_area: Json
+          p_combatant_id: string
+          p_roll: Json
+          p_slot_level: number
+          p_spell: Json
+          p_target_ids: string[]
+        }
+        Returns: Json
+      }
       close_roll_request: { Args: { p_request_id: string }; Returns: undefined }
+      concentration_save: { Args: { p_character_id: string }; Returns: Json }
       create_campaign: {
         Args: {
           p_dm_name: string
@@ -1018,6 +1201,7 @@ export type Database = {
         }
         Returns: string
       }
+      death_save: { Args: { p_combatant_id: string }; Returns: Json }
       end_turn: {
         Args: { p_encounter_id: string }
         Returns: {
@@ -1060,6 +1244,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      opportunity_attack: {
+        Args: { p_prompt_id: string; p_roll: Json }
+        Returns: Json
+      }
       override_roll: {
         Args: { p_passed: boolean; p_roll_id: string }
         Returns: {
@@ -1086,6 +1274,25 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "rolls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      pass_reaction: {
+        Args: { p_prompt_id: string }
+        Returns: {
+          campaign_id: string
+          combatant_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          provoker_id: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reaction_prompts"
           isOneToOne: true
           isSetofReturn: false
         }

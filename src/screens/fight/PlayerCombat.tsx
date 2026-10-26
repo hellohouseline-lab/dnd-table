@@ -67,6 +67,8 @@ type YourTurnProps = {
   myTurn: boolean
   /** Everyone has initiative and turns have begun. */
   started: boolean
+  /** False while unconscious: no actions or movement, only End turn. */
+  canAct?: boolean
   onAct: (what: TurnAction) => void
   onEndTurn: () => void
 }
@@ -76,7 +78,7 @@ type YourTurnProps = {
  * reaction and movement, Dash, Disengage and Dodge, and End turn. It all comes back at the start of
  * your next turn. Bonus action and reaction are clicked when you use one for a spell or feature.
  */
-export function YourTurn({ turn, speed, perAction, myTurn, started, onAct, onEndTurn }: YourTurnProps) {
+export function YourTurn({ turn, speed, perAction, myTurn, started, canAct = true, onAct, onEndTurn }: YourTurnProps) {
   const attacks = attacksLeft(turn, perAction)
   const free = actionFree(turn)
   const action =
@@ -91,7 +93,7 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, onAct, onEnd
       label: 'Bonus action',
       tone: styles.blue,
       used: turn.bonusUsed,
-      can: myTurn,
+      can: myTurn && canAct,
       hint: 'Click when you use your bonus action, for a spell or feature',
     },
     {
@@ -99,7 +101,7 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, onAct, onEnd
       label: 'Reaction',
       tone: styles.grey,
       used: turn.reactionUsed,
-      can: started,
+      can: started && canAct,
       hint: 'Click when you use your reaction, such as an opportunity attack',
     },
   ]
@@ -149,7 +151,7 @@ export function YourTurn({ turn, speed, perAction, myTurn, started, onAct, onEnd
             type="button"
             className={styles.move}
             title={hint}
-            disabled={!myTurn || !free}
+            disabled={!myTurn || !free || !canAct}
             onClick={() => onAct(what)}
           >
             {label}

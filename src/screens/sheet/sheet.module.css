@@ -510,3 +510,9 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+.defences {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

@@ -29,15 +29,87 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
     return `${actor} ${verb(they, yourself)}.`
   }
 
+  if (event.kind === 'death_save') {
+    const rolled = typeof event.shown.rolled === 'number' ? ` (rolled ${event.shown.rolled})` : ''
+    const count = `${event.shown.successes ?? 0} of 3 successes, ${event.shown.failures ?? 0} of 3 failures`
+    switch (event.shown.result) {
+      case 'awake':
+        return `${actor} ${verb('rolls', 'roll')} a 20 on a death save and ${verb('is', 'are')} back up with 1 hit point!`
+      case 'stable':
+        return `${actor} ${verb('succeeds', 'succeed')} on a third death save${rolled} and ${verb('is', 'are')} stable.`
+      case 'dead':
+        return `${actor} ${verb('fails', 'fail')} a third death save${rolled}. ${you ? 'Your character dies.' : `${actor} dies.`}`
+      case 'success':
+        return `${actor} ${verb('succeeds', 'succeed')} on a death save${rolled}: ${count}.`
+      default:
+        return `${actor} ${verb('fails', 'fail')} a death save${rolled}: ${count}.`
+    }
+  }
+
+  if (event.kind === 'concentration') {
+    const spell = event.shown.spell ?? 'the spell'
+    const rolled =
+      typeof event.shown.total === 'number' ? ` (rolled ${event.shown.total} against DC ${event.shown.dc})` : ''
+    return event.shown.kept
+      ? `${actor} ${verb('keeps', 'keep')} concentrating on ${spell}${rolled}.`
+      : `${actor} ${verb('loses', 'lose')} concentration, and ${spell} ends${rolled}.`
+  }
+
   const targetIsYou = event.targetId !== null && event.targetId === youId
   const target = targetIsYou ? 'you' : nameOf(event.targetId)
-  const weapon = event.shown.label ? ` with ${event.shown.label}` : ''
+
+  // A spell that isn't an attack roll: a saving throw, damage that just lands, healing, or nothing to roll.
+  if (event.kind === 'spell' && !event.shown.attack) {
+    const spell = event.shown.spell ?? 'a spell'
+    const whose = you ? `Your ${spell}` : `${actor}'s ${spell}`
+    const damage = event.shown.damage ?? 0
+    const type = event.shown.damageType ? ` ${event.shown.damageType}` : ''
+    const adjusted =
+      event.shown.adjust === 'resisted'
+        ? ' (resisted, so halved)'
+        : event.shown.adjust === 'vulnerable'
+          ? ' (vulnerable, so doubled)'
+          : event.shown.adjust === 'immune'
+            ? ' (immune)'
+            : ''
+    const down = event.shown.down ? ` ${targetIsYou ? 'You go' : `${target} goes`} down.` : ''
+    const takes = (they: string) =>
+      damage > 0 ? ` and ${they} ${damage}${type}${adjusted}` : event.shown.damage === 0 ? ` and ${they} nothing` : ''
+    if (event.targetId === null) return `${actor} ${verb('casts', 'cast')} ${spell}.`
+    if (event.shown.save) {
+      const rolled = typeof event.shown.saveTotal === 'number' ? ` (rolled ${event.shown.saveTotal})` : ''
+      const outcome =
+        event.shown.save === 'passed'
+          ? `${targetIsYou ? 'You make' : `${target} makes`} the save against ${spell}${rolled}`
+          : `${targetIsYou ? 'You fail' : `${target} fails`} the save against ${spell}${rolled}`
+      return `${outcome}${takes(targetIsYou ? 'take' : 'takes')}.${down}`
+    }
+    if (typeof event.shown.heal === 'number') return `${whose} heals ${target} for ${event.shown.heal}.`
+    if (event.shown.damage !== null && event.shown.damage !== undefined) {
+      return `${whose} hits ${target} for ${damage}${type}${adjusted}.${down}`
+    }
+    return `${actor} ${verb('casts', 'cast')} ${spell} on ${target}.`
+  }
+  // An opportunity attack, made with the reaction as the target moves away.
+  const weapon =
+    (event.shown.label ? ` with ${event.shown.label}` : '') + (event.shown.reaction ? ' as they move away' : '')
   const rolled = typeof event.shown.total === 'number' ? ` (rolled ${event.shown.total})` : ''
   if (!event.shown.hit) return `${actor} ${verb('misses', 'miss')} ${target}${weapon}${rolled}.`
 
   const damage = event.shown.damage ?? 0
-  const amount = damage > 0 ? ` for ${damage}${event.shown.damageType ? ` ${event.shown.damageType}` : ''}` : ''
+  const type = event.shown.damageType ? ` ${event.shown.damageType}` : ''
+  const amount = damage > 0 ? ` for ${damage}${type}` : ''
+  const adjusted =
+    event.shown.adjust === 'resisted'
+      ? ' (resisted, so halved)'
+      : event.shown.adjust === 'vulnerable'
+        ? ' (vulnerable, so doubled)'
+        : ''
   const critical = event.shown.critical ? ' A critical hit!' : ''
   const down = event.shown.down ? ` ${targetIsYou ? 'You go' : `${target} goes`} down.` : ''
-  return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${amount}${rolled}.${critical}${down}`
+  if (event.shown.adjust === 'immune') {
+    const immune = targetIsYou ? 'You are' : `${target} is`
+    return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${rolled}, but ${immune} immune to${type || ' it'}.${critical}`
+  }
+  return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${amount}${adjusted}${rolled}.${critical}${down}`
 }

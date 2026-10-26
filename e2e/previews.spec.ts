@@ -134,36 +134,131 @@ test('a player dashes, then ends their turn', async ({ page }) => {
 
 test('a player attacks a goblin by picking it, and their action is spent', async ({ page }) => {
   await page.goto('#/dev/table/fight')
-  await page.getByRole('button', { name: /Longsword/ }).first().click()
+  await page
+    .getByRole('button', { name: /Longsword/ })
+    .first()
+    .click()
   await expect(page.getByRole('status').filter({ hasText: 'Pick a target for Longsword' })).toBeVisible()
-  await page.getByRole('list', { name: 'Turn order' }).getByRole('button', { name: /Goblin A/ }).click()
+  await page
+    .getByRole('list', { name: 'Turn order' })
+    .getByRole('button', { name: /Goblin A/ })
+    .click()
   const feed = page.getByRole('region', { name: 'What happened' })
   await expect(feed).toContainText(/You (hit|miss) Goblin A with Longsword/)
   const turn = page.getByRole('region', { name: 'This turn' })
   await expect(turn).toContainText(/Action\s*Used/)
-  await page.getByRole('button', { name: /Longsword/ }).first().click()
+  await page
+    .getByRole('button', { name: /Longsword/ })
+    .first()
+    .click()
   await expect(page.getByText('You have used your action this turn.')).toBeVisible()
 })
 
 test('a player can only attack what their weapon reaches', async ({ page }) => {
   await page.goto('#/dev/table/fight')
-  await page.getByRole('button', { name: /Longsword/ }).first().click()
-  await page.getByRole('list', { name: 'Turn order' }).getByRole('button', { name: /Unknown creature 2/ }).click()
+  await page
+    .getByRole('button', { name: /Longsword/ })
+    .first()
+    .click()
+  await page
+    .getByRole('list', { name: 'Turn order' })
+    .getByRole('button', { name: /Unknown creature 2/ })
+    .click()
   await expect(page.getByText(/That's \d+ ft away, and it only reaches 5 ft\. Move closer/)).toBeVisible()
   await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Action\s*Ready/)
 })
 
-test('the DM runs a goblin\'s turn from the Battle screen in two clicks, and undoes it', async ({ page }) => {
+test("the DM runs a goblin's turn from the Battle screen in two clicks, and undoes it", async ({ page }) => {
   await page.goto('#/dev/battle')
   await expect(page.getByText('Battle · Round 1 · Thorin Ironfist is acting')).toBeVisible()
   await page.getByRole('button', { name: 'Next turn' }).click()
   await expect(page.getByText('Battle · Round 1 · Goblin A is acting')).toBeVisible()
   await page.keyboard.press('1')
   await expect(page.getByRole('status').filter({ hasText: 'Pick a target for Goblin A: Scimitar' })).toBeVisible()
-  await page.getByRole('region', { name: 'Turn order' }).getByRole('button', { name: 'Thorin Ironfist', exact: true }).click()
+  await page
+    .getByRole('region', { name: 'Turn order' })
+    .getByRole('button', { name: 'Thorin Ironfist', exact: true })
+    .click()
   const feed = page.getByRole('region', { name: 'What happened' })
   await expect(feed).toContainText(/Goblin A (hits|misses) Thorin Ironfist with Scimitar/)
   await feed.getByRole('button', { name: 'Undo' }).click()
   await expect(feed).toContainText('(undone)')
   await expect(page.getByRole('region', { name: 'Turn order' })).toContainText('17/20')
+})
+
+test('the DM asks for a roll in the middle of a fight, from the Battle screen', async ({ page }) => {
+  await page.goto('#/dev/battle')
+  await page.getByRole('button', { name: 'Ask for a roll' }).click()
+  await page.getByRole('button', { name: /Constitution save/ }).click()
+  await page.getByRole('button', { name: 'Send to players' }).click()
+  const results = page.getByRole('region', { name: 'Constitution saving throw' })
+  await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
+  await results.getByRole('button', { name: 'Done, play on' }).click()
+  await expect(results).toBeHidden()
+})
+
+test('a player strikes a goblin slipping out of reach, with their reaction', async ({ page }) => {
+  await page.goto('#/dev/table/reaction')
+  const chance = page.getByRole('dialog', { name: 'Goblin A is getting away' })
+  await expect(chance).toContainText('use your reaction to make one melee attack')
+  await chance.getByRole('button', { name: 'Attack with Longsword' }).click()
+  await expect(chance).toBeHidden()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    /You (hit|miss) Goblin A with Longsword as they move away/,
+  )
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Reaction\s*Used/)
+})
+
+test('a player at 0 hit points rolls one death save on their turn', async ({ page }) => {
+  await page.goto('#/dev/table/dying')
+  const saves = page.getByRole('region', { name: 'Death saves' })
+  await expect(saves).toContainText('Dying')
+  await expect(page.getByRole('button', { name: 'Dash' })).toBeDisabled()
+  await saves.getByRole('button', { name: 'Roll a death save' }).click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    /You (succeed on|fail|roll a 20 on) a death save/,
+  )
+  await expect(saves.getByRole('button', { name: 'Roll a death save' })).toBeHidden()
+})
+
+test('a wizard casts Magic Missile at a goblin, which spends the action', async ({ page }) => {
+  await page.goto('#/dev/table/caster')
+  await page.getByRole('button', { name: 'Spells', exact: true }).click()
+  const hand = page.getByLabel('Your hand')
+  await hand.getByRole('button', { name: /Magic Missile/ }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Cast Magic Missile: click who' })).toBeVisible()
+  await page
+    .getByRole('list', { name: 'Turn order' })
+    .getByRole('button', { name: /Goblin A/ })
+    .click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    /Your Magic Missile hits Goblin A for \d+ force/,
+  )
+  await expect(page.getByRole('region', { name: 'This turn' })).toContainText(/Action\s*Used/)
+  await expect(hand.getByRole('button', { name: /Fire Bolt/ })).toBeDisabled()
+  await expect(page.getByRole('region', { name: 'At a glance' })).toContainText('1st')
+  await expect(
+    page.getByRole('region', { name: 'At a glance' }).getByRole('group', { name: '1st-level slots left: 2 of 4' }),
+  ).toBeVisible()
+})
+
+test('a wizard puts Darkness on the map and concentrates on it', async ({ page }) => {
+  await page.goto('#/dev/table/caster')
+  await page.getByRole('button', { name: 'Spells', exact: true }).click()
+  await page
+    .getByLabel('Your hand')
+    .getByRole('button', { name: /Darkness/ })
+    .click()
+  await expect(page.getByRole('status').filter({ hasText: 'Cast Darkness: click where it goes' })).toContainText(
+    'Uses a 2nd-level slot',
+  )
+  const map = page.locator('canvas').first()
+  const box = await map.boundingBox()
+  if (!box) throw new Error('No map')
+  await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.5)
+  await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.5)
+  await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeVisible()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You cast Darkness.')
+  await page.getByRole('button', { name: 'Lost it' }).click()
+  await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeHidden()
 })

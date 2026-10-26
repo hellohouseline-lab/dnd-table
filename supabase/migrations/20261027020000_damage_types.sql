@@ -1,0 +1,214 @@
+-- C1b: damage types. A monster's resistances, vulnerabilities and immunities come from the SRD
+-- (kept with its other secrets, DM only); a character's are a short list on their sheet. An attack
+-- that hits is adjusted by them: resistance halves the damage (rounded down), vulnerability doubles
+-- it, immunity stops it. Players see the word in the feed once it has happened, as at a table.
+--
+-- Each entry is a damage type ('cold'), or a type that only non-magical attacks are stopped by
+-- ('slashing:nonmagical'), as for "bludgeoning, piercing, and slashing from nonmagical weapons".
+
+alter table public.combatant_secrets
+  add column resistances text[] not null default '{}',
+  add column vulnerabilities text[] not null default '{}',
+  add column immunities text[] not null default '{}',
+  add column condition_immunities text[] not null default '{}';
+
+alter table public.characters
+  add column resistances text[] not null default '{}' check (cardinality(resistances) <= 13),
+  add column vulnerabilities text[] not null default '{}' check (cardinality(vulnerabilities) <= 13),
+  add column immunities text[] not null default '{}' check (cardinality(immunities) <= 13);
+
+grant update (resistances, vulnerabilities, immunities) on public.characters to authenticated;
+
+-- 'resisted', 'vulnerable', 'immune', or null, for damage of this type. Resistance and
+-- vulnerability to the same damage cancel out. Same as adjustDamage in src/rules/damage.ts.
+create function private.damage_adjustment(
+  p_type text,
+  p_magical boolean,
+  p_resistances text[],
+  p_vulnerabilities text[],
+  p_immunities text[]
+)
+returns text
+language sql
+immutable
+set search_path = ''
+as $$
+  with applies as (
+    select
+      exists (select 1 from unnest(p_immunities) e where split_part(e, ':', 1) = p_type
+              and (split_part(e, ':', 2) = '' or (split_part(e, ':', 2) = 'nonmagical' and not p_magical))) as immune,
+      exists (select 1 from unnest(p_resistances) e where split_part(e, ':', 1) = p_type
+              and (split_part(e, ':', 2) = '' or (split_part(e, ':', 2) = 'nonmagical' and not p_magical))) as resists,
+      exists (select 1 from unnest(p_vulnerabilities) e where split_part(e, ':', 1) = p_type) as vulnerable
+  )
+  select case
+    when immune then 'immune'
+    when resists and vulnerable then null
+    when resists then 'resisted'
+    when vulnerable then 'vulnerable'
+  end
+  from applies
+$$;
+
+revoke execute on function private.damage_adjustment(text, boolean, text[], text[], text[]) from public;
+
+-- As before, with the damage adjusted for the target's resistances, vulnerabilities and immunities.
+create or replace function public.resolve_attack(p_attacker_id uuid, p_target_id uuid, p_roll jsonb)
+returns jsonb
+language plpgsql
+volatile
+security definer
+set search_path = ''
+as $$
+declare
+  v_attacker public.combatants;
+  v_target public.combatants;
+  v_dm boolean;
+  v_allowed integer := 1;
+  v_roll public.rolls;
+  v_ac integer;
+  v_hit boolean;
+  v_damage integer := 0;
+  v_temp integer;
+  v_hp integer;
+  v_max integer;
+  v_target_before jsonb;
+  v_event public.combat_events;
+  v_type text;
+  v_adjust text;
+  v_magical boolean := coalesce((p_roll ->> 'magical')::boolean, false);
+begin
+  select c.* into v_attacker
+  from public.combatants c
+  join public.encounters e on e.id = c.encounter_id and e.status = 'active'
+  where c.id = p_attacker_id;
+  if not found then
+    raise exception 'That fight is over' using errcode = '22023';
+  end if;
+  select c.* into v_target from public.combatants c where c.id = p_target_id and c.encounter_id = v_attacker.encounter_id;
+  if not found then
+    raise exception 'That target isn''t in this fight' using errcode = '22023';
+  end if;
+  if not private.acts_for(v_attacker, false) then
+    raise exception 'It isn''t your turn' using errcode = '42501';
+  end if;
+  if (p_roll -> 'dice') is distinct from '[{"sides": 20, "count": 1}]'::jsonb then
+    raise exception 'An attack is a single d20' using errcode = '22023';
+  end if;
+  v_dm := private.is_campaign_dm(v_attacker.campaign_id);
+
+  if v_attacker.kind = 'character' then
+    select private.attacks_per_action(ch.class, ch.level) into v_allowed
+    from public.characters ch where ch.id = v_attacker.character_id;
+  end if;
+  if not v_dm then
+    if v_attacker.attacks_made = 0 and v_attacker.action_used then
+      raise exception 'You have used your action this turn' using errcode = '22023';
+    end if;
+    if v_attacker.attacks_made >= v_allowed then
+      raise exception 'You have made all your attacks this turn' using errcode = '22023';
+    end if;
+  end if;
+
+  -- throw_dice checks the caller may roll for this character; a monster's attack is behind the screen.
+  v_roll := public.throw_dice(
+    v_attacker.campaign_id,
+    p_roll - 'request_id'
+      || jsonb_build_object(
+        'kind', 'attack',
+        'character_id', v_attacker.character_id,
+        'secret', v_attacker.kind = 'monster'
+      )
+  );
+
+  if v_target.kind = 'character' then
+    select ch.armour_class into v_ac from public.characters ch where ch.id = v_target.character_id;
+  else
+    select s.ac into v_ac from public.combatant_secrets s where s.combatant_id = v_target.id;
+  end if;
+  v_hit := v_roll.natural_d20 = 20 or (v_roll.natural_d20 <> 1 and v_roll.total >= coalesce(v_ac, 10));
+  if v_hit then
+    v_damage := greatest(0, coalesce((v_roll.damage ->> 'total')::integer, 0));
+  end if;
+
+  -- Resistance halves the damage, vulnerability doubles it, immunity stops it.
+  v_type := lower(coalesce(v_roll.damage ->> 'type', ''));
+  if v_damage > 0 and v_type <> '' then
+    if v_target.kind = 'character' then
+      select private.damage_adjustment(v_type, v_magical, ch.resistances, ch.vulnerabilities, ch.immunities)
+        into v_adjust
+      from public.characters ch where ch.id = v_target.character_id;
+    else
+      select private.damage_adjustment(v_type, v_magical, s.resistances, s.vulnerabilities, s.immunities)
+        into v_adjust
+      from public.combatant_secrets s where s.combatant_id = v_target.id;
+    end if;
+    v_damage := case v_adjust
+      when 'immune' then 0
+      when 'resisted' then v_damage / 2
+      when 'vulnerable' then v_damage * 2
+      else v_damage
+    end;
+  end if;
+
+  if v_target.kind = 'character' then
+    select jsonb_build_object('current_hp', ch.current_hp, 'temp_hp', ch.temp_hp, 'conditions', to_jsonb(ch.conditions)),
+           least(ch.temp_hp, v_damage), ch.current_hp
+      into v_target_before, v_temp, v_hp
+    from public.characters ch where ch.id = v_target.character_id;
+    v_hp := greatest(0, v_hp - (v_damage - v_temp));
+    update public.characters ch
+    set temp_hp = ch.temp_hp - v_temp,
+        current_hp = v_hp,
+        conditions = case
+          when v_hp = 0 and not ('unconscious' = any (ch.conditions)) then array_append(ch.conditions, 'unconscious')
+          else ch.conditions
+        end
+    where ch.id = v_target.character_id;
+  else
+    select jsonb_build_object('hp', s.hp, 'health', v_target.health), s.hp, s.max_hp
+      into v_target_before, v_hp, v_max
+    from public.combatant_secrets s where s.combatant_id = v_target.id;
+    if v_hp is not null then
+      v_hp := greatest(0, v_hp - v_damage);
+      update public.combatant_secrets set hp = v_hp where combatant_id = v_target.id;
+      update public.combatants set health = private.health_word(v_hp, v_max) where id = v_target.id;
+    end if;
+  end if;
+
+  update public.combatants
+  set action_used = true, attacks_made = least(10, attacks_made + 1)
+  where id = v_attacker.id;
+
+  -- The roll log shows hit or miss.
+  update public.rolls set passed = v_hit, passed_by_dice = v_hit where id = v_roll.id returning * into v_roll;
+
+  v_event := private.add_event(
+    v_attacker,
+    v_target.id,
+    'attack',
+    v_roll.id,
+    jsonb_build_object(
+      -- A monster's attack is labelled with its real name for the DM ("Goblin A: Scimitar"); the feed
+      -- keeps just the action, so an unrevealed monster stays unknown.
+      'label', case
+        when v_attacker.kind = 'monster' then coalesce(nullif(split_part(v_roll.label, ': ', 2), ''), 'an attack')
+        else v_roll.label
+      end,
+      'hit', v_hit,
+      'critical', v_hit and v_roll.natural_d20 = 20,
+      'damage', v_damage,
+      'damageType', coalesce(v_roll.damage ->> 'type', ''),
+      -- 'resisted', 'vulnerable' or 'immune', once it has happened.
+      'adjust', v_adjust,
+      -- A player's own total is theirs to see; a monster's dice stay behind the screen.
+      'total', case when v_attacker.kind = 'character' then v_roll.total end,
+      'down', v_hit and coalesce(v_hp, 1) = 0
+    ),
+    v_target_before,
+    private.turn_record(v_attacker),
+    v_ac
+  );
+  return jsonb_build_object('roll', to_jsonb(v_roll), 'event', to_jsonb(v_event));
+end
+$$;

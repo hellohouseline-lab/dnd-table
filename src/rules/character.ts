@@ -75,10 +75,20 @@ export type Character = {
   spellcasting: Spellcasting
   deathSaveSuccesses: number
   deathSaveFailures: number
+  /** At 0 hit points but no longer rolling death saves (three successes, or the DM stabilised them). */
+  stable: boolean
+  /** Three death save failures. The DM can undo it. */
+  dead: boolean
   conditions: string[]
+  /** Damage types this character resists, is vulnerable to or immune to. */
+  resistances: string[]
+  vulnerabilities: string[]
+  immunities: string[]
   exhaustion: number
   inspiration: boolean
   concentration: string | null
+  /** The Constitution save owed after taking damage while concentrating (set by the server). */
+  concentrationDc: number | null
   portraitPath: string | null
   updatedAt: string
 }
@@ -94,10 +104,16 @@ export type CharacterBuild = Omit<
   | 'hitDiceUsed'
   | 'deathSaveSuccesses'
   | 'deathSaveFailures'
+  | 'stable'
+  | 'dead'
   | 'conditions'
+  | 'resistances'
+  | 'vulnerabilities'
+  | 'immunities'
   | 'exhaustion'
   | 'inspiration'
   | 'concentration'
+  | 'concentrationDc'
   | 'portraitPath'
   | 'updatedAt'
 >

@@ -41,6 +41,9 @@ const tired = {
   exhaustion: 2,
   deathSaveSuccesses: 1,
   deathSaveFailures: 2,
+  stable: false,
+  dead: false,
+  concentrationDc: null,
 }
 
 describe('a short rest', () => {

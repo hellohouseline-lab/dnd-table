@@ -3,11 +3,23 @@ import type { Combatant } from '../../live/combat.ts'
 import type { FightControls } from '../../live/useFight.ts'
 import type { AttackEntry, Character } from '../../rules/character.ts'
 import { actionSummary, crText, HEALTH_WORDS, isAttack } from '../../rules/combat.ts'
+import { defencesText, NO_DEFENCES } from '../../rules/damage.ts'
 import { abilityModifier, formatBonus } from '../../rules/maths/core.ts'
-import { CONDITIONS, findCondition, type SrdMonster, type SrdMonsterAction } from '../../rules/srd/index.ts'
+import {
+  CONDITIONS,
+  findCondition,
+  type SrdMonster,
+  type SrdMonsterAction,
+  type SrdSpell,
+} from '../../rules/srd/index.ts'
 import { fightRows, turnLimits, type FightRow } from './fightRows.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
+import { DeathSaves } from './Reactions.tsx'
+import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
+import { AtAGlance } from './AtAGlance.tsx'
+import { SheetLink } from '../../components/SheetLink.tsx'
+import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Aiming } from './useAiming.ts'
 
 type Fight = NonNullable<FightControls['fight']>
@@ -66,7 +78,9 @@ export function TurnOrder({
           everyone has rolled, or press Next turn to start now.
         </p>
       )}
-      {aiming && <p className={styles.aimHint}>Pick a target for {aiming.label}: click a name below, or a miniature.</p>}
+      {aiming && (
+        <p className={styles.aimHint}>Pick a target for {aiming.label}: click a name below, or a miniature.</p>
+      )}
       <ol className={styles.rows}>
         {rows.map((row) => {
           const pickable = aiming !== null && row.combatant.id !== aiming.attackerId
@@ -90,6 +104,11 @@ export function TurnOrder({
                   title={pickable ? `Attack ${row.name}` : undefined}
                 >
                   <span className={row.combatant.kind === 'monster' ? styles.monsterText : undefined}>{row.name}</span>
+                  {row.character?.concentration && (
+                    <span className={styles.concentrating} title={`Concentrating on ${row.character.concentration}`}>
+                      C
+                    </span>
+                  )}
                   {row.unrevealed && (
                     <span className={styles.hidden}> · players see &ldquo;{row.combatant.shownName}&rdquo;</span>
                   )}
@@ -150,6 +169,7 @@ export function TurnOrder({
 }
 
 type ActingNowProps = {
+  campaignId: string
   row: FightRow | null
   controls: FightControls
   monsters: SrdMonster[] | null
@@ -157,7 +177,18 @@ type ActingNowProps = {
   onAttack: (row: FightRow, action: SrdMonsterAction) => void
   /** Acting for a player: one of their attacks, then its target. */
   onCharacterAttack: (row: FightRow, attack: AttackEntry) => void
-  onOpenSheet: (character: Character) => void
+  /** Opens a sheet in the app on a plain click (Screen 1's panel); otherwise it opens in a new tab. */
+  onOpenSheet?: (character: Character) => void
+  /** A character at 0 hit points: roll their death save. */
+  onDeathSave?: (row: FightRow) => void
+  /** Changes a character's sheet: Stabilise, up with 1 hit point, or Lost it (concentration). */
+  onUpdate?: (characterId: string, patch: TrackerPatch) => void
+  /** The SRD spells, for a caster's spell list. */
+  spells?: SrdSpell[] | null
+  /** Acting for a caster: one of their spells, then its target or where it goes. */
+  onCast?: (row: FightRow, spell: SrdSpell) => void
+  /** Rolls the save a caster owes to keep concentrating. */
+  onConcentrationSave?: (character: Character) => void
   /** Show the number key for each attack (the Battle screen's keyboard). */
   numbered?: boolean
   rolling?: boolean
@@ -166,12 +197,18 @@ type ActingNowProps = {
 
 /** The Acting now card (design 10): what the creature can do this turn, each attack a click away from its target. */
 export function ActingNow({
+  campaignId,
   row,
   controls,
   monsters,
   onAttack,
   onCharacterAttack,
   onOpenSheet,
+  onDeathSave,
+  onUpdate,
+  spells = null,
+  onCast,
+  onConcentrationSave,
   numbered = false,
   rolling,
   className,
@@ -180,7 +217,9 @@ export function ActingNow({
     return (
       <section className={cx(styles.actingCard, className)} aria-label="Acting now">
         <div className={styles.eyebrow}>Acting now</div>
-        <p className={styles.hint}>Nobody yet. The first turn starts once everyone has initiative, or press Next turn.</p>
+        <p className={styles.hint}>
+          Nobody yet. The first turn starts once everyone has initiative, or press Next turn.
+        </p>
       </section>
     )
   }
@@ -188,6 +227,7 @@ export function ActingNow({
   const monster = row.secret?.monster ? monsters?.find((m) => m.index === row.secret?.monster) : undefined
   const available = CONDITIONS.filter((c) => c.index !== 'exhaustion' && !row.conditions.includes(c.index))
   const attacks = monster?.actions.filter(isAttack) ?? []
+  const defences = defencesText(row.character ?? row.secret ?? NO_DEFENCES)
 
   return (
     <section className={cx(styles.actingCard, className)} aria-label="Acting now">
@@ -205,11 +245,27 @@ export function ActingNow({
           <div className={styles.actingPips}>
             <TurnPips turn={row.combatant.turn} {...turnLimits(row)} />
           </div>
+          {defences && <div className={styles.defences}>{defences}</div>}
         </div>
       </div>
 
       {row.character ? (
         <>
+          {row.character.currentHp === 0 && (
+            <DeathSaves
+              who={row.character.name}
+              saves={{
+                successes: row.character.deathSaveSuccesses,
+                failures: row.character.deathSaveFailures,
+                stable: row.character.stable,
+                dead: row.character.dead,
+              }}
+              onRoll={onDeathSave && (() => onDeathSave(row))}
+              onStabilise={onUpdate && (() => row.character && onUpdate(row.character.id, { stable: true }))}
+              onWake={onUpdate && (() => row.character && onUpdate(row.character.id, { currentHp: 1 }))}
+              rolling={rolling}
+            />
+          )}
           <p className={styles.hint}>
             {row.character.name} acts from their own screen. If they&rsquo;ve stepped away, act for them:
           </p>
@@ -231,9 +287,34 @@ export function ActingNow({
               </li>
             ))}
           </ul>
-          <button type="button" className={styles.secondary} onClick={() => row.character && onOpenSheet(row.character)}>
+          {onCast && row.character.spellcasting.spells.length > 0 && (
+            <>
+              <div className={styles.legend}>Spells</div>
+              <SlotPips spellcasting={row.character.spellcasting} />
+              <SpellList
+                character={row.character}
+                spells={spells}
+                onCast={(spell) => onCast(row, spell)}
+                rolling={rolling}
+              />
+            </>
+          )}
+          <ConcentrationChip
+            character={row.character}
+            onLostIt={onUpdate && (() => row.character && onUpdate(row.character.id, { concentration: null }))}
+            onSave={onConcentrationSave && (() => row.character && onConcentrationSave(row.character))}
+            rolling={rolling}
+          />
+          <AtAGlance character={row.character} />
+          <SheetLink
+            campaignId={campaignId}
+            characterId={row.character.id}
+            className={styles.secondary}
+            onOpen={onOpenSheet && (() => row.character && onOpenSheet(row.character))}
+            title="Cmd or Ctrl click to open it in a new tab"
+          >
             Open their sheet
-          </button>
+          </SheetLink>
         </>
       ) : (
         <>
@@ -333,6 +414,7 @@ export function ActingNow({
 }
 
 type EncounterTabProps = {
+  campaignId: string
   fight: Fight
   controls: FightControls
   characters: Character[]
@@ -350,6 +432,7 @@ type EncounterTabProps = {
 
 /** Screen 1's Encounter tab: the turn order, what just happened, and the Acting now card. */
 export function EncounterTab({
+  campaignId,
   fight,
   controls,
   characters,
@@ -385,6 +468,7 @@ export function EncounterTab({
         <CombatFeed events={controls.events} nameOf={nameOf} onUndo={controls.undo} limit={4} />
       </div>
       <ActingNow
+        campaignId={campaignId}
         row={focus}
         controls={controls}
         monsters={monsters}
@@ -396,4 +480,3 @@ export function EncounterTab({
     </div>
   )
 }
-

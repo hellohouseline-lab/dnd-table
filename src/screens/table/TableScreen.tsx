@@ -16,6 +16,7 @@ import { useRollRequest } from '../../live/useRollRequest.ts'
 import { useLibrary, useStage, useStageImage } from '../../live/useStage.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
+import { useAreas } from '../../live/areas.ts'
 import { TableView } from './TableView.tsx'
 
 /** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
@@ -33,6 +34,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
   const mapId = stage.mode === 'map' ? stage.mapId : null
   const battleMap = useStageImage(mapId, library.assets)
   const tokens = useTokens(campaignId, user.id, mapId)
+  const areas = useAreas(campaignId, user.id, mapId)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
@@ -97,6 +99,13 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
         events: fight.events,
         attack: fight.attack,
         act: fight.act,
+        prompts: fight.prompts,
+        strike: fight.strike,
+        letGo: fight.letGo,
+        deathSave: fight.deathSave,
+        cast: fight.cast,
+        concentrationSave: fight.concentrationSave,
+        areas: areas.areas,
         map: battleMap,
         tokens,
         playersMove: stage.playersMoveTokens,

@@ -1,0 +1,63 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 16px;
+}
+
+.choice:hover {
+  border-color: var(--gold-rule);
+}
+
+.chosen {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(212, 175, 90, 0.12);
+}
+
+.harm.chosen {
+  border-color: var(--fail);
+  color: var(--fail-light);
+  background: rgba(224, 123, 66, 0.14);
+}
+
+.help.chosen {
+  border-color: var(--pass);
+  color: var(--pass);
+  background: rgba(134, 212, 232, 0.12);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--label);
+}
+
+.field input {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 17px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text-2);
+}

@@ -150,12 +150,29 @@ export function attackRoll(character: RollCharacter, attack: AttackEntry, choice
   )
   return {
     ...request,
+    magical: attack.magicBonus > 0,
     damage: {
       dice,
       // With no dice the damage is flat: 1 + the bonus, as for an unarmed strike.
       modifier: dice.length > 0 ? damageBonus : flatDamage(damageBonus),
       type: (weapon?.damageType ?? attack.damageType).toLowerCase(),
     },
+  }
+}
+
+/** A spell attack: a d20 plus the spellcasting modifier and proficiency, with the spell's damage. */
+export function spellAttackRoll(
+  character: RollCharacter,
+  spell: { name: string },
+  ability: Ability,
+  damage: { dice: DiceGroup[]; modifier: number; type: string } | null,
+  choices: RollChoices = {},
+): RollRequest {
+  const parts = [abilityPart(character, ability), { label: 'Proficiency', value: proficiencyBonus(character.level) }]
+  return {
+    ...d20Roll(character, { label: spell.name, kind: 'attack', ability, parts }, choices),
+    magical: true,
+    damage,
   }
 }
 

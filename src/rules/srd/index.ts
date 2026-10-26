@@ -79,6 +79,14 @@ export type SrdSpell = {
   higherLevel?: string
   attackType?: string
   save?: Ability
+  /** On a successful save: half the damage, or none. */
+  dcSuccess?: 'half' | 'none'
+  /** Damage by slot level ({ 3: '8d6' }), or for cantrips by character level ({ 1: '1d10', 5: '2d10' }). */
+  damage?: { type: string; slots?: Record<string, string>; levels?: Record<string, string> }
+  /** Healing by slot level: { 1: '1d8 + MOD' }, MOD being the spellcasting modifier. */
+  heal?: Record<string, string>
+  /** The shape it covers: a 20 ft sphere, a 15 ft cone. */
+  area?: { type: 'sphere' | 'cube' | 'cone' | 'line' | 'cylinder'; size: number }
 }
 
 export type SrdMonsterAction = {
@@ -108,6 +116,13 @@ export type SrdMonster = {
   actions: SrdMonsterAction[]
   reactions: SrdMonsterAction[]
   legendary: SrdMonsterAction[]
+  /** Damage types it resists, is vulnerable to or immune to ('cold', or 'slashing:nonmagical'). */
+  resistances: string[]
+  vulnerabilities: string[]
+  immunities: string[]
+  conditionImmunities: string[]
+  /** Saving throws it's proficient in, as the whole bonus: { dexterity: 5 }. Others use the ability modifier. */
+  saves: Partial<Record<Ability, number>>
 }
 
 export const SKILLS = basics.skills as SrdSkill[]

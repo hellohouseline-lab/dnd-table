@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Combatant, Token } from '../live/combat.ts'
+import { NO_DEFENCES } from '../rules/damage.ts'
 import { FRESH_TURN } from '../rules/turn.ts'
 import { sampleFighter, sampleWizard } from '../screens/dev/sampleData.ts'
 import { freeSquares, mapTokens } from './mapTokens.ts'
@@ -17,6 +18,7 @@ const goblin: Combatant = {
   health: 'healthy',
   conditions: [],
   speed: 30,
+  reachFt: 5,
   turn: FRESH_TURN,
   createdAt: '2026-10-26T20:00:00Z',
 }
@@ -39,7 +41,7 @@ const tokens = [
 const people = {
   characters: [sampleFighter, sampleWizard],
   combatants: [goblin],
-  secrets: [{ combatantId: 'g1', name: 'Goblin A', monster: 'goblin', hp: 7, maxHp: 7, ac: 15 }],
+  secrets: [{ combatantId: 'g1', name: 'Goblin A', monster: 'goblin', hp: 7, maxHp: 7, ac: 15, ...NO_DEFENCES }],
   currentId: 'g1',
 }
 

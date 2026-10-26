@@ -17,13 +17,24 @@ import { useSrd } from '../../live/useSrd.ts'
 import type { Character } from '../../rules/character.ts'
 import { isAttack, monsterInitiative, startingSquares } from '../../rules/combat.ts'
 import type { RollRequest } from '../../rules/dice.ts'
-import { freeRoll, initiativeRoll } from '../../rules/rolls.ts'
-import { loadMonsters } from '../../rules/srd/index.ts'
+import { answerRoll, freeRoll, initiativeRoll } from '../../rules/rolls.ts'
+import type { DiceGroup } from '../../rules/dice.ts'
+import type { TrackerPatch } from '../../live/characterRows.ts'
+import type { RequestControls } from '../../live/useRollRequest.ts'
+import { AskRollDialog } from '../rolls/AskRollDialog.tsx'
+import { RequestResults } from '../rolls/RequestResults.tsx'
+import { loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { ActingNow, TurnOrder } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog } from '../fight/FightDialogs.tsx'
 import { cameraTurn, fightRows, type FightRow } from '../fight/fightRows.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
-import { useAiming } from '../fight/useAiming.ts'
+import { useAiming, type Aiming } from '../fight/useAiming.ts'
+import { useCasting } from '../fight/useCasting.ts'
+import { AreaDialog, type AreaDraft } from '../fight/AreaDialog.tsx'
+import { SlotPicker } from '../fight/SlotPicker.tsx'
+import type { AreaControls } from '../../live/areas.ts'
+import { ChanceStrip, type OpenChance } from '../fight/Reactions.tsx'
+import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { MapStage } from '../stage/MapStage.tsx'
 import { CameraColumn } from '../table/TableView.tsx'
 import styles from './BattleView.module.css'
@@ -51,6 +62,12 @@ type BattleViewProps = {
   }
   /** Changes a character's hit points by an amount (negative for damage). */
   onCharacterHp: (character: Character, change: number) => void
+  /** Changes a character's sheet (conditions from a roll's outcome). */
+  onUpdate: (characterId: string, patch: TrackerPatch) => void
+  /** The DM's request for a roll and its answers: Ask for a roll works here too, mid-fight. */
+  asking: RequestControls
+  /** Areas on the map on stage: spells' lasting shapes and the DM's own. */
+  areas: AreaControls
   onGrid: (map: Asset, patch: AssetPatch) => void
   /** Back to the stage (pictures, music, the library) without ending the fight. */
   onShowStage: () => void
@@ -78,6 +95,9 @@ export function BattleView({
   maps,
   pointers,
   onCharacterHp,
+  onUpdate,
+  asking,
+  areas,
   onGrid,
   onShowStage,
   thrower,
@@ -85,16 +105,83 @@ export function BattleView({
   const monsters = useSrd(loadMonsters)
   const [selected, setSelected] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
+  // Add an area: the DM's shape, first described, then put on the map.
+  const [drawing, setDrawing] = useState<{ draft: AreaDraft | null } | null>(null)
+  const spells = useSrd(loadSpells)
+  const [askFor, setAskFor] = useState<{ only: string | null } | null>(null)
+  const [hiddenFor, setHiddenFor] = useState<string | null>(null)
+  const { request } = asking
+  const showResults = request !== null && hiddenFor !== request.id && !askFor && !adding
+  const hereTonight = characters.filter((c) =>
+    members.some((m) => m.user_id === c.ownerId && m.role === 'player' && m.here_tonight),
+  )
   const [problem, setProblem] = useState<string | null>(null)
   const { attach: attachTray, throwDice } = useDiceTray()
   const table = useTableRolls({ campaignId, userId: me.user_id, throwDice, thrower })
-  const { aiming, aimMonster, aimCharacter, cancel } = useAiming(controls.attack, table.rollWith, tokens.tokens)
+  const {
+    aiming: attacking,
+    aimMonster,
+    aimCharacter,
+    cancel: cancelAttack,
+  } = useAiming(controls.attack, table.rollWith, tokens.tokens)
 
   const rows = fightRows(fight, characters, 'dm')
+  const {
+    casting,
+    begin: beginCast,
+    cancel: cancelCast,
+    problem: castProblem,
+  } = useCasting(controls.cast, table.rollWith, tokens.tokens, rows)
+  // Whatever is waiting for its target: an attack, or a spell aimed at a creature.
+  const aiming: Aiming =
+    attacking ??
+    (casting && casting.mode === 'target'
+      ? {
+          label: casting.label,
+          attackerId: casting.casterId,
+          reach: { melee: casting.rangeFt ?? 5280, normal: null, long: null },
+          onPick: casting.onPick,
+        }
+      : null)
+  const cancel = () => {
+    cancelAttack()
+    cancelCast()
+    setDrawing(null)
+  }
+  // Characters who took damage while concentrating, and owe the save.
+  const owing = characters.filter(
+    (c) => c.concentration && c.concentrationDc !== null && fight.combatants.some((x) => x.characterId === c.id),
+  )
   const acting = rows.find((r) => r.status === 'acting') ?? null
   const focus = rows.find((r) => r.combatant.id === (selected ?? fight.encounter.currentId)) ?? null
   const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
   const map = stage.stage.mode === 'map' ? (maps.find((m) => m.id === stage.stage.mapId) ?? null) : null
+
+  // Opportunity attacks: someone moved out of reach without Disengaging. A monster's chance is the
+  // DM's to take; a character's their player decides, though the DM can take it for them.
+  const chances: OpenChance[] = controls.prompts.flatMap((prompt) => {
+    const reactor = rows.find((r) => r.combatant.id === prompt.combatantId)
+    const provoker = rows.find((r) => r.combatant.id === prompt.provokerId)
+    if (!reactor || !provoker) return []
+    const owner = reactor.character ? members.find((m) => m.user_id === reactor.character?.ownerId) : undefined
+    return [
+      {
+        id: prompt.id,
+        reactor: reactor.name,
+        provoker: provoker.name,
+        player: owner && owner.user_id !== me.user_id ? owner.display_name : null,
+        strikes: strikesFor(reactor, monsters),
+      },
+    ]
+  })
+
+  function strikeFor(promptId: string, strike: Strike) {
+    const prompt = controls.prompts.find((p) => p.id === promptId)
+    const provoker = rows.find((r) => r.combatant.id === prompt?.provokerId)
+    if (!prompt || !provoker) return
+    const request = strike.build(provoker)
+    void table.rollWith(() => controls.strike(prompt, request))
+  }
 
   function rowOfToken(token: Token): FightRow | undefined {
     return rows.find((r) =>
@@ -124,11 +211,34 @@ export function BattleView({
       if (key === 'n') next()
       else if (key === 'u') undo()
       else if (key === 'r' && acting?.unrevealed) reveal(acting.combatant)
+      else if (key === 'a') setAskFor({ only: null })
       else if (/^[1-9]$/.test(key)) attackByNumber(focus, Number(key) - 1)
     }
     window.addEventListener('keydown', press)
     return () => window.removeEventListener('keydown', press)
   })
+
+  // The results of a roll the DM asked for: roll for someone who's away, then what happens.
+  async function rollFor(character: Character) {
+    if (!request) return
+    const thrown = await table.roll(answerRoll(character, request))
+    if (thrown) asking.putAnswer(thrown)
+  }
+
+  async function rollDamage(dice: DiceGroup[]) {
+    const thrown = await table.roll(freeRoll(dice, { secret: true }))
+    return thrown ? (thrown.damage?.total ?? thrown.total) : null
+  }
+
+  function damage(ids: string[], amount: number) {
+    characters.filter((c) => ids.includes(c.id)).forEach((character) => onCharacterHp(character, -amount))
+  }
+
+  function addCondition(ids: string[], condition: string) {
+    for (const character of characters.filter((c) => ids.includes(c.id) && !c.conditions.includes(condition))) {
+      onUpdate(character.id, { conditions: [...character.conditions, condition] })
+    }
+  }
 
   function rollInitiativeFor(combatant: Combatant, row: FightRow) {
     if (row.character) void controls.rollInitiative(combatant, initiativeRoll(row.character))
@@ -136,7 +246,9 @@ export function BattleView({
       const monster = monsters?.find((m) => m.index === row.secret?.monster)
       void controls.rollInitiative(
         combatant,
-        monster ? monsterInitiative(monster) : { ...freeRoll([{ sides: 20, count: 1 }]), kind: 'initiative', secret: true },
+        monster
+          ? monsterInitiative(monster)
+          : { ...freeRoll([{ sides: 20, count: 1 }]), kind: 'initiative', secret: true },
       )
     }
   }
@@ -171,6 +283,14 @@ export function BattleView({
           {acting ? ` · ${acting.name} is acting` : fight.encounter.currentId ? '' : ' · waiting for initiative'}
         </span>
         <span className={styles.spacer} />
+        {request && !showResults && (
+          <button type="button" className={styles.waiting} onClick={() => setHiddenFor(null)}>
+            {request.label}: {asking.answers.length} of {request.characterIds.length} rolled · Show results
+          </button>
+        )}
+        <button type="button" className={styles.headerButton} onClick={() => setAskFor({ only: null })} title="A">
+          Ask for a roll
+        </button>
         <button type="button" className={styles.headerButton} onClick={onShowStage}>
           Show the stage
         </button>
@@ -195,13 +315,18 @@ export function BattleView({
             compact
           />
           <ActingNow
+            campaignId={campaignId}
             className={styles.acting}
             row={focus}
             controls={controls}
             monsters={monsters}
             onAttack={aimMonster}
             onCharacterAttack={aimCharacter}
-            onOpenSheet={(character) => window.open(href(`/c/${campaignId}/sheet/${character.id}`), '_blank')}
+            onDeathSave={(row) => void table.rollWith(() => controls.deathSave(row.combatant))}
+            onUpdate={onUpdate}
+            spells={spells}
+            onCast={(row, spell) => beginCast(row, spell)}
+            onConcentrationSave={(character) => void table.rollWith(() => controls.concentrationSave(character.id))}
             numbered
             rolling={table.rolling}
           />
@@ -212,6 +337,11 @@ export function BattleView({
             <button type="button" className={styles.footButton} onClick={() => setAdding(true)}>
               Add a monster
             </button>
+            {map && (
+              <button type="button" className={styles.footButton} onClick={() => setDrawing({ draft: null })}>
+                Add an area
+              </button>
+            )}
             <button
               type="button"
               className={styles.footButton}
@@ -225,9 +355,55 @@ export function BattleView({
         </div>
 
         <div className={styles.centre}>
+          <ChanceStrip
+            chances={chances}
+            onStrike={strikeFor}
+            onLetGo={(id) => {
+              const prompt = controls.prompts.find((p) => p.id === id)
+              if (prompt) controls.letGo(prompt)
+            }}
+            rolling={table.rolling}
+          />
+          {owing.map((character) => (
+            <div key={character.id} className={styles.owing} role="status">
+              <span>
+                <strong>{character.name}</strong> took damage while concentrating on {character.concentration}:
+                Constitution save, DC {character.concentrationDc}
+              </span>
+              <button
+                type="button"
+                className={styles.aimingCancel}
+                disabled={table.rolling}
+                onClick={() => void table.rollWith(() => controls.concentrationSave(character.id))}
+              >
+                Roll for them
+              </button>
+            </div>
+          ))}
           {aiming && (
             <div className={styles.aiming} role="status">
-              Pick a target for {aiming.label}: click a miniature or a name in the turn order.
+              {casting && casting.mode === 'target'
+                ? `Cast ${aiming.label}: click who it's for, on the map or in the turn order.`
+                : `Pick a target for ${aiming.label}: click a miniature or a name in the turn order.`}
+              {casting && <SlotPicker casting={casting} />}
+              <button type="button" className={styles.aimingCancel} onClick={cancel}>
+                Cancel
+              </button>
+            </div>
+          )}
+          {casting && casting.mode === 'area' && (
+            <div className={styles.aiming} role="status">
+              Cast {casting.label}:{' '}
+              {casting.area?.fromCaster ? 'point it with the mouse and click' : 'click where it goes'}.
+              <SlotPicker casting={casting} />
+              <button type="button" className={styles.aimingCancel} onClick={cancel}>
+                Cancel
+              </button>
+            </div>
+          )}
+          {drawing?.draft && (
+            <div className={styles.aiming} role="status">
+              Click on the map where {drawing.draft.label || 'the area'} goes.
               <button type="button" className={styles.aimingCancel} onClick={cancel}>
                 Cancel
               </button>
@@ -244,6 +420,39 @@ export function BattleView({
               playersMove={stage.stage.playersMoveTokens}
               pointers={pointers}
               onGrid={(patch) => onGrid(map, patch)}
+              aim={
+                aiming && !(casting && casting.rangeFt === null)
+                  ? { attackerId: aiming.attackerId, reach: aiming.reach }
+                  : null
+              }
+              areas={areas.areas}
+              onAreaClick={(id) => {
+                const area = areas.areas.find((a) => a.id === id)
+                if (area && window.confirm(`Take ${area.label || 'this area'} off the map?`)) areas.remove(area)
+              }}
+              placing={
+                casting && casting.mode === 'area' && casting.area
+                  ? {
+                      shape: casting.area.shape,
+                      sizeFt: casting.area.sizeFt,
+                      tone: casting.area.tone,
+                      label: casting.label,
+                      fromId: casting.area.fromCaster ? casting.casterId : null,
+                      onPlace: casting.onPlace,
+                    }
+                  : drawing?.draft
+                    ? {
+                        ...drawing.draft,
+                        fromId: null,
+                        onPlace: (template) => {
+                          const draft = drawing.draft
+                          setDrawing(null)
+                          if (draft)
+                            void areas.add({ ...template, label: draft.label, tone: draft.tone, hidden: draft.hidden })
+                        },
+                      }
+                    : null
+              }
               targeting={
                 aiming
                   ? {
@@ -263,8 +472,18 @@ export function BattleView({
               </p>
               <div className={styles.mapChoices}>
                 {maps.map((choice) => (
-                  <button key={choice.id} type="button" className={styles.mapChoice} onClick={() => void putUp(choice.id)}>
-                    <StoredImage className={styles.mapThumb} path={choice.thumbPath ?? choice.path} alt="" fallback="Map" />
+                  <button
+                    key={choice.id}
+                    type="button"
+                    className={styles.mapChoice}
+                    onClick={() => void putUp(choice.id)}
+                  >
+                    <StoredImage
+                      className={styles.mapThumb}
+                      path={choice.thumbPath ?? choice.path}
+                      alt=""
+                      fallback="Map"
+                    />
                     <span>{choice.name}</span>
                   </button>
                 ))}
@@ -285,8 +504,10 @@ export function BattleView({
                 What happens shows here: hits, misses and damage, with Undo for the newest.
               </p>
             )}
-            {(problem ?? controls.error ?? table.error ?? tokens.error) && (
-              <Notice tone="error">{problem ?? controls.error ?? table.error ?? tokens.error}</Notice>
+            {(problem ?? castProblem ?? controls.error ?? table.error ?? tokens.error ?? areas.error) && (
+              <Notice tone="error">
+                {problem ?? castProblem ?? controls.error ?? table.error ?? tokens.error ?? areas.error}
+              </Notice>
             )}
           </div>
         </div>
@@ -309,6 +530,46 @@ export function BattleView({
         characters={characters}
         onDismiss={table.dismiss}
       />
+
+      {(askFor || showResults) && !adding && (
+        <div className={styles.overlay}>
+          {askFor ? (
+            <AskRollDialog
+              characters={characters}
+              hereTonight={hereTonight}
+              only={askFor.only}
+              onSend={asking.ask}
+              onCancel={() => setAskFor(null)}
+              error={asking.error}
+            />
+          ) : (
+            request && (
+              <RequestResults
+                key={request.id}
+                request={request}
+                answers={asking.answers}
+                dc={asking.dc}
+                characters={characters}
+                onOverride={asking.override}
+                onRollFor={(character) => void rollFor(character)}
+                onDamage={damage}
+                onCondition={addCondition}
+                onRollDamage={rollDamage}
+                onDone={asking.close}
+                onHide={() => setHiddenFor(request.id)}
+                rolling={table.rolling}
+                error={asking.error ?? table.error}
+              />
+            )
+          )}
+        </div>
+      )}
+
+      {drawing && !drawing.draft && (
+        <div className={styles.overlay}>
+          <AreaDialog onPlace={(draft) => setDrawing({ draft })} onCancel={() => setDrawing(null)} />
+        </div>
+      )}
 
       {adding && (
         <div className={styles.overlay}>

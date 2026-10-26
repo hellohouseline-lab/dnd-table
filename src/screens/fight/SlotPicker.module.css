@@ -1,0 +1,18 @@
+.slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.slot select {
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 15px;
+}

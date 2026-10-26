@@ -15,6 +15,7 @@ import { gainTempHp, heal, takeDamage } from '../../rules/maths/hitPoints.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
 import { CONDITIONS, findCondition, findWeapon } from '../../rules/srd/index.ts'
 import styles from './sheet.module.css'
+import { DAMAGE_TYPES } from '../../rules/damage.ts'
 
 /** What clicking a number on the sheet rolls. Without it, the sheet only shows the numbers. */
 export type SheetRolls = {
@@ -177,6 +178,10 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
 
         <Section title="Conditions">
           <Conditions character={character} onUpdate={edit} />
+        </Section>
+
+        <Section title="Damage defences">
+          <DamageDefences character={character} onUpdate={edit} />
         </Section>
 
         <div className={styles.inlineSplit}>
@@ -429,6 +434,60 @@ function Conditions({ character, onUpdate }: { character: Character; onUpdate?: 
           ))}
         </select>
       )}
+    </div>
+  )
+}
+
+const DEFENCE_KINDS = [
+  { key: 'resistances', label: 'Resists', add: 'Add a resistance…', hint: 'Takes half damage of these types' },
+  { key: 'immunities', label: 'Immune to', add: 'Add an immunity…', hint: 'Takes no damage of these types' },
+  { key: 'vulnerabilities', label: 'Vulnerable to', add: 'Add a vulnerability…', hint: 'Takes double damage of these types' },
+] as const
+
+/** Damage types the character resists, is immune to or vulnerable to, such as a tiefling's fire or a raging barbarian's. */
+function DamageDefences({ character, onUpdate }: { character: Character; onUpdate?: (patch: TrackerPatch) => void }) {
+  return (
+    <div className={styles.defences}>
+      {DEFENCE_KINDS.map(({ key, label, add, hint }) => {
+        const list = character[key]
+        if (!onUpdate && list.length === 0) return null
+        return (
+          <div key={key} className={styles.chips} title={hint}>
+            <span className={styles.muted}>{label}</span>
+            {list.length === 0 && <span className={styles.empty}>None</span>}
+            {list.map((type) => (
+              <span key={type} className={styles.chip}>
+                {type.replace(':nonmagical', ' (non-magical)')}
+                {onUpdate && (
+                  <button
+                    type="button"
+                    className={styles.chipRemove}
+                    aria-label={`Remove ${type}`}
+                    onClick={() => onUpdate({ [key]: list.filter((t) => t !== type) })}
+                  >
+                    ×
+                  </button>
+                )}
+              </span>
+            ))}
+            {onUpdate && (
+              <select
+                className={styles.addSelect}
+                aria-label={add}
+                value=""
+                onChange={(event) => event.target.value && onUpdate({ [key]: [...list, event.target.value] })}
+              >
+                <option value="">{add}</option>
+                {DAMAGE_TYPES.filter((type) => !list.includes(type)).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

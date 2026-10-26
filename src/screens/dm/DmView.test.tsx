@@ -26,6 +26,12 @@ const noFight: FightControls = {
   attack: () => Promise.reject(new Error('No fight')),
   act: noop,
   undo: noop,
+  prompts: [],
+  strike: () => Promise.reject(new Error('No fight')),
+  letGo: noop,
+  deathSave: () => Promise.reject(new Error('No fight')),
+  cast: () => Promise.reject(new Error('No fight')),
+  concentrationSave: () => Promise.reject(new Error('No fight')),
 }
 const nobodyAsked: RequestControls = {
   request: null,
@@ -91,7 +97,7 @@ describe('the DM screen', () => {
     expect(html).toMatch(/Thorin Ironfist Sam 17\/20/)
     expect(html).toMatch(/AC 18 Notices 13\+/)
     expect(html).toMatch(/Elowen Alex 12\/14/)
-    expect(html).toContain('Spells left: 2 of 3')
+    expect(html).toContain('Spells left: 5 of 6')
     expect(html).toContain('Damage or heal')
   })
 

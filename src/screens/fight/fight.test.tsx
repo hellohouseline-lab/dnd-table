@@ -29,6 +29,12 @@ const controls: FightControls = {
   attack: () => Promise.reject(new Error('No fight')),
   act: noop,
   undo: noop,
+  prompts: [],
+  strike: () => Promise.reject(new Error('No fight')),
+  letGo: noop,
+  deathSave: () => Promise.reject(new Error('No fight')),
+  cast: () => Promise.reject(new Error('No fight')),
+  concentrationSave: () => Promise.reject(new Error('No fight')),
 }
 
 describe('the turn order', () => {
@@ -54,6 +60,7 @@ describe('the Encounter tab', () => {
   const html = text(
     renderToStaticMarkup(
       <EncounterTab
+        campaignId="preview"
         fight={fight}
         controls={controls}
         characters={sampleCharacters}
@@ -106,7 +113,9 @@ describe('the player in a fight', () => {
         />,
       ),
     )
-    expect(html).toMatch(/Your turn Action Ready Bonus action Ready Reaction Ready Movement 10 of 25 ft Dash Disengage Dodge End turn/)
+    expect(html).toMatch(
+      /Your turn Action Ready Bonus action Ready Reaction Ready Movement 10 of 25 ft Dash Disengage Dodge End turn/,
+    )
   })
 
   it('counts attacks left with Extra Attack, and Dash adds movement', () => {

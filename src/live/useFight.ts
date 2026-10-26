@@ -15,8 +15,15 @@ import {
   addMonsters,
   endFight,
   getActiveFight,
+  castSpell,
   listEvents,
+  listPrompts,
+  rollConcentrationSave,
+  opportunityAttack,
+  passReaction,
   resolveAttack,
+  rollDeathSave,
+  rowToPrompt,
   rowToEvent,
   spendAction,
   undoEvent,
@@ -38,6 +45,8 @@ import {
   type CombatantSecret,
   type CombatEvent,
   type FightState,
+  type ReactionPrompt,
+  type SpellCast,
   type TurnAction,
   type NewToken,
   type Token,
@@ -78,6 +87,29 @@ export type FightControls = {
   act: (combatant: Combatant, what: TurnAction) => void
   /** DM: takes back the newest thing that happened. */
   undo: () => void
+  /** Chances to strike someone moving away (players see only their side's). */
+  prompts: ReactionPrompt[]
+  /** Takes a chance: an opportunity attack with the reaction. Throws in plain words if refused. */
+  strike: (prompt: ReactionPrompt, request: RollRequest) => Promise<Roll>
+  /** Lets a chance go. */
+  letGo: (prompt: ReactionPrompt) => void
+  /** Rolls a death save for a character at 0 hit points. Throws in plain words if it's refused. */
+  deathSave: (combatant: Combatant) => Promise<Roll>
+  /**
+   * Casts a spell on the server against these targets (or everyone in its area), leaving a lasting
+   * area on the map if given. Resolves with the roll to show with the dice (none for Bless); throws
+   * in plain words if it's refused.
+   */
+  cast: (
+    caster: Combatant,
+    spell: SpellCast,
+    slot: number,
+    targetIds: string[],
+    roll: Parameters<typeof castSpell>[4],
+    area: Parameters<typeof castSpell>[5],
+  ) => Promise<Roll | null>
+  /** The Constitution save to keep concentrating after taking damage. Throws in plain words if refused. */
+  concentrationSave: (characterId: string) => Promise<Roll>
 }
 
 /** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
@@ -91,6 +123,7 @@ function withRow<T extends { id: string }>(list: T[], item: T): T[] {
 export function useFight(campaignId: string, userId: string): FightControls {
   const [fight, setFight] = useState<Fight | null>(null)
   const [events, setEvents] = useState<CombatEvent[]>([])
+  const [prompts, setPrompts] = useState<ReactionPrompt[]>([])
   const [status, setStatus] = useState<FightControls['status']>('loading')
   const [error, setError] = useState<string | null>(null)
   const current = useRef<Fight | null>(null)
@@ -110,10 +143,16 @@ export function useFight(campaignId: string, userId: string): FightControls {
         current.current = loaded
         setFight(loaded)
         setStatus('ready')
-        if (!loaded) setEvents([])
-        else {
+        if (!loaded) {
+          setEvents([])
+          setPrompts([])
+        } else {
           listEvents(loaded.encounter.id).then(
             (list) => load === loads.current && setEvents(list),
+            () => undefined,
+          )
+          listPrompts(loaded.encounter.id).then(
+            (list) => load === loads.current && setPrompts(list),
             () => undefined,
           )
         }
@@ -193,6 +232,18 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reloadSoon],
   )
   useTableChanges(campaignId, userId, 'combat_events', onEvent)
+
+  // Chances to strike arrive as someone moves away, and close when taken, let go or the turn ends.
+  const onPrompt = useCallback((change: RowChange<'reaction_prompts'>) => {
+    if (change.type === 'delete') {
+      setPrompts((list) => list.filter((p) => p.id !== change.id))
+      return
+    }
+    const prompt = rowToPrompt(change.row)
+    if (current.current?.encounter.id !== prompt.encounterId) return
+    setPrompts((list) => (prompt.status === 'open' ? withRow(list, prompt) : list.filter((p) => p.id !== prompt.id)))
+  }, [])
+  useTableChanges(campaignId, userId, 'reaction_prompts', onPrompt)
 
   const attempt = useCallback(async <T>(work: () => Promise<T>): Promise<T | null> => {
     setError(null)
@@ -344,6 +395,63 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [attempt, reload],
   )
 
+  const strike = useCallback(
+    async (prompt: ReactionPrompt, request: RollRequest) => {
+      setError(null)
+      const { roll, event } = await opportunityAttack(prompt.id, request)
+      setPrompts((list) => list.filter((p) => p.id !== prompt.id))
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
+  const letGo = useCallback(
+    (prompt: ReactionPrompt) => {
+      setPrompts((list) => list.filter((p) => p.id !== prompt.id))
+      void attempt(() => passReaction(prompt.id)).then((done) => {
+        if (done === null) reload()
+      })
+    },
+    [attempt, reload],
+  )
+
+  const deathSave = useCallback(
+    async (combatant: Combatant) => {
+      setError(null)
+      const { roll, event } = await rollDeathSave(combatant.id)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
+  const cast = useCallback(
+    async (
+      caster: Combatant,
+      spell: SpellCast,
+      slot: number,
+      targetIds: string[],
+      roll: Parameters<typeof castSpell>[4],
+      area: Parameters<typeof castSpell>[5],
+    ) => {
+      setError(null)
+      const result = await castSpell(caster.id, spell, slot, targetIds, roll, area)
+      setEvents((list) => result.events.reduce(withRow, list).sort((a, b) => a.seq - b.seq))
+      reload()
+      return result.roll
+    },
+    [reload],
+  )
+
+  const concentrationSave = useCallback(async (characterId: string) => {
+    setError(null)
+    const { roll } = await rollConcentrationSave(characterId)
+    return roll
+  }, [])
+
   const undo = useCallback(() => {
     const newest = [...events].reverse().find((e) => !e.undone)
     if (!newest) return
@@ -358,6 +466,12 @@ export function useFight(campaignId: string, userId: string): FightControls {
     attack,
     act,
     undo,
+    prompts,
+    strike,
+    letGo,
+    deathSave,
+    cast,
+    concentrationSave,
     start,
     addMonsters: addMonstersTo,
     rollInitiative: rollFor,
