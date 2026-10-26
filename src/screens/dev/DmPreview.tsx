@@ -12,6 +12,7 @@ import type { Character } from '../../rules/character.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import { DmView } from '../dm/DmView.tsx'
 import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
+import { usePreviewEvents, usePreviewNotebook } from './previewNotebook.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import styles from './DmPreview.module.css'
 
@@ -135,6 +136,8 @@ export function DmPreview({ tab }: { tab: string }) {
     const request = previewRequest(sampleCharacters.map((c) => c.id))
     return { request, answers: [previewAnswer(sampleCharacters[0], request, 15)] }
   })
+  const notebook = usePreviewNotebook()
+  const events = usePreviewEvents()
   const asking = usePreviewAsking(characters, {
     start: start.request,
     startAnswers: start.answers,
@@ -169,6 +172,9 @@ export function DmPreview({ tab }: { tab: string }) {
         onDiceStyleChange={setDiceStyle}
         thrower={thrower}
         asking={asking}
+        notebook={notebook}
+        events={events}
+        sceneName="Arrive at the tavern"
         startTab={tab === 'log' ? 'log' : 'party'}
       />
     </AuthContext.Provider>

@@ -35,6 +35,12 @@
 .headerNote {
   font-size: 16px;
   color: var(--text-3);
+  white-space: nowrap;
+}
+
+.scene {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .spacer {
@@ -54,9 +60,15 @@
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--label);
-  opacity: 0.6;
-  cursor: not-allowed;
+  color: var(--gold-light);
+  border-color: var(--gold-rule);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.stage:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
 }
 
 .left {
@@ -64,21 +76,15 @@
   top: 82px;
   left: 16px;
   width: 330px;
-  bottom: 130px;
+  bottom: 118px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .notebook {
-  flex: 0 0 auto;
-}
-
-.ink {
-  margin: 0 0 10px;
-  font-size: 17px;
-  line-height: 1.4;
-  color: var(--ink-2);
+  flex: 1;
+  min-height: 0;
 }
 
 .dice {

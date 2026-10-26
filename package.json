@@ -24,11 +24,13 @@
     "@fontsource/cinzel-decorative": "^5.3.0",
     "@fontsource/eb-garamond": "^5.3.0",
     "@supabase/supabase-js": "^2.118.0",
+    "howler": "2.2.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
+    "@types/howler": "2.2.12",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

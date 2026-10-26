@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
 import type { Roll } from '../../live/rolls.ts'
+import { sampleNotebook } from '../dev/previewNotebook.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from '../dev/sampleData.ts'
 import { DmView } from './DmView.tsx'
 
@@ -55,6 +56,9 @@ function render(startTab: 'party' | 'log') {
         diceStyle={DEFAULT_DICE_STYLE}
         onDiceStyleChange={noop}
         asking={nobodyAsked}
+        notebook={{ notebook: sampleNotebook(), status: 'ready', change: noop, saving: false, error: null }}
+        events={{ events: [], add: noop, error: null }}
+        sceneName="Arrive at the tavern"
         startTab={startTab}
       />,
     ),
@@ -74,7 +78,15 @@ describe('the DM screen', () => {
   it('shows the roll log, secret rolls included, on the Log tab', () => {
     const html = render('log')
     expect(html).toMatch(/Matt \(DM\) 1d20 Secret/)
-    expect(html).toContain('Rolls tonight and before')
+    expect(html).toContain('Rolls and notes, tonight and before')
+  })
+
+  it('shows the notebook and the scene now', () => {
+    const html = render('party')
+    expect(html).toMatch(/Scene now: Arrive at the tavern/)
+    expect(html).toMatch(/Where we are Edit The party has just reached the tavern/)
+    expect(html).toMatch(/Silver key/)
+    expect(html).toContain('Quick note')
   })
 
   it('gives the DM their own dice, with rolling behind the screen', () => {

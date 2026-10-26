@@ -15,6 +15,34 @@
   background: #19141f;
 }
 
+.stageImage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Darkens the edges so the plate, cards and cameras stay readable over any picture. */
+.stageImage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(13, 10, 18, 0.55) 0, rgba(13, 10, 18, 0) 30%),
+    linear-gradient(270deg, rgba(13, 10, 18, 0.55) 0, rgba(13, 10, 18, 0) 25%),
+    linear-gradient(0deg, rgba(13, 10, 18, 0.6) 0, rgba(13, 10, 18, 0) 30%);
+  pointer-events: none;
+}
+
+.topChips {
+  position: absolute;
+  top: 16px;
+  left: 352px;
+  right: 280px;
+  z-index: 6;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .scene {
   position: absolute;
   inset: 0;
@@ -459,7 +487,7 @@
 
 .toasts {
   position: absolute;
-  top: 64px;
+  top: 72px;
   left: 352px;
   right: 280px;
   z-index: 30;

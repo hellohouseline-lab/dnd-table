@@ -43,6 +43,14 @@ export function CreditsScreen() {
         </p>
       </Panel>
 
+      <Panel title="Sound">
+        <p>
+          Music, ambience and sound effects play through <a href="https://howlerjs.com">Howler.js</a> by James Simpson
+          and GoldFire Studios, free under the MIT License. The sounds themselves are the DM&rsquo;s own, licensed for
+          streaming.
+        </p>
+      </Panel>
+
       <Panel title="Fonts">
         <ul className={styles.list}>
           <li>

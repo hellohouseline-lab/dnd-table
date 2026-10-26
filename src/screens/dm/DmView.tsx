@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import { Notice } from '../../components/Notice.tsx'
-import { Parchment } from '../../components/Parchment.tsx'
+import { NowPlaying } from '../../audio/SoundControls.tsx'
+import type { TableAudio } from '../../audio/useTableAudio.ts'
 import { localRoll, PRACTICE_SET } from '../../dice/localRoll.ts'
 import { RollLog } from '../../dice/RollLog.tsx'
 import { RollToasts } from '../../dice/RollToasts.tsx'
@@ -12,12 +13,17 @@ import { useDiceTray } from '../../dice/useDiceTray.ts'
 import { useTableRolls } from '../../dice/useTableRolls.ts'
 import type { Campaign, Member } from '../../live/campaigns.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
+import type { NotebookControls } from '../../live/useNotebook.ts'
+import type { LogControls } from '../../live/useStage.ts'
 import type { Roll } from '../../live/rolls.ts'
 import type { RollLogState } from '../../live/useRollLog.ts'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { Character } from '../../rules/character.ts'
 import { isSingleD20, type DiceGroup, type RollMode, type RollRequest } from '../../rules/dice.ts'
-import { takeDamage } from '../../rules/maths/hitPoints.ts'
+import { gainTempHp, heal, takeDamage } from '../../rules/maths/hitPoints.ts'
+import type { RestPatch } from '../../rules/rest.ts'
+import { namesText } from '../../rules/askable.ts'
+import { findCondition } from '../../rules/srd/index.ts'
 import {
   abilityCheck,
   answerRoll,
@@ -34,7 +40,10 @@ import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { CameraColumn } from '../table/TableView.tsx'
 import { DiceControls } from '../table/DiceControls.tsx'
-import { PartyCards } from './PartyCards.tsx'
+import { NotebookPanel } from './NotebookPanel.tsx'
+import { PartyCards, type HitPointChange } from './PartyCards.tsx'
+import { RestDialog } from './RestDialog.tsx'
+import { useSessionClock } from './useSessionClock.ts'
 import styles from './DmView.module.css'
 
 type DmTab = 'party' | 'log'
@@ -47,14 +56,18 @@ const TABS: { label: string; tab?: DmTab; title?: string }[] = [
   { label: 'Log', tab: 'log' },
 ]
 
-const VERBS: { label: string; icon: IconName; title: string; ask?: boolean }[] = [
-  { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', ask: true },
+type Verb = 'ask' | 'rest' | 'note'
+
+const VERBS: { label: string; icon: IconName; title: string; verb?: Verb }[] = [
+  { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', verb: 'ask' },
   { label: 'Start combat', icon: 'sword', title: 'Arrives in milestone 6' },
   { label: 'Show an NPC', icon: 'journal', title: 'Arrives in Phase 2' },
   { label: 'Give an item', icon: 'items', title: 'Arrives in Phase 2' },
-  { label: 'Rest', icon: 'star', title: 'Arrives in milestone 5' },
-  { label: 'Add a note', icon: 'log', title: 'Arrives in milestone 5' },
+  { label: 'Rest', icon: 'moon', title: 'A short or long rest for the party', verb: 'rest' },
+  { label: 'Add a note', icon: 'log', title: 'Write a quick note into the log', verb: 'note' },
 ]
+
+const HP_WORDS: Record<HitPointChange, string> = { damage: 'took', heal: 'healed', temp: 'gained' }
 
 type DmViewProps = {
   campaign: Campaign
@@ -71,13 +84,20 @@ type DmViewProps = {
   thrower?: (request: RollRequest) => Promise<Roll>
   /** The open request for a roll, its answers and what the DM can do about it. */
   asking: RequestControls
+  notebook: NotebookControls
+  /** The log's notes, damage and rests. */
+  events: LogControls
+  /** The one-line "Scene now" from the stage. */
+  sceneName: string
+  /** The table's sound in this tab (left out in the previews). */
+  audio?: TableAudio
   startTab?: DmTab
 }
 
 /**
- * Screen 07, the DM's Command screen: the party at a glance, asking for rolls (screens 08 and 09),
- * the roll log and the DM's own dice, with everyone's throws landing in the middle. The notebook,
- * stage and combat arrive in later milestones.
+ * Screen 07, the DM's Command screen: the notebook, the party at a glance with damage and healing,
+ * asking for rolls (screens 08 and 09), rests, notes, the log and the DM's own dice, with everyone's
+ * throws landing in the middle. Combat arrives in milestone 6.
  */
 export function DmView({
   campaign,
@@ -92,8 +112,15 @@ export function DmView({
   onDiceStyleChange,
   thrower,
   asking,
+  notebook,
+  events,
+  sceneName,
+  audio,
   startTab = 'party',
 }: DmViewProps) {
+  const [resting, setResting] = useState(false)
+  const noteInput = useRef<HTMLInputElement>(null)
+  const sessionTime = useSessionClock(campaign.id)
   // The Ask for a roll card, optionally for one character; and a request the DM has tucked away.
   const [askFor, setAskFor] = useState<{ only: string | null } | null>(null)
   const [hiddenFor, setHiddenFor] = useState<string | null>(null)
@@ -107,7 +134,7 @@ export function DmView({
   const open = characters.find((c) => c.id === sheetFor)
   const choices = { mode, secret }
   const { request } = asking
-  const showResults = request && hiddenFor !== request.id && !askFor
+  const showResults = request && hiddenFor !== request.id && !askFor && !resting
   const hereTonight = characters.filter((c) =>
     members.some((m) => m.user_id === c.ownerId && m.role === 'player' && m.here_tonight),
   )
@@ -124,17 +151,51 @@ export function DmView({
     return thrown ? (thrown.damage?.total ?? thrown.total) : null
   }
 
+  function hitPoints(character: Character, change: HitPointChange, amount: number) {
+    const before = { current: character.currentHp, max: character.maxHp, temp: character.tempHp }
+    const after =
+      change === 'damage'
+        ? takeDamage(before, amount)
+        : change === 'heal'
+          ? heal(before, amount)
+          : gainTempHp(before, amount)
+    onUpdate(character.id, { currentHp: after.current, tempHp: after.temp })
+    const what =
+      change === 'temp'
+        ? `${amount} temporary hit points`
+        : `${amount} ${change === 'damage' ? 'damage' : 'hit points'}`
+    events.add(
+      change === 'damage' ? 'damage' : 'heal',
+      `${character.name} ${HP_WORDS[change]} ${what} (${before.current} → ${after.current}${after.temp ? ` +${after.temp} temp` : ''}).`,
+    )
+  }
+
   function damage(ids: string[], amount: number) {
-    for (const character of characters.filter((c) => ids.includes(c.id))) {
-      const hp = takeDamage({ current: character.currentHp, max: character.maxHp, temp: character.tempHp }, amount)
-      onUpdate(character.id, { currentHp: hp.current, tempHp: hp.temp })
-    }
+    characters.filter((c) => ids.includes(c.id)).forEach((character) => hitPoints(character, 'damage', amount))
   }
 
   function addCondition(ids: string[], condition: string) {
-    for (const character of characters.filter((c) => ids.includes(c.id) && !c.conditions.includes(condition))) {
+    const affected = characters.filter((c) => ids.includes(c.id) && !c.conditions.includes(condition))
+    for (const character of affected) {
       onUpdate(character.id, { conditions: [...character.conditions, condition] })
     }
+    if (affected.length > 0) {
+      const name = (findCondition(condition)?.name ?? condition).toLowerCase()
+      events.add(
+        'condition',
+        `${namesText(affected.map((c) => c.name))} ${affected.length === 1 ? 'is' : 'are'} now ${name}.`,
+      )
+    }
+  }
+
+  function rest(character: Character, patch: RestPatch) {
+    onUpdate(character.id, patch)
+  }
+
+  function runVerb(verb: Verb) {
+    if (verb === 'ask') setAskFor({ only: null })
+    if (verb === 'rest') setResting(true)
+    if (verb === 'note') noteInput.current?.focus()
   }
 
   function roll(request: RollRequest) {
@@ -156,28 +217,30 @@ export function DmView({
     <main className={styles.screen}>
       <header className={styles.header}>
         <h1 className={styles.campaign}>{campaign.name}</h1>
-        <span className={styles.headerNote}>DM screen</span>
-        <span className={styles.spacer} />
-        <a className={styles.headerLink} href={href(`/c/${campaign.id}`)}>
-          Join screen and invites
-        </a>
-        <span className={styles.stage} title="The stage screen arrives in milestone 5">
-          Screen 2: Stage
+        <span className={styles.headerNote}>
+          Scene now: <strong className={styles.scene}>{sceneName || 'not named yet'}</strong>
         </span>
+        <span className={styles.spacer} />
+        {audio && <NowPlaying audio={audio} />}
+        <a className={styles.headerLink} href={href(`/c/${campaign.id}`)}>
+          Join screen
+        </a>
+        <span className={styles.headerNote}>Session time {sessionTime}</span>
+        <a className={styles.stage} href={href(`/c/${campaign.id}/stage`)}>
+          Screen 2: Stage
+        </a>
       </header>
 
       <aside className={styles.left}>
-        <Parchment title="Your notebook" className={styles.notebook}>
-          <p className={styles.ink}>
-            Where we are, what happens next, key items to collect and quick notes arrive here in milestone 5.
-          </p>
-          <p className={styles.ink}>
-            For now: watch everyone&rsquo;s rolls land in the middle, check the Log tab, and roll your own dice below,
-            in secret if you like.
-          </p>
-        </Parchment>
+        <NotebookPanel
+          className={styles.notebook}
+          notebook={notebook}
+          onNote={(text) => events.add('note', text)}
+          noteInput={noteInput}
+        />
         {saveError && <Notice tone="error">{saveError}</Notice>}
         {table.error && <Notice tone="error">{table.error}</Notice>}
+        {events.error && <Notice tone="error">{events.error}</Notice>}
       </aside>
 
       <DiceControls
@@ -225,6 +288,7 @@ export function DmView({
               members={members}
               characters={characters}
               onAsk={(character) => setAskFor({ only: character.id })}
+              onHitPoints={hitPoints}
               onOpenSheet={(character) => {
                 setSheetTab('sheet')
                 setSheetFor(character.id)
@@ -233,6 +297,7 @@ export function DmView({
           ) : (
             <RollLog
               rolls={log.rolls}
+              events={events.events}
               members={members}
               characters={characters}
               loading={log.status === 'loading'}
@@ -246,9 +311,9 @@ export function DmView({
               key={verb.label}
               type="button"
               className={styles.verb}
-              disabled={!verb.ask}
+              disabled={!verb.verb}
               title={verb.title}
-              onClick={() => verb.ask && setAskFor({ only: null })}
+              onClick={() => verb.verb && runVerb(verb.verb)}
             >
               <Icon name={verb.icon} />
               {verb.label}
@@ -280,9 +345,17 @@ export function DmView({
         />
       </section>
 
-      {(askFor || showResults) && (
+      {(askFor || showResults || resting) && (
         <div className={styles.overlay}>
-          {askFor ? (
+          {resting ? (
+            <RestDialog
+              characters={characters}
+              hereTonight={hereTonight}
+              onRest={rest}
+              onLog={(text) => events.add('rest', text, true)}
+              onClose={() => setResting(false)}
+            />
+          ) : askFor ? (
             <AskRollDialog
               characters={characters}
               hereTonight={hereTonight}

@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { cx } from '../../components/cx.ts'
 import { HpBar } from '../../components/HpBar.tsx'
 import { Portrait } from '../../components/Portrait.tsx'
 import type { Member } from '../../live/campaigns.ts'
@@ -11,10 +13,16 @@ type PartyCardsProps = {
   characters: Character[]
   onOpenSheet: (character: Character) => void
   onAsk: (character: Character) => void
+  onHitPoints: (character: Character, change: HitPointChange, amount: number) => void
 }
 
+export type HitPointChange = 'damage' | 'heal' | 'temp'
+
 /** The Party tab from design 07: a card per character with what the DM glances at most. */
-export function PartyCards({ members, characters, onOpenSheet, onAsk }: PartyCardsProps) {
+export function PartyCards({ members, characters, onOpenSheet, onAsk, onHitPoints }: PartyCardsProps) {
+  const [hpFor, setHpFor] = useState<string | null>(null)
+  const [amount, setAmount] = useState('')
+  const value = Math.max(0, Math.trunc(Number(amount)) || 0)
   const players = members.filter((member) => member.role === 'player')
   const cards = players.flatMap((member) => {
     const character = characters.find((c) => c.ownerId === member.user_id)
@@ -67,8 +75,68 @@ export function PartyCards({ members, characters, onOpenSheet, onAsk }: PartyCar
               ))}
               {character.exhaustion > 0 && <span className={styles.condition}>Exhaustion {character.exhaustion}</span>}
             </div>
+            {hpFor === character.id && (
+              <form
+                className={styles.hpRow}
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  if (value > 0) onHitPoints(character, 'damage', value)
+                  setAmount('')
+                }}
+              >
+                <input
+                  className={styles.hpInput}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={999}
+                  aria-label={`Hit points for ${character.name}`}
+                  placeholder="0"
+                  autoFocus
+                  value={amount}
+                  onChange={(event) => setAmount(event.target.value)}
+                />
+                <button type="submit" className={cx(styles.action, styles.damage)} disabled={!value}>
+                  Damage
+                </button>
+                <button
+                  type="button"
+                  className={cx(styles.action, styles.heal)}
+                  disabled={!value}
+                  onClick={() => {
+                    onHitPoints(character, 'heal', value)
+                    setAmount('')
+                  }}
+                >
+                  Heal
+                </button>
+                <button
+                  type="button"
+                  className={styles.action}
+                  disabled={!value}
+                  title="Temporary hit points don't stack: they keep the higher amount"
+                  onClick={() => {
+                    onHitPoints(character, 'temp', value)
+                    setAmount('')
+                  }}
+                >
+                  Temp
+                </button>
+                <button type="button" className={styles.linkish} onClick={() => onOpenSheet(character)}>
+                  Sheet
+                </button>
+              </form>
+            )}
             <div className={styles.actions}>
-              <button type="button" className={styles.action} onClick={() => onOpenSheet(character)}>
+              <button
+                type="button"
+                className={cx(styles.action, hpFor === character.id && styles.actionOn)}
+                aria-expanded={hpFor === character.id}
+                onClick={() => {
+                  setAmount('')
+                  setHpFor(hpFor === character.id ? null : character.id)
+                }}
+              >
                 Damage or heal
               </button>
               <button type="button" className={styles.action} onClick={() => onAsk(character)}>
