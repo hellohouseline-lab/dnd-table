@@ -35,6 +35,8 @@ export type CardDetails = {
   footer: [string, string]
   /** What it takes from your turn. */
   cost: FeatureCost
+  /** A concentration spell: marked on the banner. */
+  concentration?: boolean
 }
 
 /** Most bullet points a card shows; the rest is on your sheet. */
@@ -141,12 +143,19 @@ export function spellDetails(character: Character, spell: SrdSpell): CardDetails
   const bullets = [...(summary ? [summary.charAt(0).toUpperCase() + summary.slice(1)] : []), ...toBullets(spell.desc)]
   const extra = [
     ...(material ? [`Needs ${material}`] : []),
-    ...(spell.concentration ? ['Concentration: ends if you cast another, or fail a save when hurt'] : []),
+    ...(spell.concentration
+      ? [
+          character.concentration && character.concentration !== spell.name
+            ? `Casting this ends your concentration on ${character.concentration}`
+            : 'Concentration: one spell at a time. Each time you take damage, a Constitution save (DC 10 or half the damage) keeps it; being knocked out or stunned ends it',
+        ]
+      : []),
     ...(spell.higherLevel ? [`Higher levels: ${spell.higherLevel.replace(/^At Higher Levels\.?\s*/i, '')}`] : []),
   ]
   // The extras matter most for play, so they keep their place when the description is long.
   const room = Math.max(1, MOST_BULLETS - extra.length)
-  const body = bullets.length > room ? [...bullets.slice(0, room - 1), 'More on your character sheet.'] : bullets
+  const cut = bullets.length > room
+  const body = cut ? bullets.slice(0, room - 1) : bullets
   return {
     kind: 'spell',
     title: spell.name,
@@ -155,14 +164,18 @@ export function spellDetails(character: Character, spell: SrdSpell): CardDetails
       { label: 'Casting time', value: spell.castingTime },
       { label: 'Range', value: shortRange(spell.range) },
       { label: 'Components', value: components },
-      { label: 'Duration', value: spell.concentration ? spell.duration.replace(/^up to/i, 'Up to') : spell.duration },
+      {
+        label: 'Duration',
+        value: spell.concentration ? `Concentration, ${spell.duration.replace(/^up to/i, 'up to')}` : spell.duration,
+      },
     ],
-    bullets: [...body, ...extra],
+    bullets: [...body, ...extra, ...(cut ? ['More on your character sheet.'] : [])],
     footer: [
       `${spell.school}${spell.ritual ? ' · ritual' : ''}`,
       spell.level === 0 ? 'Cantrip' : `${levelWords(spell.level)} level`,
     ],
     cost: cost === 'longer' ? 'free' : cost,
+    concentration: spell.concentration,
   }
 }
 

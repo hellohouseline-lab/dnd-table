@@ -388,3 +388,20 @@
   font-size: 14px;
   color: var(--text-3);
 }
+
+/* Concentrating, in the turn order. */
+.pillConc {
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #b8893f;
+  color: #1a120a;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9px;
+  vertical-align: 2px;
+}

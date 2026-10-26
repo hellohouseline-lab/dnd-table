@@ -1153,6 +1153,16 @@ export function CameraColumn({
                 {chips[member.user_id].label}
               </span>
             )}
+            {character?.concentration && member.role === 'player' && (
+              <span
+                className={cx(styles.concTag, character.concentrationDc !== null && styles.concOwed)}
+                title="Concentrating on a spell"
+              >
+                <span className={styles.concSeal}>C</span>
+                {character.concentration}
+                {character.concentrationDc !== null && ` · save DC ${character.concentrationDc}`}
+              </span>
+            )}
             <div className={styles.namePlate}>
               <div className={styles.plateText}>
                 <div className={styles.plateName}>

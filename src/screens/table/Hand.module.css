@@ -178,3 +178,30 @@
   background: none;
   border: 1px solid var(--chip-border);
 }
+
+/* A concentration spell's seal, top right of its card. */
+.concSeal {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #b8893f;
+  color: #1a120a;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  box-shadow: 0 0 0 1px #f0d58f;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
