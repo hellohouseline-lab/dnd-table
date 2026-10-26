@@ -9,6 +9,7 @@ import type { Character } from '../../rules/character.ts'
 import { parseDice, type DiceGroup } from '../../rules/dice.ts'
 import { halfDamage } from '../../rules/maths/hitPoints.ts'
 import { CONDITIONS } from '../../rules/srd/index.ts'
+import { passes } from '../../rules/askable.ts'
 import { allAnswered, closestMiss, CONDITION_VERBS, suggestedCondition } from './requestStatus.ts'
 import styles from './RequestResults.module.css'
 
@@ -18,7 +19,10 @@ type RequestResultsProps = {
   /** The DC (the DM always knows it). */
   dc: number | null
   characters: Character[]
+  /** Rules an answer a pass or a fail (players see nothing until the DM does). */
   onOverride: (roll: Roll, passed: boolean) => void
+  /** Goes with the dice for everyone not yet ruled on. */
+  onAccept: () => void
   /** Rolls for a character whose player hasn't, say because they stepped away. */
   onRollFor: (character: Character) => void
   onDamage: (characterIds: string[], amount: number) => void
@@ -39,6 +43,7 @@ export function RequestResults({
   dc,
   characters,
   onOverride,
+  onAccept,
   onRollFor,
   onDamage,
   onCondition,
@@ -58,6 +63,9 @@ export function RequestResults({
   const passed = asked.filter((c) => answerFor(c.id)?.passed === true)
   const failed = asked.filter((c) => answerFor(c.id)?.passed === false)
   const waiting = asked.filter((c) => !answerFor(c.id))
+  const toRule = asked.filter((c) => answerFor(c.id)?.passed === null)
+  // What the dice say, from the total against the DC: the DM's suggestion, never final.
+  const diceSay = (roll: Roll) => (dc === null ? null : passes(roll.total, dc))
   const everyone = allAnswered(request, answers)
   const miss = closestMiss(answers, dc)
   const missName = miss && characters.find((c) => c.id === miss.roll.characterId)?.name
@@ -87,7 +95,9 @@ export function RequestResults({
     <section className={cx(styles.panel, className)} aria-labelledby="results-title">
       <div className={styles.top}>
         <div>
-          <div className={styles.eyebrow}>{everyone ? 'The dice have spoken' : 'Waiting for the dice'}</div>
+          <div className={styles.eyebrow}>
+            {!everyone ? 'Waiting for the dice' : toRule.length > 0 ? 'Your ruling' : 'Ruled'}
+          </div>
           <h2 id="results-title" className={styles.title}>
             {request.label}
           </h2>
@@ -108,10 +118,20 @@ export function RequestResults({
         <div className={cx(styles.count, styles.countFail)}>
           <span className={styles.countNumber}>{failed.length}</span> failed
         </div>
+        {toRule.length > 0 && (
+          <div className={styles.count}>
+            <span className={styles.countNumber}>{toRule.length}</span> to rule on
+          </div>
+        )}
         {waiting.length > 0 && (
           <div className={styles.count}>
             <span className={styles.countNumber}>{waiting.length}</span> to roll
           </div>
+        )}
+        {toRule.length > 0 && (
+          <button type="button" className={styles.accept} onClick={onAccept}>
+            Go with the dice{toRule.length > 1 ? ' for everyone' : ''}
+          </button>
         )}
       </div>
 
@@ -127,13 +147,47 @@ export function RequestResults({
                     rolled {sumText(answer)} = <strong className={styles.total}>{answer.total}</strong>
                     {answer.mode !== 'normal' && <span className={styles.mode}> ({answer.mode})</span>}
                   </span>
-                  <span className={cx(styles.verdict, answer.passed ? styles.verdictPass : styles.verdictFail)}>
-                    {answer.passed ? 'Passed' : 'Failed'}
-                    {answer.passed !== answer.passedByDice && ' by you'}
-                  </span>
-                  <button type="button" className={styles.flip} onClick={() => onOverride(answer, !answer.passed)}>
-                    {answer.passed ? 'Make it a fail' : 'Make it a pass'}
-                  </button>
+                  {answer.passed === null ? (
+                    <>
+                      <span className={styles.diceSay}>
+                        dice say <strong>{diceSay(answer) === null ? '?' : diceSay(answer) ? 'pass' : 'fail'}</strong>
+                      </span>
+                      <span className={styles.rule} role="group" aria-label={`Rule on ${character.name}'s roll`}>
+                        <button
+                          type="button"
+                          className={cx(
+                            styles.ruleButton,
+                            styles.rulePass,
+                            diceSay(answer) === true && styles.ruleSuggested,
+                          )}
+                          onClick={() => onOverride(answer, true)}
+                        >
+                          Pass
+                        </button>
+                        <button
+                          type="button"
+                          className={cx(
+                            styles.ruleButton,
+                            styles.ruleFail,
+                            diceSay(answer) === false && styles.ruleSuggested,
+                          )}
+                          onClick={() => onOverride(answer, false)}
+                        >
+                          Fail
+                        </button>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className={cx(styles.verdict, answer.passed ? styles.verdictPass : styles.verdictFail)}>
+                        {answer.passed ? 'Passed' : 'Failed'}
+                        {answer.passedByDice !== null && answer.passed !== answer.passedByDice && ' by you'}
+                      </span>
+                      <button type="button" className={styles.flip} onClick={() => onOverride(answer, !answer.passed)}>
+                        {answer.passed ? 'Make it a fail' : 'Make it a pass'}
+                      </button>
+                    </>
+                  )}
                 </>
               ) : (
                 <>
@@ -149,7 +203,7 @@ export function RequestResults({
       </ul>
       <p className={styles.hint}>
         {miss && missName && `${missName} missed by ${miss.by}. `}
-        You can always change a result, for example to reward good roleplay.
+        Players see their result only once you rule on it. Go with the dice, or decide for the story.
       </p>
 
       <div className={styles.now}>

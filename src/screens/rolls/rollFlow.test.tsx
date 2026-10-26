@@ -252,6 +252,7 @@ describe('the roll flow screens', () => {
           dc={15}
           characters={sampleCharacters}
           onOverride={noop}
+          onAccept={noop}
           onRollFor={noop}
           onDamage={noop}
           onCondition={noop}

@@ -8,6 +8,16 @@ A first-time player opens **Make a character** and is walked through it one step
 
 The full form stays for editing a character later, and for characters brought from somewhere else.
 
+## Quick starts (added 27 October at Matt's request)
+
+The builder opens with three ways in, so a brand new player can be ready in a minute:
+
+- **Ready-made characters:** twelve level 1 characters, one for each class, built from the free rules with sensible picks (a Hill Dwarf Fighter in chain mail with a longsword and shield; a High Elf Wizard with Magic Missile and Shield; a Halfling Rogue with a shortbow and thieves' tools). Each card says in a line how it plays ("Stands at the front and hits hard"). Pick one, give it a name, and it's done: scores, hit points, AC, gear, spells and the hand of cards all filled in. Everything can still be changed in the steps.
+- **Surprise me:** a random but sensible level 1 character: a random race and class, the standard array placed for the class, the class's first gear option, its usual spells, and a random background idea, name suggestions and personality from the lists. Roll again until one appeals.
+- **Build my own:** the steps below.
+
+The DM can use the same quick starts to make a ready-made character and give it to a player (C2e).
+
 ## The steps
 
 On the left, the steps with ticks as each is done. In the middle, the choices as big cards. On the right, the character as it takes shape: scores, hit points, AC, skills and the hand of cards, updating as you choose. Every choice has a short line in plain words ("Dwarves are tough and hard to poison"); hold the mouse on a card for 2 seconds for the full rules, as in the hand.
@@ -98,7 +108,7 @@ Nine races, twelve classes with one subclass each, one background (Acolyte), and
 | 29 to 31 Oct | **C2b.** Steps 1 to 4 (race, class, background, scores) and the live summary | Build the start of a character |
 | 1 to 3 Nov | **C2c.** Gear, wallet and inventory; AC from armour; potions and usable items in a fight | Pick a kit and see the AC and hand change; drink a potion |
 | 4 to 6 Nov | **C2d.** Level up (DM grants, the player's walk-through, every choice), spells, who they are, review and save | Make a level 3 wizard; level a fighter to 4 |
-| 7 to 9 Nov | **C2e.** Your path (looking ahead, a druid's beasts), ready-made characters, the DM's starting level and gold | Plan a druid's Wild Shapes; give a character to a player |
+| 7 to 9 Nov | **C2e.** Quick starts (twelve ready-made characters and Surprise me), Your path (looking ahead, a druid's beasts), giving characters to players, the DM's starting level and gold | Make a character in one click; plan a druid's Wild Shapes; give a character to a player |
 
 That leaves twelve days before the one-shot for I1, S1 and fixes, as in `TABLE_TOOLS_PLAN.md`.
 
@@ -112,3 +122,4 @@ That leaves twelve days before the one-shot for I1, S1 and fixes, as in `TABLE_T
 34. **The one-shot's level:** the builder handles levels 1 to 5 (one subclass, one ability score increase). *Recommended.* Or level 1 only for now.
 35. **A mock-up first?** There's no screen design for the builder. I can build step 1 in the table's look for you to react to before the rest. *Recommended.* Or build it all and adjust after.
 36. **Potions in a fight** take an action to drink or to give, as the 2014 rules say. *Decided by Matt on 27 October.*
+37. **Quick starts:** twelve ready-made level 1 characters and a Surprise me generator at the start of the builder, built in C2e once every step exists. *Asked for by Matt on 27 October.*

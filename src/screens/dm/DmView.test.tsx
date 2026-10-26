@@ -43,6 +43,7 @@ const nobodyAsked: RequestControls = {
   error: null,
   ask: async () => true,
   override: noop,
+  accept: noop,
   close: noop,
   putAnswer: noop,
 }

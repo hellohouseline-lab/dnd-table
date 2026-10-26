@@ -332,3 +332,67 @@
   color: var(--text);
   font-size: 17px;
 }
+
+/* The DM's ruling: what the dice say, then Pass or Fail (the dice's choice outlined). */
+.accept {
+  margin-left: auto;
+  align-self: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 4px;
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.diceSay {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.diceSay strong {
+  font-style: normal;
+  color: var(--text);
+}
+
+.rule {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.ruleButton {
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rulePass {
+  color: var(--pass);
+}
+
+.ruleFail {
+  color: var(--fail-light);
+}
+
+.rulePass.ruleSuggested {
+  border-color: var(--pass);
+  background: rgba(134, 212, 232, 0.14);
+}
+
+.ruleFail.ruleSuggested {
+  border-color: var(--fail);
+  background: rgba(224, 123, 66, 0.14);
+}

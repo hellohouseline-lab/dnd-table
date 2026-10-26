@@ -86,9 +86,11 @@ type RollResultProps = {
 export function RollResult({ roll, shownDc, onClose, className }: RollResultProps) {
   const moment = naturalMoment(roll)
   const passed = roll.passed === true
-  const tone = moment === 'nat20' ? 'gold' : passed ? 'pass' : 'fail'
+  // A requested roll waits for the DM's ruling before it passes or fails.
+  const waiting = roll.passed === null && roll.requestId !== null
+  const tone = moment === 'nat20' ? 'gold' : waiting ? 'wait' : passed ? 'pass' : 'fail'
   const kept = roll.dice.find((die) => !die.dropped)?.value ?? roll.total
-  const title = naturalTitle(roll) ?? (passed ? 'Passed' : 'Failed')
+  const title = naturalTitle(roll) ?? (waiting ? 'Waiting for the DM' : passed ? 'Passed' : 'Failed')
 
   return (
     <div className={cx(styles.resultWrap, className)}>
@@ -119,12 +121,14 @@ export function RollResult({ roll, shownDc, onClose, className }: RollResultProp
           {shownDc && <span className={styles.vs}> vs DC {shownDc}</span>}
         </div>
         <div className={styles.label}>{title}</div>
-        {moment && (
+        {moment && !waiting && (
           <div className={cx(styles.verdict, passed ? styles.verdictPass : styles.verdictFail)}>
             {passed ? 'Passed' : 'Failed'}
           </div>
         )}
-        <p className={styles.sub}>{resultSentence(roll)}</p>
+        <p className={styles.sub}>
+          {waiting ? `You rolled ${roll.total}. The DM is deciding whether it passes.` : resultSentence(roll)}
+        </p>
         <p className={styles.small}>Everyone at the table sees your result. The DM decides what happens next.</p>
         <button type="button" className={styles.back} onClick={onClose}>
           Back to the table

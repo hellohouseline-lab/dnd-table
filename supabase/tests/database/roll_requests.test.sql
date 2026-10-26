@@ -4,7 +4,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(31);
+select plan(32);
 
 -- A DM, two players and an outsider who all signed in with email.
 insert into auth.users (id, email) values
@@ -107,8 +107,8 @@ select lives_ok(
   'A player answers for their own character, with advantage'
 );
 select ok(
-  (select passed and passed_by_dice from public.rolls where request_id = current_setting('test.easy')::uuid),
-  'The server judges it: anything passes DC 1'
+  (select passed is null and passed_by_dice is null from public.rolls where request_id = current_setting('test.easy')::uuid),
+  'The answer waits for the DM''s ruling: no verdict reaches the player'
 );
 select ok(
   (select label = 'Easy save' and not secret and kind = 'save' from public.rolls where request_id = current_setting('test.easy')::uuid),
@@ -146,7 +146,7 @@ set local request.jwt.claims = '{"sub": "dddddddd-0000-4000-8000-000000000001", 
 select public.override_roll((select id from public.rolls where request_id = current_setting('test.easy')::uuid), false);
 select ok(
   (select not passed and passed_by_dice from public.rolls where request_id = current_setting('test.easy')::uuid),
-  'The DM turns a pass into a fail, and the dice''s verdict is kept'
+  'The DM rules it a fail, and what the dice said (a pass against DC 1) is kept'
 );
 select throws_ok(
   $$ select public.override_roll((select id from public.rolls where label = 'Nothing asked' limit 1), true) $$,
@@ -165,8 +165,12 @@ select lives_ok(
        || '{"kind": "check", "dice": [{"sides": 20, "count": 1}]}'::jsonb) $$,
   'The DM can roll for a character who was asked'
 );
+select is(
+  (select count(*)::int from public.accept_dice(current_setting('test.hard')::uuid)), 1,
+  'The DM goes with the dice for everyone not yet ruled on'
+);
 select ok(
-  (select not passed from public.rolls where request_id = current_setting('test.hard')::uuid),
+  (select not passed and not passed_by_dice from public.rolls where request_id = current_setting('test.hard')::uuid),
   'Nothing passes DC 40 without a bonus, natural 20 or not'
 );
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRequestChanges, useRollChanges, useRollInserts } from './campaignChannel.ts'
 import { messageFor } from './errors.ts'
 import {
+  acceptDice,
   askForRoll,
   closeRequest,
   getOpenRequest,
@@ -22,8 +23,10 @@ export type RequestControls = {
   error: string | null
   /** DM: sends a request. Resolves true once it's sent. */
   ask: (input: AskInput) => Promise<boolean>
-  /** DM: turns a pass into a fail, or back. */
+  /** DM: rules an answer a pass or a fail (answers wait for this before players see a verdict). */
   override: (roll: Roll, passed: boolean) => void
+  /** DM: goes with the dice for every answer not yet ruled on. */
+  accept: () => void
   /** DM: "Done, play on". */
   close: () => void
   /** An answer just thrown here, shown before it comes back on the live channel. */
@@ -131,6 +134,15 @@ export function useRollRequest(campaignId: string, userId: string, isDm: boolean
     [putAnswer],
   )
 
+  const accept = useCallback(() => {
+    if (!requestId) return
+    setError(null)
+    acceptDice(requestId).then(
+      (ruled) => ruled.forEach(putAnswer),
+      (caught: unknown) => setError(messageFor(caught)),
+    )
+  }, [requestId, putAnswer])
+
   const close = useCallback(() => {
     if (!requestId) return
     setError(null)
@@ -145,6 +157,7 @@ export function useRollRequest(campaignId: string, userId: string, isDm: boolean
     error,
     ask,
     override,
+    accept,
     close,
     putAnswer,
   }

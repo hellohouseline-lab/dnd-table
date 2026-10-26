@@ -102,6 +102,13 @@ export async function overrideRoll(rollId: string, passed: boolean): Promise<Rol
   return rowToRoll(data)
 }
 
+/** The DM goes with the dice for every answer not yet ruled on. */
+export async function acceptDice(requestId: string): Promise<Roll[]> {
+  const { data, error } = await db().rpc('accept_dice', { p_request_id: requestId })
+  if (error) throw requestError(error)
+  return (data ?? []).map(rowToRoll)
+}
+
 /** "Done, play on": closes the request, and everyone's prompt goes away. */
 export async function closeRequest(requestId: string): Promise<void> {
   const { error } = await db().rpc('close_roll_request', { p_request_id: requestId })
