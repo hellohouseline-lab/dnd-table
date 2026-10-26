@@ -3,6 +3,10 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Height and weight pickers, and the character sheet as text (live).**
+  - **Who they are** picks height in centimetres, or feet and inches, and weight in kilograms or pounds (a switch between the two), always saved with both ("5 ft 2 in (157 cm)", "150 lb (68 kg)"), with a guide to what's usual for the race ("Most dwarves are 4 ft to 5 ft").
+  - **Copy as text** and **Download** on every character sheet, and **Copy everyone's sheets** on the DM's Party tab. The text has the whole sheet (scores, hit points, AC, saves, skills, attacks, spells, features, equipment, coins, who they are) with a **picture description** at the top, built from the race, class, age, looks, armour, weapons and personality, ready to paste into an image generator for a portrait of each character.
+  - Tests: 403 unit (8 new), 31 preview browser tests (1 new).
 - **Death saves outside a fight (live).** At 0 hit points a player's table screen now shows the death save card in or out of a fight: the three successes and three failures, and **Roll a death save** (outside a fight, whenever the DM says). The pips tick themselves; a 20 brings them back with 1 hit point; three failures and they die. On the DM's Party tab a dying character's card shows the same pips with **Roll their death save**, **Stabilise** and **Up with 1 HP**, instead of the "1 saved, 2 failed" line. Tests: 397 unit (2 new), 30 preview browser tests.
 - **C2d: the builder finished, saving, and levelling up (live).**
   - **New characters now open the builder** (`#/c/<campaign>/character/new`); "Type it in instead" leads to the old form. All nine steps work:

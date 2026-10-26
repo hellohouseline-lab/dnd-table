@@ -89,3 +89,32 @@
   line-height: 1;
   color: var(--gold-light);
 }
+
+/* Copy or download the sheet as text. */
+.export {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.exportButton {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-2);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.exportButton:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.exportSaid {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--gold-light);
+}

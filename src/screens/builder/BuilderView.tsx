@@ -211,7 +211,14 @@ export function BuilderView({
             ))}
           {step === 6 &&
             (plan && cls ? <SpellsStep draft={draft} onDraft={onDraft} className={cls.name} plan={plan} /> : loading)}
-          {step === 7 && <WhoStep draft={draft} onDraft={onDraft} background={backgroundData} />}
+          {step === 7 && (
+            <WhoStep
+              draft={draft}
+              onDraft={onDraft}
+              background={backgroundData}
+              race={race ? { index: draft.race === 'other' ? null : draft.race, name: race.name } : null}
+            />
+          )}
           {step === 8 && (
             <ReviewStep
               build={build}
