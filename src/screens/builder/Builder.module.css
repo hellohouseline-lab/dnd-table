@@ -601,3 +601,238 @@
   font-size: 15px;
   color: var(--text);
 }
+
+/* The steps on the left are buttons once reachable. */
+button.stepItem {
+  width: 100%;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+}
+
+button.stepItem:hover:not(:disabled) {
+  background: rgba(212, 175, 90, 0.06);
+}
+
+button.stepItem:disabled {
+  cursor: default;
+}
+
+.back {
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  background: none;
+  color: var(--gold-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.plays {
+  margin: 0;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.plays strong {
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.fixed {
+  display: inline-flex;
+  align-items: center;
+  color: var(--gold-light);
+  border-color: var(--gold-rule);
+}
+
+.doubled {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+
+/* Step 4. */
+.methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.method {
+  min-width: 0;
+}
+
+.rollRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rolls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rollSet {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--card-fill);
+  font-size: 16px;
+}
+
+.rollSet strong {
+  margin-left: 4px;
+  color: var(--gold-light);
+}
+
+.die {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  border: 1px solid var(--gold-rule);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.dropped {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+.pointsLeft {
+  margin: 0;
+  font-size: 17px;
+  color: var(--text-2);
+}
+
+.pointsLeft strong {
+  font-size: 22px;
+  color: var(--gold-light);
+}
+
+.scoreTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.scoreTable th,
+.scoreTable td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(58, 47, 56, 0.8);
+  text-align: center;
+}
+
+.scoreTable thead th {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.scoreTable tbody th {
+  text-align: left;
+}
+
+.abilityName {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.abilityWords {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.scoreSelect {
+  height: 38px;
+  min-width: 70px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  background: var(--card-fill);
+  color: var(--text);
+  font-size: 17px;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-rule);
+  background: none;
+  color: var(--gold-light);
+  font-size: 18px;
+}
+
+.stepper button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.stepperValue {
+  min-width: 26px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.bonusCell {
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.quietCell {
+  color: var(--text-3);
+}
+
+.totalCell {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.modCell {
+  font-weight: 600;
+  color: var(--gold-light);
+}
+
+.suggest {
+  align-self: flex-start;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  background: rgba(212, 175, 90, 0.1);
+  color: var(--gold-light);
+  font-size: 16px;
+}
