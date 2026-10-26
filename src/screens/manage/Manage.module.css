@@ -1,0 +1,198 @@
+/* Change your character: tabs across the top, cards below, a save bar at the foot. */
+.body {
+  flex: 1;
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 20px 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid rgba(168, 132, 60, 0.35);
+}
+
+.tab {
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-2);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tab:hover {
+  color: var(--gold-light);
+}
+
+.tabHere {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+}
+
+.panel {
+  min-height: 400px;
+}
+
+.cardGrid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  min-width: 0;
+  gap: 4px;
+}
+
+/* In a wizard's book but not prepared today. */
+.inBook {
+  border-style: dashed;
+  border-color: var(--gold-rule);
+}
+
+.more {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.more summary {
+  cursor: pointer;
+  color: var(--label);
+  font-size: 14px;
+}
+
+.more p {
+  margin: 6px 0 0;
+  white-space: pre-line;
+}
+
+.cardActions {
+  margin-top: auto;
+  padding-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cardButton {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  background: none;
+  color: var(--gold-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cardButton:hover:not(:disabled) {
+  background: rgba(212, 175, 90, 0.12);
+}
+
+.cardButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cardLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 15px;
+  text-decoration: underline;
+}
+
+.tag {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--label);
+}
+
+.good {
+  font-size: 14px;
+  color: var(--pass);
+}
+
+.bad {
+  font-size: 14px;
+  color: var(--fail-light);
+}
+
+.gearColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.gearColumns > aside {
+  position: sticky;
+  top: 16px;
+}
+
+.carryList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.carryList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.carryName {
+  flex: 1;
+  min-width: 0;
+}
+
+.carryButtons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+}
+
+.count {
+  min-width: 22px;
+  text-align: center;
+}
+
+.coins {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.coins input {
+  width: 100%;
+}

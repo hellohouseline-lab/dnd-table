@@ -7,6 +7,7 @@ import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
 import { BuilderScreen } from '../screens/builder/BuilderScreen.tsx'
 import { LevelUpScreen } from '../screens/builder/LevelUpScreen.tsx'
 import { CharacterEditorScreen } from '../screens/character/CharacterEditorScreen.tsx'
+import { ManageScreen } from '../screens/manage/ManageScreen.tsx'
 import { BattlePreview } from '../screens/dev/BattlePreview.tsx'
 import { CallPreview } from '../screens/dev/CallPreview.tsx'
 import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
@@ -15,6 +16,7 @@ import { StagePreview } from '../screens/dev/StagePreview.tsx'
 import { RollsForDmPreview } from '../screens/dev/RollsForDmPreview.tsx'
 import { BuilderPreview } from '../screens/dev/BuilderPreview.tsx'
 import { LevelUpPreview } from '../screens/dev/LevelUpPreview.tsx'
+import { ManagePreview } from '../screens/dev/ManagePreview.tsx'
 import { CharacterFormPreview, JoinScreenPreview, TablePreview } from '../screens/dev/JoinScreenPreview.tsx'
 import { SheetScreen } from '../screens/sheet/SheetScreen.tsx'
 import { DmScreen } from '../screens/dm/DmScreen.tsx'
@@ -100,6 +102,15 @@ const ROUTES: Route[] = [
   },
   {
     pattern: '/c/:campaignId/character/:characterId/edit',
+    title: `Change your character · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId, characterId }) => (
+      <ManageScreen key={characterId} campaignId={campaignId} characterId={characterId} />
+    ),
+  },
+  {
+    // Type anything in by hand.
+    pattern: '/c/:campaignId/character/:characterId/form',
     title: `Edit character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId, characterId }) => (
@@ -162,6 +173,11 @@ const ROUTES: Route[] = [
         },
         { pattern: '/dev/stage', title: `Stage preview · ${APP_NAME}`, render: () => <StagePreview /> },
         { pattern: '/dev/level-up', title: `Level up preview · ${APP_NAME}`, render: () => <LevelUpPreview /> },
+        {
+          pattern: '/dev/change/:who',
+          title: `Change your character preview · ${APP_NAME}`,
+          render: ({ who }: Record<string, string>) => <ManagePreview who={who} />,
+        },
         {
           pattern: '/dev/dm-rolls',
           title: `Rolls for the DM preview · ${APP_NAME}`,
