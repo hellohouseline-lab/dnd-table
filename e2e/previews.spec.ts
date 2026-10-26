@@ -218,7 +218,7 @@ test('a player at 0 hit points rolls one death save on their turn', async ({ pag
   await expect(page.getByRole('button', { name: 'Dash' })).toBeDisabled()
   await saves.getByRole('button', { name: 'Roll a death save' }).click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
-    /You (succeed on|fail|roll a 20 on) a death save/,
+    /You (succeed on|fail|roll a 20 on) a (\w+ )?death save/,
   )
   await expect(saves.getByRole('button', { name: 'Roll a death save' })).toBeHidden()
 })
