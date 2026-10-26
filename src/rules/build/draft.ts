@@ -3,6 +3,7 @@
 
 import type { Ability } from '../abilities.ts'
 import type { SrdRace, SrdRaces, SrdTrait } from '../srd/index.ts'
+import { EMPTY_STORY, type Story } from '../character.ts'
 import type { GearPick } from './gear.ts'
 import type { Scores } from './scores.ts'
 
@@ -65,6 +66,15 @@ export type BuilderDraft = {
   /** Step 6. The option picked for each of the class's gear choices, and the background's. */
   gearPicks: (GearPick | null)[]
   backgroundGearPicks: (GearPick | null)[]
+
+  /** Step 7. Cantrips and spells by SRD index; a wizard's prepared ones from their book. */
+  cantripPicks: string[]
+  spellPicks: string[]
+  preparedPicks: string[]
+
+  /** Step 8. Who they are. Only the name is needed. */
+  name: string
+  story: Story
 }
 
 export type ScoreMethod = 'standard' | 'pointbuy' | 'roll' | 'random'
@@ -91,6 +101,11 @@ export function emptyDraft(): BuilderDraft {
     rolled: null,
     gearPicks: [],
     backgroundGearPicks: [],
+    cantripPicks: [],
+    spellPicks: [],
+    preparedPicks: [],
+    name: '',
+    story: EMPTY_STORY,
   }
 }
 

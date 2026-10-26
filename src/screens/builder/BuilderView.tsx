@@ -13,6 +13,12 @@ import {
 import { gearSummary } from '../../rules/build/gearStep.ts'
 import type { SrdBackground, SrdClass, SrdEquipment, SrdFeature, SrdRaces, SrdSpell } from '../../rules/srd/index.ts'
 import { GearStep } from './GearStep.tsx'
+import { ReviewStep } from './ReviewStep.tsx'
+import { SpellsStep } from './SpellsStep.tsx'
+import { WhoStep } from './WhoStep.tsx'
+import { assembleBuild } from '../../rules/build/assemble.ts'
+import { spellPlan, spellsMissing } from '../../rules/build/spellsStep.ts'
+import type { CharacterBuild } from '../../rules/character.ts'
 import { BackgroundStep } from './BackgroundStep.tsx'
 import styles from './Builder.module.css'
 import { ClassStep } from './ClassStep.tsx'
@@ -21,8 +27,8 @@ import { ScoresStep } from './ScoresStep.tsx'
 import { STEPS } from './steps.ts'
 import { Summary } from './Summary.tsx'
 
-/** Steps built so far (Race to Gear); Spells, Who they are and Review follow in C2d. */
-const BUILT = 6
+/** Every step is built. */
+const BUILT = 9
 
 type BuilderViewProps = {
   draft: BuilderDraft
@@ -41,6 +47,10 @@ type BuilderViewProps = {
   exitHref: string
   /** The plain form, for anyone who'd rather type their sheet in. */
   formHref?: string | null
+  /** Saves the finished character; resolves with a problem to show, or null. */
+  onSave: (build: CharacterBuild) => Promise<string | null>
+  /** Why it can't be saved here (the DM, or a player with a character already), or null. */
+  cantSave: string | null
 }
 
 /**
@@ -61,8 +71,12 @@ export function BuilderView({
   campaignName,
   exitHref,
   formHref,
+  onSave,
+  cantSave,
 }: BuilderViewProps) {
   const [step, setStep] = useState(0)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const race = races ? raceSummary(draft, races) : null
   const cls = classes?.find((c) => c.index === draft.className) ?? null
@@ -72,6 +86,12 @@ export function BuilderView({
   const scores = finalScores(draft, race)
   const backgroundData = backgrounds?.find((b) => b.index === draft.background) ?? null
   const gear = equipment ? gearSummary(draft, cls, backgroundData, equipment, scores) : null
+  const plan = cls && spells ? spellPlan(cls, 1, klass?.subclass?.index ?? null, scores, spells) : null
+  const data =
+    races && classes && features && backgrounds && equipment && spells
+      ? { races, classes, features, backgrounds, equipment, spells }
+      : null
+  const build = data ? assembleBuild(draft, data) : null
 
   const missing: (string[] | null)[] = [
     race ? race.missing : null,
@@ -81,7 +101,10 @@ export function BuilderView({
     // Level: every character starts at level 1 until the DM sets a higher one (C2e).
     [],
     gear && cls ? gear.missing : null,
+    plan ? spellsMissing(draft, plan) : null,
+    draft.name.trim() ? [] : ['Give your character a name'],
   ]
+  missing.push(missing.every((m) => m !== null && m.length === 0) ? [] : null)
   const done = missing.map((m) => m !== null && m.length === 0)
   // Steps that can be opened: every one up to the first not yet done.
   const firstOpen = done.findIndex((d) => !d)
@@ -186,6 +209,32 @@ export function BuilderView({
             ) : (
               loading
             ))}
+          {step === 6 &&
+            (plan && cls ? <SpellsStep draft={draft} onDraft={onDraft} className={cls.name} plan={plan} /> : loading)}
+          {step === 7 && <WhoStep draft={draft} onDraft={onDraft} background={backgroundData} />}
+          {step === 8 && (
+            <ReviewStep
+              build={build}
+              missing={STEPS.slice(0, 8).map((s, i) => ({
+                step: s.name,
+                stepIndex: i,
+                items: missing[i] ?? [`Open ${s.name}`],
+              }))}
+              onGoTo={setStep}
+              cantSave={cantSave}
+              saving={saving}
+              saveError={saveError}
+              onSave={() => {
+                if (!build) return
+                setSaving(true)
+                setSaveError(null)
+                void onSave(build).then((problem) => {
+                  setSaving(false)
+                  setSaveError(problem)
+                })
+              }}
+            />
+          )}
           {step === 3 && (
             <ScoresStep
               draft={draft}
@@ -204,17 +253,17 @@ export function BuilderView({
               </button>
             )}
             <span className={styles.footerNote}>
-              {here === null
-                ? step === 3
-                  ? 'Pick a way to make your scores.'
-                  : step === 5
-                    ? 'Pick a class first.'
-                    : `Pick ${step === 0 ? 'a race' : step === 1 ? 'a class' : 'a background'} to begin.`
-                : here.length > 0
-                  ? `Still to pick: ${here.join('; ')}.`
-                  : step + 1 < BUILT
-                    ? `${STEPS[step].name} done.`
-                    : 'Done so far. Gear, spells and the rest are being built next.'}
+              {step === 8
+                ? 'Your whole character, ready to save.'
+                : here === null
+                  ? step === 3
+                    ? 'Pick a way to make your scores.'
+                    : step === 5 || step === 6
+                      ? 'Pick a class first.'
+                      : `Pick ${step === 0 ? 'a race' : step === 1 ? 'a class' : 'a background'} to begin.`
+                  : here.length > 0
+                    ? `Still to pick: ${here.join('; ')}.`
+                    : `${STEPS[step].name} done.`}
             </span>
             {nextStep && (
               <button
@@ -241,6 +290,7 @@ export function BuilderView({
           scores={scores}
           armourClass={gear?.ac?.ac ?? null}
           attacks={gear?.attacks.map((a) => a.name) ?? []}
+          languages={[...(race?.languages ?? []), ...draft.backgroundLanguagePicks]}
         />
       </div>
     </main>

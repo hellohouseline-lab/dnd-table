@@ -67,6 +67,39 @@ export type Wallet = { cp: number; sp: number; ep: number; gp: number; pp: numbe
 
 export const EMPTY_WALLET: Wallet = { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 }
 
+/** Who a character is: looks, personality and history, all optional. */
+export type Story = {
+  alignment: string
+  age: string
+  height: string
+  weight: string
+  eyes: string
+  skin: string
+  hair: string
+  personality: string
+  ideals: string
+  bonds: string
+  flaws: string
+  goals: string
+  backstory: string
+}
+
+export const EMPTY_STORY: Story = {
+  alignment: '',
+  age: '',
+  height: '',
+  weight: '',
+  eyes: '',
+  skin: '',
+  hair: '',
+  personality: '',
+  ideals: '',
+  bonds: '',
+  flaws: '',
+  goals: '',
+  backstory: '',
+}
+
 export type Character = {
   id: string
   campaignId: string
@@ -96,6 +129,7 @@ export type Character = {
   spellcasting: Spellcasting
   inventory: InventoryItem[]
   wallet: Wallet
+  story: Story
   deathSaveSuccesses: number
   deathSaveFailures: number
   /** At 0 hit points but no longer rolling death saves (three successes, or the DM stabilised them). */
@@ -175,6 +209,7 @@ export function newBuild(): CharacterBuild {
     spellcasting: NO_SPELLCASTING,
     inventory: [],
     wallet: EMPTY_WALLET,
+    story: EMPTY_STORY,
   }
 }
 
