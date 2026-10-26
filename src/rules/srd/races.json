@@ -23,7 +23,8 @@
           "abilityBonuses": {
             "wisdom": 1
           },
-          "traits": ["dwarven-toughness"]
+          "traits": ["dwarven-toughness"],
+          "languageChoices": 0
         }
       ]
     },
@@ -45,7 +46,8 @@
           "abilityBonuses": {
             "intelligence": 1
           },
-          "traits": ["elf-weapon-training", "high-elf-cantrip", "extra-language"]
+          "traits": ["elf-weapon-training", "high-elf-cantrip", "extra-language"],
+          "languageChoices": 0
         }
       ]
     },
@@ -67,7 +69,8 @@
           "abilityBonuses": {
             "charisma": 1
           },
-          "traits": ["naturally-stealthy"]
+          "traits": ["naturally-stealthy"],
+          "languageChoices": 0
         }
       ]
     },
@@ -121,7 +124,8 @@
           "abilityBonuses": {
             "constitution": 1
           },
-          "traits": ["artificers-lore", "tinker"]
+          "traits": ["artificers-lore", "tinker"],
+          "languageChoices": 0
         }
       ]
     },

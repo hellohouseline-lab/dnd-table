@@ -57,6 +57,8 @@ export type SrdSubrace = {
   name: string
   abilityBonuses: Partial<Record<Ability, number>>
   traits: string[]
+  /** Extra languages this kind picks (a high elf's one). */
+  languageChoices: number
 }
 export type SrdRace = {
   index: string

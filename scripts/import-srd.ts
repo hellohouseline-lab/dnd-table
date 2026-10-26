@@ -256,6 +256,7 @@ async function main(): Promise<void> {
           name: s.name,
           abilityBonuses: bonuses(s.ability_bonuses),
           traits: (s.racial_traits as Ref[]).map((t) => t.index),
+          languageChoices: s.language_options?.choose ?? 0,
         })),
     })),
     traits: Object.fromEntries(

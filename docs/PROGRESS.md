@@ -3,6 +3,11 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C2b part 1: the builder's frame and step 1, Race (live for Matt to review; decision 35).** Open it at `#/c/<campaign>/build` (for the "test" table: https://hellohouseline-lab.github.io/dnd-table/#/c/9e0bbddb-d08d-440e-8116-00a35960206f/build). Players still make characters with the old form until the builder is finished; nothing in the builder is saved to the table yet, only kept in the browser.
+  - **The frame:** the nine steps down the left (ticked when done, later ones "Coming next"), the choices in the middle, and **your character so far** on the right (ability bonuses, speed, size, languages and traits), staying in view as you scroll. "Type it in instead" leads to the old form.
+  - **Step 1, Race:** nine race cards, each with its own emblem, a plain line and its bonuses, speed and size, plus **Another race** for one from a book. Picking one shows its kind (Hill dwarf, High elf, Lightfoot halfling, Rock gnome), its choices (a half-elf's two +1s, extra languages for humans, half-elves and high elves, a dragonborn's ancestry with its damage and breath, a high elf's cantrip with hover text) and every trait with the full text a click away. The footer says what's still to pick.
+  - Potions and usable items are in the C2c plan, taking an action as the 2014 rules say (decision 36).
+  - Tests: 366 unit (5 new for the race step), 22 preview browser tests (1 new).
 - **Monsters' bonus actions, reactions and legendary actions on the DM's card (live).** The Acting now card (Screen 1's Encounter tab and the Battle screen) reads each monster's stat block:
   - **Bonus action** (blue, like the players'): each one with its own buttons. A goblin's Nimble Escape gives **Disengage** and **Hide (Stealth +6)**, and Hide rolls the Stealth secretly for you; a spy's Cunning Action gives Dash, Disengage and Hide; an orc's Aggressive is **Move its speed**; a lion's Pounce is **Bite, then pick a target**, marked "only after it charges and hits"; a gnoll's Rampage, "only after it drops someone"; anything else is **Use it**, named in the feed. It greys out once the bonus action is used.
   - **Reaction:** each of its reactions (a knight's Parry) as **Use Parry**; opportunity attacks still come up by themselves.
@@ -163,7 +168,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C2b next:** the builder's first steps (race, class, background, scores) and the live summary, starting with step 1 for Matt to react to (decision 35).
+- **Matt reviews step 1 of the builder**, then C2b carries on: Class, Background and Ability scores.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
