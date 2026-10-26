@@ -11,6 +11,7 @@ type ItemsTabProps = {
   characters: Character[]
   giving: GivingControls
   onGive: (character: Character | null) => void
+  onOpenBox: () => void
 }
 
 const QUICK = [1, 5, 10, 50, 100]
@@ -19,11 +20,17 @@ const QUICK = [1, 5, 10, 50, 100]
  * Items and loot on Screen 1: every character's purse as coins, with one-click gold to add or take,
  * their pack with Offer to buy anything from them, and Give; then the party stash.
  */
-export function ItemsTab({ characters, giving, onGive }: ItemsTabProps) {
+export function ItemsTab({ characters, giving, onGive, onOpenBox }: ItemsTabProps) {
   const { stash } = giving
   const stashEmpty = stash.items.length === 0 && coinWords(stash.wallet) === 'nothing'
   return (
     <div className={styles.tab}>
+      <div className={styles.top}>
+        <button type="button" className={styles.openBox} onClick={onOpenBox}>
+          Open a box
+        </button>
+        <span className={styles.topNote}>A chest, a sack, a body, a desk or a hoard: the table fills it for you.</span>
+      </div>
       <div className={party.grid}>
         {characters.map((character) => (
           <CharacterThings

@@ -1,13 +1,20 @@
 // The DM's notebook and the session log. The database lets only the DM read or write the notebook;
 // the log is written by the DM's screens, and players see only entries marked visible.
 
+import { DEFAULT_BOXES, parseBoxSettings, type BoxSettings } from '../rules/boxes.ts'
 import type { Json, Tables } from './database.types.ts'
 import { fromDatabaseError, NOT_CONNECTED, TableError } from './errors.ts'
 import { supabase } from './supabase.ts'
 
 export type NextStep = { id: string; text: string; done: boolean }
 export type KeyItem = { id: string; name: string; holder: string }
-export type Notebook = { whereWeAre: string; nextSteps: NextStep[]; keyItems: KeyItem[] }
+export type Notebook = {
+  whereWeAre: string
+  nextSteps: NextStep[]
+  keyItems: KeyItem[]
+  /** How full the DM's boxes are (their own numbers, or ours). */
+  boxSettings: BoxSettings
+}
 
 export type LogKind = 'note' | 'damage' | 'heal' | 'rest' | 'condition' | 'stage' | 'gift'
 export type LogEvent = {
@@ -21,9 +28,16 @@ export type LogEvent = {
   gift?: Gift
 }
 
-export type Gift = { to: string[]; from: string | null; items: { name: string; quantity: number }[]; copper: number }
+export type Gift = {
+  to: string[]
+  from: string | null
+  items: { name: string; quantity: number }[]
+  copper: number
+  /** Put on the table for the whole party, not given to one. */
+  stash: boolean
+}
 
-export const EMPTY_NOTEBOOK: Notebook = { whereWeAre: '', nextSteps: [], keyItems: [] }
+export const EMPTY_NOTEBOOK: Notebook = { whereWeAre: '', nextSteps: [], keyItems: [], boxSettings: DEFAULT_BOXES }
 const LOG_LENGTH = 150
 
 function db() {
@@ -57,6 +71,7 @@ export function rowToNotebook(row: Tables<'dm_notebooks'>): Notebook {
           }
         : null,
     ),
+    boxSettings: parseBoxSettings(row.box_settings),
   }
 }
 
@@ -72,6 +87,7 @@ export async function saveNotebook(campaignId: string, notebook: Notebook): Prom
     where_we_are: notebook.whereWeAre.slice(0, 4000),
     next_steps: notebook.nextSteps,
     key_items: notebook.keyItems,
+    box_settings: notebook.boxSettings,
   }
   const updated = await db().from('dm_notebooks').update(row).eq('campaign_id', campaignId).select('campaign_id')
   if (updated.error) throw fromDatabaseError(updated.error)
@@ -106,6 +122,7 @@ function parseGift(data: Json): Gift {
       typeof i.name === 'string' ? { name: i.name, quantity: typeof i.quantity === 'number' ? i.quantity : 1 } : null,
     ),
     copper: typeof d.copper === 'number' ? d.copper : 0,
+    stash: d.stash === true,
   }
 }
 

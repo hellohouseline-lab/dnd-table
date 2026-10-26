@@ -62,6 +62,7 @@ describe('the notebook', () => {
       where_we_are: 'At the tavern',
       next_steps: [{ id: '1', text: 'Meet the innkeeper', done: true }, 'nonsense'],
       key_items: [{ id: 'k', name: 'Silver key' }],
+      box_settings: {},
       updated_at: '2026-10-26T20:00:00Z',
     })
     expect(notebook.nextSteps).toEqual([{ id: '1', text: 'Meet the innkeeper', done: true }])

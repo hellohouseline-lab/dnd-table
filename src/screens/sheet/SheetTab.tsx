@@ -290,7 +290,7 @@ export function SheetTab({ character, canEdit, onUpdate, rolls }: TabProps) {
 
 export function Section({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} aria-label={title}>
       <h3 className={styles.sectionTitle}>
         {title}
         {note && <span className={styles.sectionNote}>{note}</span>}

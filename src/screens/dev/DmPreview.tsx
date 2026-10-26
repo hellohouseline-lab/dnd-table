@@ -269,6 +269,10 @@ function usePreviewGiving(
       }, 1500)
       return null
     },
+    putOnTable: async (items, copper) => {
+      setStash((s) => ({ items: mergeItems(s.items, items), wallet: addWallets(s.wallet, coinsFor(copper)) }))
+      return null
+    },
     withdraw: async (offerId) => {
       setOffers((now) => now.map((o) => (o.id === offerId ? { ...o, status: 'withdrawn' } : o)))
       return null

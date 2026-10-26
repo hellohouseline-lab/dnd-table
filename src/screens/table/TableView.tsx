@@ -23,7 +23,7 @@ import callStyles from '../../call/Call.module.css'
 import { isMuted, useTableCall } from '../../call/callContext.ts'
 import { CameraFeed } from '../../call/CameraFeed.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
-import type { HandOver, Offer } from '../../live/giving.ts'
+import type { HandOver, Offer, StashControls } from '../../live/giving.ts'
 import { coinsFor, coinWords } from '../../rules/money.ts'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
@@ -129,6 +129,8 @@ type TableViewProps = {
   /** The DM's offers to buy something you carry, and selling or saying no. */
   offers?: Offer[]
   onAnswerOffer?: (offerId: string, sell: boolean) => Promise<string | null>
+  /** The party stash, on the Items panel. */
+  stash?: StashControls
 }
 
 /** Something just given to you: "You got a Longsword +1". */
@@ -254,6 +256,7 @@ export function TableView({
   onArrivalSeen,
   offers = [],
   onAnswerOffer,
+  stash,
 }: TableViewProps) {
   const [inspected, setInspected] = useState<string | null>(null)
   // The attack you're about to make, while you pick its target.
@@ -1319,6 +1322,7 @@ export function TableView({
             onUpdate={update}
             rolls={rolls}
             handing={handOver ? { party: characters, handOver } : undefined}
+            stash={stash}
           />
         </>
       )}

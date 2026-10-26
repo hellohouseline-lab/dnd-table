@@ -44,6 +44,8 @@ export type GivingControls = {
   offers: Offer[]
   offer: (characterId: string, itemId: string, quantity: number, copper: number) => Promise<string | null>
   withdraw: (offerId: string) => Promise<string | null>
+  /** Puts things (and coins in copper) in the party stash for everyone. */
+  putOnTable: (items: InventoryItem[], copper: number) => Promise<string | null>
   /** Items (weapons listed with whether the character is trained, for their card) and coins in copper. */
   give: (
     characterId: string,
@@ -74,6 +76,7 @@ export const NO_GIVING: GivingControls = {
   offers: [],
   offer: async () => null,
   withdraw: async () => null,
+  putOnTable: async () => null,
 }
 
 async function call(
@@ -229,6 +232,10 @@ export function useGivingControls(campaignId: string, userId: string): GivingCon
           }),
         ),
       withdraw: (offerId: string) => call(() => db().rpc('withdraw_offer', { p_offer_id: offerId })),
+      putOnTable: (items: InventoryItem[], copper: number) =>
+        call(() =>
+          db().rpc('put_on_table', { p_campaign_id: campaignId, p_items: items as unknown as Json, p_copper: copper }),
+        ),
     }),
     [campaignId, stash, yours, offers, reload],
   )
@@ -287,4 +294,31 @@ export function useOffers(campaignId: string, userId: string): Offer[] {
 /** A player sells, or says no thanks. */
 export function answerOffer(offerId: string, sell: boolean): Promise<string | null> {
   return call(() => db().rpc('answer_offer', { p_offer_id: offerId, p_sell: sell }))
+}
+
+/** The party stash for a player: what's in it, taking something, and sharing out its coins. */
+export type StashControls = {
+  stash: PartyStash
+  take: (itemId: string, quantity: number, proficient: boolean | null) => Promise<string | null>
+  split: () => Promise<string | null>
+}
+
+export function useStashControls(campaignId: string, userId: string, characterId: string | null): StashControls {
+  const stash = useStash(campaignId, userId)
+  return useMemo(
+    () => ({
+      stash,
+      take: (itemId: string, quantity: number, proficient: boolean | null) =>
+        call(() =>
+          db().rpc('take_from_stash', {
+            p_character_id: characterId as string,
+            p_item_id: itemId,
+            p_quantity: quantity,
+            p_proficient: proficient as boolean,
+          }),
+        ),
+      split: () => call(() => db().rpc('split_stash', { p_campaign_id: campaignId })),
+    }),
+    [campaignId, characterId, stash],
+  )
 }

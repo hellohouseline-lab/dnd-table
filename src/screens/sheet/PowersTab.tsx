@@ -43,7 +43,9 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
       <div className={styles.column}>
         <Section title="Features and traits">
           {character.features.length === 0 ? (
-            <p className={styles.empty}>No features yet. Add your class features and racial traits with Edit character.</p>
+            <p className={styles.empty}>
+              No features yet. Add your class features and racial traits with Edit character.
+            </p>
           ) : (
             <ul className={styles.cards}>
               {character.features.map((feature) => (
@@ -82,7 +84,9 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
               <StatBox label="Attack" value={formatBonus(sheet.spell.attackBonus)} title="Spell attack bonus" />
             </div>
           ) : (
-            <p className={styles.empty}>No spellcasting. If your character casts spells, set it up with Edit character.</p>
+            <p className={styles.empty}>
+              No spellcasting. If your character casts spells, set it up with Edit character.
+            </p>
           )}
           {spellcasting.slotsMax.some((max) => max > 0) && (
             <ul className={styles.rows}>
@@ -108,7 +112,11 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
                   <span className={styles.muted}>Concentrating on</span> <strong>{character.concentration}</strong>
                 </span>
                 {edit && (
-                  <button type="button" className={buttonClassName('quiet')} onClick={() => edit({ concentration: null })}>
+                  <button
+                    type="button"
+                    className={buttonClassName('quiet')}
+                    onClick={() => edit({ concentration: null })}
+                  >
                     Stop concentrating
                   </button>
                 )}
@@ -174,7 +182,15 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
   )
 }
 
-function SpellCard({ spell, srd, onTogglePrepared }: { spell: SpellEntry; srd?: SrdSpell; onTogglePrepared?: () => void }) {
+function SpellCard({
+  spell,
+  srd,
+  onTogglePrepared,
+}: {
+  spell: SpellEntry
+  srd?: SrdSpell
+  onTogglePrepared?: () => void
+}) {
   return (
     <li className={styles.card}>
       <div className={styles.cardHeader}>

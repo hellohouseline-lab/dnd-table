@@ -8,9 +8,9 @@ import { itemName } from '../../rules/build/gearStep.ts'
 import { EMPTY_WALLET, entryId, type Character, type InventoryItem, type Wallet } from '../../rules/character.ts'
 import { POTIONS, USABLE, wornArmourClass } from '../../rules/items.ts'
 import { attunedCount, ATTUNE_LIMIT, toggleAttuned } from '../../rules/magic.ts'
-import { coinWords } from '../../rules/money.ts'
+import { coinWords, walletCopper } from '../../rules/money.ts'
 import { anOrA } from '../../rules/sheetText.ts'
-import type { HandOver } from '../../live/giving.ts'
+import type { HandOver, StashControls } from '../../live/giving.ts'
 import { loadEquipment } from '../../rules/srd/index.ts'
 import { Section } from './SheetTab.tsx'
 import styles from './sheet.module.css'
@@ -21,6 +21,8 @@ type TabProps = {
   onUpdate: (patch: TrackerPatch) => void
   /** Handing things to someone else in the party (left out where there's nobody to give to). */
   handing?: { party: Character[]; handOver: HandOver }
+  /** The party stash: take things for yourself, and share out its coins. */
+  stash?: StashControls
 }
 
 const COINS: { key: keyof Wallet; name: string }[] = [
@@ -36,12 +38,26 @@ const COINS: { key: keyof Wallet; name: string }[] = [
  * weighs against what they can carry, and their coins. Usable things, such as potions, show what
  * they do; in a fight they're in the hand's Items set.
  */
-export function InventoryTab({ character, canEdit, onUpdate, handing }: TabProps) {
+export function InventoryTab({ character, canEdit, onUpdate, handing, stash }: TabProps) {
   const equipment = useSrd(loadEquipment)
   const [adding, setAdding] = useState('')
   const [givingId, setGivingId] = useState<string | null>(null)
   const [handed, setHanded] = useState<{ ok: boolean; text: string } | null>(null)
   const others = handing?.party.filter((c) => c.id !== character.id) ?? []
+
+  async function takeFromStash(item: InventoryItem) {
+    const srd = item.item && equipment ? findItem(equipment, item.item) : undefined
+    const proficient = srd?.kind === 'weapon' ? weaponProficient(srd, character.otherProficiencies.split(/,\s*/)) : null
+    const problem = await stash!.take(item.id, item.quantity, proficient)
+    setHanded(
+      problem ? { ok: false, text: problem } : { ok: true, text: `You took ${item.name} from the party stash.` },
+    )
+  }
+
+  async function splitStash() {
+    const problem = await stash!.split()
+    setHanded(problem ? { ok: false, text: problem } : { ok: true, text: 'The coins are shared out across the party.' })
+  }
   const attuned = attunedCount(character.inventory)
 
   async function hand(to: Character, what: { item: InventoryItem | null; quantity: number; coins: Wallet }) {
@@ -299,6 +315,44 @@ export function InventoryTab({ character, canEdit, onUpdate, handing }: TabProps
           10 copper make a silver, 10 silver a gold, 10 gold a platinum. Shops arrive later.
         </p>
       </Section>
+
+      {stash && (stash.stash.items.length > 0 || walletCopper(stash.stash.wallet) > 0) && (
+        <Section title="Party stash" note="shared by everyone">
+          {stash.stash.items.length > 0 && (
+            <ul className={styles.stashList}>
+              {stash.stash.items.map((item) => (
+                <li key={item.id}>
+                  <span className={item.magic ? styles.magicItem : undefined}>
+                    {item.quantity > 1 && `${item.quantity} × `}
+                    {item.name}
+                    {item.note && <span className={styles.muted}> · {item.note}</span>}
+                  </span>
+                  {canEdit && (
+                    <button
+                      type="button"
+                      className={styles.toggle}
+                      aria-label={`Take ${item.name}`}
+                      onClick={() => void takeFromStash(item)}
+                    >
+                      Take
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {walletCopper(stash.stash.wallet) > 0 && (
+            <p className={styles.inline}>
+              <strong>{coinWords(stash.stash.wallet)}</strong>
+              {canEdit && (
+                <button type="button" className={styles.toggle} onClick={() => void splitStash()}>
+                  Split the coins
+                </button>
+              )}
+            </p>
+          )}
+        </Section>
+      )}
     </div>
   )
 }
