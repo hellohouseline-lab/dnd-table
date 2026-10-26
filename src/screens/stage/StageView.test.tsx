@@ -97,6 +97,6 @@ describe('the stage screen', () => {
   it('keeps the later features visible but switched off', () => {
     expect(html).toContain('Switch to battle map')
     expect(html).toContain('Players move their own tokens: on')
-    expect(html).toMatch(/Library: 5\.0 MB of the 1 GB free storage/)
+    expect(html).toMatch(/Storage used: 5\.0 MB of the 1 GB free/)
   })
 })
