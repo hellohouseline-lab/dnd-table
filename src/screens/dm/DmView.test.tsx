@@ -98,6 +98,37 @@ function render(startTab: 'party' | 'log') {
 }
 
 describe('the DM screen', () => {
+  it("shows a dying character's death saves on their card, with the DM's buttons", () => {
+    const down = sampleCharacters.map((c, i) =>
+      i === 0 ? { ...c, currentHp: 0, deathSaveSuccesses: 1, deathSaveFailures: 1 } : c,
+    )
+    const html = text(
+      renderToStaticMarkup(
+        <DmView
+          campaign={sampleCampaign}
+          me={sampleMembers[0]}
+          members={sampleMembers}
+          characters={down}
+          online={new Set(['dm'])}
+          onUpdate={noop}
+          log={{ status: 'ready', rolls: [] }}
+          diceStyle={DEFAULT_DICE_STYLE}
+          onDiceStyleChange={noop}
+          asking={nobodyAsked}
+          notebook={{ notebook: sampleNotebook(), status: 'ready', change: noop, saving: false, error: null }}
+          events={{ events: [], add: noop, error: null }}
+          sceneName="Arrive at the tavern"
+          fight={noFight}
+          startTab="party"
+        />,
+      ),
+    )
+    expect(html).toContain('Thorin Ironfist is dying')
+    expect(html).toContain('Roll their death save')
+    expect(html).toContain('Stabilise')
+    expect(html).toContain('Up with 1 HP')
+  })
+
   it('shows a card for each character with what the DM glances at', () => {
     const html = render('party')
     expect(html).toMatch(/Thorin Ironfist Sam 17\/20/)
