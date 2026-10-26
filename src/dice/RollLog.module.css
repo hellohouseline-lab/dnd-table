@@ -157,3 +157,28 @@
   border-color: var(--fail);
   color: var(--fail);
 }
+
+.eventRow {
+  color: var(--text-2);
+}
+
+.event_note {
+  border-color: var(--gold-rule);
+  color: var(--gold-light);
+}
+
+.event_damage {
+  border-color: var(--hp);
+  color: var(--fail-light);
+}
+
+.event_heal,
+.event_rest {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.event_condition {
+  border-color: var(--fail);
+  color: var(--fail);
+}

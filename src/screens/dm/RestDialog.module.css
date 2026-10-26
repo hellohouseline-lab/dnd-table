@@ -1,0 +1,161 @@
+.card {
+  width: 620px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 26px 30px 24px;
+  border-radius: 10px;
+  background: var(--card-fill);
+  border: 1px solid var(--gold-rule);
+  box-shadow:
+    inset 0 0 0 5px var(--card-fill),
+    inset 0 0 0 6px rgba(212, 175, 90, 0.3),
+    0 20px 60px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 28px;
+  text-transform: uppercase;
+}
+
+.lead {
+  margin: 0;
+  font-size: 18px;
+}
+
+.kinds {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kind {
+  padding: 14px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: rgba(31, 26, 39, 0.6);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  text-align: left;
+}
+
+.kind:hover {
+  border-color: var(--gold-rule);
+}
+
+.kindOn,
+.kindOn:hover {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+.kindName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gold-light);
+}
+
+.kindPlain {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.who {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.legend {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+}
+
+.person input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--gold);
+}
+
+.done {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.note {
+  margin: 0;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--label);
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.primary {
+  height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--gold-light);
+}
+
+.primary:disabled {
+  opacity: 0.5;
+}
+
+.secondary {
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text);
+  font-size: 17px;
+}

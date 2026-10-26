@@ -105,3 +105,48 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+.actionOn {
+  border-color: var(--gold);
+}
+
+.hpRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hpInput {
+  width: 64px;
+  height: 38px;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+}
+
+.hpRow .action {
+  flex: 1;
+}
+
+.damage {
+  border-color: var(--hp);
+}
+
+.heal {
+  border-color: var(--pass);
+}
+
+.linkish {
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

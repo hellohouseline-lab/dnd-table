@@ -14,6 +14,9 @@ import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useRollLog } from '../../live/useRollLog.ts'
 import { useRollRequest } from '../../live/useRollRequest.ts'
+import { useNotebook } from '../../live/useNotebook.ts'
+import { useLibrary, useLogEvents, useStage } from '../../live/useStage.ts'
+import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { DmView } from './DmView.tsx'
 
 /** The DM's screen. Players who open it are sent to their own table screen. */
@@ -25,6 +28,11 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   const online = useOnlineIds(campaignId, user.id)
   const log = useRollLog(campaignId, user.id)
   const asking = useRollRequest(campaignId, user.id, true)
+  const notebook = useNotebook(campaignId)
+  const events = useLogEvents(campaignId, user.id)
+  const { stage } = useStage(campaignId, user.id)
+  const library = useLibrary(campaignId, user.id)
+  const audio = useTableAudio(campaignId, user.id, stage, library.assets)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
@@ -87,6 +95,10 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       diceStyle={diceStyle}
       onDiceStyleChange={changeDiceStyle}
       asking={asking}
+      notebook={notebook}
+      events={events}
+      sceneName={stage.sceneName}
+      audio={audio}
     />
   )
 }

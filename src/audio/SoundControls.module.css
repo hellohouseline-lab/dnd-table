@@ -1,0 +1,76 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(16, 12, 20, 0.85);
+  border: 1px solid var(--chip-border);
+  color: var(--text);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.chip svg {
+  color: var(--gold);
+  flex: 0 0 auto;
+}
+
+.locked {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  animation: glow 2s ease-in-out infinite;
+}
+
+.volumeButton {
+  display: inline-flex;
+  padding: 0;
+  margin-left: 2px;
+  border: 0;
+  background: none;
+}
+
+.volume {
+  position: absolute;
+  top: calc(100% + 6px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(16, 12, 20, 0.96);
+  border: 1px solid var(--gold-rule);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.volume input {
+  width: 140px;
+  accent-color: var(--gold);
+}
+
+.percent {
+  min-width: 40px;
+  text-align: right;
+  color: var(--text-3);
+}
+
+@keyframes glow {
+  50% {
+    box-shadow: 0 0 16px rgba(212, 175, 90, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .locked {
+    animation: none;
+  }
+}

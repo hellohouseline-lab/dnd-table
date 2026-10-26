@@ -11,6 +11,12 @@ const PATHS = {
   d20: ['M12 2l8.7 5v10L12 22l-8.7-5V7z', 'M12 7.5l-5 9h10z'],
   sword: ['M14.5 17.5L3 6V3h3l11.5 11.5', 'M13 19l6-6', 'M16 16l4 4'],
   log: ['M6 3h12v18H6z', 'M9 8h6M9 12h6M9 16h4'],
+  music: ['M9 18V5l12-2v13', 'M6 15a3 3 0 1 1 0 6 3 3 0 0 1 0-6z', 'M18 13a3 3 0 1 1 0 6 3 3 0 0 1 0-6z'],
+  volume: ['M4 9h4l5-4v14l-5-4H4z', 'M16 9a4 4 0 0 1 0 6', 'M19 6a8 8 0 0 1 0 12'],
+  play: ['M7 4l13 8-13 8z'],
+  pause: ['M7 4h4v16H7z', 'M14 4h4v16h-4z'],
+  upload: ['M12 16V4', 'M7 9l5-5 5 5', 'M4 16v4h16v-4'],
+  moon: ['M20 14a8 8 0 1 1-10-10 6 6 0 0 0 10 10z'],
 } as const
 
 export type IconName = keyof typeof PATHS

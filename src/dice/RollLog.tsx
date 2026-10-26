@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { cx } from '../components/cx.ts'
 import type { Member } from '../live/campaigns.ts'
+import type { LogEvent, LogKind } from '../live/notebook.ts'
 import type { Roll } from '../live/rolls.ts'
 import type { Character } from '../rules/character.ts'
 import { DiceFaces } from './DiceFaces.tsx'
@@ -18,16 +19,33 @@ import styles from './RollLog.module.css'
 
 type RollLogProps = {
   rolls: Roll[]
+  /** Notes, damage, healing and rests, shown among the rolls when the log shows everyone. */
+  events?: LogEvent[]
   members: Member[]
   characters: Character[]
   loading?: boolean
   error?: string
 }
 
-/** Who rolled what, with which bonuses, the result and the time, newest first. Filter by person. */
-export function RollLog({ rolls, members, characters, loading, error }: RollLogProps) {
+const EVENT_NAMES: Record<LogKind, string> = {
+  note: 'Note',
+  damage: 'Damage',
+  heal: 'Healing',
+  rest: 'Rest',
+  condition: 'Condition',
+  stage: 'Stage',
+}
+
+type Entry = { at: string; roll: Roll; event?: never } | { at: string; event: LogEvent; roll?: never }
+
+/** Who rolled what, with which bonuses, the result and the time, newest first, among the DM's notes. */
+export function RollLog({ rolls, events = [], members, characters, loading, error }: RollLogProps) {
   const [who, setWho] = useState('')
   const shown = who ? rolls.filter((roll) => roll.rollerId === who) : rolls
+  const entries: Entry[] = [
+    ...shown.map((roll) => ({ at: roll.createdAt, roll })),
+    ...(who ? [] : events.map((event) => ({ at: event.createdAt, event }))),
+  ].sort((a, b) => b.at.localeCompare(a.at))
   const people = members.map((member) => {
     const character = characters.find((c) => c.ownerId === member.user_id)
     const name = member.role === 'dm' ? `${member.display_name} (DM)` : (character?.name ?? member.display_name)
@@ -37,11 +55,11 @@ export function RollLog({ rolls, members, characters, loading, error }: RollLogP
   return (
     <section className={styles.log} aria-label="Roll log">
       <div className={styles.bar}>
-        <h2 className={styles.heading}>Rolls tonight and before</h2>
+        <h2 className={styles.heading}>Rolls and notes, tonight and before</h2>
         <label className={styles.filter}>
           <span>Show</span>
           <select value={who} onChange={(event) => setWho(event.target.value)}>
-            <option value="">Everyone</option>
+            <option value="">Everything</option>
             {people.map((person) => (
               <option key={person.id} value={person.id}>
                 {person.name}
@@ -51,14 +69,29 @@ export function RollLog({ rolls, members, characters, loading, error }: RollLogP
         </label>
       </div>
       {error && <p className={styles.empty}>{error}</p>}
-      {!error && loading && shown.length === 0 && <p className={styles.empty}>Loading the rolls…</p>}
-      {!error && !loading && shown.length === 0 && (
-        <p className={styles.empty}>No rolls yet. Every roll at the table appears here the moment it lands.</p>
+      {!error && loading && entries.length === 0 && <p className={styles.empty}>Loading the log…</p>}
+      {!error && !loading && entries.length === 0 && (
+        <p className={styles.empty}>Nothing yet. Every roll appears here the moment it lands, with your notes.</p>
       )}
       <ol className={styles.list}>
-        {shown.map((roll) => (
-          <LogRow key={roll.id} roll={roll} who={whoRolled(roll, members, characters)} />
-        ))}
+        {entries.map((entry) =>
+          entry.roll ? (
+            <LogRow key={entry.roll.id} roll={entry.roll} who={whoRolled(entry.roll, members, characters)} />
+          ) : (
+            <li key={entry.event.id} className={cx(styles.row, styles.eventRow)}>
+              <time className={styles.time} dateTime={entry.event.createdAt}>
+                {timeText(entry.event.createdAt)}
+              </time>
+              <div className={styles.line}>
+                <span className={cx(styles.chip, styles[`event_${entry.event.kind}`])}>
+                  {EVENT_NAMES[entry.event.kind]}
+                </span>
+                <span>{entry.event.text}</span>
+              </div>
+              <span />
+            </li>
+          ),
+        )}
       </ol>
     </section>
   )
