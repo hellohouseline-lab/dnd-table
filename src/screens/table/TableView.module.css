@@ -139,14 +139,24 @@
   color: #8f8780;
 }
 
+/* Stops above the dice controls, and scrolls when a fight fills it (the turn, the cheat card). */
 .left {
   position: absolute;
   top: 16px;
   left: 16px;
+  bottom: 132px;
   width: 320px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-rule) transparent;
+}
+
+.left > * {
+  flex: none;
 }
 
 .plate,

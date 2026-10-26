@@ -220,7 +220,6 @@ test('a player at 0 hit points rolls one death save on their turn', async ({ pag
 
 test('a wizard casts Magic Missile at a goblin, which spends the action', async ({ page }) => {
   await page.goto('#/dev/table/caster')
-  await page.getByRole('button', { name: 'Spells', exact: true }).click()
   const hand = page.getByLabel('Your hand')
   await hand.getByRole('button', { name: /Magic Missile/ }).click()
   await expect(page.getByRole('status').filter({ hasText: 'Cast Magic Missile: click who' })).toBeVisible()
@@ -240,7 +239,6 @@ test('a wizard casts Magic Missile at a goblin, which spends the action', async 
 
 test('a wizard puts Darkness on the map and concentrates on it', async ({ page }) => {
   await page.goto('#/dev/table/caster')
-  await page.getByRole('button', { name: 'Spells', exact: true }).click()
   await page
     .getByLabel('Your hand')
     .getByRole('button', { name: /Darkness/ })
@@ -316,4 +314,14 @@ test('the DM asks the party for a Perception check in one click', async ({ page 
   const results = page.getByRole('region', { name: 'Perception check' })
   await expect(results).toContainText('Needed 20 or more')
   await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
+})
+
+test('a fighter has a Bonus actions set, in blue, that greys out once the bonus action is used', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  await page.getByRole('button', { name: /Bonus actions/ }).click()
+  const hand = page.getByLabel('Your hand')
+  await expect(hand.getByRole('button', { name: /Second Wind/ })).toBeEnabled()
+  await hand.getByRole('button', { name: /Second Wind/ }).click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You use Second Wind.')
+  await expect(hand.getByRole('button', { name: /Second Wind/ })).toBeDisabled()
 })

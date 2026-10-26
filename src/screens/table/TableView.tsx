@@ -637,6 +637,15 @@ export function TableView({
         character={character}
         onAttack={attackWith}
         onUseFeature={(feature) => void playFeature(feature)}
+        turn={
+          fight && mine ? { myTurn, bonusUsed: mine.turn.bonusUsed, offhand: (attack) => offhandReady(attack) } : null
+        }
+        bonusMoves={bonusMoves(character.className, character.level)}
+        onBonusMove={(move) => {
+          if (!mine || !combat) return
+          combat.act(mine, `bonus_${move}`)
+          if (move === 'hide') roll(skillCheck(character, 'stealth', choices))
+        }}
         spells={
           character.spellcasting.spells.length > 0
             ? { list: spellList, whyNot: (spell) => whyNot(spell, character, mine, myTurn), onCast: castSpell }

@@ -441,7 +441,9 @@ export default function BattleMap({
                     event.cancelBubble = true
                     const x = toSquare(event.target.x(), offsetX)
                     const y = toSquare(event.target.y(), offsetY)
-                    event.target.position({ x: centre(x, offsetX), y: centre(y, offsetY) })
+                    // Back where it was until the move is accepted (it then shows in its new square), so
+                    // a refused move (a taken square, too far) leaves nothing out of place.
+                    event.target.position({ x: centre(token.x, offsetX), y: centre(token.y, offsetY) })
                     if (x !== token.x || y !== token.y) onMove(token.id, x, y)
                   }}
                   onMouseEnter={(event) => {

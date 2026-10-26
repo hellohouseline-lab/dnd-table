@@ -142,3 +142,39 @@
   z-index: 14;
   pointer-events: none;
 }
+
+/* Anything done with a bonus action: blue, as the bonus action pip on Your turn. */
+.bonus {
+  color: var(--pass);
+}
+
+.bonusCard {
+  border-color: var(--pass);
+  box-shadow:
+    inset 0 0 0 3px var(--card-fill),
+    inset 0 0 0 4px rgba(134, 212, 232, 0.35);
+}
+
+.tabBonus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--pass);
+}
+
+.tabBonus.tabOn {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.bonusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pass);
+}
+
+.bonusDotUsed {
+  background: none;
+  border: 1px solid var(--chip-border);
+}

@@ -76,3 +76,30 @@ export function freeSquares(taken: { x: number; y: number }[], count: number, st
   }
   return squares
 }
+
+type Placed = { id: string; x: number; y: number; hidden: boolean }
+
+/**
+ * Why a miniature can't make this move (2014 rules), or null if it can: nobody ends a move in a
+ * square that's taken, and nobody moves through an enemy's square on the way (a friend's is fine).
+ * Hidden miniatures don't count, so they aren't given away. Same as move_token on the server.
+ */
+export function blockedMove(
+  tokens: Placed[],
+  moving: Placed,
+  to: { x: number; y: number },
+  enemy: (token: Placed) => string | null,
+): string | null {
+  const others = tokens.filter((t) => t.id !== moving.id && !t.hidden)
+  if (others.some((t) => t.x === to.x && t.y === to.y)) return 'Someone is already in that square'
+  const steps = Math.max(Math.abs(to.x - moving.x), Math.abs(to.y - moving.y))
+  for (let i = 1; i < steps; i++) {
+    const x = Math.round(moving.x + ((to.x - moving.x) * i) / steps)
+    const y = Math.round(moving.y + ((to.y - moving.y) * i) / steps)
+    for (const t of others.filter((o) => o.x === x && o.y === y)) {
+      const name = enemy(t)
+      if (name) return `You can't move through ${name}'s square`
+    }
+  }
+  return null
+}

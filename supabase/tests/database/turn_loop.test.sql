@@ -149,7 +149,7 @@ select is(
   'Players don''t change a token directly'
 );
 select lives_ok(
-  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 10, 2) $$,
+  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 2, 10) $$,
   'A player moves their miniature within their movement'
 );
 select is(
@@ -157,12 +157,12 @@ select is(
   'The feet walked are counted'
 );
 select throws_ok(
-  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 13, 2) $$,
+  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 2, 13) $$,
   '22023', 'You can move 10 more feet this turn',
   'Nobody moves further than their movement left'
 );
 select lives_ok(
-  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 12, 4) $$,
+  $$ select public.move_token(current_setting('test.thorin_token')::uuid, 4, 12) $$,
   'A diagonal square costs 5 feet, as in the rules'
 );
 select throws_ok(

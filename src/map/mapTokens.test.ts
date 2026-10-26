@@ -3,7 +3,7 @@ import type { Combatant, Token } from '../live/combat.ts'
 import { NO_DEFENCES } from '../rules/damage.ts'
 import { FRESH_TURN } from '../rules/turn.ts'
 import { sampleFighter, sampleWizard } from '../screens/dev/sampleData.ts'
-import { freeSquares, mapTokens } from './mapTokens.ts'
+import { freeSquares, mapTokens, blockedMove } from './mapTokens.ts'
 
 const goblin: Combatant = {
   id: 'g1',
@@ -74,5 +74,18 @@ describe('tokens on the map', () => {
       { x: 2, y: 1 },
       { x: 3, y: 1 },
     ])
+  })
+})
+
+describe('moving through squares', () => {
+  const at = (id: string, x: number, y: number, hidden = false) => ({ id, x, y, hidden })
+  const tokens = [at('thorin', 0, 0), at('mira', 2, 0), at('goblin', 0, 2), at('ghost', 4, 4, true)]
+  const enemy = (t: { id: string }) => (t.id === 'goblin' ? 'Goblin A' : null)
+  it('stops a move onto anyone, or through an enemy, but not through a friend or a hidden creature', () => {
+    expect(blockedMove(tokens, tokens[0], { x: 0, y: 2 }, enemy)).toBe('Someone is already in that square')
+    expect(blockedMove(tokens, tokens[0], { x: 2, y: 0 }, enemy)).toBe('Someone is already in that square')
+    expect(blockedMove(tokens, tokens[0], { x: 0, y: 4 }, enemy)).toBe("You can't move through Goblin A's square")
+    expect(blockedMove(tokens, tokens[0], { x: 4, y: 0 }, enemy)).toBeNull()
+    expect(blockedMove(tokens, tokens[0], { x: 4, y: 4 }, enemy)).toBeNull()
   })
 })
