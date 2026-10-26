@@ -205,7 +205,8 @@ function RemoteFeed({ call, userId, cameraId, cameraKey, presence, portraitPath,
         />
       )}
       {call.hearing && (
-        <div className={styles.tools}>
+        <div className={cx(styles.tools, styles.volumeTools)}>
+          <Icon name="volume" size={15} />
           <input
             className={styles.volume}
             type="range"

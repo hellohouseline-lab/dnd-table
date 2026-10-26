@@ -39,24 +39,3 @@
   font-style: italic;
   color: var(--label);
 }
-
-.preview {
-  aspect-ratio: 16 / 9;
-  border-radius: 6px;
-  border: 1px dashed var(--dm-only);
-  background: #120e17;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7e7387;
-}
-
-.small {
-  font-size: 15px;
-  line-height: 1.45;
-  color: var(--label);
-}

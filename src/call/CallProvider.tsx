@@ -6,6 +6,7 @@ import {
   setCallPresence,
   useCallPresence,
   useCameraKeyBroadcasts,
+  type CallPresence,
 } from '../live/campaignChannel.ts'
 import { getCameraDetails, renewCameraKey } from '../live/campaigns.ts'
 import { CallContext, type CallStatus, type TableCall } from './callContext.ts'
@@ -89,8 +90,9 @@ export function CallProvider({ children }: { children: ReactNode }) {
   )
 }
 
+/** The call at a real table: camera details from the database, and who's in the call from presence. */
 function TableCallLayer({ campaignId, userId, children }: { campaignId: string; userId: string; children: ReactNode }) {
-  const [details, setDetails] = useState<{ cameraId: string; key: string } | null>(null)
+  const [details, setDetails] = useState<CameraDetails | null>(null)
   const loadDetails = useCallback(() => {
     getCameraDetails(campaignId, userId)
       .then(setDetails)
@@ -98,12 +100,52 @@ function TableCallLayer({ campaignId, userId, children }: { campaignId: string; 
   }, [campaignId, userId])
   useEffect(loadDetails, [loadDetails])
   useCameraKeyBroadcasts(campaignId, userId, loadDetails)
+  const calls = useCallPresence(campaignId, userId)
+  const announce = useCallback((call: CallPresence | null) => setCallPresence(campaignId, call), [campaignId])
+  const renew = useCallback(async () => {
+    await renewCameraKey(campaignId)
+    broadcastCameraKey(campaignId)
+    loadDetails()
+  }, [campaignId, loadDetails])
 
+  return (
+    <CallEngine
+      campaignId={campaignId}
+      userId={userId}
+      details={details}
+      calls={calls}
+      announce={announce}
+      renewCameraKey={renew}
+    >
+      {children}
+    </CallEngine>
+  )
+}
+
+type CameraDetails = { cameraId: string; key: string }
+
+type CallEngineProps = {
+  campaignId: string
+  userId: string
+  /** Your camera address and the table's camera password, once loaded. */
+  details: CameraDetails | null
+  /** Everyone in the call, by user id. */
+  calls: ReadonlyMap<string, CallPresence>
+  /** Tells the table whether you're in the call, and with what switched on. */
+  announce: (call: CallPresence | null) => void
+  renewCameraKey: () => Promise<void>
+  children: ReactNode
+}
+
+/**
+ * Joining, leaving, muting and devices, the one tab that sends and plays, and the hidden sender.
+ * The design previews run it too, with made-up details, to try a real call between two browsers.
+ */
+export function CallEngine({ campaignId, userId, details, calls, announce, renewCameraKey, children }: CallEngineProps) {
   const [prefs, setPrefs] = useState(() => loadPrefs(campaignId))
   const [devices, setDevicesState] = useState(loadDevices)
   const [problem, setProblem] = useState<string | null>(null)
   const [volumes, setVolumes] = useState(loadVolumes)
-  const calls = useCallPresence(campaignId, userId)
 
   // Keep this table's tabs in this browser in step.
   const tabs = useRef<BroadcastChannel | null>(null)
@@ -197,9 +239,9 @@ function TableCallLayer({ campaignId, userId, children }: { campaignId: string; 
 
   // Tell the table, once your camera is really on its way.
   useEffect(() => {
-    setCallPresence(campaignId, owner && status === 'live' ? { camera, mic } : null)
-  }, [campaignId, owner, status, camera, mic])
-  useEffect(() => () => setCallPresence(campaignId, null), [campaignId])
+    announce(owner && status === 'live' ? { camera, mic } : null)
+  }, [announce, owner, status, camera, mic])
+  useEffect(() => () => announce(null), [announce])
 
   const join = useCallback(async () => {
     setProblem(null)
@@ -246,12 +288,6 @@ function TableCallLayer({ campaignId, userId, children }: { campaignId: string; 
   }, [])
   const volumeOf = useCallback((who: string) => volumes[who] ?? 1, [volumes])
 
-  const renew = useCallback(async () => {
-    await renewCameraKey(campaignId)
-    broadcastCameraKey(campaignId)
-    loadDetails()
-  }, [campaignId, loadDetails])
-
   // M mutes and unmutes you, unless you're typing.
   useEffect(() => {
     if (!prefs.joined) return
@@ -291,7 +327,7 @@ function TableCallLayer({ campaignId, userId, children }: { campaignId: string; 
       setCamera,
       setMic,
       setDevices,
-      renewCameraKey: renew,
+      renewCameraKey,
     }),
     [
       campaignId,
@@ -313,7 +349,7 @@ function TableCallLayer({ campaignId, userId, children }: { campaignId: string; 
       setCamera,
       setMic,
       setDevices,
-      renew,
+      renewCameraKey,
     ],
   )
 

@@ -127,7 +127,10 @@ describe('The player cards', () => {
     expect(html.match(/disabled=""/g)).toHaveLength(1)
   })
 
-  it('keep the camera box from the design', () => {
-    expect(renderToStaticMarkup(<CameraPanel />)).toContain('Camera preview 16:9')
+  it('keep the camera box from the design, with voice and camera in place of the VDO.Ninja link', () => {
+    const html = text(renderToStaticMarkup(<CameraPanel />))
+    expect(html).toContain('Camera preview 16:9')
+    expect(html).toContain('Voice and camera Not joined yet')
+    expect(html).toContain('The same feed appears in everyone’s camera column and in every streamer’s overlay.')
   })
 })

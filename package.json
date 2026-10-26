@@ -16,7 +16,8 @@
     "db:push": "supabase db push --linked",
     "db:types": "supabase gen types typescript --linked --schema public > src/live/database.types.ts",
     "test:e2e": "node scripts/e2e.mjs",
-    "test:previews": "playwright test e2e/previews.spec.ts"
+    "test:previews": "playwright test e2e/previews.spec.ts",
+    "test:call": "playwright test e2e/call.spec.ts"
   },
   "dependencies": {
     "@3d-dice/dice-box-threejs": "0.0.12",

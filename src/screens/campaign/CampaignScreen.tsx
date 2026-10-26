@@ -151,7 +151,7 @@ export function CampaignView({
             myId={me.user_id}
             partySize={table.party_size}
           />
-          <CameraPanel />
+          <CameraPanel isDm={isDm} />
         </aside>
       </div>
 

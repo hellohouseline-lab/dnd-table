@@ -1,3 +1,5 @@
+import { CameraCheck } from '../../call/CameraCheck.tsx'
+import { useTableCall } from '../../call/callContext.ts'
 import { cx } from '../../components/cx.ts'
 import { Panel } from '../../components/Panel.tsx'
 import type { Member } from '../../live/campaigns.ts'
@@ -17,13 +19,15 @@ export function AtTheTablePanel({ members, characters, online, myId, partySize }
   const dm = members.filter((member) => member.role === 'dm')
   const players = members.filter((member) => member.role === 'player')
   const emptySeats = Math.max(0, partySize - players.length)
+  const call = useTableCall()
 
   return (
     <Panel title="At the table now">
       <ul className={styles.people}>
         {[...dm, ...players].map((member) => {
           const here = online.has(member.user_id)
-          const state = here ? 'Here' : member.here_tonight ? 'Not here yet' : 'Not tonight'
+          const inCall = call?.calls.has(member.user_id) ?? false
+          const state = inCall ? 'In the call' : here ? 'Here' : member.here_tonight ? 'Not here yet' : 'Not tonight'
           const character = characters.find((c) => c.ownerId === member.user_id)
           return (
             <li key={member.user_id} className={styles.person}>
@@ -50,14 +54,11 @@ export function AtTheTablePanel({ members, characters, online, myId, partySize }
   )
 }
 
-/** Holds the camera box from the design until cameras arrive in milestone 7. */
-export function CameraPanel() {
+/** "Your camera" from the Join screen design: check it, pick your devices and join the call. */
+export function CameraPanel({ isDm = false }: { isDm?: boolean }) {
   return (
     <Panel title="Your camera">
-      <div className={styles.preview}>Camera preview 16:9</div>
-      <div className={styles.small}>
-        Cameras come in a later milestone, once your group has picked how to share video and voice.
-      </div>
+      <CameraCheck isDm={isDm} />
     </Panel>
   )
 }
