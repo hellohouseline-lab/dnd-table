@@ -3,6 +3,15 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Fixes from Matt's C1b test, and three starter maps (live).**
+  - **End fight** is one step on the server: every miniature leaves the map, chances to strike close, and the map stays up as an ordinary picture, so picking another picture or music works as usual. (Matt's stage had been left in battle-map mode with two miniatures on it.)
+  - **Pop-ups** close with a ✕, Escape or a click outside. The sheet panel's close button has a ✕ too.
+  - **Monster turns are tracked:** the pips count its Multiattack, and a further attack asks "Attack again anyway?". The card offers Dash, Disengage, Dodge, and its bonus actions and reactions by name (a goblin's Nimble Escape). The goblins had attacked six times in a row in the test.
+  - **Death saves from the sheet:** at 0 hit points the Death saves section has **Roll a death save**, in or out of a fight, and the pips tick themselves. In the test the pips had been clicked by hand.
+  - **Bigger cameras,** as wide as the character plate (320 pixels), with five fitting down a 900-pixel screen.
+  - **Portraits on tokens:** a character's uploaded portrait fills their miniature.
+  - **Three starter maps** drawn for the table: a tavern, a forest road with a stream, and an old crypt. They're drawn at 70 pixels a square, so the grid lines up. Add one from Maps in the art library, or from the Battle screen when there's no map yet. The drawings are in `public/maps/`; `addStarterMap` in `src/live/library.ts` turns one into a picture and saves it like any upload.
+  - Tests: 359 database (7 new for ending a fight), 322 unit and 15 preview browser tests.
 - **C1b, the rest of the fight's rules (built after the C1 test, live).**
   - **Damage types:** resistance halves, vulnerability doubles, immunity stops it; magic weapons get past resistance to non-magical weapons. Monsters bring theirs from the SRD; players mark their own on the Sheet. The feed says "resisted" or "immune".
   - **Battle screen:** Ask for a roll (A) works mid-fight; a circle shows how far whoever is acting can still move; aiming shows a band for what the attack reaches and a dashed ring where long range gives disadvantage.
@@ -84,14 +93,21 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4): build a character step by step, with random balanced scores, point buy, starting gear and spells, so sheets are quick to fill in. Then **S1**, story mode and Screen 1 as "the journey" (section 4b), then **C3 lite** (Talk cards, two-weapon fighting, Hide and Search, conditions counting down), then the test one-shot, milestone 8 and milestone 9.
-- **Milestone 8, the stream overlay:** overlay links, guest access, the 1920 by 1080 frame with everyone's cameras in it, stage mirror, toasts, own character card, an OBS scene collection file, and voices and game audio through the overlay with "Control audio via OBS" (see `PHASE1_PLAN.md` section 8, "What this changes in milestone 8"). Plan first, then build.
+- **Waiting for Matt's approval: `docs/TABLE_TOOLS_PLAN.md`** (decisions 22 to 28), from his C1b notes:
+  - **T1:** cards that explain themselves (a side panel with what it does, then confirm, roll and Undo), and the Party tab with nine quick checks and fuller party cards.
+  - **C2:** the character builder, now with backstory details, a wallet and starting gear.
+  - **I1:** items, money, loot and shops.
+  - **S1:** story mode, with an importer for Matt's starter campaign, and rules lookups for players.
+  - Then the test one-shot, C3 lite, and the stream overlay (milestone 8).
 
 ## Targets
 - Test one-shot with a fight: 21 to 22 November 2026.
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Read `docs/TABLE_TOOLS_PLAN.md`** and approve it, or say what to change (decisions 22 to 28, especially the order in section 6).
+- **Send your starter campaign** when you're ready, and say whether it's your own writing or from a published book. A book's text stays in the table's private database, never in the code.
+- **Try the fixes:** end a fight and check the map stays as a picture with no miniatures; pick another picture; on a goblin's turn attack twice and see "Attack again anyway?"; drop a character to 0 and roll a death save from their sheet; add a starter map from Maps.
 - **Try C1b** with a player in a second browser (steps in "How to try C1b" below). Say what feels slow or wrong: that's what C3 lite and the fixes are for.
 - **Check decisions 19 to 21** in `docs/COMBAT_PLAN.md` section 7 (death save pips visible to all, players place their own spell areas, moves don't wait for opportunity attacks). They're built as recommended; any is a small change.
 - **Optional:** run `npm run test:e2e` with the two test logins: it now also plays a whole fight in two browsers against the real project.
