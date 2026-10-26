@@ -1,10 +1,12 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import type { CharacterChange, CharacterRow } from './characterRows.ts'
+import { rowToRoll, type Roll, type RollRow } from './rolls.ts'
 import { supabase } from './supabase.ts'
 
 // Each campaign has one private live channel, 'campaign:<id>'. The database only lets people at
-// that table use it. It carries who is online (presence) and changes to the party's characters.
+// that table use it. It carries who is online (presence), changes to the party's characters and
+// new rolls (secret ones reach only the roller and the DM, by the database's rules).
 // Everything on screen shares the one connection, which closes a moment after the last user
 // lets go, so React reopening a screen doesn't reconnect.
 
@@ -13,6 +15,7 @@ type LiveCampaign = {
   online: ReadonlySet<string>
   presenceListeners: Set<() => void>
   characterListeners: Set<(change: CharacterChange) => void>
+  rollListeners: Set<(roll: Roll) => void>
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
@@ -38,6 +41,7 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     online: NOBODY,
     presenceListeners: new Set(),
     characterListeners: new Set(),
+    rollListeners: new Set(),
     users: 1,
   }
 
@@ -58,6 +62,15 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
             : null
           : { type: 'upsert', row: payload.new }
       if (change) live.characterListeners.forEach((listener) => listener(change))
+    },
+  )
+
+  channel.on<RollRow>(
+    'postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'rolls', filter: `campaign_id=eq.${campaignId}` },
+    (payload) => {
+      const roll = rowToRoll(payload.new)
+      live.rollListeners.forEach((listener) => listener(roll))
     },
   )
 
@@ -113,4 +126,17 @@ export function useCharacterChanges(
       release(campaignId)
     }
   }, [campaignId, userId, onChange])
+}
+
+/** Calls `onRoll` for every new roll at this table that you're allowed to see, your own included. */
+export function useRollInserts(campaignId: string, userId: string, onRoll: (roll: Roll) => void): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.rollListeners.add(onRoll)
+    return () => {
+      live.rollListeners.delete(onRoll)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onRoll])
 }

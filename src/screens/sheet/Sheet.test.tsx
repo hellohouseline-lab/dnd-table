@@ -1,5 +1,6 @@
 // Renders the sheet and table screen with the sample characters, to catch mistakes in what they show.
 import { renderToStaticMarkup } from 'react-dom/server'
+import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
 import { describe, expect, it } from 'vitest'
 import { sampleCharacters, sampleFighter, sampleMembers, sampleWizard } from '../dev/sampleData.ts'
 import { TableView } from '../table/TableView.tsx'
@@ -69,6 +70,8 @@ describe('the table screen', () => {
         characters={sampleCharacters}
         online={new Set(['p1'])}
         onUpdate={noop}
+        diceStyle={{ material: 'glass', colour: 'ruby', numbers: 'gold' }}
+        onDiceStyleChange={noop}
       />,
     ),
   )
@@ -78,6 +81,11 @@ describe('the table screen', () => {
     expect(html).toContain('Level 2 · Sam (you)')
     expect(html).toMatch(/Hit points 17 \/ 20/)
     expect(html).toMatch(/AC 18 Speed 25 Init\. \+1 Percep\. 13/)
+  })
+
+  it('shows your dice and your hand of cards', () => {
+    expect(html).toContain('Your dice Ruby glass, gold numbers')
+    expect(html).toMatch(/Attack Longsword \+5 · 1d8\+3/)
   })
 
   it('shows everyone in the camera column with their character’s HP', () => {
@@ -96,6 +104,8 @@ describe('the table screen', () => {
           characters={sampleCharacters}
           online={new Set()}
           onUpdate={noop}
+          diceStyle={DEFAULT_DICE_STYLE}
+          onDiceStyleChange={noop}
         />,
       ),
     )

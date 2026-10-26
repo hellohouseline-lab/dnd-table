@@ -1,25 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
 import { LoadingScreen } from '../../components/LoadingScreen.tsx'
 import { Notice } from '../../components/Notice.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
+import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
 import { useOnlineIds } from '../../live/campaignChannel.ts'
 import { listMembers } from '../../live/campaigns.ts'
+import { messageFor } from '../../live/errors.ts'
+import { saveDiceStyle } from '../../live/rolls.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { TableView } from './TableView.tsx'
 
-/**
- * The player's table screen. The DM's screens come in milestone 5, so the DM is sent back to the
- * Join screen; a player without a character is sent to make one.
- */
+/** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
 export function TableScreen({ campaignId }: { campaignId: string }) {
   const user = useSignedInUser()
   const members = useLoad(() => listMembers(campaignId), [campaignId])
   const party = useParty(campaignId, user.id)
   const online = useOnlineIds(campaignId, user.id)
+  const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
+  const [styleError, setStyleError] = useState<string | null>(null)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
   const character = party.status === 'ready' ? party.characters.find((c) => c.ownerId === user.id) : undefined
@@ -27,7 +29,8 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
 
   useEffect(() => {
     if (!ready) return
-    if (!me || me.role === 'dm') navigate(`/c/${campaignId}`, { replace: true })
+    if (!me) navigate(`/c/${campaignId}`, { replace: true })
+    else if (me.role === 'dm') navigate(`/c/${campaignId}/dm`, { replace: true })
     else if (!character) navigate(`/c/${campaignId}/character/new`, { replace: true })
   }, [ready, me, character, campaignId])
 
@@ -39,11 +42,20 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
     return (
       <Page width="narrow">
         <PageHeader eyebrow="Something went wrong" title="The table didn't open" />
-        <Notice tone="error">{members.status === 'error' ? members.message : party.status === 'error' ? party.message : ''}</Notice>
+        <Notice tone="error">
+          {members.status === 'error' ? members.message : party.status === 'error' ? party.message : ''}
+        </Notice>
       </Page>
     )
   }
   if (!ready || !me || !character || party.status !== 'ready') return <LoadingScreen />
+
+  const diceStyle = chosenStyle ?? parseDiceStyle(me.dice_style)
+  function changeDiceStyle(style: DiceStyle) {
+    setChosenStyle(style)
+    setStyleError(null)
+    saveDiceStyle(campaignId, user.id, style).catch((error: unknown) => setStyleError(messageFor(error)))
+  }
 
   return (
     <TableView
@@ -54,7 +66,9 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       characters={party.characters}
       online={online}
       onUpdate={party.update}
-      saveError={party.saveError}
+      saveError={party.saveError ?? styleError}
+      diceStyle={diceStyle}
+      onDiceStyleChange={changeDiceStyle}
     />
   )
 }

@@ -1,10 +1,13 @@
 // Local development only (the routes exist only under `npm run dev`): screens with made-up people,
 // so their look can be checked without signing in. Buttons that save won't work here.
 import type { User } from '@supabase/supabase-js'
-import { useState, type ReactNode } from 'react'
+import { useCallback, useState, type ReactNode } from 'react'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
+import { localRoll } from '../../dice/localRoll.ts'
+import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import { newBuild, type Character } from '../../rules/character.ts'
+import type { RollRequest } from '../../rules/dice.ts'
 import { CampaignView } from '../campaign/CampaignScreen.tsx'
 import { CharacterForm } from '../character/CharacterForm.tsx'
 import { Page } from '../../components/Page.tsx'
@@ -44,6 +47,12 @@ export function JoinScreenPreview({ as }: { as: string }) {
 /** #/dev/table: the table screen. Trackers change on screen but aren't saved. */
 export function TablePreview() {
   const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
+  const [diceStyle, setDiceStyle] = useState<DiceStyle>(() => parseDiceStyle(sampleMembers[1].dice_style))
+  // The preview throws dice in the browser; there's no database to ask.
+  const thrower = useCallback(
+    async (request: RollRequest) => localRoll(request, { campaignId: 'preview', rollerId: 'p1', style: diceStyle }),
+    [diceStyle],
+  )
   const update = (id: string, patch: TrackerPatch) =>
     setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   return (
@@ -56,6 +65,9 @@ export function TablePreview() {
         characters={characters}
         online={online}
         onUpdate={update}
+        diceStyle={diceStyle}
+        onDiceStyleChange={setDiceStyle}
+        thrower={thrower}
       />
     </SignedInAs>
   )

@@ -3,6 +3,13 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Milestone 3, dice and the roll log (25 to 26 October).**
+  - The server throws every die (`public.throw_dice`, fair secure random numbers), so nobody can pick a result. It applies advantage and disadvantage, throws an attack's damage with it (a natural 20 doubles the damage dice, a natural 1 always misses, flat damage for unarmed strikes) and saves the roll. Secret rolls are seen only by the roller and the DM. 35 more database tests, including a fairness check over 2,000 d20s.
+  - The same rules in `src/rules/dice.ts`, and ready-made rolls in `src/rules/rolls.ts` for ability checks, saves, skills, initiative and attacks, with conditions and exhaustion adding disadvantage or advantage (and the two cancelling out). Unit tests for all of it.
+  - 3D dice from `@3d-dice/dice-box-threejs` (changed from the planned dice-box, which can't land dice on a given number; see `PHASE1_PLAN.md` section 1). Each person picks plastic, glass, metal or stone, one of ten colours and a number colour; saved per table, shown on every screen. Metal and stone textures are drawn by our own code.
+  - Player screen (`#/c/<id>/play`): the dice medallion and picker from design 02 (any dice, how many, advantage or disadvantage for the next d20, secret), Practice throw, click an ability medallion, Init., or any save, skill or attack on the sheet to roll it, and a hand of cards (attacks roll to hit and damage together; features with uses spend one). Everyone's throws land in the middle of everyone's screen, then a result card shows, with a gold burst for a natural 20 and a crack for a natural 1.
+  - A first DM screen (`#/c/<id>/dm`, design 07 frame), opened from the new "Open the DM screen" button on the Join screen: party cards (HP, AC, Notices, spells left, conditions, Damage or heal opens the sheet), the Log tab (every roll with who, dice, bonuses, total and time, filter by person), the camera column and the DM's own dice, with rolling behind the screen. The notebook, Encounter, NPCs and Items tabs and the verb bar are drawn but switched off until their milestones.
+  - Fixed: an unarmed strike now deals 1 + Strength modifier, as the 2014 rules say (it showed only the modifier).
 - Spec written (`SPEC.md`).
 - 12 screens designed and reviewed with Matt (`design/`, `DESIGN_NOTES.md`).
 - Repository created: https://github.com/hellohouseline-lab/dnd-table (public). GitHub Pages switched on (step A1).
@@ -18,14 +25,14 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **Milestone 3, dice and the roll log:** 3D dice in metal, glass and stone, free rolls, roll from a card or skill, advantage, natural 20 and 1 effects, the Log tab; everyone sees everyone's throw.
+- **Milestone 4, the roll flow:** the DM asks for a roll (screen 08), players get the prompt (03) and the pass or fail card (04), the DM gets the results (09), with a secret DC judged on the server, overrides and outcome buttons. Playwright test added.
 
 ## Targets
 - Test one-shot with a fight: 21 to 22 November 2026.
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Try milestone 2** on the live site: as a player, create a character, take your seat, open Sheet and Powers; as the DM, open the player's sheet from The party and change their HP.
+- **Try milestones 2 and 3** on the live site with two browsers (DM and player): make a character, take your seat, pick glass dice, roll, and watch them land on the DM screen too; check the Log tab. Nobody has rolled on the real site yet, because Claude can't sign in there.
 - **Before milestone 7:** a test call with the group to choose voice and cameras (step D): Twitch Stream Together, VDO.Ninja for both, or Discord plus VDO.Ninja.
 
 ## Notes for the next session
@@ -36,5 +43,6 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - Database: the Supabase CLI is logged in and linked. `npm run db:push` applies new files in `supabase/migrations/`, `npm run db:types` regenerates `src/live/database.types.ts`, and `npm run test:db` runs the pgTAP tests in `supabase/tests/database/` against the live project inside a transaction that is always undone (no Docker on this Mac, so `supabase test db` can't run).
 - Supabase's advisor warns that signed-in users can call the security-definer functions and that the table rules apply to anonymous guests too. Both are on purpose: each function checks the caller, and guests can't join a table, so they see nothing (covered by tests). Leaked-password protection doesn't apply, as nobody uses passwords.
 - Login uses the implicit flow (see the corrected note in `PHASE1_PLAN.md` section 1). A link opened on a different device, such as a phone, signs in that device, so the email also carries a code: after asking for a login, the "Check your email" step has a box for it. The email wording lives in `supabase/templates/` and must match the dashboard's Magic Link and Confirm signup templates.
-- Design previews with made-up data, only under `npm run dev`: `#/dev/join/dm`, `#/dev/join/player`, `#/dev/join/new`, `#/dev/table`, `#/dev/character` and `#/dev/check-email`. Sample characters live in `src/screens/dev/sampleData.ts` and are reused by the render tests.
+- Design previews with made-up data, only under `npm run dev`: `#/dev/join/dm`, `#/dev/join/player`, `#/dev/join/new`, `#/dev/table`, `#/dev/character`, `#/dev/check-email`, `#/dev/dm/party`, `#/dev/dm/log` and `#/dev/dm/moments` (every kind of result card). In the previews dice are thrown in the browser, not by the server. Sample characters live in `src/screens/dev/sampleData.ts` and are reused by the render tests. Keep preview data inside functions, not built when a file loads, or the live build can't leave it out (check with `grep fumble dist/assets/*.js` after `npm run build`).
+- Dice: the 3D library is wrapped in `src/dice/diceTray.ts`. It is pinned at 0.0.12 and patched in two places at run time (textures come from `src/dice/textures.ts`; each throw gets a fresh colour set name because the library shares texture settings between sets). Check both if the version ever changes. `natural` is a reserved word in Postgres, hence the column name `natural_d20`.
 - To update the rules data, change the commit in `scripts/import-srd.ts`, run `node scripts/import-srd.ts`, and check `npm test`.

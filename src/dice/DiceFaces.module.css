@@ -1,0 +1,65 @@
+.faces {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.die {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: var(--chip-fill);
+  border: 1px solid var(--chip-border);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.small .die {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  font-size: 12px;
+}
+
+.large .die {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  font-size: 15px;
+}
+
+/* A d20 is drawn as a hexagon, like the dice medallion. */
+.d20 {
+  border: none;
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--gold-rule);
+  position: relative;
+  isolation: isolate;
+}
+
+.d20::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  clip-path: inherit;
+  background: var(--card-fill);
+}
+
+.dropped {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.nat20 {
+  background: var(--gold-light);
+  color: var(--gold-light);
+}
+
+.nat1 {
+  background: var(--fail);
+  color: var(--fail-light);
+}

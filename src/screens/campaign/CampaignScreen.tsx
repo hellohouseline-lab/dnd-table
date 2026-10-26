@@ -16,7 +16,7 @@ import type { Character } from '../../rules/character.ts'
 import columns from '../columns.module.css'
 import { AtTheTablePanel, CameraPanel } from './AsidePanels.tsx'
 import { describeParty, welcomeWord } from './describeParty.ts'
-import { DmDetailsPanel, DmInvitePanel, DmPartyPanel } from './DmPanels.tsx'
+import { DmDetailsPanel, DmInvitePanel, DmPartyPanel, DmScreenPanel } from './DmPanels.tsx'
 import { PlayerChoices } from './PlayerChoices.tsx'
 
 /** Screen 01, "Join": the campaign's front door. Players pick a character; the DM invites and manages the party. */
@@ -39,7 +39,8 @@ export function CampaignScreen({ campaignId }: { campaignId: string }) {
     if (name) document.title = `${name} · D&D Table`
   }, [name])
 
-  if (campaign.status === 'loading' || members.status === 'loading' || party.status === 'loading') return <LoadingScreen />
+  if (campaign.status === 'loading' || members.status === 'loading' || party.status === 'loading')
+    return <LoadingScreen />
 
   if (campaign.status === 'error' || members.status === 'error') {
     const message = campaign.status === 'error' ? campaign.message : members.status === 'error' ? members.message : ''
@@ -122,11 +123,11 @@ export function CampaignView({
       <div className={columns.columns}>
         <section className={columns.main} aria-labelledby="welcome-heading">
           <h2 id="welcome-heading" className={columns.sectionTitle}>
-            {welcomeWord(me.joined_at)}, {me.display_name}.{' '}
-            {isDm ? 'Invite your players' : 'Choose your character'}
+            {welcomeWord(me.joined_at)}, {me.display_name}. {isDm ? 'Invite your players' : 'Choose your character'}
           </h2>
           {isDm ? (
             <>
+              <DmScreenPanel campaign={table} />
               <DmInvitePanel campaign={table} siteUrl={siteUrl} onRenewed={onCampaignChanged} />
               <DmPartyPanel
                 campaign={table}

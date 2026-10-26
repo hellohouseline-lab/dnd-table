@@ -153,9 +153,10 @@ describe('weapon attacks', () => {
     expect(weaponAttack(longsword, { ...scores, strength: 8 }, 1, true).damage).toBe('1d8−1')
   })
 
-  it('handles a typed-in attack such as an unarmed strike', () => {
+  it('handles a typed-in attack such as an unarmed strike: 1 + Strength modifier', () => {
     const unarmed = { ability: 'strength' as const, damageDice: '', damageType: 'Bludgeoning' }
-    expect(customAttack(unarmed, scores, 2, true)).toMatchObject({ toHit: 5, damage: '3' })
+    expect(customAttack(unarmed, scores, 2, true)).toMatchObject({ toHit: 5, damage: '4' })
+    expect(customAttack(unarmed, { ...scores, strength: 6 }, 2, true).damage).toBe('0')
   })
 
   it('writes damage without a bonus when it is zero', () => {

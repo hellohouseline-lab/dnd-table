@@ -21,6 +21,21 @@ import { CampaignFields, type CampaignForm } from './CampaignFields.tsx'
 import { seatsFilled } from './describeParty.ts'
 import styles from './DmPanels.module.css'
 
+/** The way into the DM's own screen: the party at a glance, the roll log and the DM's dice. */
+export function DmScreenPanel({ campaign }: { campaign: Campaign }) {
+  return (
+    <Panel title="Run the game">
+      <p className={styles.text}>
+        Your DM screen shows the party at a glance, everyone&rsquo;s dice as they land and the roll log. Keep it open
+        while you play.
+      </p>
+      <ButtonLink href={href(`/c/${campaign.id}/dm`)} variant="primary">
+        Open the DM screen
+      </ButtonLink>
+    </Panel>
+  )
+}
+
 type DmInviteProps = { campaign: Campaign; siteUrl: string; onRenewed: () => void }
 
 /** The join code and invite link, with copy and "make a new code". */
@@ -130,46 +145,52 @@ export function DmPartyPanel({ campaign, members, characters, online, onChanged 
           {players.map((player) => {
             const character = characters.find((c) => c.ownerId === player.user_id)
             return (
-            <li key={player.user_id} className={styles.player}>
-              <span className={cx(styles.dot, online.has(player.user_id) && styles.here)} aria-hidden="true" />
-              <span className={styles.playerName}>
-                {player.display_name}
-                <span className={styles.characterName}>{character ? ` · ${character.name}` : ' · no character yet'}</span>
-              </span>
-              {character && (
-                <ButtonLink href={href(`/c/${campaign.id}/sheet/${character.id}`)} variant="quiet">
-                  Sheet
-                </ButtonLink>
-              )}
-              <label className={styles.tonight}>
-                <input
-                  type="checkbox"
-                  checked={player.here_tonight}
-                  onChange={(event) =>
-                    void act(() => setHereTonight(campaign.id, player.user_id, event.target.checked))
-                  }
-                />
-                Here tonight
-              </label>
-              {removing === player.user_id ? (
-                <span className={styles.confirm}>
+              <li key={player.user_id} className={styles.player}>
+                <span className={cx(styles.dot, online.has(player.user_id) && styles.here)} aria-hidden="true" />
+                <span className={styles.playerName}>
+                  {player.display_name}
+                  <span className={styles.characterName}>
+                    {character ? ` · ${character.name}` : ' · no character yet'}
+                  </span>
+                </span>
+                {character && (
+                  <ButtonLink href={href(`/c/${campaign.id}/sheet/${character.id}`)} variant="quiet">
+                    Sheet
+                  </ButtonLink>
+                )}
+                <label className={styles.tonight}>
+                  <input
+                    type="checkbox"
+                    checked={player.here_tonight}
+                    onChange={(event) =>
+                      void act(() => setHereTonight(campaign.id, player.user_id, event.target.checked))
+                    }
+                  />
+                  Here tonight
+                </label>
+                {removing === player.user_id ? (
+                  <span className={styles.confirm}>
+                    <button
+                      type="button"
+                      className={buttonClassName('outline', { size: 'small' })}
+                      onClick={() => void act(() => removeMember(campaign.id, player.user_id))}
+                    >
+                      Remove {player.display_name}
+                    </button>
+                    <button type="button" className={buttonClassName('quiet')} onClick={() => setRemoving(null)}>
+                      Cancel
+                    </button>
+                  </span>
+                ) : (
                   <button
                     type="button"
-                    className={buttonClassName('outline', { size: 'small' })}
-                    onClick={() => void act(() => removeMember(campaign.id, player.user_id))}
+                    className={buttonClassName('quiet')}
+                    onClick={() => setRemoving(player.user_id)}
                   >
-                    Remove {player.display_name}
+                    Remove
                   </button>
-                  <button type="button" className={buttonClassName('quiet')} onClick={() => setRemoving(null)}>
-                    Cancel
-                  </button>
-                </span>
-              ) : (
-                <button type="button" className={buttonClassName('quiet')} onClick={() => setRemoving(player.user_id)}>
-                  Remove
-                </button>
-              )}
-            </li>
+                )}
+              </li>
             )
           })}
         </ul>
@@ -219,11 +240,7 @@ export function DmDetailsPanel({ campaign, onSaved }: { campaign: Campaign; onSa
           }}
         />
         <div>
-          <button
-            type="submit"
-            className={buttonClassName('primary', { size: 'small' })}
-            disabled={saving || !changed}
-          >
+          <button type="submit" className={buttonClassName('primary', { size: 'small' })} disabled={saving || !changed}>
             {saving ? 'Saving…' : 'Save changes'}
           </button>
         </div>

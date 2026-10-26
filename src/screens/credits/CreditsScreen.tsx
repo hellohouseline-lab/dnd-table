@@ -10,7 +10,7 @@ const SRD_URL = 'https://dnd.wizards.com/resources/systems-reference-document'
 const CC_BY_URL = 'https://creativecommons.org/licenses/by/4.0/legalcode'
 
 // Keep in step with CREDITS.md. Add each new source here when it first ships:
-// dice-box themes, game-icons.net icons, Open5e content.
+// game-icons.net icons, Open5e content.
 export function CreditsScreen() {
   return (
     <Page width="narrow">
@@ -23,16 +23,25 @@ export function CreditsScreen() {
       <Parchment title="Game rules" corners>
         {/* The SRD 5.1 attribution statement, word for word as Wizards of the Coast asks. */}
         <p>
-          This work includes material taken from the System Reference Document 5.1 (&ldquo;SRD 5.1&rdquo;) by
-          Wizards of the Coast LLC and available at <a href={SRD_URL}>{SRD_URL}</a>. The SRD 5.1 is licensed
-          under the Creative Commons Attribution 4.0 International License available at{' '}
-          <a href={CC_BY_URL}>{CC_BY_URL}</a>.
+          This work includes material taken from the System Reference Document 5.1 (&ldquo;SRD 5.1&rdquo;) by Wizards of
+          the Coast LLC and available at <a href={SRD_URL}>{SRD_URL}</a>. The SRD 5.1 is licensed under the Creative
+          Commons Attribution 4.0 International License available at <a href={CC_BY_URL}>{CC_BY_URL}</a>.
         </p>
         <p>
-          The rules data was prepared by the <a href="https://github.com/5e-bits/5e-srd-api">5e-database project</a>{' '}
-          by 5e-bits, shared under the MIT License. Only its 2014 SRD 5.1 data is used.
+          The rules data was prepared by the <a href="https://github.com/5e-bits/5e-srd-api">5e-database project</a> by
+          5e-bits, shared under the MIT License. Only its 2014 SRD 5.1 data is used.
         </p>
       </Parchment>
+
+      <Panel title="Dice">
+        <p>
+          The 3D dice are thrown by <a href="https://github.com/3d-dice/dice-box-threejs">dice-box-threejs</a> from the
+          3D Dice project by Frank Ali, based on Major Victory&rsquo;s 3D Dice Roller and Teall Dice, running on{' '}
+          <a href="https://threejs.org">three.js</a> and <a href="https://github.com/pmndrs/cannon-es">cannon-es</a>.
+          All three are free under the MIT License. The metal and stone finishes are drawn by this table&rsquo;s own
+          code.
+        </p>
+      </Panel>
 
       <Panel title="Fonts">
         <ul className={styles.list}>
@@ -50,8 +59,8 @@ export function CreditsScreen() {
 
       <Panel title="Not official">
         <p>
-          This is an unofficial fan project for one group of friends. It isn&rsquo;t made, endorsed or supported
-          by Wizards of the Coast. Dungeons &amp; Dragons and D&amp;D are trademarks of Wizards of the Coast LLC.
+          This is an unofficial fan project for one group of friends. It isn&rsquo;t made, endorsed or supported by
+          Wizards of the Coast. Dungeons &amp; Dragons and D&amp;D are trademarks of Wizards of the Coast LLC.
         </p>
       </Panel>
 

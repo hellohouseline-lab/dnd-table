@@ -17,9 +17,25 @@ export const sampleCampaign: Campaign = {
 const joined = '2026-10-20T20:00:00Z'
 
 export const sampleMembers: Member[] = [
-  { campaign_id: 'preview', user_id: 'dm', role: 'dm', display_name: 'Matt', here_tonight: true, joined_at: joined },
-  { campaign_id: 'preview', user_id: 'p1', role: 'player', display_name: 'Sam', here_tonight: true, joined_at: joined },
-  { campaign_id: 'preview', user_id: 'p2', role: 'player', display_name: 'Alex', here_tonight: false, joined_at: joined },
+  { campaign_id: 'preview', user_id: 'dm', role: 'dm', display_name: 'Matt', here_tonight: true, joined_at: joined, dice_style: {} },
+  {
+    campaign_id: 'preview',
+    user_id: 'p1',
+    role: 'player',
+    display_name: 'Sam',
+    here_tonight: true,
+    joined_at: joined,
+    dice_style: { material: 'glass', colour: 'ruby', numbers: 'gold' },
+  },
+  {
+    campaign_id: 'preview',
+    user_id: 'p2',
+    role: 'player',
+    display_name: 'Alex',
+    here_tonight: false,
+    joined_at: joined,
+    dice_style: { material: 'stone', colour: 'slate', numbers: 'white' },
+  },
 ]
 
 const trackers = {

@@ -17,6 +17,7 @@ export type Database = {
       campaign_members: {
         Row: {
           campaign_id: string
+          dice_style: Json
           display_name: string
           here_tonight: boolean
           joined_at: string
@@ -25,6 +26,7 @@ export type Database = {
         }
         Insert: {
           campaign_id: string
+          dice_style?: Json
           display_name: string
           here_tonight?: boolean
           joined_at?: string
@@ -33,6 +35,7 @@ export type Database = {
         }
         Update: {
           campaign_id?: string
+          dice_style?: Json
           display_name?: string
           here_tonight?: boolean
           joined_at?: string
@@ -216,6 +219,78 @@ export type Database = {
           },
         ]
       }
+      rolls: {
+        Row: {
+          campaign_id: string
+          character_id: string | null
+          created_at: string
+          damage: Json | null
+          dice: Json
+          id: string
+          kind: string
+          label: string
+          mode: string
+          modifier: number
+          natural_d20: number | null
+          parts: Json
+          roller_id: string
+          secret: boolean
+          style: Json
+          total: number
+        }
+        Insert: {
+          campaign_id: string
+          character_id?: string | null
+          created_at?: string
+          damage?: Json | null
+          dice: Json
+          id?: string
+          kind: string
+          label: string
+          mode?: string
+          modifier?: number
+          natural_d20?: number | null
+          parts?: Json
+          roller_id: string
+          secret?: boolean
+          style?: Json
+          total: number
+        }
+        Update: {
+          campaign_id?: string
+          character_id?: string | null
+          created_at?: string
+          damage?: Json | null
+          dice?: Json
+          id?: string
+          kind?: string
+          label?: string
+          mode?: string
+          modifier?: number
+          natural_d20?: number | null
+          parts?: Json
+          roller_id?: string
+          secret?: boolean
+          style?: Json
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rolls_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rolls_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -245,6 +320,33 @@ export type Database = {
         }[]
       }
       renew_join_code: { Args: { p_campaign_id: string }; Returns: string }
+      throw_dice: {
+        Args: { p_campaign_id: string; p_roll: Json }
+        Returns: {
+          campaign_id: string
+          character_id: string | null
+          created_at: string
+          damage: Json | null
+          dice: Json
+          id: string
+          kind: string
+          label: string
+          mode: string
+          modifier: number
+          natural_d20: number | null
+          parts: Json
+          roller_id: string
+          secret: boolean
+          style: Json
+          total: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rolls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never

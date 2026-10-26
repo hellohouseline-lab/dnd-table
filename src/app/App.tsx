@@ -5,8 +5,10 @@ import { NewCampaignScreen } from '../screens/campaign/NewCampaignScreen.tsx'
 import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
 import { CharacterEditorScreen } from '../screens/character/CharacterEditorScreen.tsx'
 import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
+import { DmPreview } from '../screens/dev/DmPreview.tsx'
 import { CharacterFormPreview, JoinScreenPreview, TablePreview } from '../screens/dev/JoinScreenPreview.tsx'
 import { SheetScreen } from '../screens/sheet/SheetScreen.tsx'
+import { DmScreen } from '../screens/dm/DmScreen.tsx'
 import { TableScreen } from '../screens/table/TableScreen.tsx'
 import { JoinByCodeScreen } from '../screens/join/JoinByCodeScreen.tsx'
 import { NotConnectedScreen } from '../screens/NotConnectedScreen.tsx'
@@ -44,6 +46,12 @@ const ROUTES: Route[] = [
     render: ({ campaignId }) => <CampaignScreen key={campaignId} campaignId={campaignId} />,
   },
   {
+    pattern: '/c/:campaignId/dm',
+    title: `DM screen · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId }) => <DmScreen key={campaignId} campaignId={campaignId} />,
+  },
+  {
     pattern: '/c/:campaignId/play',
     title: APP_NAME,
     signedIn: true,
@@ -76,14 +84,27 @@ const ROUTES: Route[] = [
   // Design previews with made-up data, only under `npm run dev`; the live build leaves them out.
   ...(import.meta.env.DEV
     ? [
-        { pattern: '/dev/check-email', title: `Check email preview · ${APP_NAME}`, render: () => <CheckEmailPreview /> },
+        {
+          pattern: '/dev/check-email',
+          title: `Check email preview · ${APP_NAME}`,
+          render: () => <CheckEmailPreview />,
+        },
         {
           pattern: '/dev/join/:as',
           title: `Join preview · ${APP_NAME}`,
           render: ({ as }: Record<string, string>) => <JoinScreenPreview as={as} />,
         },
         { pattern: '/dev/table', title: `Table preview · ${APP_NAME}`, render: () => <TablePreview /> },
-        { pattern: '/dev/character', title: `Character form preview · ${APP_NAME}`, render: () => <CharacterFormPreview /> },
+        {
+          pattern: '/dev/dm/:tab',
+          title: `DM screen preview · ${APP_NAME}`,
+          render: ({ tab }: Record<string, string>) => <DmPreview tab={tab} />,
+        },
+        {
+          pattern: '/dev/character',
+          title: `Character form preview · ${APP_NAME}`,
+          render: () => <CharacterFormPreview />,
+        },
       ]
     : []),
 ]
