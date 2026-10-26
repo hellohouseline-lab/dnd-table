@@ -13,7 +13,8 @@ import {
 } from '../../../rules/catalogue.ts'
 import type { Character } from '../../../rules/character.ts'
 import { giftItem, giftName, needsBase, type Gift } from '../../../rules/magic.ts'
-import type { SrdEquipment } from '../../../rules/srd/index.ts'
+import type { SrdEquipment, SrdMagicItem } from '../../../rules/srd/index.ts'
+import { entryValue, valueWords } from '../../../rules/value.ts'
 import own from '../GiveDialog.module.css'
 import styles from '../RestDialog.module.css'
 import { Status, type StatusLine } from './Status.tsx'
@@ -24,6 +25,7 @@ type GiveThingsProps = {
   onWho: (id: string) => void
   catalogue: Entry[]
   equipment: SrdEquipment
+  magicItems: SrdMagicItem[]
   giving: GivingControls
   /** A key item was given: fill in who has it in the notebook. */
   onKeyItem: (name: string, holder: string) => void
@@ -50,6 +52,7 @@ export function GiveThings({
   onWho,
   catalogue,
   equipment,
+  magicItems,
   giving,
   onKeyItem,
   onMake,
@@ -160,6 +163,9 @@ export function GiveThings({
             <li key={entry.key} className={cx(own.item, on && own.itemOn)}>
               <span className={own.name}>{entry.name}</span>
               <span className={own.words}>{entry.line}</span>
+              {entry.source !== 'gear' && valueWords(entryValue(entry.gift, equipment, magicItems)) && (
+                <span className={own.worth}>Worth {valueWords(entryValue(entry.gift, equipment, magicItems))}</span>
+              )}
               {entry.desc && (
                 <details className={own.more}>
                   <summary>All of it</summary>

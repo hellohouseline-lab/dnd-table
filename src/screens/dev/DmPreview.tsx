@@ -273,6 +273,14 @@ function usePreviewGiving(
       }, 1500)
       return null
     },
+    removeFromStash: async (itemId) => {
+      setStash((s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) }))
+      return null
+    },
+    clearStash: async () => {
+      setStash(EMPTY_STASH)
+      return null
+    },
     putOnTable: async (items, copper) => {
       setStash((s) => ({ items: mergeItems(s.items, items), wallet: addWallets(s.wallet, coinsFor(copper)) }))
       return null

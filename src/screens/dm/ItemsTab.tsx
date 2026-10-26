@@ -6,6 +6,8 @@ import type { Shop } from '../../rules/shops.ts'
 import type { Character, InventoryItem, Wallet } from '../../rules/character.ts'
 import { attunedCount, ATTUNE_LIMIT } from '../../rules/magic.ts'
 import { coinsFor, coinWords, readCoins } from '../../rules/money.ts'
+import type { SrdEquipment, SrdMagicItem } from '../../rules/srd/index.ts'
+import { marketValue, priceVerdict, valueWords, type Value } from '../../rules/value.ts'
 import party from './PartyCards.module.css'
 import styles from './ItemsTab.module.css'
 
@@ -17,7 +19,12 @@ type ItemsTabProps = {
   shops: ShopControls
   /** Opens the shop editor: a shop to change, or null to make one. */
   onShop: (shop: Shop | null) => void
+  /** For what things are worth (only the DM sees it). */
+  equipment: SrdEquipment | null
+  magicItems: SrdMagicItem[] | null
 }
+
+const VERDICT_WORDS = { cheap: 'that’s cheap', fair: 'that’s fair', pricey: 'that’s pricey' }
 
 const QUICK = [1, 5, 10, 50, 100]
 
@@ -25,8 +32,18 @@ const QUICK = [1, 5, 10, 50, 100]
  * Items and loot on Screen 1: every character's purse as coins, with one-click gold to add or take,
  * their pack with Offer to buy anything from them, and Give; then the party stash.
  */
-export function ItemsTab({ characters, giving, onGive, onOpenBox, shops, onShop }: ItemsTabProps) {
+export function ItemsTab({
+  characters,
+  giving,
+  onGive,
+  onOpenBox,
+  shops,
+  onShop,
+  equipment,
+  magicItems,
+}: ItemsTabProps) {
   const { stash } = giving
+  const worth = (item: InventoryItem) => (equipment ? marketValue(item, equipment, magicItems) : null)
   const stashEmpty = stash.items.length === 0 && coinWords(stash.wallet) === 'nothing'
   return (
     <div className={styles.tab}>
@@ -119,6 +136,7 @@ export function ItemsTab({ characters, giving, onGive, onOpenBox, shops, onShop 
             giving={giving}
             offers={giving.offers.filter((o) => o.characterId === character.id)}
             onGive={() => onGive(character)}
+            worth={worth}
           />
         ))}
         {characters.length === 0 && <p className={party.empty}>Nobody has a character yet.</p>}
@@ -130,16 +148,39 @@ export function ItemsTab({ characters, giving, onGive, onOpenBox, shops, onShop 
             <div className={party.name}>Party stash</div>
             <div className={party.player}>Shared by everyone. Coins that wouldn&rsquo;t split land here.</div>
           </div>
+          {!stashEmpty && (
+            <button
+              type="button"
+              className={party.action}
+              onClick={() => {
+                if (window.confirm('Clear the party stash? Everything in it, coins too, is gone.'))
+                  void giving.clearStash()
+              }}
+            >
+              Clear the stash
+            </button>
+          )}
         </div>
         {stashEmpty ? (
           <p className={party.empty}>Empty.</p>
         ) : (
           <>
             <Purse wallet={stash.wallet} />
-            <ul className={styles.pack}>
+            <ul className={styles.things}>
               {stash.items.map((i) => (
                 <li key={i.id}>
-                  {i.quantity > 1 && <span className={styles.count}>{i.quantity} ×</span>} {i.name}
+                  <span className={i.magic ? styles.magic : undefined}>
+                    {i.quantity > 1 && <span className={styles.count}>{i.quantity} ×</span>} {i.name}
+                    <Worth words={valueWords(worth(i), i.quantity)} />
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.offer}
+                    aria-label={`Take ${i.name} out of the stash`}
+                    onClick={() => void giving.removeFromStash(i.id)}
+                  >
+                    Take out
+                  </button>
                 </li>
               ))}
             </ul>
@@ -155,11 +196,13 @@ function CharacterThings({
   giving,
   offers,
   onGive,
+  worth,
 }: {
   character: Character
   giving: GivingControls
   offers: Offer[]
   onGive: () => void
+  worth: (item: InventoryItem) => Value | null
 }) {
   const weight = character.inventory.reduce((sum, i) => sum + i.weight * i.quantity, 0)
   const attuned = attunedCount(character.inventory)
@@ -257,6 +300,7 @@ function CharacterThings({
                   {item.quantity > 1 && <span className={styles.count}>{item.quantity} ×</span>} {item.name}
                   {item.worn && <span className={styles.tag}>worn</span>}
                   {item.attuned && <span className={styles.tag}>attuned</span>}
+                  <Worth words={valueWords(worth(item), item.quantity)} />
                 </span>
                 {open ? (
                   <span className={styles.offered}>
@@ -268,6 +312,7 @@ function CharacterThings({
                 ) : offering === item.id ? (
                   <OfferForm
                     item={item}
+                    value={worth(item)}
                     onOffer={async (quantity, copper) => {
                       const result = await giving.offer(character.id, item.id, quantity, copper)
                       setProblem(result)
@@ -303,10 +348,12 @@ function CharacterThings({
 
 function OfferForm({
   item,
+  value,
   onOffer,
   onCancel,
 }: {
   item: InventoryItem
+  value: Value | null
   onOffer: (quantity: number, copper: number) => Promise<void>
   onCancel: () => void
 }) {
@@ -346,8 +393,21 @@ function OfferForm({
       <button type="button" className={styles.link} onClick={onCancel}>
         Cancel
       </button>
+      {value && (
+        <span className={styles.worthNote}>
+          Worth {valueWords(value, quantity)}
+          {copper !== null &&
+            priceVerdict(copper, value, quantity) &&
+            `: ${VERDICT_WORDS[priceVerdict(copper, value, quantity)!]}`}
+        </span>
+      )}
     </form>
   )
+}
+
+/** What it's worth, quietly, for the DM. */
+function Worth({ words }: { words: string }) {
+  return words ? <span className={styles.worth}> · {words}</span> : null
 }
 
 const COIN_ORDER: { key: keyof Wallet; name: string }[] = [

@@ -506,6 +506,8 @@ export function DmView({
               onOpenBox={() => setBoxOpen(true)}
               shops={shops}
               onShop={(shop) => setShopEdit({ shop })}
+              equipment={equipment}
+              magicItems={magicItems}
             />
           ) : tab === 'party' ? (
             <PartyCards
@@ -587,6 +589,8 @@ export function DmView({
             shops={shops}
             characters={characters}
             onPersuade={(id) => setAskFor({ only: id, key: 'skill:persuasion' })}
+            equipment={equipment}
+            magicItems={magicItems}
           />
           <RollsForDm rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
         </div>

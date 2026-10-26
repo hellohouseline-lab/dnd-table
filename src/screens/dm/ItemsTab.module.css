@@ -286,3 +286,20 @@
   font-size: 15px;
   color: var(--text-2);
 }
+
+/* What things are worth: quiet, for the DM's eyes. */
+.worth {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.worthNote {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--label);
+}
+
+.offerForm {
+  flex-wrap: wrap;
+}

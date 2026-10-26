@@ -1699,6 +1699,21 @@ export type Database = {
         }
         Returns: Json
       }
+      clear_stash: {
+        Args: { p_campaign_id: string }
+        Returns: {
+          campaign_id: string
+          items: Json
+          updated_at: string
+          wallet: Json
+        }
+        SetofOptions: {
+          from: "*"
+          to: "party_stash"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       close_roll_request: { Args: { p_request_id: string }; Returns: undefined }
       concentration_save: { Args: { p_character_id: string }; Returns: Json }
       create_campaign: {
@@ -2139,6 +2154,21 @@ export type Database = {
       }
       put_on_table: {
         Args: { p_campaign_id: string; p_copper: number; p_items: Json }
+        Returns: {
+          campaign_id: string
+          items: Json
+          updated_at: string
+          wallet: Json
+        }
+        SetofOptions: {
+          from: "*"
+          to: "party_stash"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      remove_from_stash: {
+        Args: { p_campaign_id: string; p_item_id: string }
         Returns: {
           campaign_id: string
           items: Json

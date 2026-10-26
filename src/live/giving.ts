@@ -46,6 +46,9 @@ export type GivingControls = {
   withdraw: (offerId: string) => Promise<string | null>
   /** Puts things (and coins in copper) in the party stash for everyone. */
   putOnTable: (items: InventoryItem[], copper: number) => Promise<string | null>
+  /** Takes one thing out of the stash for good, or clears it, coins and all. */
+  removeFromStash: (itemId: string) => Promise<string | null>
+  clearStash: () => Promise<string | null>
   /** Items (weapons listed with whether the character is trained, for their card) and coins in copper. */
   give: (
     characterId: string,
@@ -77,6 +80,8 @@ export const NO_GIVING: GivingControls = {
   offer: async () => null,
   withdraw: async () => null,
   putOnTable: async () => null,
+  removeFromStash: async () => null,
+  clearStash: async () => null,
 }
 
 async function call(
@@ -236,6 +241,9 @@ export function useGivingControls(campaignId: string, userId: string): GivingCon
         call(() =>
           db().rpc('put_on_table', { p_campaign_id: campaignId, p_items: items as unknown as Json, p_copper: copper }),
         ),
+      removeFromStash: (itemId: string) =>
+        call(() => db().rpc('remove_from_stash', { p_campaign_id: campaignId, p_item_id: itemId })),
+      clearStash: () => call(() => db().rpc('clear_stash', { p_campaign_id: campaignId })),
     }),
     [campaignId, stash, yours, offers, reload],
   )

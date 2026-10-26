@@ -77,6 +77,7 @@ export function GiveDialog({ characters, only, equipment, magicItems, giving, on
           onWho={setWho}
           catalogue={catalogue}
           equipment={equipment}
+          magicItems={magicItems}
           giving={giving}
           onKeyItem={onKeyItem}
           onMake={() => setSide('make')}

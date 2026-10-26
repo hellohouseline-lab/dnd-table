@@ -61,3 +61,20 @@
 .unpriced th {
   color: var(--fail-light);
 }
+
+/* How the price here compares with what it's worth. */
+.cheap {
+  color: var(--pass);
+  font-style: italic;
+}
+
+.fair,
+.muted {
+  color: var(--text-3);
+  font-style: italic;
+}
+
+.pricey {
+  color: var(--fail-light);
+  font-style: italic;
+}
