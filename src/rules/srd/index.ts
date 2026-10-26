@@ -21,7 +21,19 @@ export type SrdClassLevel = {
   slots: number[]
   cantripsKnown?: number
   spellsKnown?: number
+  /** The class's own numbers at this level: rage_count, ki_points, sneak_attack, wild_shape_max_cr and so on. */
+  extras: Record<string, unknown>
+  /** Ability score increases had so far (one at level 4, two at 8, and so on; fighters and rogues get more). */
+  abilityScoreIncreases: number
 }
+
+/** Part of a starting-gear option: an item and how many, or a pick from a category ("a martial weapon"). */
+export type GearPart = { item: string; quantity: number } | { category: string; choose: number; desc: string }
+/** A starting-gear choice: pick `choose` of the options, each a list of parts. */
+export type GearChoice = { desc: string; choose: number; options: GearPart[][] }
+
+/** Something a feature or trait asks you to pick: features, skills (expertise), spells, or words (favoured enemies). */
+export type SrdChoice = { kind: 'feature' | 'skill' | 'spell' | 'trait' | 'text'; choose: number; from: string[] }
 
 export type SrdClass = {
   index: string
@@ -34,6 +46,10 @@ export type SrdClass = {
   subclasses: { index: string; name: string }[]
   levels: Record<string, SrdClassLevel>
   subclassFeatures: Record<string, Record<string, string[]>>
+  startingGear: { item: string; quantity: number }[]
+  startingChoices: GearChoice[]
+  /** Spells a subclass always has prepared, from a level (a Land druid's by terrain). */
+  subclassSpells: Record<string, { spell: string; level: number; terrain: string | null }[]>
 }
 
 export type SrdSubrace = {
@@ -51,17 +67,68 @@ export type SrdRace = {
   languages: string[]
   traits: string[]
   subraces: SrdSubrace[]
+  /** Half-elves: +1 to two abilities of their choice (not Charisma, which already has +2). */
+  abilityBonusChoice?: { choose: number; from: Ability[] }
+  /** Extra languages to pick. */
+  languageChoices: number
 }
-export type SrdRaces = { races: SrdRace[]; traits: Record<string, { name: string; desc: string }> }
+export type SrdTrait = {
+  name: string
+  desc: string
+  /** A high elf's cantrip, a dragonborn's ancestry. */
+  choice?: SrdChoice
+  /** A draconic ancestry's damage type and breath weapon. */
+  damageType?: string
+  breath?: { area: { size: number; type: string }; save: Ability | null }
+}
+export type SrdRaces = { races: SrdRace[]; traits: Record<string, SrdTrait> }
 
 export type SrdBackground = {
   index: string
   name: string
   skills: string[]
   feature: { name: string; desc: string } | null
+  languageChoices: number
+  gear: { item: string; quantity: number }[]
+  gearChoices: GearChoice[]
+  /** Gold pieces to start with. */
+  gold: number
+  /** Ideas to pick from, or write your own. */
+  personality: string[]
+  ideals: string[]
+  bonds: string[]
+  flaws: string[]
 }
 
-export type SrdFeature = { name: string; class: string | null; subclass: string | null; level: number; desc: string }
+export type SrdPrerequisite = { level: number } | { spell: string } | { feature: string }
+export type SrdFeature = {
+  name: string
+  class: string | null
+  subclass: string | null
+  level: number
+  desc: string
+  /** What it asks you to pick. Invocations come with choose 0: how many is the class's invocations_known. */
+  choice?: SrdChoice
+  /** The feature it's one option of (a fighting style's Fighting Style). */
+  parent?: string
+  prerequisites: SrdPrerequisite[]
+}
+
+/** An item of equipment. Costs are in copper pieces (1 gp = 100). */
+export type SrdItem = {
+  index: string
+  name: string
+  /** 'weapon', 'armor', 'adventuring-gear', 'tools' or 'mounts-and-vehicles'. */
+  kind: string
+  /** Light, Medium, Heavy or Shield; Simple or Martial; Equipment Packs, Standard Gear… */
+  sub: string | null
+  weight: number
+  cost: number
+  /** A pack's contents. */
+  contents?: { item: string; quantity: number }[]
+  armour?: { base: number; dexBonus: boolean; maxDex: number | null; strength: number; stealthDisadvantage: boolean }
+}
+export type SrdEquipment = { items: SrdItem[]; categories: Record<string, string[]> }
 
 export type SrdSpell = {
   index: string
@@ -157,6 +224,7 @@ export const loadBackgrounds = once(
 export const loadFeatures = once(
   async () => (await import('./features.json')).default.features as unknown as Record<string, SrdFeature>,
 )
+export const loadEquipment = once(async () => (await import('./equipment.json')).default as unknown as SrdEquipment)
 export const loadSpells = once(async () => (await import('./spells.json')).default.spells as unknown as SrdSpell[])
 /** Monsters are only loaded on the DM's screens. */
 export const loadMonsters = once(

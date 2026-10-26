@@ -1,0 +1,2364 @@
+{
+  "source": {
+    "project": "5e-database (github.com/5e-bits/5e-srd-api), 2014 SRD 5.1 data",
+    "commit": "386930c2e93a7f2c9ba2a9715ccc5b95d8926e41",
+    "licence": "Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT."
+  },
+  "items": [
+    {
+      "index": "club",
+      "name": "Club",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 2,
+      "cost": 10
+    },
+    {
+      "index": "dagger",
+      "name": "Dagger",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 1,
+      "cost": 200
+    },
+    {
+      "index": "greatclub",
+      "name": "Greatclub",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 10,
+      "cost": 20
+    },
+    {
+      "index": "handaxe",
+      "name": "Handaxe",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 2,
+      "cost": 500
+    },
+    {
+      "index": "javelin",
+      "name": "Javelin",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 2,
+      "cost": 50
+    },
+    {
+      "index": "light-hammer",
+      "name": "Light hammer",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 2,
+      "cost": 200
+    },
+    {
+      "index": "mace",
+      "name": "Mace",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 4,
+      "cost": 500
+    },
+    {
+      "index": "quarterstaff",
+      "name": "Quarterstaff",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 4,
+      "cost": 20
+    },
+    {
+      "index": "sickle",
+      "name": "Sickle",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 2,
+      "cost": 100
+    },
+    {
+      "index": "spear",
+      "name": "Spear",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 3,
+      "cost": 100
+    },
+    {
+      "index": "crossbow-light",
+      "name": "Crossbow, light",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 5,
+      "cost": 2500
+    },
+    {
+      "index": "dart",
+      "name": "Dart",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 0.25,
+      "cost": 5
+    },
+    {
+      "index": "shortbow",
+      "name": "Shortbow",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 2,
+      "cost": 2500
+    },
+    {
+      "index": "sling",
+      "name": "Sling",
+      "kind": "weapon",
+      "sub": "Simple",
+      "weight": 0,
+      "cost": 10
+    },
+    {
+      "index": "battleaxe",
+      "name": "Battleaxe",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 4,
+      "cost": 1000
+    },
+    {
+      "index": "flail",
+      "name": "Flail",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 2,
+      "cost": 1000
+    },
+    {
+      "index": "glaive",
+      "name": "Glaive",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 6,
+      "cost": 2000
+    },
+    {
+      "index": "greataxe",
+      "name": "Greataxe",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 7,
+      "cost": 3000
+    },
+    {
+      "index": "greatsword",
+      "name": "Greatsword",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 6,
+      "cost": 5000
+    },
+    {
+      "index": "halberd",
+      "name": "Halberd",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 6,
+      "cost": 2000
+    },
+    {
+      "index": "lance",
+      "name": "Lance",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 6,
+      "cost": 1000
+    },
+    {
+      "index": "longsword",
+      "name": "Longsword",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 3,
+      "cost": 1500
+    },
+    {
+      "index": "maul",
+      "name": "Maul",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 10,
+      "cost": 1000
+    },
+    {
+      "index": "morningstar",
+      "name": "Morningstar",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 4,
+      "cost": 1500
+    },
+    {
+      "index": "pike",
+      "name": "Pike",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 18,
+      "cost": 500
+    },
+    {
+      "index": "rapier",
+      "name": "Rapier",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 2,
+      "cost": 2500
+    },
+    {
+      "index": "scimitar",
+      "name": "Scimitar",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 3,
+      "cost": 2500
+    },
+    {
+      "index": "shortsword",
+      "name": "Shortsword",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 2,
+      "cost": 1000
+    },
+    {
+      "index": "trident",
+      "name": "Trident",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 4,
+      "cost": 500
+    },
+    {
+      "index": "war-pick",
+      "name": "War pick",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 2,
+      "cost": 500
+    },
+    {
+      "index": "warhammer",
+      "name": "Warhammer",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 2,
+      "cost": 1500
+    },
+    {
+      "index": "whip",
+      "name": "Whip",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 3,
+      "cost": 200
+    },
+    {
+      "index": "blowgun",
+      "name": "Blowgun",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 1,
+      "cost": 1000
+    },
+    {
+      "index": "crossbow-hand",
+      "name": "Crossbow, hand",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 3,
+      "cost": 7500
+    },
+    {
+      "index": "crossbow-heavy",
+      "name": "Crossbow, heavy",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 18,
+      "cost": 5000
+    },
+    {
+      "index": "longbow",
+      "name": "Longbow",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 2,
+      "cost": 5000
+    },
+    {
+      "index": "net",
+      "name": "Net",
+      "kind": "weapon",
+      "sub": "Martial",
+      "weight": 3,
+      "cost": 100
+    },
+    {
+      "index": "padded-armor",
+      "name": "Padded Armor",
+      "kind": "armor",
+      "sub": "Light",
+      "weight": 8,
+      "cost": 500,
+      "armour": {
+        "base": 11,
+        "dexBonus": true,
+        "maxDex": null,
+        "strength": 0,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "leather-armor",
+      "name": "Leather Armor",
+      "kind": "armor",
+      "sub": "Light",
+      "weight": 10,
+      "cost": 1000,
+      "armour": {
+        "base": 11,
+        "dexBonus": true,
+        "maxDex": null,
+        "strength": 0,
+        "stealthDisadvantage": false
+      }
+    },
+    {
+      "index": "studded-leather-armor",
+      "name": "Studded Leather Armor",
+      "kind": "armor",
+      "sub": "Light",
+      "weight": 13,
+      "cost": 4500,
+      "armour": {
+        "base": 12,
+        "dexBonus": true,
+        "maxDex": null,
+        "strength": 0,
+        "stealthDisadvantage": false
+      }
+    },
+    {
+      "index": "hide-armor",
+      "name": "Hide Armor",
+      "kind": "armor",
+      "sub": "Medium",
+      "weight": 12,
+      "cost": 1000,
+      "armour": {
+        "base": 12,
+        "dexBonus": true,
+        "maxDex": 2,
+        "strength": 0,
+        "stealthDisadvantage": false
+      }
+    },
+    {
+      "index": "chain-shirt",
+      "name": "Chain Shirt",
+      "kind": "armor",
+      "sub": "Medium",
+      "weight": 20,
+      "cost": 5000,
+      "armour": {
+        "base": 13,
+        "dexBonus": true,
+        "maxDex": 2,
+        "strength": 0,
+        "stealthDisadvantage": false
+      }
+    },
+    {
+      "index": "scale-mail",
+      "name": "Scale Mail",
+      "kind": "armor",
+      "sub": "Medium",
+      "weight": 45,
+      "cost": 5000,
+      "armour": {
+        "base": 14,
+        "dexBonus": true,
+        "maxDex": 2,
+        "strength": 0,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "breastplate",
+      "name": "Breastplate",
+      "kind": "armor",
+      "sub": "Medium",
+      "weight": 20,
+      "cost": 40000,
+      "armour": {
+        "base": 14,
+        "dexBonus": true,
+        "maxDex": 2,
+        "strength": 0,
+        "stealthDisadvantage": false
+      }
+    },
+    {
+      "index": "half-plate-armor",
+      "name": "Half Plate Armor",
+      "kind": "armor",
+      "sub": "Medium",
+      "weight": 40,
+      "cost": 75000,
+      "armour": {
+        "base": 15,
+        "dexBonus": true,
+        "maxDex": 2,
+        "strength": 0,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "ring-mail",
+      "name": "Ring Mail",
+      "kind": "armor",
+      "sub": "Heavy",
+      "weight": 40,
+      "cost": 3000,
+      "armour": {
+        "base": 14,
+        "dexBonus": false,
+        "maxDex": null,
+        "strength": 0,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "chain-mail",
+      "name": "Chain Mail",
+      "kind": "armor",
+      "sub": "Heavy",
+      "weight": 55,
+      "cost": 7500,
+      "armour": {
+        "base": 16,
+        "dexBonus": false,
+        "maxDex": null,
+        "strength": 13,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "splint-armor",
+      "name": "Splint Armor",
+      "kind": "armor",
+      "sub": "Heavy",
+      "weight": 60,
+      "cost": 20000,
+      "armour": {
+        "base": 17,
+        "dexBonus": false,
+        "maxDex": null,
+        "strength": 15,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "plate-armor",
+      "name": "Plate Armor",
+      "kind": "armor",
+      "sub": "Heavy",
+      "weight": 65,
+      "cost": 150000,
+      "armour": {
+        "base": 18,
+        "dexBonus": false,
+        "maxDex": null,
+        "strength": 15,
+        "stealthDisadvantage": true
+      }
+    },
+    {
+      "index": "shield",
+      "name": "Shield",
+      "kind": "armor",
+      "sub": "Shield",
+      "weight": 6,
+      "cost": 1000,
+      "armour": {
+        "base": 2,
+        "dexBonus": false,
+        "maxDex": null,
+        "strength": 0,
+        "stealthDisadvantage": false
+      }
+    },
+    {
+      "index": "abacus",
+      "name": "Abacus",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 200
+    },
+    {
+      "index": "acid-vial",
+      "name": "Acid (vial)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 2500
+    },
+    {
+      "index": "alchemists-fire-flask",
+      "name": "Alchemist's fire (flask)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 5000
+    },
+    {
+      "index": "alms-box",
+      "name": "Alms box",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "arrow",
+      "name": "Arrow",
+      "kind": "adventuring-gear",
+      "sub": "Ammunition",
+      "weight": 1,
+      "cost": 100
+    },
+    {
+      "index": "block-of-incense",
+      "name": "Block of incense",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "blowgun-needle",
+      "name": "Blowgun needle",
+      "kind": "adventuring-gear",
+      "sub": "Ammunition",
+      "weight": 1,
+      "cost": 100
+    },
+    {
+      "index": "censer",
+      "name": "Censer",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "crossbow-bolt",
+      "name": "Crossbow bolt",
+      "kind": "adventuring-gear",
+      "sub": "Ammunition",
+      "weight": 1.5,
+      "cost": 100
+    },
+    {
+      "index": "sling-bullet",
+      "name": "Sling bullet",
+      "kind": "adventuring-gear",
+      "sub": "Ammunition",
+      "weight": 1.5,
+      "cost": 4
+    },
+    {
+      "index": "amulet",
+      "name": "Amulet",
+      "kind": "adventuring-gear",
+      "sub": "Holy Symbols",
+      "weight": 1,
+      "cost": 500
+    },
+    {
+      "index": "antitoxin-vial",
+      "name": "Antitoxin (vial)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 5000
+    },
+    {
+      "index": "crystal",
+      "name": "Crystal",
+      "kind": "adventuring-gear",
+      "sub": "Arcane Foci",
+      "weight": 1,
+      "cost": 1000
+    },
+    {
+      "index": "orb",
+      "name": "Orb",
+      "kind": "adventuring-gear",
+      "sub": "Arcane Foci",
+      "weight": 3,
+      "cost": 2000
+    },
+    {
+      "index": "rod",
+      "name": "Rod",
+      "kind": "adventuring-gear",
+      "sub": "Arcane Foci",
+      "weight": 2,
+      "cost": 1000
+    },
+    {
+      "index": "staff",
+      "name": "Staff",
+      "kind": "adventuring-gear",
+      "sub": "Arcane Foci",
+      "weight": 4,
+      "cost": 500
+    },
+    {
+      "index": "wand",
+      "name": "Wand",
+      "kind": "adventuring-gear",
+      "sub": "Arcane Foci",
+      "weight": 1,
+      "cost": 1000
+    },
+    {
+      "index": "backpack",
+      "name": "Backpack",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 200
+    },
+    {
+      "index": "ball-bearings-bag-of-1000",
+      "name": "Ball bearings (bag of 1,000)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 100
+    },
+    {
+      "index": "barrel",
+      "name": "Barrel",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 70,
+      "cost": 200
+    },
+    {
+      "index": "basket",
+      "name": "Basket",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 40
+    },
+    {
+      "index": "bedroll",
+      "name": "Bedroll",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 7,
+      "cost": 100
+    },
+    {
+      "index": "bell",
+      "name": "Bell",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 100
+    },
+    {
+      "index": "blanket",
+      "name": "Blanket",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 3,
+      "cost": 50
+    },
+    {
+      "index": "block-and-tackle",
+      "name": "Block and tackle",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 100
+    },
+    {
+      "index": "book",
+      "name": "Book",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 2500
+    },
+    {
+      "index": "bottle-glass",
+      "name": "Bottle, glass",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 200
+    },
+    {
+      "index": "bucket",
+      "name": "Bucket",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 5
+    },
+    {
+      "index": "caltrops",
+      "name": "Caltrops",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 5
+    },
+    {
+      "index": "candle",
+      "name": "Candle",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 1
+    },
+    {
+      "index": "case-crossbow-bolt",
+      "name": "Case, crossbow bolt",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 100
+    },
+    {
+      "index": "case-map-or-scroll",
+      "name": "Case, map or scroll",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 100
+    },
+    {
+      "index": "chain-10-feet",
+      "name": "Chain (10 feet)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 10,
+      "cost": 500
+    },
+    {
+      "index": "chalk-1-piece",
+      "name": "Chalk (1 piece)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 1
+    },
+    {
+      "index": "chest",
+      "name": "Chest",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 25,
+      "cost": 500
+    },
+    {
+      "index": "clothes-common",
+      "name": "Clothes, common",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 3,
+      "cost": 50
+    },
+    {
+      "index": "clothes-costume",
+      "name": "Clothes, costume",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 4,
+      "cost": 500
+    },
+    {
+      "index": "clothes-fine",
+      "name": "Clothes, fine",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 6,
+      "cost": 1500
+    },
+    {
+      "index": "clothes-travelers",
+      "name": "Clothes, traveler's",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 4,
+      "cost": 200
+    },
+    {
+      "index": "component-pouch",
+      "name": "Component pouch",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 2500
+    },
+    {
+      "index": "crowbar",
+      "name": "Crowbar",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 200
+    },
+    {
+      "index": "sprig-of-mistletoe",
+      "name": "Sprig of mistletoe",
+      "kind": "adventuring-gear",
+      "sub": "Druidic Foci",
+      "weight": 0,
+      "cost": 100
+    },
+    {
+      "index": "totem",
+      "name": "Totem",
+      "kind": "adventuring-gear",
+      "sub": "Druidic Foci",
+      "weight": 0,
+      "cost": 100
+    },
+    {
+      "index": "wooden-staff",
+      "name": "Wooden staff",
+      "kind": "adventuring-gear",
+      "sub": "Druidic Foci",
+      "weight": 4,
+      "cost": 500
+    },
+    {
+      "index": "yew-wand",
+      "name": "Yew wand",
+      "kind": "adventuring-gear",
+      "sub": "Druidic Foci",
+      "weight": 1,
+      "cost": 1000
+    },
+    {
+      "index": "emblem",
+      "name": "Emblem",
+      "kind": "adventuring-gear",
+      "sub": "Holy Symbols",
+      "weight": 0,
+      "cost": 500
+    },
+    {
+      "index": "fishing-tackle",
+      "name": "Fishing tackle",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 4,
+      "cost": 100
+    },
+    {
+      "index": "flask-or-tankard",
+      "name": "Flask or tankard",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 2
+    },
+    {
+      "index": "grappling-hook",
+      "name": "Grappling hook",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 4,
+      "cost": 200
+    },
+    {
+      "index": "hammer",
+      "name": "Hammer",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 3,
+      "cost": 100
+    },
+    {
+      "index": "hammer-sledge",
+      "name": "Hammer, sledge",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 10,
+      "cost": 200
+    },
+    {
+      "index": "holy-water-flask",
+      "name": "Holy water (flask)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 2500
+    },
+    {
+      "index": "hourglass",
+      "name": "Hourglass",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 2500
+    },
+    {
+      "index": "hunting-trap",
+      "name": "Hunting trap",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 25,
+      "cost": 500
+    },
+    {
+      "index": "ink-1-ounce-bottle",
+      "name": "Ink (1 ounce bottle)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 1000
+    },
+    {
+      "index": "ink-pen",
+      "name": "Ink pen",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 2
+    },
+    {
+      "index": "jug-or-pitcher",
+      "name": "Jug or pitcher",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 4,
+      "cost": 2
+    },
+    {
+      "index": "climbers-kit",
+      "name": "Climber's Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 12,
+      "cost": 2500
+    },
+    {
+      "index": "disguise-kit",
+      "name": "Disguise Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 3,
+      "cost": 2500
+    },
+    {
+      "index": "forgery-kit",
+      "name": "Forgery Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 5,
+      "cost": 1500
+    },
+    {
+      "index": "herbalism-kit",
+      "name": "Herbalism Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 3,
+      "cost": 500
+    },
+    {
+      "index": "healers-kit",
+      "name": "Healer's Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 3,
+      "cost": 500
+    },
+    {
+      "index": "mess-kit",
+      "name": "Mess Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 1,
+      "cost": 20
+    },
+    {
+      "index": "poisoners-kit",
+      "name": "Poisoner's Kit",
+      "kind": "adventuring-gear",
+      "sub": "Kits",
+      "weight": 2,
+      "cost": 5000
+    },
+    {
+      "index": "ladder-10-foot",
+      "name": "Ladder (10-foot)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 25,
+      "cost": 10
+    },
+    {
+      "index": "lamp",
+      "name": "Lamp",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 50
+    },
+    {
+      "index": "lantern-bullseye",
+      "name": "Lantern, bullseye",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 1000
+    },
+    {
+      "index": "lantern-hooded",
+      "name": "Lantern, hooded",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 500
+    },
+    {
+      "index": "little-bag-of-sand",
+      "name": "Little bag of sand",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "lock",
+      "name": "Lock",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 1000
+    },
+    {
+      "index": "magnifying-glass",
+      "name": "Magnifying glass",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 10000
+    },
+    {
+      "index": "manacles",
+      "name": "Manacles",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 6,
+      "cost": 200
+    },
+    {
+      "index": "mirror-steel",
+      "name": "Mirror, steel",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0.5,
+      "cost": 500
+    },
+    {
+      "index": "oil-flask",
+      "name": "Oil (flask)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 10
+    },
+    {
+      "index": "paper-one-sheet",
+      "name": "Paper (one sheet)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 20
+    },
+    {
+      "index": "parchment-one-sheet",
+      "name": "Parchment (one sheet)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 10
+    },
+    {
+      "index": "perfume-vial",
+      "name": "Perfume (vial)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 500
+    },
+    {
+      "index": "pick-miners",
+      "name": "Pick, miner's",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 10,
+      "cost": 200
+    },
+    {
+      "index": "piton",
+      "name": "Piton",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0.25,
+      "cost": 5
+    },
+    {
+      "index": "poison-basic-vial",
+      "name": "Poison, basic (vial)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 10000
+    },
+    {
+      "index": "pole-10-foot",
+      "name": "Pole (10-foot)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 7,
+      "cost": 5
+    },
+    {
+      "index": "pot-iron",
+      "name": "Pot, iron",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 10,
+      "cost": 200
+    },
+    {
+      "index": "pouch",
+      "name": "Pouch",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 50
+    },
+    {
+      "index": "quiver",
+      "name": "Quiver",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 100
+    },
+    {
+      "index": "ram-portable",
+      "name": "Ram, portable",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 35,
+      "cost": 400
+    },
+    {
+      "index": "rations-1-day",
+      "name": "Rations (1 day)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 2,
+      "cost": 50
+    },
+    {
+      "index": "reliquary",
+      "name": "Reliquary",
+      "kind": "adventuring-gear",
+      "sub": "Holy Symbols",
+      "weight": 2,
+      "cost": 500
+    },
+    {
+      "index": "robes",
+      "name": "Robes",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 4,
+      "cost": 100
+    },
+    {
+      "index": "rope-hempen-50-feet",
+      "name": "Rope, hempen (50 feet)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 10,
+      "cost": 100
+    },
+    {
+      "index": "rope-silk-50-feet",
+      "name": "Rope, silk (50 feet)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 1000
+    },
+    {
+      "index": "sack",
+      "name": "Sack",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0.5,
+      "cost": 1
+    },
+    {
+      "index": "scale-merchants",
+      "name": "Scale, merchant's",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 3,
+      "cost": 500
+    },
+    {
+      "index": "sealing-wax",
+      "name": "Sealing wax",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 50
+    },
+    {
+      "index": "shovel",
+      "name": "Shovel",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 200
+    },
+    {
+      "index": "signal-whistle",
+      "name": "Signal whistle",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 5
+    },
+    {
+      "index": "signet-ring",
+      "name": "Signet ring",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 500
+    },
+    {
+      "index": "small-knife",
+      "name": "Small knife",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "soap",
+      "name": "Soap",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 2
+    },
+    {
+      "index": "spellbook",
+      "name": "Spellbook",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 3,
+      "cost": 5000
+    },
+    {
+      "index": "spike-iron",
+      "name": "Spike, iron",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 10
+    },
+    {
+      "index": "spyglass",
+      "name": "Spyglass",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 100000
+    },
+    {
+      "index": "string-10-feet",
+      "name": "String (10 feet)",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "tent-two-person",
+      "name": "Tent, two-person",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 20,
+      "cost": 200
+    },
+    {
+      "index": "tinderbox",
+      "name": "Tinderbox",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 50
+    },
+    {
+      "index": "torch",
+      "name": "Torch",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 1
+    },
+    {
+      "index": "vestments",
+      "name": "Vestments",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 0
+    },
+    {
+      "index": "vial",
+      "name": "Vial",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 0,
+      "cost": 100
+    },
+    {
+      "index": "waterskin",
+      "name": "Waterskin",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 5,
+      "cost": 20
+    },
+    {
+      "index": "whetstone",
+      "name": "Whetstone",
+      "kind": "adventuring-gear",
+      "sub": "Standard Gear",
+      "weight": 1,
+      "cost": 1
+    },
+    {
+      "index": "burglars-pack",
+      "name": "Burglar's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 1600,
+      "contents": [
+        {
+          "item": "backpack",
+          "quantity": 1
+        },
+        {
+          "item": "ball-bearings-bag-of-1000",
+          "quantity": 1
+        },
+        {
+          "item": "string-10-feet",
+          "quantity": 1
+        },
+        {
+          "item": "bell",
+          "quantity": 1
+        },
+        {
+          "item": "candle",
+          "quantity": 5
+        },
+        {
+          "item": "crowbar",
+          "quantity": 1
+        },
+        {
+          "item": "hammer",
+          "quantity": 1
+        },
+        {
+          "item": "piton",
+          "quantity": 10
+        },
+        {
+          "item": "lantern-hooded",
+          "quantity": 1
+        },
+        {
+          "item": "oil-flask",
+          "quantity": 2
+        },
+        {
+          "item": "rations-1-day",
+          "quantity": 5
+        },
+        {
+          "item": "tinderbox",
+          "quantity": 1
+        },
+        {
+          "item": "waterskin",
+          "quantity": 1
+        },
+        {
+          "item": "rope-hempen-50-feet",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "diplomats-pack",
+      "name": "Diplomat's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 3900,
+      "contents": [
+        {
+          "item": "chest",
+          "quantity": 1
+        },
+        {
+          "item": "case-map-or-scroll",
+          "quantity": 2
+        },
+        {
+          "item": "clothes-fine",
+          "quantity": 1
+        },
+        {
+          "item": "ink-1-ounce-bottle",
+          "quantity": 1
+        },
+        {
+          "item": "ink-pen",
+          "quantity": 1
+        },
+        {
+          "item": "lamp",
+          "quantity": 1
+        },
+        {
+          "item": "oil-flask",
+          "quantity": 2
+        },
+        {
+          "item": "paper-one-sheet",
+          "quantity": 5
+        },
+        {
+          "item": "perfume-vial",
+          "quantity": 1
+        },
+        {
+          "item": "sealing-wax",
+          "quantity": 1
+        },
+        {
+          "item": "soap",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "dungeoneers-pack",
+      "name": "Dungeoneer's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 1200,
+      "contents": [
+        {
+          "item": "backpack",
+          "quantity": 1
+        },
+        {
+          "item": "crowbar",
+          "quantity": 1
+        },
+        {
+          "item": "hammer",
+          "quantity": 1
+        },
+        {
+          "item": "piton",
+          "quantity": 10
+        },
+        {
+          "item": "torch",
+          "quantity": 10
+        },
+        {
+          "item": "tinderbox",
+          "quantity": 1
+        },
+        {
+          "item": "rations-1-day",
+          "quantity": 10
+        },
+        {
+          "item": "waterskin",
+          "quantity": 1
+        },
+        {
+          "item": "rope-hempen-50-feet",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "entertainers-pack",
+      "name": "Entertainer's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 4000,
+      "contents": [
+        {
+          "item": "backpack",
+          "quantity": 1
+        },
+        {
+          "item": "bedroll",
+          "quantity": 1
+        },
+        {
+          "item": "clothes-costume",
+          "quantity": 2
+        },
+        {
+          "item": "candle",
+          "quantity": 5
+        },
+        {
+          "item": "rations-1-day",
+          "quantity": 5
+        },
+        {
+          "item": "waterskin",
+          "quantity": 1
+        },
+        {
+          "item": "disguise-kit",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "explorers-pack",
+      "name": "Explorer's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 1000,
+      "contents": [
+        {
+          "item": "backpack",
+          "quantity": 1
+        },
+        {
+          "item": "bedroll",
+          "quantity": 1
+        },
+        {
+          "item": "mess-kit",
+          "quantity": 1
+        },
+        {
+          "item": "tinderbox",
+          "quantity": 1
+        },
+        {
+          "item": "torch",
+          "quantity": 10
+        },
+        {
+          "item": "rations-1-day",
+          "quantity": 10
+        },
+        {
+          "item": "waterskin",
+          "quantity": 1
+        },
+        {
+          "item": "rope-hempen-50-feet",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "priests-pack",
+      "name": "Priest's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 1900,
+      "contents": [
+        {
+          "item": "backpack",
+          "quantity": 1
+        },
+        {
+          "item": "blanket",
+          "quantity": 1
+        },
+        {
+          "item": "candle",
+          "quantity": 10
+        },
+        {
+          "item": "tinderbox",
+          "quantity": 1
+        },
+        {
+          "item": "rations-1-day",
+          "quantity": 2
+        },
+        {
+          "item": "waterskin",
+          "quantity": 1
+        },
+        {
+          "item": "alms-box",
+          "quantity": 1
+        },
+        {
+          "item": "block-of-incense",
+          "quantity": 2
+        },
+        {
+          "item": "censer",
+          "quantity": 1
+        },
+        {
+          "item": "vestments",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "scholars-pack",
+      "name": "Scholar's Pack",
+      "kind": "adventuring-gear",
+      "sub": "Equipment Packs",
+      "weight": 0,
+      "cost": 4000,
+      "contents": [
+        {
+          "item": "backpack",
+          "quantity": 1
+        },
+        {
+          "item": "book",
+          "quantity": 1
+        },
+        {
+          "item": "ink-1-ounce-bottle",
+          "quantity": 1
+        },
+        {
+          "item": "ink-pen",
+          "quantity": 1
+        },
+        {
+          "item": "parchment-one-sheet",
+          "quantity": 10
+        },
+        {
+          "item": "little-bag-of-sand",
+          "quantity": 1
+        },
+        {
+          "item": "small-knife",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "index": "alchemists-supplies",
+      "name": "Alchemist's Supplies",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 8,
+      "cost": 5000
+    },
+    {
+      "index": "brewers-supplies",
+      "name": "Brewer's Supplies",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 9,
+      "cost": 2000
+    },
+    {
+      "index": "calligraphers-supplies",
+      "name": "Calligrapher's Supplies",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 1000
+    },
+    {
+      "index": "carpenters-tools",
+      "name": "Carpenter's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 6,
+      "cost": 800
+    },
+    {
+      "index": "cartographers-tools",
+      "name": "Cartographer's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 6,
+      "cost": 1500
+    },
+    {
+      "index": "cobblers-tools",
+      "name": "Cobbler's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 500
+    },
+    {
+      "index": "cooks-utensils",
+      "name": "Cook's utensils",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 8,
+      "cost": 100
+    },
+    {
+      "index": "glassblowers-tools",
+      "name": "Glassblower's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 3000
+    },
+    {
+      "index": "jewelers-tools",
+      "name": "Jeweler's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 2,
+      "cost": 2500
+    },
+    {
+      "index": "leatherworkers-tools",
+      "name": "Leatherworker's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 500
+    },
+    {
+      "index": "masons-tools",
+      "name": "Mason's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 8,
+      "cost": 1000
+    },
+    {
+      "index": "painters-supplies",
+      "name": "Painter's Supplies",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 1000
+    },
+    {
+      "index": "potters-tools",
+      "name": "Potter's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 3,
+      "cost": 1000
+    },
+    {
+      "index": "smiths-tools",
+      "name": "Smith's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 8,
+      "cost": 2000
+    },
+    {
+      "index": "tinkers-tools",
+      "name": "Tinker's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 10,
+      "cost": 5000
+    },
+    {
+      "index": "weavers-tools",
+      "name": "Weaver's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 100
+    },
+    {
+      "index": "woodcarvers-tools",
+      "name": "Woodcarver's Tools",
+      "kind": "tools",
+      "sub": "Artisan's Tools",
+      "weight": 5,
+      "cost": 100
+    },
+    {
+      "index": "dice-set",
+      "name": "Dice Set",
+      "kind": "tools",
+      "sub": "Gaming Sets",
+      "weight": 0,
+      "cost": 10
+    },
+    {
+      "index": "playing-card-set",
+      "name": "Playing Card Set",
+      "kind": "tools",
+      "sub": "Gaming Sets",
+      "weight": 0,
+      "cost": 50
+    },
+    {
+      "index": "bagpipes",
+      "name": "Bagpipes",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 6,
+      "cost": 3000
+    },
+    {
+      "index": "drum",
+      "name": "Drum",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 3,
+      "cost": 600
+    },
+    {
+      "index": "dulcimer",
+      "name": "Dulcimer",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 10,
+      "cost": 2500
+    },
+    {
+      "index": "flute",
+      "name": "Flute",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 1,
+      "cost": 200
+    },
+    {
+      "index": "lute",
+      "name": "Lute",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 2,
+      "cost": 3500
+    },
+    {
+      "index": "lyre",
+      "name": "Lyre",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 2,
+      "cost": 3000
+    },
+    {
+      "index": "horn",
+      "name": "Horn",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 2,
+      "cost": 300
+    },
+    {
+      "index": "pan-flute",
+      "name": "Pan flute",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 2,
+      "cost": 1200
+    },
+    {
+      "index": "shawm",
+      "name": "Shawm",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 1,
+      "cost": 200
+    },
+    {
+      "index": "viol",
+      "name": "Viol",
+      "kind": "tools",
+      "sub": "Musical Instrument",
+      "weight": 1,
+      "cost": 3000
+    },
+    {
+      "index": "navigators-tools",
+      "name": "Navigator's Tools",
+      "kind": "tools",
+      "sub": "Other Tools",
+      "weight": 2,
+      "cost": 2500
+    },
+    {
+      "index": "thieves-tools",
+      "name": "Thieves' Tools",
+      "kind": "tools",
+      "sub": "Other Tools",
+      "weight": 1,
+      "cost": 2500
+    },
+    {
+      "index": "camel",
+      "name": "Camel",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 5000
+    },
+    {
+      "index": "donkey",
+      "name": "Donkey",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 800
+    },
+    {
+      "index": "mule",
+      "name": "Mule",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 800
+    },
+    {
+      "index": "elephant",
+      "name": "Elephant",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 20000
+    },
+    {
+      "index": "horse-draft",
+      "name": "Horse, draft",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 5000
+    },
+    {
+      "index": "horse-riding",
+      "name": "Horse, riding",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 7500
+    },
+    {
+      "index": "mastiff",
+      "name": "Mastiff",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 2500
+    },
+    {
+      "index": "pony",
+      "name": "Pony",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 3000
+    },
+    {
+      "index": "warhorse",
+      "name": "Warhorse",
+      "kind": "mounts-and-vehicles",
+      "sub": "Mounts and Other Animals",
+      "weight": 0,
+      "cost": 40000
+    },
+    {
+      "index": "barding-padded",
+      "name": "Barding: Padded",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 16,
+      "cost": 2000
+    },
+    {
+      "index": "barding-leather",
+      "name": "Barding: Leather",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 20,
+      "cost": 4000
+    },
+    {
+      "index": "barding-studded-leather",
+      "name": "Barding: Studded Leather",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 26,
+      "cost": 18000
+    },
+    {
+      "index": "barding-hide",
+      "name": "Barding: Hide",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 24,
+      "cost": 4000
+    },
+    {
+      "index": "barding-chain-shirt",
+      "name": "Barding: Chain shirt",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 40,
+      "cost": 20000
+    },
+    {
+      "index": "barding-scale-mail",
+      "name": "Barding: Scale mail",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 90,
+      "cost": 20000
+    },
+    {
+      "index": "barding-breastplate",
+      "name": "Barding: Breastplate",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 40,
+      "cost": 160000
+    },
+    {
+      "index": "barding-half-plate",
+      "name": "Barding: Half plate",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 80,
+      "cost": 300000
+    },
+    {
+      "index": "barding-ring-mail",
+      "name": "Barding: Ring mail",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 80,
+      "cost": 1200
+    },
+    {
+      "index": "barding-chain-mail",
+      "name": "Barding: Chain mail",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 110,
+      "cost": 30000
+    },
+    {
+      "index": "barding-splint",
+      "name": "Barding: Splint",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 120,
+      "cost": 80000
+    },
+    {
+      "index": "barding-plate",
+      "name": "Barding: Plate",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 130,
+      "cost": 600000
+    },
+    {
+      "index": "bit-and-bridle",
+      "name": "Bit and bridle",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 1,
+      "cost": 200
+    },
+    {
+      "index": "carriage",
+      "name": "Carriage",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 600,
+      "cost": 10000
+    },
+    {
+      "index": "cart",
+      "name": "Cart",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 200,
+      "cost": 1500
+    },
+    {
+      "index": "chariot",
+      "name": "Chariot",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 100,
+      "cost": 25000
+    },
+    {
+      "index": "animal-feed-1-day",
+      "name": "Animal Feed (1 day)",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 10,
+      "cost": 5
+    },
+    {
+      "index": "saddle-exotic",
+      "name": "Saddle, Exotic",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 50,
+      "cost": 6000
+    },
+    {
+      "index": "saddle-military",
+      "name": "Saddle, Military",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 30,
+      "cost": 2000
+    },
+    {
+      "index": "saddle-pack",
+      "name": "Saddle, Pack",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 15,
+      "cost": 500
+    },
+    {
+      "index": "saddle-riding",
+      "name": "Saddle, Riding",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 25,
+      "cost": 1000
+    },
+    {
+      "index": "saddlebags",
+      "name": "Saddlebags",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 8,
+      "cost": 400
+    },
+    {
+      "index": "sled",
+      "name": "Sled",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 300,
+      "cost": 2000
+    },
+    {
+      "index": "stabling-1-day",
+      "name": "Stabling (1 day)",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 0,
+      "cost": 50
+    },
+    {
+      "index": "wagon",
+      "name": "Wagon",
+      "kind": "mounts-and-vehicles",
+      "sub": "Tack, Harness, and Drawn Vehicles",
+      "weight": 400,
+      "cost": 3500
+    },
+    {
+      "index": "galley",
+      "name": "Galley",
+      "kind": "mounts-and-vehicles",
+      "sub": "Waterborne Vehicles",
+      "weight": 0,
+      "cost": 3000000
+    },
+    {
+      "index": "keelboat",
+      "name": "Keelboat",
+      "kind": "mounts-and-vehicles",
+      "sub": "Waterborne Vehicles",
+      "weight": 0,
+      "cost": 300000
+    },
+    {
+      "index": "longship",
+      "name": "Longship",
+      "kind": "mounts-and-vehicles",
+      "sub": "Waterborne Vehicles",
+      "weight": 0,
+      "cost": 1000000
+    },
+    {
+      "index": "rowboat",
+      "name": "Rowboat",
+      "kind": "mounts-and-vehicles",
+      "sub": "Waterborne Vehicles",
+      "weight": 0,
+      "cost": 5000
+    },
+    {
+      "index": "sailing-ship",
+      "name": "Sailing ship",
+      "kind": "mounts-and-vehicles",
+      "sub": "Waterborne Vehicles",
+      "weight": 0,
+      "cost": 1000000
+    },
+    {
+      "index": "warship",
+      "name": "Warship",
+      "kind": "mounts-and-vehicles",
+      "sub": "Waterborne Vehicles",
+      "weight": 0,
+      "cost": 2500000
+    }
+  ],
+  "categories": {
+    "martial-melee-weapons": [
+      "battleaxe",
+      "flail",
+      "glaive",
+      "greataxe",
+      "greatsword",
+      "halberd",
+      "lance",
+      "longsword",
+      "maul",
+      "morningstar",
+      "pike",
+      "rapier",
+      "scimitar",
+      "shortsword",
+      "trident",
+      "war-pick",
+      "warhammer",
+      "whip"
+    ],
+    "simple-weapons": [
+      "club",
+      "dagger",
+      "greatclub",
+      "handaxe",
+      "javelin",
+      "light-hammer",
+      "mace",
+      "quarterstaff",
+      "sickle",
+      "spear",
+      "crossbow-light",
+      "dart",
+      "shortbow",
+      "sling"
+    ],
+    "musical-instruments": [
+      "bagpipes",
+      "drum",
+      "dulcimer",
+      "flute",
+      "lute",
+      "lyre",
+      "horn",
+      "pan-flute",
+      "shawm",
+      "viol"
+    ],
+    "holy-symbols": ["amulet", "emblem", "reliquary"],
+    "simple-melee-weapons": [
+      "club",
+      "dagger",
+      "greatclub",
+      "handaxe",
+      "javelin",
+      "light-hammer",
+      "mace",
+      "quarterstaff",
+      "sickle",
+      "spear"
+    ],
+    "druidic-foci": ["sprig-of-mistletoe", "totem", "wooden-staff", "yew-wand"],
+    "martial-weapons": [
+      "battleaxe",
+      "flail",
+      "glaive",
+      "greataxe",
+      "greatsword",
+      "halberd",
+      "lance",
+      "longsword",
+      "maul",
+      "morningstar",
+      "pike",
+      "rapier",
+      "scimitar",
+      "shortsword",
+      "trident",
+      "war-pick",
+      "warhammer",
+      "whip",
+      "blowgun",
+      "crossbow-hand",
+      "crossbow-heavy",
+      "longbow",
+      "net"
+    ],
+    "arcane-foci": ["crystal", "orb", "rod", "staff", "wand"]
+  }
+}
