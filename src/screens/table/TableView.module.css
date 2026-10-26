@@ -362,6 +362,12 @@
   border: 2px solid var(--gold);
 }
 
+/* Whoever is acting in a fight, as in design 05. */
+.acting {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 16px rgba(212, 175, 90, 0.45);
+}
+
 /* The status chip in a tile's corner while the DM's roll request is open. */
 .chip {
   position: absolute;
@@ -393,25 +399,6 @@
 .chip_fail {
   border-color: var(--fail);
   color: var(--fail);
-}
-
-.feed {
-  position: absolute;
-  inset: 0;
-  padding-bottom: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-family: var(--font-heading);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7e7387;
-}
-
-.feedHere {
-  color: var(--pass);
 }
 
 .namePlate {

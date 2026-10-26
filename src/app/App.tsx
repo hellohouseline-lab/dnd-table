@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { CallProvider } from '../call/CallProvider.tsx'
 import { LoadingScreen } from '../components/LoadingScreen.tsx'
 import { CampaignScreen } from '../screens/campaign/CampaignScreen.tsx'
 import { NewCampaignScreen } from '../screens/campaign/NewCampaignScreen.tsx'
@@ -131,7 +132,9 @@ const ROUTES: Route[] = [
 export function App() {
   return (
     <AuthProvider>
-      <Screens />
+      <CallProvider>
+        <Screens />
+      </CallProvider>
     </AuthProvider>
   )
 }

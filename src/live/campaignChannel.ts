@@ -10,12 +10,15 @@ import { supabase } from './supabase.ts'
 // that table use it. It carries who is online (presence), changes to the party's characters, new
 // and changed rolls (secret ones reach only the roller and the DM, by the database's rules), the
 // DM's requests for a roll, the stage, the log and the library, and sound effects as they're played.
+// Presence also says who is in the call and whether their camera and microphone are on.
 // Everything on screen shares the one connection, which closes a moment after the last user
 // lets go, so React reopening a screen doesn't reconnect.
 
 type LiveCampaign = {
   channel: RealtimeChannel
   online: ReadonlySet<string>
+  calls: ReadonlyMap<string, CallPresence>
+  since: string
   presenceListeners: Set<() => void>
   characterListeners: Set<(change: CharacterChange) => void>
   rollListeners: Set<(roll: Roll) => void>
@@ -24,6 +27,7 @@ type LiveCampaign = {
   tableListeners: Map<WatchedTable, Set<(change: RowChange<WatchedTable>) => void>>
   effectListeners: Set<(assetId: string) => void>
   pointerListeners: Set<(kind: 'hand' | 'ping', pointer: MapPointer) => void>
+  cameraKeyListeners: Set<() => void>
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
@@ -38,9 +42,28 @@ const WATCHED: WatchedTable[] = ['stage', 'log_events', 'assets', 'encounters', 
 
 /** A hand over the battle map (in grid squares), or a ping: sent to everyone, never saved. */
 export type MapPointer = { userId: string; name: string; x: number; y: number }
+
+/** Someone in the call: whether their camera and microphone are on. */
+export type CallPresence = { camera: boolean; mic: boolean }
+
 const CLOSE_DELAY_MS = 1000
 const NOBODY: ReadonlySet<string> = new Set()
+const NO_CALLS: ReadonlyMap<string, CallPresence> = new Map()
 const open = new Map<string, LiveCampaign>()
+/** This tab's place in each table's call, announced with its presence (only the tab sending the call has one). */
+const myCalls = new Map<string, CallPresence>()
+
+function callOf(meta: unknown): CallPresence | null {
+  const call = (meta as { call?: unknown } | null)?.call as Partial<CallPresence> | undefined
+  return call && typeof call.camera === 'boolean' && typeof call.mic === 'boolean'
+    ? { camera: call.camera, mic: call.mic }
+    : null
+}
+
+function presencePayload(campaignId: string, live: LiveCampaign) {
+  const call = myCalls.get(campaignId)
+  return call ? { since: live.since, call } : { since: live.since }
+}
 
 function acquire(campaignId: string, userId: string): LiveCampaign | null {
   if (!supabase) return null
@@ -57,6 +80,8 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
   const live: LiveCampaign = {
     channel,
     online: NOBODY,
+    calls: NO_CALLS,
+    since: new Date().toISOString(),
     presenceListeners: new Set(),
     characterListeners: new Set(),
     rollListeners: new Set(),
@@ -65,11 +90,20 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     tableListeners: new Map(WATCHED.map((table) => [table, new Set()])),
     effectListeners: new Set(),
     pointerListeners: new Set(),
+    cameraKeyListeners: new Set(),
     users: 1,
   }
 
   channel.on('presence', { event: 'sync' }, () => {
-    live.online = new Set(Object.keys(channel.presenceState()))
+    const state = channel.presenceState()
+    live.online = new Set(Object.keys(state))
+    // A person may have several tabs open; they're in the call if any one of them is sending it.
+    const calls = new Map<string, CallPresence>()
+    for (const [userId, metas] of Object.entries(state)) {
+      const call = metas.map(callOf).find((c) => c !== null)
+      if (call) calls.set(userId, call)
+    }
+    live.calls = calls
     live.presenceListeners.forEach((listener) => listener())
   })
 
@@ -146,8 +180,10 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     })
   }
 
+  channel.on('broadcast', { event: 'camera-key' }, () => live.cameraKeyListeners.forEach((listener) => listener()))
+
   channel.subscribe((status) => {
-    if (status === 'SUBSCRIBED') void channel.track({ since: new Date().toISOString() })
+    if (status === 'SUBSCRIBED') void channel.track(presencePayload(campaignId, live))
   })
   open.set(campaignId, live)
   return live
@@ -296,4 +332,51 @@ export function usePointerBroadcasts(
 /** Shows everyone your hand on the map, or a ping. (Hands are sent at most 4 times a second; see useMapPointers.) */
 export function broadcastPointer(campaignId: string, kind: 'hand' | 'ping', pointer: MapPointer): void {
   void open.get(campaignId)?.channel.send({ type: 'broadcast', event: kind, payload: pointer })
+}
+
+/** Everyone in the call right now, by user id, with whether their camera and microphone are on. */
+export function useCallPresence(campaignId: string, userId: string): ReadonlyMap<string, CallPresence> {
+  const [calls, setCalls] = useState<ReadonlyMap<string, CallPresence>>(NO_CALLS)
+
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    const update = () => setCalls(live.calls)
+    live.presenceListeners.add(update)
+    update()
+    return () => {
+      live.presenceListeners.delete(update)
+      release(campaignId)
+    }
+  }, [campaignId, userId])
+
+  return calls
+}
+
+/** Tells the table this tab is sending your camera and voice (or null when it stops). */
+export function setCallPresence(campaignId: string, call: CallPresence | null): void {
+  const before = myCalls.get(campaignId)
+  if (call ? before?.camera === call.camera && before.mic === call.mic : !before) return
+  if (call) myCalls.set(campaignId, call)
+  else myCalls.delete(campaignId)
+  const live = open.get(campaignId)
+  if (live && String(live.channel.state) === 'joined') void live.channel.track(presencePayload(campaignId, live))
+}
+
+/** Calls `onChange` when the DM makes new camera links, so everyone reconnects with the new password. */
+export function useCameraKeyBroadcasts(campaignId: string, userId: string, onChange: () => void): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.cameraKeyListeners.add(onChange)
+    return () => {
+      live.cameraKeyListeners.delete(onChange)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onChange])
+}
+
+/** DM: tells everyone the camera password has changed. */
+export function broadcastCameraKey(campaignId: string): void {
+  void open.get(campaignId)?.channel.send({ type: 'broadcast', event: 'camera-key', payload: {} })
 }

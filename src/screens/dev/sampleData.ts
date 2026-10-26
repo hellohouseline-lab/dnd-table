@@ -11,6 +11,7 @@ export const sampleCampaign: Campaign = {
   party_size: 4,
   starting_level: 2,
   join_code: 'K7QM2P',
+  camera_key: 'abcdef0123456789abcdef01',
   created_at: '2026-10-25T20:00:00Z',
 }
 
@@ -20,6 +21,7 @@ export const sampleMembers: Member[] = [
   {
     campaign_id: 'preview',
     user_id: 'dm',
+    camera_id: 'dndpreviewdm',
     role: 'dm',
     display_name: 'Matt',
     here_tonight: true,
@@ -29,6 +31,7 @@ export const sampleMembers: Member[] = [
   {
     campaign_id: 'preview',
     user_id: 'p1',
+    camera_id: 'dndpreviewp1',
     role: 'player',
     display_name: 'Sam',
     here_tonight: true,
@@ -38,6 +41,7 @@ export const sampleMembers: Member[] = [
   {
     campaign_id: 'preview',
     user_id: 'p2',
+    camera_id: 'dndpreviewp2',
     role: 'player',
     display_name: 'Alex',
     here_tonight: false,

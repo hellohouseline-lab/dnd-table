@@ -14,11 +14,21 @@ const campaign: Campaign = {
   party_size: 4,
   starting_level: 1,
   join_code: 'K7QM2P',
+  camera_key: 'abcdef0123456789abcdef01',
   created_at: '2026-10-25T20:00:00Z',
 }
 
 function member(user_id: string, display_name: string, role: 'dm' | 'player', here_tonight = true): Member {
-  return { campaign_id: 'c1', user_id, display_name, role, here_tonight, joined_at: '2026-10-25T20:00:00Z', dice_style: {} }
+  return {
+    campaign_id: 'c1',
+    user_id,
+    camera_id: `dndtest${user_id}`,
+    display_name,
+    role,
+    here_tonight,
+    joined_at: '2026-10-25T20:00:00Z',
+    dice_style: {},
+  }
 }
 
 const members = [member('dm', 'Matt', 'dm'), member('p1', 'Sam', 'player'), member('p2', 'Alex', 'player', false)]

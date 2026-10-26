@@ -96,6 +96,27 @@ export async function renewJoinCode(campaignId: string): Promise<string> {
   return data
 }
 
+/** Your camera address at this table and the table's camera password, or null if you're not at it. */
+export async function getCameraDetails(
+  campaignId: string,
+  userId: string,
+): Promise<{ cameraId: string; key: string } | null> {
+  const [campaign, member] = await Promise.all([
+    db().from('campaigns').select('camera_key').eq('id', campaignId).maybeSingle(),
+    db().from('campaign_members').select('camera_id').eq('campaign_id', campaignId).eq('user_id', userId).maybeSingle(),
+  ])
+  if (campaign.error) throw fromDatabaseError(campaign.error)
+  if (member.error) throw fromDatabaseError(member.error)
+  if (!campaign.data || !member.data) return null
+  return { cameraId: member.data.camera_id, key: campaign.data.camera_key }
+}
+
+/** DM only: swaps the table's camera password, which cuts off any camera link that has leaked. */
+export async function renewCameraKey(campaignId: string): Promise<void> {
+  const { error } = await db().rpc('renew_camera_key', { p_campaign_id: campaignId })
+  if (error) throw fromDatabaseError(error)
+}
+
 /** DM only: changes the campaign's name, party size or starting level. */
 export async function updateCampaign(campaignId: string, details: CampaignDetails): Promise<void> {
   const { error } = await db()
