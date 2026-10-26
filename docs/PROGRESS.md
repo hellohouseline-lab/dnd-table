@@ -3,6 +3,13 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Fixes from Matt's C1 test (27 October).**
+  - **End turn and Next turn:** they worked in the database but failed from the website, so the turn bounced back to the same person. `end_turn` no longer uses a temporary table.
+  - **Monsters in Start combat:** clicking a monster now adds it at once (with − and +), so it can't be left out by missing the Add button. That was why the basilisk wasn't in the fight at first, and why the first turn began with yenn alone.
+  - **Before the first turn:** players place their miniature anywhere, using no movement.
+  - **Reach and range:** attacks check them on the map. Players can't attack out of reach; the DM is asked "Attack anyway?"; beyond normal range means disadvantage.
+  - **Error messages:** "Something went wrong" now adds the technical detail, for precise reports.
+  - **Tests:** 271 database tests, 282 app tests and 9 preview browser tests (one new, for reach).
 - **C1, the turn loop (26 to 27 October, overnight).** The first step of `COMBAT_PLAN.md`, approved with the recommended answers.
   - Database (four migrations, 53 more tests): every fighter has a turn record kept by the server (action, attacks made, bonus action, reaction, feet moved, Dash, Disengage, Dodge), fresh at the start of its turn. `start_fight` puts the party in the turn order and the chosen map on stage in one go; the first turn starts by itself once everyone has initiative. `move_token` keeps players to their own miniature, their own turn and their movement left (diagonals 5 ft); the DM moves anything and the acting creature's feet are counted. `resolve_attack` throws the attack (to hit and damage together), checks it against armour class (natural 20 hits, natural 1 misses), takes damage off temporary hit points first, knocks a character at 0 unconscious, updates a monster's secret hit points and health word, spends the attack (Extra Attack at fighter 5, 11, 20 and other martial classes at 5), and posts it to `combat_events`, which everyone sees. A monster's real name, armour class and hit points never go in the feed; what Undo needs is in a DM-only table. `undo_event` takes back the newest thing (not the feet already walked). Players no longer change token rows directly.
   - Start combat asks **Where**: a battle map from the library (Maps) or "No map, in our heads", and has **Players know what these are** (ticked). With a map, everyone's miniature goes on it: the party down the left, monsters a few squares away.
@@ -65,7 +72,12 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4): plan approved; start when Matt says. Then **C3, the full combat rules**, before the test one-shot on 21 to 22 November; then milestones 8 and 9 as below.
+- **Revised plan, waiting for Matt's approval** (`docs/COMBAT_PLAN.md`, revised 27 October, decisions 14 to 18 in section 7):
+  - **C1b**, damage types, spells and rests in the fight (28 October to 1 November).
+  - **C2**, the character builder (2 to 8 November).
+  - **S1**, story mode and Screen 1 as "the journey" (9 to 13 November).
+  - **C3 lite** (14 to 18 November).
+  - Then the test one-shot, milestone 8 and milestone 9.
 - **Milestone 8, the stream overlay:** overlay links, guest access, the 1920 by 1080 frame with everyone's cameras in it, stage mirror, toasts, own character card, an OBS scene collection file, and voices and game audio through the overlay with "Control audio via OBS" (see `PHASE1_PLAN.md` section 8, "What this changes in milestone 8"). Plan first, then build.
 
 ## Targets
@@ -73,7 +85,8 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Try C1 with a second browser or computer** (steps in "How to try C1" below), and say how it feels.
+- **Try C1 again** with the fixes (steps in "How to try C1" below): Start combat should now include the monster you click, End turn and Next turn should move on properly, and players can place their miniature before the first turn.
+- **Approve the revised plan** in `docs/COMBAT_PLAN.md` (decisions 14 to 18), or say what to change.
 - **Optional:** run `npm run test:e2e` with the two test logins: it now also plays a whole fight in two browsers against the real project.
 - **Run a two-goblin fight** across two browsers: on Screen 2 put a battle map on stage (Maps in the library), **Add the party**; on Screen 1 press **Start combat**, add 2 goblins, start; as the player roll initiative, see "Unknown creature" in the turn order until you click **Reveal name**; move your token, end your turn.
 - **Try milestone 7 with someone on another computer** (or a laptop): both open the live site, go to the table's Join screen and press **Join voice and camera** (allow the camera and microphone when the browser asks). You should see and hear each other in the camera tiles. Press **M** and check the crossed-out microphone appears on the other screen; open **Screen 2: Stage** and check each voice is still heard once. Wear headphones.

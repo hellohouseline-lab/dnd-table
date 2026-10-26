@@ -1,6 +1,6 @@
 # Combat and characters rework: the plan
 
-**C1 built on 26 October**, overnight: see `PROGRESS.md` for what's in it and how to try it. C2 and C3 are next.
+**C1 built on 26 October**, overnight: see `PROGRESS.md` for what's in it and how to try it. **Revised on 27 October** after Matt tested C1: damage types, spells and rests come next (C1b), then the character builder (C2), then a new **story mode** (S1, section 4b), then the rest of the rules (C3 lite). Screen 1 becomes "the journey" and Screen 2 "the table". Fable researched what DMs and players struggle with (appendix B). The fixes from that test (End turn, monsters joining, placing miniatures before the first turn, reach and range) are live.
 
 Written 26 October 2026, after Matt's first combat test, and revised the same day so the whole fight runs from one DM screen. The UX was planned with Fable (including research into how D&D Beyond and other online tables split the DM's controls, in the appendix) and checked against the code and the SRD data. Nothing here is built yet; it waits for Matt's approval. Sections 1 to 4 are plain words; section 5 is technical; sections 6 and 7 are the order of work and the decisions.
 
@@ -42,7 +42,17 @@ Matt's test found one real bug and a lot of hand work the app should be doing.
 
 Screen 1 keeps the story. Its Encounter tab becomes a glance (the order, Next turn, Ask for a roll and the feed), and the notebook holds "Why this fight matters" and "Read aloud when it ends" from design 10.
 
-On a player's turn the Acting now card says "Elowen acts from her screen", with **Act for her** for someone who has stepped away.
+On a player's turn the Acting now card becomes their **turn card**:
+- **What's left:** the four pips, and their attacks.
+- **Spells:** slots as pips for each level ("1st ●●○ · 2nd ●○"), and their spells by level with casting time and a C for concentration.
+- **Everything else:** features with uses, what they're concentrating on, and conditions with the turns they have left.
+
+It says "Elowen acts from her screen", and **Act for her** uses the same card for someone who has stepped away.
+
+**The acting player also sees** a Spells group in their hand with the slot pips at its head:
+- **Out of slots:** a spell greys out when no slot fits.
+- **Casting:** spends the slot and the action (or bonus action) by itself. Attack spells roll like weapons; save spells open the DM's results screen; the rest are logged.
+- **Concentration:** a caster shows a C chip on their plate, camera tile and miniature, and is asked for the save when hit.
 
 **A monster's turn in two clicks.** The Acting now card lists its SRD actions. Click one (or press its number), then click a target on the map or in the turn order. The server rolls to hit against the character's AC, takes the damage off and posts it.
 - **Multiattack:** one button, both rolls.
@@ -55,6 +65,8 @@ On a player's turn the Acting now card says "Elowen acts from her screen", with 
 
 **One server function settles an attack.** It throws the dice the fair way it does today, reads the target's AC, and decides hit or miss: a natural 20 always hits, a natural 1 always misses, otherwise the total against the AC. Then it applies the damage:
 - **Temporary hit points first.**
+- **Damage types.** Every attack and spell carries its type. A monster's resistances, vulnerabilities and immunities come from the SRD; a character's from a short list on the sheet. They're applied with no settings to fiddle with, and the feed says so ("Goblin A takes 3 cold, resisted"). Players learn a resistance only once it has happened, as they would at a table.
+- **Reach and range** (built 27 October). On the map, an attack checks the distance first: melee 5 feet (10 with reach), thrown and ranged weapons their range, with disadvantage beyond normal range. Players can't attack what they can't reach; the DM is asked "Attack anyway?".
 - **Resistance, vulnerability and immunity:** resistance halves, vulnerability doubles, immunity stops it. Monsters' come from the SRD; characters' from a short list on the sheet.
 - **Health:** a monster's hit points change in its secret record and its health word updates; a character's hit points change on their sheet.
 - **Never sent to players:** the monster's AC and how close the roll was.
@@ -84,13 +96,22 @@ On a player's turn the Acting now card says "Elowen acts from her screen", with 
 
 The DM can still hide a monster for an ambush.
 
-**Who moves what.** The DM drags anything, any time. A player drags their own miniature on their turn, only as far as their movement left (plus Dash). The server refuses a longer move, so the limit is real. The "Players move their own tokens" switch stays, to turn that off. Hands and double-click pings stay for pointing. New: on someone else's turn a player can draw a suggested path, and the DM sees it with **Move them there** (one click).
+**Who moves what.** The DM drags anything, any time. Before the first turn, while everyone rolls initiative, players put their own miniature where they think their character is (built 27 October). After that a player drags their own miniature on their turn, only as far as their movement left (plus Dash). The server refuses a longer move, so the limit is real. The "Players move their own tokens" switch stays, to turn that off. Hands and double-click pings stay for pointing. New: on someone else's turn a player can draw a suggested path, and the DM sees it with **Move them there** (one click).
 
-**The DM's two screens.** The fight runs from one screen, as Matt asked:
+**The DM's two screens** (revised 27 October). Keep two screens, but make each one able to run the table alone.
 
-- **Screen 1, "Story and the table"** (design 07): notebook, Party, NPCs, Items and loot, Log, the verb bar and cameras. New: a thin **stage strip** under the header with the picture on stage (and Change), music moods with play and pause, and "Effects: keys 1 to 9". The art library and uploads stay on Screen 2. In a fight the Encounter tab is a glance: the order with pips, Next turn, Ask for a roll and the feed.
-- **Screen 2, "Stage, and the battle"** (design 11): as now between fights. Pressing **Start combat** switches it to the **Battle** layout by itself, and ending the fight switches it back. **Show a picture** in its header cuts to art mid-fight without leaving the battle.
-- **One monitor:** both screens are in the same tab and the call carries on when you switch. In a fight use the Battle layout; the notebook slides in over the turn order as a **story drawer** (key S). The header swaps screens (the \` key).
+- **Screen 1 is "the journey"** (design 07 reshaped). Out of a fight, this is where the DM works:
+  - Story mode (section 4b): chapters, scenes, the current scene's read-aloud, reminders, planned rolls and choices.
+  - The party at a glance: HP, AC, conditions, spell slots left and concentration.
+  - Ask for a roll, Rest and Give an item.
+  - A **stage strip**: the picture on stage, the music mood and the effects keys.
+
+  In a fight it shows the fight's scene notes and the glance Encounter tab.
+- **Screen 2 is "the table"** (design 11): what everyone sees, the library and the full mixer out of a fight, and the Battle layout during one, as built. The acting creature's full turn card lives here.
+- **What players see** is set from a scene in one click on Screen 1, since a scene's picture and music come with it. The library and the mixer stay on Screen 2. The effects keys work on both screens.
+- **The chat monitor** shows Twitch chat in a browser or OBS; nothing of ours.
+- **One monitor:** each screen has what it needs (the story drawer on Screen 2, the stage strip on Screen 1), and the \` key swaps between them.
+- **Why not one merged screen?** With two monitors, the pattern that works is to operate on one and keep reference on the other, and a merged screen would shrink the map.
 
 **The Battle layout at 1440 by 900** (design 11's frame, in the same panels and parchment):
 - **Header:** "Battle · Round 2 · Goblin A is acting", a sound strip (moods, play and pause, effects keys; **Sound** opens the full panels as a drawer), **Show a picture**, **Screen 1: Story**.
@@ -140,6 +161,37 @@ A step-by-step wizard for new characters (the full form stays for edits and for 
 
 **The hand of cards** is built from the sheet: equipped weapons (thrown ones too), spells (with a slot picker when more than one level fits), features with uses, potions, and the combat actions. Out of a fight it shows attacks, features and spells only.
 
+## 4b. Story mode
+
+**What it holds.** A chapter is a list of **scenes** (steps or places). A scene has:
+- a title and place;
+- **read aloud** text, on parchment;
+- **reminders** for the DM: where the party can go, and what they might miss;
+- a **picture** and a **music mood**;
+- **people**: NPCs, on stage or hidden;
+- **planned rolls**: which check, who rolls, a DC, whether to tell them the number, and whether to tell them the outcome;
+- **choices** ("If they take the mill road: Scene 4");
+- **items** to hand out;
+- an **encounter** ready to start, with its monsters and map.
+
+A **Where we are** marker sits on the current scene. The notebook's boxes (what happens next, key items, quick note) stay as the chapter's checklist.
+
+**One click.** **Go here** on a scene does four things:
+- puts its picture and music on stage;
+- shows its read-aloud;
+- turns its planned rolls into buttons ("Ask: Perception, DC 13, secret");
+- turns its choices into links to the next scenes.
+
+A planned roll opens Ask for a roll already filled in, and the encounter opens Start combat already filled in.
+
+**Secret outcomes.**
+- **Tell players the outcome:** a new tick in Ask for a roll, next to Tell players the number, on by default. With it off, players see only "You rolled 14", and the DM sees Passed or Failed. The pass or fail never reaches their browser.
+- **Roll behind the screen:** for the rare roll players shouldn't see at all, the DM throws it for them with their bonus.
+
+Use both sparingly, for an ambush Perception check or a pivotal Insight check.
+
+**Getting the story in.** A **Paste your notes** box takes plain text (or Markdown) and splits it into chapters and scenes at headings and numbered lines; then you tidy it. Typing scenes in works too. Book text is fine here, because it lives only in the private database, never in the public repository. There's no PDF import before the first stream.
+
 ## 5. How it's built (technical)
 
 **Database** (new migrations, pgTAP tests in the style of `combat.test.sql`):
@@ -184,6 +236,24 @@ A step-by-step wizard for new characters (the full form stays for edits and for 
 - **Stage:** the Quick map painter and suggested paths.
 - **Characters:** `CharacterWizard`, and an item search on the Sheet tab.
 
+**Added on 27 October (C1b, S1):**
+- **Database:**
+  - `scenes`, DM only: `campaign_id`, `chapter`, `order`, `title`, `place`, `read_aloud`, `notes`, `image_id`, `music_mood`, and `people`, `planned_rolls`, `choices`, `items` and `encounter` as jsonb. `stage.scene_id` marks where we are.
+  - `roll_requests.outcome_shown`. When it's false, `throw_dice` writes the verdict to a DM-only `roll_verdicts` row and leaves `rolls.passed` empty.
+  - `resistances`, `vulnerabilities` and `immunities` as text arrays on `characters` and `combatant_secrets`, imported for monsters.
+  - `combatants.concentrating` and `condition_turns`.
+  - `resolve_attack` and a new `apply_damage` take a damage type. A new `cast_spell(combatant, spell, slot_level)` spends the slot and the action, and `end_turn` counts conditions down.
+- **Rules layer:**
+  - `src/rules/damage.ts`: damage type adjustments.
+  - `src/rules/spells.ts`: what can be cast now, which slot, and concentration.
+  - `src/rules/story.ts`: the paste splitter.
+
+  All pure functions with tests.
+- **Screens:**
+  - `JourneyView` for Screen 1: the scene list, the current scene, planned rolls and choices.
+  - `TurnCard` on the Battle screen, and `SpellsGroup` in the hand.
+  - The C chip, and the outcome tick in Ask for a roll.
+
 **Free plan:** events are small rows, hands stay throttled, quick maps are tiny, no new storage.
 
 ## 6. Order of work
@@ -192,28 +262,29 @@ Each step ends in something Matt can open and try, like the milestones so far.
 
 | When | Step | Matt can try | Size |
 | --- | --- | --- | --- |
-| 27 Oct to 2 Nov | **C1. The turn loop.** Turn record and functions, cards that spend actions, movement limit, map chosen and miniatures placed on Start combat, the Battle layout on Screen 2 (map, order, acting creature, feed, Undo) and the glance tab on Screen 1, attacks that hit and take damage off (weapons and monster attacks) with Undo | A two-goblin fight run from Screen 2 while Screen 1 shows the notebook; then the same fight on one monitor with the story drawer | About 6 days |
-| 3 to 9 Nov | **C2. The character builder.** Wizard, the four ways to make scores, starting gear with AC from armour, spells list, item search, hand built from the sheet, SRD equipment import | Players build their one-shot characters a fortnight early | About 5 days |
-| 10 to 16 Nov | **C3. The full rules.** Standard actions, Talk cards, opportunity attacks, two-weapon fighting, concentration, death saves, resistances, toasts, Quick map, the stage strip on Screen 1, the sound strip and drawer, shortcuts | A full fight with a caster, a character going down and a parley | About 5 days |
-| 17 to 20 Nov | Spare days, then a dry run with the group | | |
+| 26 Oct | **C1. The turn loop** (built), plus the fixes from Matt's first test (built 27 Oct) | | |
+| 28 Oct to 1 Nov | **C1b. Damage, spells and rests in the fight.** Damage types with resistance, vulnerability and immunity; spell cards that spend a slot and the action; slot pips for the DM and the player; the concentration chip and save prompt; death saves; "back after a rest" on the sheet | A wizard casts Magic Missile and Shield, a goblin shrugs off cold, and a caster is asked for the concentration save when hit | About 4 days |
+| 2 to 8 Nov | **C2. The character builder**, as in section 4 | Players build their one-shot characters | About 5 days |
+| 9 to 13 Nov | **S1. Story mode** (section 4b): chapters and scenes, Go here, planned rolls, Tell players the outcome, Roll behind the screen, the paste import, the journey layout on Screen 1 | Paste your one-shot and walk a scene: its picture, its music and a secret Perception check | About 4 days |
+| 14 to 18 Nov | **C3 lite.** Opportunity attacks, Talk cards, two-weapon fighting, Hide and Search, conditions counting down, and fixes from your tests | A full fight with a parley and someone going down | 3 days and 2 spare |
+| 19 to 20 Nov | A dry run with the group | | |
 | 21 to 22 Nov | **Test one-shot** | | |
-| 23 to 29 Nov | **8. Stream overlay**, as planned; the feed and turn record feed its toasts and turn panel | | About 5 days |
+| 23 to 29 Nov | **8. Stream overlay** | | About 5 days |
 | 30 Nov to 4 Dec | **9. Rehearsal fixes** | | |
 | 5 to 6 Dec | **First stream** | | |
 
-This moves the overlay after the test one-shot. Every streamer then has about a week to set up OBS rather than most of November, so the OBS steps should go out the moment milestone 8 lands.
+The overlay comes after the test one-shot, so the OBS steps should go to the streamers the moment milestone 8 lands.
 
 **If time runs short, cut in this order:**
-1. The map generator (not in Phase 1 anyway).
-2. The Quick map painter (uploads only).
-3. Suggested paths (pings only).
-4. Ready and Help (log lines only).
-5. The shop (the DM gives items).
-6. Spells beyond attack and save spells: a plain "Cast" card spends the slot and logs it.
-7. Character resistances.
-8. Legendary actions.
+1. The Quick map painter (uploads only).
+2. Suggested paths (pings only).
+3. The shop (the DM gives items).
+4. Ready and Help.
+5. Talk cards (Ask for a roll covers them).
+6. Legendary actions.
+7. The paste import (type the scenes in).
 
-Don't cut C1, the wizard's scores and gear, or Undo.
+Don't cut C1b, the builder's scores and gear, Go here, or Tell players the outcome.
 
 ## 7. Decisions for Matt (recommendations first)
 
@@ -230,6 +301,11 @@ Don't cut C1, the wizard's scores and gear, or Undo.
 11. **Does Screen 2 switch to the battle by itself?** Yes when you press Start combat, and back when the fight ends, with Show a picture to cut to art mid-fight.
 12. **Where are the sound controls in a fight?** A strip in the Battle header (moods, play and pause, effects keys), with the full panels in a drawer; the effects keys work on both screens.
 13. **One monitor?** The Battle screen with the story drawer in a fight, the Story screen between fights.
+14. **Keep two screens?** Yes: Screen 1 the journey, Screen 2 the table and the battle, each able to run alone. One merged screen would shrink the map.
+15. **Hidden outcomes?** Add "Tell players the outcome" (on by default) and "Roll behind the screen"; keep them for ambush Perception and pivotal Insight checks.
+16. **Do spells spend slots by themselves?** Yes, with Undo; save spells still go through your results screen.
+17. **Are resistances applied by themselves?** Yes, with no settings, and the feed says "resisted" or "immune" once it has happened.
+18. **How does the story come in?** Paste plain text and tidy the scenes; typing works too; no PDF import before the stream.
 
 ## Appendix: how other online tables split the DM's controls
 
@@ -244,3 +320,15 @@ Researched by Fable on 26 October 2026.
 - **Dedicated trackers** ([Improved Initiative](https://improvedinitiative.app/), [Shieldmaiden](https://shieldmaiden.app/)) show a list beside a stat block for the DM, and a separate live list for players, streams or a TV. The lesson: the players' copy belongs on their screens and the overlay, not on the DM's second monitor.
 
 Across them all: one monitor for what you operate (in a fight, the map and the tracker together) and one for reference and story.
+
+## Appendix B: what DMs and players struggle with
+
+Researched by Fable on 27 October 2026, in its own words with the sources linked.
+
+- **Slow turns.** The usual fixes are showing the order so everyone knows who's "on deck", warning the next player early, and setting out options by action type rather than hunting through the sheet. New players ask for exactly that cheat sheet: movement, action, bonus action and the options for each. Trackers show whose turn it is, but none sets out a player's usable options for this turn; our filtered hand does. Sources: [D&D Beyond on slow combat](https://www.dndbeyond.com/forums/dungeons-dragons-discussion/dungeon-masters-only/115632-combat-is-to-slow), [Sly Flourish](https://slyflourish.com/tips_to_speed_up_combat.html), [r/DnD cheat sheet](https://www.reddit.com/r/DnD/comments/b24s8a/oc_cheat_sheet_for_new_players), [EN World](https://www.enworld.org/threads/oh-man-do-i-need-some-dm-tips.527187/).
+- **Spent actions and reactions.** Players forget their reaction most of all and ask for trackers, but reminders in the wrong tone feel patronising. So track it quietly and show it as pips, without nagging. Sources: [D&D Beyond feedback](https://www.dndbeyond.com/forums/d-d-beyond-feedback/216121-character-builder-improvements/next), [EN World](https://www.enworld.org/posts/9983368/).
+- **Spell slots, concentration and durations.** The concentration save after damage is the step tables miss most, and casters forget they're already concentrating. Prompting when damage lands, with the DC worked out, is what works. Durations are hardest on other creatures' turns, and Fantasy Grounds counts them down by itself while D&D Beyond's tracker doesn't. Sources: [EN World](https://www.enworld.org/threads/how-do-you-remember-concentration-duration-checks.679965/), [Foundry's Concentration Notifier](https://foundryvtt.com/packages/concentrationnotifier), [Roll20 forum](https://app.roll20.net/forum/permalink/12123508/), [Fantasy Grounds wiki](https://fantasygroundsunity.atlassian.net/wiki/spaces/FGCP/pages/996641040/Tracking+Conditions+and+Effects).
+- **Damage types.** They're forgotten because they live only in the stat block. Foundry can apply them automatically, but with so many settings it's daunting. So apply them with no settings, and say so in the feed. Source: [midi-qol](https://www.foundryvtt-hub.com/package/midi-qol/).
+- **The DM juggling.** Sly Flourish keeps short lists at hand (places with a few notable features, NPC names, monsters, secrets to drop in) and treats scenes as a loose framework, not a script. No online table keeps story notes beside the fight. Sources: [Sly Flourish, the eight steps at the table](https://slyflourish.com/using_the_8_steps_at_the_table.html), [Sly Flourish, eight steps 2023](https://slyflourish.com/eight_steps_2023.html).
+- **Secret rolls.** DMs split on them, but most agree they're for pivotal Insight checks and ambush Perception checks, where a low number makes players act on what their characters don't know. Some tools still show the dice animation; ours judges on the server, so nothing leaks. Sources: [DM David](https://dmdavid.com/tag/tag/insight/), [EN World](https://www.enworld.org/threads/hidden-player-rolls.357477/), [Foundry dice docs](https://foundryvtt.com/article/dice/).
+- **Streaming.** Viewers drift away during rule lookups and dead air, and combat is the slowest part. So anything that saves the DM a lookup mid-fight helps the stream too. Source: [Streamscheme](https://www.streamscheme.com/?p=23624).
