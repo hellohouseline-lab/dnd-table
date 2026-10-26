@@ -8,6 +8,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      assets: {
+        Row: {
+          campaign_id: string
+          category: string | null
+          created_at: string
+          credit: string
+          hotkey: number | null
+          id: string
+          kind: string
+          mood: string | null
+          name: string
+          path: string
+          size_bytes: number
+          stream_safe: boolean
+          thumb_path: string | null
+        }
+        Insert: {
+          campaign_id: string
+          category?: string | null
+          created_at?: string
+          credit?: string
+          hotkey?: number | null
+          id?: string
+          kind: string
+          mood?: string | null
+          name: string
+          path: string
+          size_bytes?: number
+          stream_safe?: boolean
+          thumb_path?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          category?: string | null
+          created_at?: string
+          credit?: string
+          hotkey?: number | null
+          id?: string
+          kind?: string
+          mood?: string | null
+          name?: string
+          path?: string
+          size_bytes?: number
+          stream_safe?: boolean
+          thumb_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'assets_campaign_id_fkey'
+            columns: ['campaign_id']
+            isOneToOne: false
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       campaign_members: {
         Row: {
           campaign_id: string
@@ -213,6 +269,76 @@ export type Database = {
           },
         ]
       }
+      dm_notebooks: {
+        Row: {
+          campaign_id: string
+          key_items: Json
+          next_steps: Json
+          updated_at: string
+          where_we_are: string
+        }
+        Insert: {
+          campaign_id: string
+          key_items?: Json
+          next_steps?: Json
+          updated_at?: string
+          where_we_are?: string
+        }
+        Update: {
+          campaign_id?: string
+          key_items?: Json
+          next_steps?: Json
+          updated_at?: string
+          where_we_are?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'dm_notebooks_campaign_id_fkey'
+            columns: ['campaign_id']
+            isOneToOne: true
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      log_events: {
+        Row: {
+          author_id: string | null
+          campaign_id: string
+          created_at: string
+          id: string
+          kind: string
+          text: string
+          visible: boolean
+        }
+        Insert: {
+          author_id?: string | null
+          campaign_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          text: string
+          visible?: boolean
+        }
+        Update: {
+          author_id?: string | null
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          text?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'log_events_campaign_id_fkey'
+            columns: ['campaign_id']
+            isOneToOne: false
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       roll_request_secrets: {
         Row: {
           campaign_id: string
@@ -387,6 +513,67 @@ export type Database = {
           },
         ]
       }
+      stage: {
+        Row: {
+          ambience: Json
+          campaign_id: string
+          image_id: string | null
+          music_id: string | null
+          music_playing: boolean
+          music_position: number
+          music_started_at: string | null
+          music_volume: number
+          scene_name: string
+          updated_at: string
+        }
+        Insert: {
+          ambience?: Json
+          campaign_id: string
+          image_id?: string | null
+          music_id?: string | null
+          music_playing?: boolean
+          music_position?: number
+          music_started_at?: string | null
+          music_volume?: number
+          scene_name?: string
+          updated_at?: string
+        }
+        Update: {
+          ambience?: Json
+          campaign_id?: string
+          image_id?: string | null
+          music_id?: string | null
+          music_playing?: boolean
+          music_position?: number
+          music_started_at?: string | null
+          music_volume?: number
+          scene_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'stage_campaign_id_fkey'
+            columns: ['campaign_id']
+            isOneToOne: true
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stage_image_id_fkey'
+            columns: ['image_id']
+            isOneToOne: false
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stage_music_id_fkey'
+            columns: ['music_id']
+            isOneToOne: false
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -470,6 +657,7 @@ export type Database = {
         }[]
       }
       renew_join_code: { Args: { p_campaign_id: string }; Returns: string }
+      server_time: { Args: never; Returns: string }
       throw_dice: {
         Args: { p_campaign_id: string; p_roll: Json }
         Returns: {

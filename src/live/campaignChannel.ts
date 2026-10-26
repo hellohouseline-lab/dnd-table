@@ -1,14 +1,15 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import type { CharacterChange, CharacterRow } from './characterRows.ts'
+import type { Tables } from './database.types.ts'
 import { rowToAsked, type AskedRoll, type RollRequestRow } from './rollRequests.ts'
 import { rowToRoll, type Roll, type RollRow } from './rolls.ts'
 import { supabase } from './supabase.ts'
 
 // Each campaign has one private live channel, 'campaign:<id>'. The database only lets people at
 // that table use it. It carries who is online (presence), changes to the party's characters, new
-// and changed rolls (secret ones reach only the roller and the DM, by the database's rules) and the
-// DM's requests for a roll.
+// and changed rolls (secret ones reach only the roller and the DM, by the database's rules), the
+// DM's requests for a roll, the stage, the log and the library, and sound effects as they're played.
 // Everything on screen shares the one connection, which closes a moment after the last user
 // lets go, so React reopening a screen doesn't reconnect.
 
@@ -20,10 +21,19 @@ type LiveCampaign = {
   rollListeners: Set<(roll: Roll) => void>
   rollChangeListeners: Set<(roll: Roll) => void>
   requestListeners: Set<(request: AskedRoll) => void>
+  tableListeners: Map<WatchedTable, Set<(change: RowChange<WatchedTable>) => void>>
+  effectListeners: Set<(assetId: string) => void>
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
 }
 
+/** Tables whose changes reach the screens as they are, row by row. */
+export type WatchedTable = 'stage' | 'log_events' | 'assets'
+
+/** A row added or changed, or the id of one removed. */
+export type RowChange<T extends WatchedTable> = { type: 'upsert'; row: Tables<T> } | { type: 'delete'; id: string }
+
+const WATCHED: WatchedTable[] = ['stage', 'log_events', 'assets']
 const CLOSE_DELAY_MS = 1000
 const NOBODY: ReadonlySet<string> = new Set()
 const open = new Map<string, LiveCampaign>()
@@ -48,6 +58,8 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     rollListeners: new Set(),
     rollChangeListeners: new Set(),
     requestListeners: new Set(),
+    tableListeners: new Map(WATCHED.map((table) => [table, new Set()])),
+    effectListeners: new Set(),
     users: 1,
   }
 
@@ -98,6 +110,26 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
       live.requestListeners.forEach((listener) => listener(request))
     },
   )
+
+  for (const table of WATCHED) {
+    channel.on<Record<string, unknown>>(
+      'postgres_changes',
+      { event: '*', schema: 'public', table, filter: `campaign_id=eq.${campaignId}` },
+      (payload) => {
+        const old = payload.old as { id?: string; campaign_id?: string }
+        const change =
+          payload.eventType === 'DELETE'
+            ? { type: 'delete' as const, id: String(old.id ?? old.campaign_id ?? '') }
+            : { type: 'upsert' as const, row: payload.new as Tables<typeof table> }
+        live.tableListeners.get(table)?.forEach((listener) => listener(change))
+      },
+    )
+  }
+
+  channel.on('broadcast', { event: 'effect' }, ({ payload }) => {
+    const assetId = (payload as { assetId?: unknown }).assetId
+    if (typeof assetId === 'string') live.effectListeners.forEach((listener) => listener(assetId))
+  })
 
   channel.subscribe((status) => {
     if (status === 'SUBSCRIBED') void channel.track({ since: new Date().toISOString() })
@@ -190,4 +222,41 @@ export function useRequestChanges(campaignId: string, userId: string, onRequest:
       release(campaignId)
     }
   }, [campaignId, userId, onRequest])
+}
+
+/** Calls `onChange` when a row of this table, at this table, is added, changed or removed. */
+export function useTableChanges<T extends WatchedTable>(
+  campaignId: string,
+  userId: string,
+  table: T,
+  onChange: (change: RowChange<T>) => void,
+): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    const listeners = live.tableListeners.get(table) as Set<(change: RowChange<T>) => void> | undefined
+    listeners?.add(onChange)
+    return () => {
+      listeners?.delete(onChange)
+      release(campaignId)
+    }
+  }, [campaignId, userId, table, onChange])
+}
+
+/** Calls `onEffect` when someone else at the table plays a sound effect. */
+export function useEffectBroadcasts(campaignId: string, userId: string, onEffect: (assetId: string) => void): void {
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    live.effectListeners.add(onEffect)
+    return () => {
+      live.effectListeners.delete(onEffect)
+      release(campaignId)
+    }
+  }, [campaignId, userId, onEffect])
+}
+
+/** Tells everyone at the table to play a sound effect now. (It isn't saved anywhere.) */
+export function broadcastEffect(campaignId: string, assetId: string): void {
+  void open.get(campaignId)?.channel.send({ type: 'broadcast', event: 'effect', payload: { assetId } })
 }

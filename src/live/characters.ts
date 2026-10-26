@@ -4,6 +4,7 @@
 import type { Character, CharacterBuild } from '../rules/character.ts'
 import { buildToRow, rowToCharacter, trackersToRow, type TrackerPatch } from './characterRows.ts'
 import { fromDatabaseError, NOT_CONNECTED, TableError } from './errors.ts'
+import { squareImage } from './images.ts'
 import { supabase } from './supabase.ts'
 
 function db() {
@@ -108,24 +109,4 @@ export function portraitUrl(path: string): Promise<string | null> {
     portraitUrls.set(path, url)
   }
   return url
-}
-
-/** Crops the middle square of a picture and shrinks it, as WebP where the browser can make it. */
-async function squareImage(file: File, size: number): Promise<Blob> {
-  if (!file.type.startsWith('image/')) throw new TableError('That file isn’t a picture.')
-  const bitmap = await createImageBitmap(file)
-  const side = Math.min(bitmap.width, bitmap.height)
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const context = canvas.getContext('2d')
-  if (!context) throw new TableError("Your browser couldn't prepare the picture.")
-  context.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, size, size)
-  bitmap.close()
-  const encode = (type: string) => new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, 0.85))
-  const webp = await encode('image/webp')
-  if (webp?.type === 'image/webp') return webp
-  const jpeg = await encode('image/jpeg')
-  if (!jpeg) throw new TableError("Your browser couldn't prepare the picture.")
-  return jpeg
 }
