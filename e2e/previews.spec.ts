@@ -364,3 +364,18 @@ test('after attacking with one light weapon, the player is offered an off-hand a
   await expect(feed).toContainText(/Dagger/)
   await expect(ready).toHaveCount(0)
 })
+
+test("the DM uses a goblin's Nimble Escape from its card", async ({ page }) => {
+  page.on('dialog', (dialog) => void dialog.accept())
+  await page.goto('#/dev/battle')
+  const card = page.getByRole('region', { name: 'Acting now' })
+  for (let i = 0; i < 3 && !(await card.innerText()).includes('Goblin'); i++) await page.keyboard.press('n')
+  const bonus = card.getByRole('region', { name: 'Its bonus action' })
+  await expect(bonus).toContainText('Nimble Escape')
+  await bonus.getByRole('button', { name: 'Disengage' }).click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    /Goblin \w+ disengages \(bonus action\)/i,
+  )
+  await expect(bonus).toContainText('used this turn')
+  await expect(bonus.getByRole('button', { name: /Hide/ })).toBeDisabled()
+})

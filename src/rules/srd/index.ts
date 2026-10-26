@@ -188,6 +188,8 @@ export type SrdMonster = {
   vulnerabilities: string[]
   immunities: string[]
   conditionImmunities: string[]
+  /** Skills it's proficient in, as the whole bonus: { stealth: 6 }. Others use the ability modifier. */
+  skills: Record<string, number>
   /** Saving throws it's proficient in, as the whole bonus: { dexterity: 5 }. Others use the ability modifier. */
   saves: Partial<Record<Ability, number>>
 }

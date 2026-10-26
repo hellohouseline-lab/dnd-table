@@ -332,6 +332,7 @@ export function BattleView({
             spells={spells}
             onCast={(row, spell) => beginCast(row, spell)}
             onConcentrationSave={(character) => void table.rollWith(() => controls.concentrationSave(character.id))}
+            onRoll={(request) => void table.roll(request)}
             numbered
             rolling={table.rolling}
           />

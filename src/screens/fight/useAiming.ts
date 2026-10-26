@@ -57,11 +57,12 @@ export function useAiming(
     return () => window.removeEventListener('keydown', cancel)
   }, [aim])
 
+  // A bonus-action attack (a lion's Pounce bite) doesn't need room in the action.
   const aimMonster = useCallback(
-    (row: FightRow, action: SrdMonsterAction) => {
-      if (!roomFor(row)) return
+    (row: FightRow, action: SrdMonsterAction, bonus = false) => {
+      if (!bonus && !roomFor(row)) return
       setAim({
-        label: `${row.name}: ${action.name}`,
+        label: `${row.name}: ${action.name}${bonus ? ' (bonus action)' : ''}`,
         attacker: row.combatant,
         reach: actionReach(action.desc),
         build: (target, feet) => {
