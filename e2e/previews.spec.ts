@@ -41,3 +41,49 @@ test('the player gets the prompt, rolls, and sees pass or fail', async ({ page }
   await result.getByRole('button', { name: 'Back to the table' }).click()
   await expect(result).toBeHidden()
 })
+
+test('the DM uploads a picture, puts it on stage and plays music', async ({ page }) => {
+  await page.goto('#/dev/stage')
+  // A small picture and a short sound, made here rather than kept as files.
+  const png = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR4nGNgYPj/n4GBgYGJAQoAAD4ABDYfjLMAAAAASUVORK5CYII=',
+    'base64',
+  )
+  await page
+    .locator('input[type=file][accept^="image"]')
+    .setInputFiles({ name: 'tavern.png', mimeType: 'image/png', buffer: png })
+  const tile = page.getByRole('region', { name: 'Art library' }).getByRole('button', { name: 'Tavern', exact: true })
+  await expect(tile).toBeVisible()
+  await tile.click()
+  await expect(page.getByText('On stage', { exact: true })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'On stage: Tavern' })).toBeVisible()
+
+  const music = page.getByRole('region', { name: 'Music' })
+  await music
+    .locator('input[type=file]')
+    .setInputFiles({ name: 'merry-inn.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from([0]) })
+  await music.getByRole('button', { name: 'Merry inn', exact: true }).click()
+  await expect(music).toContainText('Tavern · stream-safe')
+  await expect(page.getByRole('button', { name: 'Pause the music' })).toBeVisible()
+})
+
+test('the DM writes in the notebook, rests the party and sees it in the log', async ({ page }) => {
+  await page.goto('#/dev/dm/party')
+  const notebook = page.getByRole('region', { name: 'Your notebook' })
+  await notebook.getByPlaceholder('Add a step, then press Enter').fill('Find the secret door')
+  await notebook.getByPlaceholder('Add a step, then press Enter').press('Enter')
+  await expect(notebook).toContainText('Find the secret door')
+  await notebook.getByLabel('Quick note').fill('The innkeeper flinched at the word ruins')
+  await notebook.getByRole('button', { name: 'Add', exact: true }).click()
+
+  await page.getByRole('button', { name: 'Rest' }).click()
+  await page.getByRole('radio', { name: /Long rest/ }).click()
+  await page.getByRole('button', { name: 'Take a long rest' }).click()
+  await expect(page.getByText('Morning comes.')).toBeVisible()
+  await page.getByRole('button', { name: 'Back to the party' }).click()
+
+  await page.getByRole('tab', { name: 'Log' }).click()
+  const log = page.getByRole('region', { name: 'Roll log' })
+  await expect(log).toContainText('The innkeeper flinched at the word ruins')
+  await expect(log).toContainText('Long rest.')
+})
