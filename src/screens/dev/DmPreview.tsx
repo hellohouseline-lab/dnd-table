@@ -11,6 +11,7 @@ import type { Roll } from '../../live/rolls.ts'
 import type { Character } from '../../rules/character.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import { DmView } from '../dm/DmView.tsx'
+import { judgePreview, previewAnswer, previewRequest, usePreviewAsking } from './previewAsking.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 import styles from './DmPreview.module.css'
 
@@ -38,6 +39,9 @@ function sample(id: string, minutesAgo: number, roll: Partial<Roll>): Roll {
     secret: false,
     style: { material: 'glass', colour: 'ruby', numbers: 'gold' },
     createdAt: new Date(Date.now() - minutesAgo * 60000).toISOString(),
+    requestId: null,
+    passed: null,
+    passedByDice: null,
     ...roll,
   }
 }
@@ -125,13 +129,28 @@ export function DmPreview({ tab }: { tab: string }) {
   const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
   const [rolls, setRolls] = useState<Roll[]>(sampleRolls)
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(DEFAULT_DICE_STYLE)
+  // #/dev/dm/asked opens with a Constitution save out, which Thorin has rolled and Elowen hasn't.
+  const [start] = useState(() => {
+    if (tab !== 'asked') return { request: null, answers: [] }
+    const request = previewRequest(sampleCharacters.map((c) => c.id))
+    return { request, answers: [previewAnswer(sampleCharacters[0], request, 15)] }
+  })
+  const asking = usePreviewAsking(characters, {
+    start: start.request,
+    startAnswers: start.answers,
+    answerFor: sampleCharacters.map((c) => c.id),
+  })
 
   if (tab === 'moments') return <Moments />
 
   const update = (id: string, patch: TrackerPatch) =>
     setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   const thrower = async (request: RollRequest) => {
-    const roll = localRoll(request, { campaignId: 'preview', rollerId: 'dm', style: diceStyle })
+    const roll = judgePreview(
+      localRoll(request, { campaignId: 'preview', rollerId: 'dm', style: diceStyle }),
+      request,
+      asking.dc ?? 15,
+    )
     setRolls((list) => [roll, ...list])
     return roll
   }
@@ -149,6 +168,7 @@ export function DmPreview({ tab }: { tab: string }) {
         diceStyle={diceStyle}
         onDiceStyleChange={setDiceStyle}
         thrower={thrower}
+        asking={asking}
         startTab={tab === 'log' ? 'log' : 'party'}
       />
     </AuthContext.Provider>

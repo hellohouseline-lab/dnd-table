@@ -87,6 +87,9 @@ const baseRoll: Roll = {
   secret: false,
   style: DEFAULT_DICE_STYLE,
   createdAt: '2026-10-25T20:00:00Z',
+  requestId: null,
+  passed: null,
+  passedByDice: null,
 }
 
 describe('roll words', () => {

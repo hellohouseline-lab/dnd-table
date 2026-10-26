@@ -1,16 +1,10 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.18"
+    PostgrestVersion: '14.18'
   }
   public: {
     Tables: {
@@ -44,11 +38,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "campaign_members_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'campaign_members_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -211,11 +205,97 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "characters_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'characters_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      roll_request_secrets: {
+        Row: {
+          campaign_id: string
+          dc: number
+          request_id: string
+        }
+        Insert: {
+          campaign_id: string
+          dc: number
+          request_id: string
+        }
+        Update: {
+          campaign_id?: string
+          dc?: number
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'roll_request_secrets_campaign_id_fkey'
+            columns: ['campaign_id']
+            isOneToOne: false
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'roll_request_secrets_request_id_fkey'
+            columns: ['request_id']
+            isOneToOne: true
+            referencedRelation: 'roll_requests'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      roll_requests: {
+        Row: {
+          ability: string
+          campaign_id: string
+          character_ids: string[]
+          closed_at: string | null
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          plain: string
+          shown_dc: number | null
+          skill: string | null
+          status: string
+        }
+        Insert: {
+          ability: string
+          campaign_id: string
+          character_ids: string[]
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          label: string
+          plain?: string
+          shown_dc?: number | null
+          skill?: string | null
+          status?: string
+        }
+        Update: {
+          ability?: string
+          campaign_id?: string
+          character_ids?: string[]
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          plain?: string
+          shown_dc?: number | null
+          skill?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'roll_requests_campaign_id_fkey'
+            columns: ['campaign_id']
+            isOneToOne: false
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -233,6 +313,9 @@ export type Database = {
           modifier: number
           natural_d20: number | null
           parts: Json
+          passed: boolean | null
+          passed_by_dice: boolean | null
+          request_id: string | null
           roller_id: string
           secret: boolean
           style: Json
@@ -251,6 +334,9 @@ export type Database = {
           modifier?: number
           natural_d20?: number | null
           parts?: Json
+          passed?: boolean | null
+          passed_by_dice?: boolean | null
+          request_id?: string | null
           roller_id: string
           secret?: boolean
           style?: Json
@@ -269,6 +355,9 @@ export type Database = {
           modifier?: number
           natural_d20?: number | null
           parts?: Json
+          passed?: boolean | null
+          passed_by_dice?: boolean | null
+          request_id?: string | null
           roller_id?: string
           secret?: boolean
           style?: Json
@@ -276,18 +365,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "rolls_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'rolls_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "rolls_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'rolls_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'rolls_request_id_fkey'
+            columns: ['request_id']
+            isOneToOne: false
+            referencedRelation: 'roll_requests'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -296,6 +392,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ask_for_roll: {
+        Args: { p_campaign_id: string; p_request: Json }
+        Returns: {
+          ability: string
+          campaign_id: string
+          character_ids: string[]
+          closed_at: string | null
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          plain: string
+          shown_dc: number | null
+          skill: string | null
+          status: string
+        }
+        SetofOptions: {
+          from: '*'
+          to: 'roll_requests'
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      close_roll_request: { Args: { p_request_id: string }; Returns: undefined }
       create_campaign: {
         Args: {
           p_dm_name: string
@@ -308,6 +428,36 @@ export type Database = {
       join_campaign: {
         Args: { p_code: string; p_display_name: string }
         Returns: string
+      }
+      override_roll: {
+        Args: { p_passed: boolean; p_roll_id: string }
+        Returns: {
+          campaign_id: string
+          character_id: string | null
+          created_at: string
+          damage: Json | null
+          dice: Json
+          id: string
+          kind: string
+          label: string
+          mode: string
+          modifier: number
+          natural_d20: number | null
+          parts: Json
+          passed: boolean | null
+          passed_by_dice: boolean | null
+          request_id: string | null
+          roller_id: string
+          secret: boolean
+          style: Json
+          total: number
+        }
+        SetofOptions: {
+          from: '*'
+          to: 'rolls'
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       peek_campaign: {
         Args: { p_code: string }
@@ -335,14 +485,17 @@ export type Database = {
           modifier: number
           natural_d20: number | null
           parts: Json
+          passed: boolean | null
+          passed_by_dice: boolean | null
+          request_id: string | null
           roller_id: string
           secret: boolean
           style: Json
           total: number
         }
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -357,33 +510,30 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof (DefaultSchema['Tables'] & DefaultSchema['Views']) | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -391,24 +541,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -416,24 +564,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -441,37 +587,34 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
     : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema['CompositeTypes'] | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
     : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {

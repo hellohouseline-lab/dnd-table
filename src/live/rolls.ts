@@ -32,6 +32,12 @@ export type Roll = RollOutcome & {
   secret: boolean
   style: DiceStyle
   createdAt: string
+  /** Set when this answers the DM's request for a roll. */
+  requestId: string | null
+  /** The final word on a requested roll (the DM can change it); null for any other roll. */
+  passed: boolean | null
+  /** What the dice said against the DC, before any change by the DM. */
+  passedByDice: boolean | null
 }
 
 const LOG_LENGTH = 150
@@ -94,6 +100,9 @@ export function rowToRoll(row: RollRow): Roll {
     secret: row.secret,
     style: parseDiceStyle(row.style),
     createdAt: row.created_at,
+    requestId: row.request_id,
+    passed: row.passed,
+    passedByDice: row.passed_by_dice,
   }
 }
 
@@ -109,6 +118,7 @@ export function requestToJson(request: RollRequest): Json {
     mode: request.mode,
     damage: request.damage,
     secret: request.secret,
+    request_id: request.requestId,
   }
 }
 

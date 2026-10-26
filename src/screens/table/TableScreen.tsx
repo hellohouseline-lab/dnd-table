@@ -12,6 +12,7 @@ import { messageFor } from '../../live/errors.ts'
 import { saveDiceStyle } from '../../live/rolls.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
+import { useRollRequest } from '../../live/useRollRequest.ts'
 import { TableView } from './TableView.tsx'
 
 /** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
@@ -20,6 +21,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
   const members = useLoad(() => listMembers(campaignId), [campaignId])
   const party = useParty(campaignId, user.id)
   const online = useOnlineIds(campaignId, user.id)
+  const asking = useRollRequest(campaignId, user.id, false)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
   const [styleError, setStyleError] = useState<string | null>(null)
 
@@ -69,6 +71,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       saveError={party.saveError ?? styleError}
       diceStyle={diceStyle}
       onDiceStyleChange={changeDiceStyle}
+      asking={asking}
     />
   )
 }

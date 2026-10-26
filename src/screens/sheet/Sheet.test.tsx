@@ -2,12 +2,23 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { DEFAULT_DICE_STYLE } from '../../dice/style.ts'
 import { describe, expect, it } from 'vitest'
+import type { RequestControls } from '../../live/useRollRequest.ts'
 import { sampleCharacters, sampleFighter, sampleMembers, sampleWizard } from '../dev/sampleData.ts'
 import { TableView } from '../table/TableView.tsx'
 import { PowersTab } from './PowersTab.tsx'
 import { SheetTab } from './SheetTab.tsx'
 
 const noop = () => {}
+const nobodyAsked: RequestControls = {
+  request: null,
+  answers: [],
+  dc: null,
+  error: null,
+  ask: async () => true,
+  override: noop,
+  close: noop,
+  putAnswer: noop,
+}
 const text = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')
 
 describe('the Sheet tab', () => {
@@ -72,6 +83,7 @@ describe('the table screen', () => {
         onUpdate={noop}
         diceStyle={{ material: 'glass', colour: 'ruby', numbers: 'gold' }}
         onDiceStyleChange={noop}
+        asking={nobodyAsked}
       />,
     ),
   )
@@ -106,6 +118,7 @@ describe('the table screen', () => {
           onUpdate={noop}
           diceStyle={DEFAULT_DICE_STYLE}
           onDiceStyleChange={noop}
+          asking={nobodyAsked}
         />,
       ),
     )

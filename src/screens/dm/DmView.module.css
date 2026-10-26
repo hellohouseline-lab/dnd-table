@@ -206,3 +206,38 @@
 .screen > .cameras {
   top: 82px;
 }
+
+/* Ask for a roll (08) and the results (09), over the notebook and the middle; the cameras stay in view. */
+.overlay {
+  position: absolute;
+  top: 66px;
+  bottom: 0;
+  left: 0;
+  right: 280px;
+  z-index: 12;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 6, 12, 0.72);
+}
+
+/* A request the DM has tucked away, waiting above the tabs. */
+.waiting {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: rgba(16, 12, 20, 0.9);
+  color: var(--text);
+  font-size: 15px;
+  z-index: 2;
+}
+
+.waiting strong {
+  color: var(--gold-light);
+  font-weight: 600;
+}

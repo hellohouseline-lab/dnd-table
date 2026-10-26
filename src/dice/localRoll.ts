@@ -27,6 +27,9 @@ export function localRoll(
     secret: request.secret,
     style: who.style,
     createdAt: new Date().toISOString(),
+    requestId: request.requestId,
+    passed: null,
+    passedByDice: null,
   }
 }
 
@@ -48,4 +51,5 @@ export const PRACTICE_SET: RollRequest = {
   mode: 'normal',
   damage: null,
   secret: false,
+  requestId: null,
 }

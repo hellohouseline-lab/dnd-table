@@ -7,7 +7,11 @@ import { CheckEmailPanel } from '../signin/CheckEmailPanel.tsx'
 export function CheckEmailPreview() {
   return (
     <Page width="narrow">
-      <PageHeader eyebrow="Take your seat at the table" title="D&D Table" subtitle="A private table for one party · 2014 rules" />
+      <PageHeader
+        eyebrow="Take your seat at the table"
+        title="D&D Table"
+        subtitle="A private table for one party · 2014 rules"
+      />
       <CheckEmailPanel email="player@example.com" onDifferentEmail={() => {}} />
     </Page>
   )

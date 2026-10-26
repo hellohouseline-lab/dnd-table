@@ -96,6 +96,11 @@ const ROUTES: Route[] = [
         },
         { pattern: '/dev/table', title: `Table preview · ${APP_NAME}`, render: () => <TablePreview /> },
         {
+          pattern: '/dev/table/asked',
+          title: `Table preview · ${APP_NAME}`,
+          render: () => <TablePreview key="asked" asked />,
+        },
+        {
           pattern: '/dev/dm/:tab',
           title: `DM screen preview · ${APP_NAME}`,
           render: ({ tab }: Record<string, string>) => <DmPreview tab={tab} />,

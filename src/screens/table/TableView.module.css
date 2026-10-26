@@ -296,6 +296,39 @@
   border: 2px solid var(--gold);
 }
 
+/* The status chip in a tile's corner while the DM's roll request is open. */
+.chip {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(13, 10, 18, 0.88);
+  border: 1px solid var(--text-3);
+  color: var(--text-3);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chip_gold {
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+
+.chip_pass {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.chip_fail {
+  border-color: var(--fail);
+  color: var(--fail);
+}
+
 .feed {
   position: absolute;
   inset: 0;
@@ -390,6 +423,22 @@
   bottom: 16px;
   left: 16px;
   right: 280px;
+}
+
+/* The DM's request for a roll, and your result, over the scene (the cameras stay in view). */
+.asked {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 280px;
+  z-index: 15;
+  padding: 60px 24px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 6, 12, 0.72);
+  overflow-y: auto;
 }
 
 /* The dice land over the middle of the table, above your hand and everything but the result cards. */

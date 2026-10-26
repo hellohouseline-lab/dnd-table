@@ -31,3 +31,8 @@ export function suggestedMaxHp(hitDie: number, constitution: number, level: numb
   const perLevel = Math.max(1, hitDie / 2 + 1 + con)
   return first + (clampLevel(level) - 1) * perLevel
 }
+
+/** Half damage, as on a successful save against a spell like Fireball: rounded down. */
+export function halfDamage(amount: number): number {
+  return Math.floor(Math.max(0, Math.trunc(amount)) / 2)
+}

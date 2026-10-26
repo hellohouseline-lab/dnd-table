@@ -14,9 +14,22 @@ import type { Campaign, Member } from '../../live/campaigns.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Roll } from '../../live/rolls.ts'
 import type { RollLogState } from '../../live/useRollLog.ts'
+import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { Character } from '../../rules/character.ts'
-import { isSingleD20, type RollMode, type RollRequest } from '../../rules/dice.ts'
-import { abilityCheck, attackRoll, freeRoll, initiativeRoll, savingThrow, skillCheck } from '../../rules/rolls.ts'
+import { isSingleD20, type DiceGroup, type RollMode, type RollRequest } from '../../rules/dice.ts'
+import { takeDamage } from '../../rules/maths/hitPoints.ts'
+import {
+  abilityCheck,
+  answerRoll,
+  attackRoll,
+  freeRoll,
+  initiativeRoll,
+  savingThrow,
+  skillCheck,
+} from '../../rules/rolls.ts'
+import { AskRollDialog } from '../rolls/AskRollDialog.tsx'
+import { RequestResults } from '../rolls/RequestResults.tsx'
+import { allAnswered, requestChips } from '../rolls/requestStatus.ts'
 import { SheetPanel, type SheetTabName } from '../sheet/SheetPanel.tsx'
 import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { CameraColumn } from '../table/TableView.tsx'
@@ -34,8 +47,8 @@ const TABS: { label: string; tab?: DmTab; title?: string }[] = [
   { label: 'Log', tab: 'log' },
 ]
 
-const VERBS: { label: string; icon: IconName; title: string }[] = [
-  { label: 'Ask for a roll', icon: 'd20', title: 'Arrives in milestone 4' },
+const VERBS: { label: string; icon: IconName; title: string; ask?: boolean }[] = [
+  { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', ask: true },
   { label: 'Start combat', icon: 'sword', title: 'Arrives in milestone 6' },
   { label: 'Show an NPC', icon: 'journal', title: 'Arrives in Phase 2' },
   { label: 'Give an item', icon: 'items', title: 'Arrives in Phase 2' },
@@ -56,13 +69,15 @@ type DmViewProps = {
   onDiceStyleChange: (style: DiceStyle) => void
   /** Throws in the browser instead of on the server (the design preview, which has no database). */
   thrower?: (request: RollRequest) => Promise<Roll>
+  /** The open request for a roll, its answers and what the DM can do about it. */
+  asking: RequestControls
   startTab?: DmTab
 }
 
 /**
- * Screen 07, the DM's Command screen. In milestone 3: the party at a glance, the roll log and the
- * DM's own dice, with everyone's throws landing in the middle. The notebook, stage and combat
- * arrive in later milestones.
+ * Screen 07, the DM's Command screen: the party at a glance, asking for rolls (screens 08 and 09),
+ * the roll log and the DM's own dice, with everyone's throws landing in the middle. The notebook,
+ * stage and combat arrive in later milestones.
  */
 export function DmView({
   campaign,
@@ -76,8 +91,12 @@ export function DmView({
   diceStyle,
   onDiceStyleChange,
   thrower,
+  asking,
   startTab = 'party',
 }: DmViewProps) {
+  // The Ask for a roll card, optionally for one character; and a request the DM has tucked away.
+  const [askFor, setAskFor] = useState<{ only: string | null } | null>(null)
+  const [hiddenFor, setHiddenFor] = useState<string | null>(null)
   const [tab, setTab] = useState<DmTab>(startTab)
   const [sheetFor, setSheetFor] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName>('sheet')
@@ -87,6 +106,36 @@ export function DmView({
   const table = useTableRolls({ campaignId: campaign.id, userId: me.user_id, throwDice, thrower })
   const open = characters.find((c) => c.id === sheetFor)
   const choices = { mode, secret }
+  const { request } = asking
+  const showResults = request && hiddenFor !== request.id && !askFor
+  const hereTonight = characters.filter((c) =>
+    members.some((m) => m.user_id === c.ownerId && m.role === 'player' && m.here_tonight),
+  )
+  const chips = requestChips({ request, answers: asking.answers, members, characters, viewerId: me.user_id })
+
+  async function rollFor(character: Character) {
+    if (!request) return
+    const thrown = await table.roll(answerRoll(character, request))
+    if (thrown) asking.putAnswer(thrown)
+  }
+
+  async function rollDamage(dice: DiceGroup[]) {
+    const thrown = await table.roll(freeRoll(dice, { secret: true }))
+    return thrown ? (thrown.damage?.total ?? thrown.total) : null
+  }
+
+  function damage(ids: string[], amount: number) {
+    for (const character of characters.filter((c) => ids.includes(c.id))) {
+      const hp = takeDamage({ current: character.currentHp, max: character.maxHp, temp: character.tempHp }, amount)
+      onUpdate(character.id, { currentHp: hp.current, tempHp: hp.temp })
+    }
+  }
+
+  function addCondition(ids: string[], condition: string) {
+    for (const character of characters.filter((c) => ids.includes(c.id) && !c.conditions.includes(condition))) {
+      onUpdate(character.id, { conditions: [...character.conditions, condition] })
+    }
+  }
 
   function roll(request: RollRequest) {
     if (isSingleD20(request.dice)) setMode('normal')
@@ -148,6 +197,12 @@ export function DmView({
       />
 
       <section className={styles.centre}>
+        {request && !showResults && !askFor && (
+          <button type="button" className={styles.waiting} onClick={() => setHiddenFor(null)}>
+            {request.label}: {asking.answers.length} of {request.characterIds.length} rolled
+            {allAnswered(request, asking.answers) ? ', all in' : ''} · <strong>Show results</strong>
+          </button>
+        )}
         <div role="tablist" aria-label="DM panels" className={styles.tabs}>
           {TABS.map(({ label, tab: target, title }) => (
             <button
@@ -169,6 +224,7 @@ export function DmView({
             <PartyCards
               members={members}
               characters={characters}
+              onAsk={(character) => setAskFor({ only: character.id })}
               onOpenSheet={(character) => {
                 setSheetTab('sheet')
                 setSheetFor(character.id)
@@ -186,7 +242,14 @@ export function DmView({
         </div>
         <nav className={styles.verbs} aria-label="DM actions">
           {VERBS.map((verb) => (
-            <button key={verb.label} type="button" className={styles.verb} disabled title={verb.title}>
+            <button
+              key={verb.label}
+              type="button"
+              className={styles.verb}
+              disabled={!verb.ask}
+              title={verb.title}
+              onClick={() => verb.ask && setAskFor({ only: null })}
+            >
               <Icon name={verb.icon} />
               {verb.label}
             </button>
@@ -217,12 +280,47 @@ export function DmView({
         />
       </section>
 
+      {(askFor || showResults) && (
+        <div className={styles.overlay}>
+          {askFor ? (
+            <AskRollDialog
+              characters={characters}
+              hereTonight={hereTonight}
+              only={askFor.only}
+              onSend={asking.ask}
+              onCancel={() => setAskFor(null)}
+              error={asking.error}
+            />
+          ) : (
+            request && (
+              <RequestResults
+                key={request.id}
+                request={request}
+                answers={asking.answers}
+                dc={asking.dc}
+                characters={characters}
+                onOverride={asking.override}
+                onRollFor={(character) => void rollFor(character)}
+                onDamage={damage}
+                onCondition={addCondition}
+                onRollDamage={rollDamage}
+                onDone={asking.close}
+                onHide={() => setHiddenFor(request.id)}
+                rolling={table.rolling}
+                error={asking.error ?? table.error}
+              />
+            )
+          )}
+        </div>
+      )}
+
       <CameraColumn
         className={styles.cameras}
         members={members}
         characters={characters}
         online={online}
         myId={me.user_id}
+        chips={chips}
       />
     </main>
   )

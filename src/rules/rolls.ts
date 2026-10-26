@@ -3,6 +3,7 @@
 // advantage or disadvantage by the 2014 rules.
 
 import { ABILITY_NAME, type Ability } from './abilities.ts'
+import type { AskKind } from './askable.ts'
 import type { AttackEntry, Character } from './character.ts'
 import {
   combineModes,
@@ -89,6 +90,7 @@ function d20Roll(
     mode: combineModes([choices.mode ?? 'normal', ...effects.map((effect) => effect.mode)]),
     damage: null,
     secret: choices.secret ?? false,
+    requestId: null,
   }
 }
 
@@ -157,6 +159,24 @@ export function attackRoll(character: RollCharacter, attack: AttackEntry, choice
   }
 }
 
+/**
+ * A character's answer to the DM's request for a roll: the right check or save, with their bonus,
+ * their conditions and anything they chose, under the request's name.
+ */
+export function answerRoll(
+  character: RollCharacter,
+  request: { id: string; kind: AskKind; ability: Ability; skill: string | null; label: string },
+  choices: RollChoices = {},
+): RollRequest {
+  const roll =
+    request.kind === 'skill' && request.skill
+      ? skillCheck(character, request.skill, choices)
+      : request.kind === 'save'
+        ? savingThrow(character, request.ability, choices)
+        : abilityCheck(character, request.ability, choices)
+  return { ...roll, label: request.label, requestId: request.id, secret: false }
+}
+
 /** Dice picked by hand, with no bonus worked out. */
 export function freeRoll(
   dice: DiceGroup[],
@@ -172,5 +192,6 @@ export function freeRoll(
     mode: choices.mode && dice.length === 1 && dice[0].sides === 20 && dice[0].count === 1 ? choices.mode : 'normal',
     damage: null,
     secret: choices.secret ?? false,
+    requestId: null,
   }
 }

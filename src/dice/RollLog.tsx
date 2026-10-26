@@ -81,6 +81,12 @@ function LogRow({ roll, who }: { roll: Roll; who: string }) {
           {mode && <span className={styles.chip}>{mode}</span>}
           {roll.secret && <span className={cx(styles.chip, styles.secret)}>Secret</span>}
           {title && <span className={cx(styles.chip, styles.moment)}>{title}</span>}
+          {roll.passed !== null && (
+            <span className={cx(styles.chip, roll.passed ? styles.passed : styles.failed)}>
+              {roll.passed ? 'Passed' : 'Failed'}
+              {roll.passed !== roll.passedByDice && ' (changed by the DM)'}
+            </span>
+          )}
         </div>
         <div className={styles.line}>
           <DiceFaces dice={roll.dice} natural={roll.natural} />

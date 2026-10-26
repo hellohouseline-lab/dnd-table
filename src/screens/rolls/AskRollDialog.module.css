@@ -1,0 +1,273 @@
+.card {
+  position: relative;
+  width: 860px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 26px 40px 24px;
+  border-radius: 6px;
+  background: var(--parchment);
+  color: var(--ink);
+  border: 2px solid var(--parchment-rule);
+  box-shadow:
+    inset 0 0 0 7px var(--parchment),
+    inset 0 0 0 8px rgba(138, 106, 42, 0.55),
+    0 20px 60px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.corner {
+  position: absolute;
+  top: 14px;
+  width: 30px;
+  height: 30px;
+  border-top: 2px solid var(--parchment-rule);
+}
+
+.topLeft {
+  left: 14px;
+  border-left: 2px solid var(--parchment-rule);
+  border-top-left-radius: 10px;
+}
+
+.topRight {
+  right: 14px;
+  border-right: 2px solid var(--parchment-rule);
+  border-top-right-radius: 10px;
+}
+
+.title {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: -10px 0 0;
+  text-align: center;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stepTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.checks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.check,
+.difficulty,
+.pill {
+  border: 1px solid #b89a62;
+  background: rgba(43, 29, 18, 0.04);
+  color: var(--ink);
+  border-radius: 4px;
+}
+
+.check {
+  min-height: 58px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+}
+
+.check:hover,
+.difficulty:hover,
+.pill:hover {
+  border-color: var(--ink-2);
+}
+
+.checkName,
+.difficultyName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.checkPlain {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.on,
+.on:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--gold-light);
+}
+
+.on .checkPlain {
+  color: var(--parchment-shade);
+}
+
+.other {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.otherLabel {
+  color: var(--wax);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.other select {
+  height: 36px;
+  max-width: 420px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid #b89a62;
+  background: #f4ead2;
+  color: var(--ink);
+  font: inherit;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.pillName {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: 0;
+}
+
+.hint {
+  margin: 0;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.difficulties {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.difficulty {
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.difficultyDc {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.howRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  font-size: 16px;
+  color: var(--ink-2);
+}
+
+.howRow > span {
+  flex: 1 1 320px;
+}
+
+.custom,
+.tell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+}
+
+.custom input {
+  width: 64px;
+  height: 34px;
+  padding: 0 6px;
+  border-radius: 4px;
+  border: 1px solid #b89a62;
+  background: #f4ead2;
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+}
+
+.tell input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(138, 106, 42, 0.55);
+}
+
+.sentence {
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.cancel {
+  height: 52px;
+  padding: 0 20px;
+  border-radius: 4px;
+  border: 1px solid var(--ink-2);
+  background: none;
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.cancel:hover {
+  background: rgba(43, 29, 18, 0.06);
+}
+
+.send {
+  height: 52px;
+  padding: 0 24px;
+}

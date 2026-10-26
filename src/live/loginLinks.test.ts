@@ -37,7 +37,10 @@ describe('readAuthCallback', () => {
   })
 
   it('explains an expired link', () => {
-    const callback = readAuthCallback('', '#error=access_denied&error_code=otp_expired&error_description=Email+link+expired')
+    const callback = readAuthCallback(
+      '',
+      '#error=access_denied&error_code=otp_expired&error_description=Email+link+expired',
+    )
     expect(callback.isCallback).toBe(true)
     expect(callback.error).toBe(loginLinkError('otp_expired'))
   })

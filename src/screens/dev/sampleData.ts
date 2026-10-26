@@ -17,7 +17,15 @@ export const sampleCampaign: Campaign = {
 const joined = '2026-10-20T20:00:00Z'
 
 export const sampleMembers: Member[] = [
-  { campaign_id: 'preview', user_id: 'dm', role: 'dm', display_name: 'Matt', here_tonight: true, joined_at: joined, dice_style: {} },
+  {
+    campaign_id: 'preview',
+    user_id: 'dm',
+    role: 'dm',
+    display_name: 'Matt',
+    here_tonight: true,
+    joined_at: joined,
+    dice_style: {},
+  },
   {
     campaign_id: 'preview',
     user_id: 'p1',
@@ -74,8 +82,26 @@ export const sampleFighter: Character = {
   otherProficiencies: 'All armor, Shields, Simple Weapons, Martial Weapons',
   languages: 'Common, Dwarvish',
   attacks: [
-    { id: 'a1', name: 'Longsword', weapon: 'longsword', proficient: true, magicBonus: 0, ability: 'strength', damageDice: '', damageType: '' },
-    { id: 'a2', name: 'Handaxe', weapon: 'handaxe', proficient: true, magicBonus: 0, ability: 'strength', damageDice: '', damageType: '' },
+    {
+      id: 'a1',
+      name: 'Longsword',
+      weapon: 'longsword',
+      proficient: true,
+      magicBonus: 0,
+      ability: 'strength',
+      damageDice: '',
+      damageType: '',
+    },
+    {
+      id: 'a2',
+      name: 'Handaxe',
+      weapon: 'handaxe',
+      proficient: true,
+      magicBonus: 0,
+      ability: 'strength',
+      damageDice: '',
+      damageType: '',
+    },
   ],
   features: [
     {
@@ -94,7 +120,14 @@ export const sampleFighter: Character = {
       usesLeft: 0,
       recharge: 'short',
     },
-    { id: 'f3', name: 'Darkvision', description: 'You can see in dim light within 60 feet.', usesMax: null, usesLeft: 0, recharge: null },
+    {
+      id: 'f3',
+      name: 'Darkvision',
+      description: 'You can see in dim light within 60 feet.',
+      usesMax: null,
+      usesLeft: 0,
+      recharge: null,
+    },
   ],
 }
 

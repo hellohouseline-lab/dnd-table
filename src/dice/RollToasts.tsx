@@ -20,11 +20,13 @@ type RollToastsProps = {
   members: Member[]
   characters: Character[]
   onDismiss: (id: string) => void
+  /** Show "Passed" or "Failed" on answers to the DM's request (hidden from someone still to roll). */
+  showVerdicts?: boolean
   className?: string
 }
 
 /** The result of each throw once the dice land, newest at the bottom, with a fuss for natural 20s and 1s. */
-export function RollToasts({ rolls, members, characters, onDismiss, className }: RollToastsProps) {
+export function RollToasts({ rolls, members, characters, onDismiss, showVerdicts = true, className }: RollToastsProps) {
   return (
     <div className={cx(styles.stack, className)} aria-live="polite">
       {rolls.map((roll) => (
@@ -33,13 +35,24 @@ export function RollToasts({ rolls, members, characters, onDismiss, className }:
           roll={roll}
           who={whoRolled(roll, members, characters)}
           onDismiss={() => onDismiss(roll.id)}
+          showVerdict={showVerdicts}
         />
       ))}
     </div>
   )
 }
 
-export function RollToast({ roll, who, onDismiss }: { roll: Roll; who: string; onDismiss?: () => void }) {
+export function RollToast({
+  roll,
+  who,
+  onDismiss,
+  showVerdict = true,
+}: {
+  roll: Roll
+  who: string
+  onDismiss?: () => void
+  showVerdict?: boolean
+}) {
   const moment = naturalMoment(roll)
   const title = naturalTitle(roll)
   const note = naturalNote(roll)
@@ -62,6 +75,11 @@ export function RollToast({ roll, who, onDismiss }: { roll: Roll; who: string; o
             {who} · {roll.label}
           </span>
           {roll.secret && <span className={styles.secret}>Secret</span>}
+          {roll.passed !== null && showVerdict && (
+            <span className={cx(styles.verdict, roll.passed ? styles.verdictPass : styles.verdictFail)}>
+              {roll.passed ? 'Passed' : 'Failed'}
+            </span>
+          )}
           {onDismiss && (
             <button type="button" className={styles.close} aria-label="Close" onClick={onDismiss}>
               ×
