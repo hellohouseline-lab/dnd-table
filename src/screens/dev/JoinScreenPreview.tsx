@@ -57,6 +57,7 @@ export function JoinScreenPreview({ as }: { as: string }) {
  * #/dev/table/reaction: on Goblin A's turn it has just stepped away from Thorin, who may strike.
  * #/dev/table/dying: Thorin's turn at 0 hit points, with one death save failed.
  * #/dev/table/caster: Elowen's turn (played by Alex), with her spells in the hand.
+ * #/dev/table/dual: Thorin's turn with a shortsword and a dagger, for two-weapon fighting.
  */
 export function TablePreview({
   asked = false,
@@ -65,7 +66,7 @@ export function TablePreview({
 }: {
   asked?: boolean
   fighting?: boolean
-  variant?: 'reaction' | 'dying' | 'caster' | null
+  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | null
 }) {
   const caster = variant === 'caster'
   const [characters, setCharacters] = useState<Character[]>(() =>
@@ -73,7 +74,19 @@ export function TablePreview({
       ? sampleCharacters.map((c, i) =>
           i === 0 ? { ...c, currentHp: 0, deathSaveFailures: 1, conditions: [...c.conditions, 'unconscious'] } : c,
         )
-      : sampleCharacters,
+      : variant === 'dual'
+        ? sampleCharacters.map((c, i) =>
+            i === 0
+              ? {
+                  ...c,
+                  attacks: [
+                    { ...c.attacks[0], id: 'a1', name: 'Shortsword', weapon: 'shortsword' },
+                    { ...c.attacks[0], id: 'a2', name: 'Dagger', weapon: 'dagger' },
+                  ],
+                }
+              : c,
+          )
+        : sampleCharacters,
   )
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(() => parseDiceStyle(sampleMembers[1].dice_style))
   const [start] = useState(() => {

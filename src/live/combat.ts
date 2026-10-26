@@ -26,6 +26,7 @@ import type { Tables } from './database.types.ts'
 import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './errors.ts'
 import { requestToJson, rowToRoll, type Roll } from './rolls.ts'
 import { supabase } from './supabase.ts'
+import type { BonusAttackKind } from '../rules/bonusActions.ts'
 
 export type Encounter = {
   id: string
@@ -545,16 +546,21 @@ export type TurnAction =
   | 'bonus_hide'
   | 'bonus_dodge'
 
-/** Two-weapon fighting: a second attack with a light weapon, for the bonus action. */
+/**
+ * An attack with the bonus action: two-weapon fighting (the default), a monk's unarmed strike or
+ * Flurry of Blows, or a berserker's frenzy. The server checks the rules for each.
+ */
 export async function offhandAttack(
   attackerId: string,
   targetId: string,
   request: RollRequest,
+  kind: BonusAttackKind = 'offhand',
 ): Promise<{ roll: Roll; event: CombatEvent }> {
-  const { data, error } = await db().rpc('offhand_attack', {
+  const { data, error } = await db().rpc('bonus_attack', {
     p_attacker_id: attackerId,
     p_target_id: targetId,
     p_roll: requestToJson(request),
+    p_kind: kind,
   })
   if (error) throw fromServerRule(error)
   const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }

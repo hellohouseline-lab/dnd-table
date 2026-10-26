@@ -29,7 +29,7 @@ export function durationRounds(duration: string): number | null {
 /** The timer for a concentration spell, if its duration is one the table counts. */
 export function concentrationTimer(spell: string, duration: string): Effect | null {
   const rounds = durationRounds(duration)
-  return rounds === null ? null : { key: 'concentration', name: `Concentrating: ${spell}`, spell, roundsLeft: rounds }
+  return rounds === null ? null : { key: 'concentration', name: `${spell} (concentration)`, spell, roundsLeft: rounds }
 }
 
 /** "7 rounds left", "about 10 minutes left". */

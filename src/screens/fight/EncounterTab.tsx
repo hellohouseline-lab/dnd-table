@@ -19,6 +19,8 @@ import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
 import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
 import { AtAGlance } from './AtAGlance.tsx'
+import bonusStyles from './BonusReady.module.css'
+import { triggeredBonus } from '../../rules/bonusActions.ts'
 import { SheetLink } from '../../components/SheetLink.tsx'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Aiming } from './useAiming.ts'
@@ -236,6 +238,15 @@ export function ActingNow({
     /bonus action/i.test(a.desc),
   )
   const defences = defencesText(row.character ?? row.secret ?? NO_DEFENCES)
+  // What the acting player's turn has just opened up (shown to them too).
+  const readyBonus =
+    row.character && row.status === 'acting'
+      ? triggeredBonus(row.character, {
+          myTurn: true,
+          bonusUsed: row.combatant.turn.bonusUsed,
+          attacksMade: row.combatant.turn.attacksMade,
+        })
+      : []
 
   return (
     <section className={cx(styles.actingCard, className)} aria-label="Acting now">
@@ -256,6 +267,12 @@ export function ActingNow({
           {defences && <div className={styles.defences}>{defences}</div>}
         </div>
       </div>
+      {readyBonus.length > 0 && (
+        <p className={bonusStyles.dmReady} role="status">
+          <strong>Bonus action ready:</strong> {readyBonus.map((e) => e.name).join(', ')}. {row.name} has been asked on
+          their screen.
+        </p>
+      )}
 
       {row.character ? (
         <>

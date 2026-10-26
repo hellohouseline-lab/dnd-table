@@ -1,0 +1,102 @@
+.card {
+  width: 420px;
+  padding: 12px 14px 12px;
+  border-radius: 8px;
+  background: rgba(14, 22, 34, 0.96);
+  border: 1px solid var(--pass);
+  box-shadow:
+    0 0 0 3px rgba(134, 212, 232, 0.18),
+    0 12px 36px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pass);
+}
+
+.why {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.choices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.take {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--pass);
+  background: rgba(134, 212, 232, 0.12);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+}
+
+.take:hover {
+  background: rgba(134, 212, 232, 0.24);
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cost {
+  font-weight: 400;
+  color: var(--text-2);
+}
+
+.what {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.notNow {
+  align-self: flex-end;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: none;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.notNow:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+/* On the DM's acting card. */
+.dmReady {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--pass);
+  background: rgba(134, 212, 232, 0.1);
+  font-size: 15px;
+  color: var(--text);
+}
+
+.dmReady strong {
+  color: var(--pass);
+  font-weight: 600;
+}

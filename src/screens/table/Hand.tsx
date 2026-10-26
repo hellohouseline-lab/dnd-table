@@ -2,12 +2,14 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import type { AttackEntry, Character, FeatureEntry } from '../../rules/character.ts'
+import { coveredFeatures } from '../../rules/bonusActions.ts'
 import { featureCost } from '../../rules/features.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
 import { findWeapon, type SrdSpell } from '../../rules/srd/index.ts'
 import { castingCost, spellSummary } from '../../rules/spells.ts'
 import type { BonusMove } from '../../rules/turn.ts'
+import type { BonusChoice } from '../fight/BonusReady.tsx'
 import { SlotPips } from '../fight/SpellParts.tsx'
 import { levelWords, srdSpellFor } from '../fight/useCasting.ts'
 import { CardInfo } from './CardPanel.tsx'
@@ -47,6 +49,9 @@ type HandProps = {
   /** Dash, Disengage, Hide or Dodge as a bonus action (a rogue's Cunning Action, a monk's ki). */
   bonusMoves?: BonusMove[]
   onBonusMove?: (move: BonusMove) => void
+  /** A monk's unarmed strike and Flurry of Blows, a berserker's frenzy: why each can't be used now, or null. */
+  bonusAttacks?: (BonusChoice & { why: string | null })[]
+  onBonusAttack?: (choice: BonusChoice) => void
   disabled?: boolean
   className?: string
 }
@@ -90,6 +95,8 @@ export function Hand({
   turn = null,
   bonusMoves = [],
   onBonusMove,
+  bonusAttacks = [],
+  onBonusAttack,
   disabled,
   className,
 }: HandProps) {
@@ -190,7 +197,36 @@ export function Hand({
     play: () => onBonusMove?.(move),
   })
 
-  const usable = character.features.filter((f) => f.usesMax !== null)
+  const bonusAttackCard = (choice: BonusChoice & { why: string | null }): Card => {
+    const why = choice.why ?? bonusWhy
+    return {
+      key: `bonus-${choice.entry.key}`,
+      tag: 'Bonus action',
+      tone: 'bonus',
+      icon: choice.entry.attack === 'frenzy' ? weaponIcon(choice.attack.weapon || choice.attack.name) : 'powers',
+      name: choice.label,
+      detail: choice.entry.cost ?? (choice.entry.trigger === 'afterAttack' ? 'After you attack' : 'While raging'),
+      why,
+      info: {
+        kind: 'move',
+        title: choice.label,
+        icon: 'powers',
+        stats: [
+          { label: 'Takes', value: 'Bonus action' },
+          { label: 'Costs', value: choice.entry.cost ?? 'Nothing more' },
+        ],
+        bullets: [choice.entry.what],
+        footer: [choice.entry.source, ''],
+        cost: 'bonus',
+      },
+      spent: why !== null,
+      play: () => onBonusAttack?.(choice),
+    }
+  }
+
+  // Features a bonus action card stands for (Cunning Action, Martial Arts) aren't shown twice.
+  const covered = coveredFeatures(character)
+  const usable = character.features.filter((f) => f.usesMax !== null && !covered.has(f.name.trim().toLowerCase()))
   const weaponCards = [...character.attacks.map((entry) => attackCard(entry, false)), ...usable.map(featureCard)]
   const spellCards = castable.map(spellCard)
   // Light melee weapons, for an off-hand attack, when there are two of them.
@@ -200,7 +236,10 @@ export function Hand({
   })
   const bonusCards = [
     ...bonusMoves.map(moveCard),
-    ...character.features.filter((f) => featureCost(f.name, f.description) === 'bonus').map(featureCard),
+    ...bonusAttacks.map(bonusAttackCard),
+    ...character.features
+      .filter((f) => featureCost(f.name, f.description) === 'bonus' && !covered.has(f.name.trim().toLowerCase()))
+      .map(featureCard),
     ...castable.filter((s) => castingCost(s.castingTime) === 'bonus').map(spellCard),
     ...(light.length >= 2 ? light.map((entry) => attackCard(entry, true)) : []),
   ]

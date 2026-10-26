@@ -56,6 +56,7 @@ import {
 import { messageFor } from './errors.ts'
 import type { Roll } from './rolls.ts'
 import type { FeatureCost } from '../rules/features.ts'
+import type { BonusAttackKind } from '../rules/bonusActions.ts'
 
 type Fight = NonNullable<FightState>
 
@@ -87,7 +88,8 @@ export type FightControls = {
    */
   attack: (attacker: Combatant, target: Combatant, request: RollRequest) => Promise<Roll>
   /** Two-weapon fighting: the off-hand attack, for the bonus action. Throws in plain words if refused. */
-  offhandAttack: (attacker: Combatant, target: Combatant, request: RollRequest) => Promise<Roll>
+  /** An attack with the bonus action: off hand by default, or a monk's strike or a frenzy. */
+  offhandAttack: (attacker: Combatant, target: Combatant, request: RollRequest, kind?: BonusAttackKind) => Promise<Roll>
   /** Spends part of a turn: Dash, Disengage, Dodge, or the action, bonus action or reaction. */
   act: (combatant: Combatant, what: TurnAction) => void
   /** DM: takes back the newest thing that happened. */
@@ -395,9 +397,9 @@ export function useFight(campaignId: string, userId: string): FightControls {
   )
 
   const offhand = useCallback(
-    async (attacker: Combatant, target: Combatant, request: RollRequest) => {
+    async (attacker: Combatant, target: Combatant, request: RollRequest, kind?: BonusAttackKind) => {
       setError(null)
-      const { roll, event } = await offhandAttack(attacker.id, target.id, request)
+      const { roll, event } = await offhandAttack(attacker.id, target.id, request, kind)
       setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
       reload()
       return roll

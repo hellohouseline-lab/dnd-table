@@ -629,3 +629,12 @@
   max-height: calc(100% - 320px);
   display: flex;
 }
+
+/* Bonus action ready: just above the hand, in the middle. */
+.bonusReady {
+  position: absolute;
+  left: 50%;
+  bottom: 200px;
+  transform: translateX(-50%);
+  z-index: 14;
+}

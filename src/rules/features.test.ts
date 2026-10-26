@@ -47,7 +47,7 @@ describe('features', () => {
   it('makes concentration timers', () => {
     expect(concentrationTimer('Bless', 'Up to 1 minute')).toEqual({
       key: 'concentration',
-      name: 'Concentrating: Bless',
+      name: 'Bless (concentration)',
       spell: 'Bless',
       roundsLeft: 10,
     })
