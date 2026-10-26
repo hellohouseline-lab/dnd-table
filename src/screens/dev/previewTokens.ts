@@ -38,6 +38,18 @@ export function previewMap(): Asset {
   }
 }
 
+/** A made-up portrait (a bearded face on blue), drawn here, for the previews' tokens. */
+export function previewPortrait(): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+    <rect width="120" height="120" fill="#3b5a7a"/>
+    <circle cx="60" cy="50" r="26" fill="#e3b892"/>
+    <path d="M30 58 Q60 120 90 58 Q86 92 60 100 Q34 92 30 58z" fill="#8a4b2a"/>
+    <rect x="34" y="22" width="52" height="16" rx="8" fill="#6d6d74"/>
+    <circle cx="50" cy="50" r="3" fill="#2b1d12"/><circle cx="70" cy="50" r="3" fill="#2b1d12"/>
+  </svg>`
+  return `data:image/svg+xml;base64,${btoa(svg)}`
+}
+
 /** The party and the fight's monsters, placed on the made-up map. */
 export function previewMapTokens(mapId: string, fight: FightControls['fight']): Token[] {
   const base = { campaignId: 'preview', mapId, hidden: false }
@@ -47,7 +59,14 @@ export function previewMapTokens(mapId: string, fight: FightControls['fight']): 
     ...(fight?.combatants ?? [])
       .filter((c) => c.kind === 'monster')
       // Goblin A stands next to Thorin, in sword's reach; the other is across the room.
-      .map((c, i) => ({ ...base, id: `mt-${i}`, characterId: null, combatantId: c.id, x: i === 0 ? 7 : 11 + i, y: 4 + i * 2 })),
+      .map((c, i) => ({
+        ...base,
+        id: `mt-${i}`,
+        characterId: null,
+        combatantId: c.id,
+        x: i === 0 ? 7 : 11 + i,
+        y: 4 + i * 2,
+      })),
   ]
 }
 

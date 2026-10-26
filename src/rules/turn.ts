@@ -132,6 +132,22 @@ export function actionReach(desc: string): Reach {
   }
 }
 
+const COUNT: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6 }
+
+/**
+ * How many attacks a monster's action gives, from its Multiattack ("makes three attacks: one with
+ * its bite and two with its claws"). 1 without one; 2 when the text doesn't say a number (a hydra's
+ * heads), so the DM is asked before going further.
+ */
+export function monsterAttacksPerAction(actions: { name: string; desc: string }[]): number {
+  const multi = actions.find((a) => a.name.toLowerCase() === 'multiattack')
+  if (!multi) return 1
+  const said = /makes (one|two|three|four|five|six) (?:[a-z]+ ){0,3}attacks?/i.exec(multi.desc)
+  if (said) return COUNT[said[1].toLowerCase()]
+  const parts = [...multi.desc.matchAll(/\b(one|two|three|four)\b (?:with|of)/gi)]
+  return parts.length > 0 ? parts.reduce((sum, m) => sum + COUNT[m[1].toLowerCase()], 0) : 2
+}
+
 /**
  * How far a monster threatens for opportunity attacks: its longest melee reach ("reach 10 ft."),
  * 5 feet if none of its actions says. Same as the server's reach_ft, between 5 and 30.

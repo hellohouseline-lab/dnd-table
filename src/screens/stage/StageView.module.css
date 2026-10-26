@@ -73,7 +73,7 @@
   top: 82px;
   bottom: 16px;
   left: 16px;
-  right: 280px;
+  right: 352px;
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr) 290px;
   gap: 16px;
@@ -678,4 +678,42 @@ button.padButton:active {
   min-width: 48px;
   text-align: center;
   font-size: 15px;
+}
+
+/* The maps that come with the table, above the DM's own. */
+.starters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.startersTitle {
+  font-size: 15px;
+  color: var(--text-3);
+}
+
+.starter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.starter:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.starter img {
+  width: 56px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 4px;
 }

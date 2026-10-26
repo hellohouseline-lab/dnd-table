@@ -6,6 +6,7 @@ import type Konva from 'konva'
 import { useEffect, useRef, useState } from 'react'
 import { Circle, Group, Image as KonvaImage, Layer, Line, Rect, Stage, Text } from 'react-konva'
 import { directionTowards, snapOrigin, squaresIn, type AreaShape, type AreaTemplate } from '../rules/areas.ts'
+import { portraitUrl } from '../live/characters.ts'
 import { fileUrl } from '../live/files.ts'
 import type { Asset } from '../live/library.ts'
 import type { Pointer } from '../live/useFight.ts'
@@ -26,6 +27,8 @@ export type MapToken = {
   canMove: boolean
   /** At 0 hit points: drawn faded. */
   down?: boolean
+  /** A character's uploaded portrait, shown in the token instead of initials. */
+  portrait?: string | null
 }
 
 export type AreaLook = 'harm' | 'help' | 'block'
@@ -98,6 +101,27 @@ function useImage(path: string): HTMLImageElement | null {
   return loaded && loaded.path === path ? loaded.image : null
 }
 
+/** The tokens' portraits, loaded as pictures once each. */
+function usePortraits(paths: string[]): ReadonlyMap<string, HTMLImageElement> {
+  const [loaded, setLoaded] = useState<ReadonlyMap<string, HTMLImageElement>>(new Map())
+  const wanted = [...new Set(paths)].sort().join('|')
+  useEffect(() => {
+    let live = true
+    for (const path of wanted ? wanted.split('|') : []) {
+      void portraitUrl(path).then((url) => {
+        if (!url || !live) return
+        const image = new window.Image()
+        image.onload = () => live && setLoaded((now) => new Map(now).set(path, image))
+        image.src = url
+      })
+    }
+    return () => {
+      live = false
+    }
+  }, [wanted])
+  return loaded
+}
+
 function useSize(element: HTMLDivElement | null): { width: number; height: number } {
   const [size, setSize] = useState({ width: 0, height: 0 })
   useEffect(() => {
@@ -109,6 +133,12 @@ function useSize(element: HTMLDivElement | null): { width: number; height: numbe
     return () => observer.disconnect()
   }, [element])
   return size
+}
+
+/** A picture's size to cover a circle of this radius, keeping its shape. */
+function cover(image: HTMLImageElement, radius: number): { width: number; height: number } {
+  const fit = (radius * 2) / Math.min(image.width || 1, image.height || 1)
+  return { width: image.width * fit, height: image.height * fit }
 }
 
 export default function BattleMap({
@@ -132,6 +162,7 @@ export default function BattleMap({
   const [holder, setHolder] = useState<HTMLDivElement | null>(null)
   const { width, height } = useSize(holder)
   const image = useImage(map.path)
+  const portraits = usePortraits(tokens.flatMap((t) => (t.portrait ? [t.portrait] : [])))
   const stage = useRef<Konva.Stage>(null)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
@@ -389,6 +420,7 @@ export default function BattleMap({
               const tone = TONES[token.tone]
               const dimmed = outOfRange(token)
               const radius = size * 0.42
+              const portrait = token.portrait ? portraits.get(token.portrait) : undefined
               return (
                 <Group
                   key={token.id}
@@ -447,7 +479,23 @@ export default function BattleMap({
                     strokeWidth={(token.tone === 'you' ? 3 : 2) / scale}
                     dash={token.hidden ? [6 / scale, 4 / scale] : undefined}
                   />
+                  {portrait && (
+                    // The portrait fills the token, cropped to a circle inside its ring.
+                    <Group
+                      listening={false}
+                      clipFunc={(context) => context.arc(0, 0, radius - 2 / scale, 0, Math.PI * 2, false)}
+                    >
+                      <KonvaImage
+                        image={portrait}
+                        x={-cover(portrait, radius).width / 2}
+                        y={-cover(portrait, radius).height / 2}
+                        width={cover(portrait, radius).width}
+                        height={cover(portrait, radius).height}
+                      />
+                    </Group>
+                  )}
                   <Text
+                    visible={!portrait}
                     text={token.label}
                     width={radius * 2}
                     height={radius * 2}

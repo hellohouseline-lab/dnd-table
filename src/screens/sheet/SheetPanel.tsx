@@ -74,7 +74,10 @@ export function SheetPanel({
             Edit character
           </ButtonLink>
         )}
-        <button type="button" className={styles.close} onClick={onClose}>
+        <button type="button" className={styles.close} onClick={onClose} title="Close (Esc)">
+          <span className={styles.x} aria-hidden="true">
+            ×
+          </span>
           {closeLabel}
         </button>
       </div>

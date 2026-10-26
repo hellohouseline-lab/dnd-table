@@ -7,7 +7,14 @@ import { NowPlaying } from '../../audio/SoundControls.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
 import type { Campaign, Member } from '../../live/campaigns.ts'
 import { messageFor } from '../../live/errors.ts'
-import { sizeText, type ArtCategory, type Asset, type AssetPatch, type SoundDetails } from '../../live/library.ts'
+import {
+  sizeText,
+  type ArtCategory,
+  type Asset,
+  type AssetPatch,
+  type SoundDetails,
+  type StarterMap,
+} from '../../live/library.ts'
 import type { LibraryControls, StageControls } from '../../live/useStage.ts'
 import type { Character } from '../../rules/character.ts'
 import { cameraTurn, fightRows } from '../fight/fightRows.ts'
@@ -29,6 +36,8 @@ export type LibraryActions = {
   uploadSound: (file: File, details: SoundDetails) => Promise<Asset>
   update: (id: string, patch: AssetPatch) => Promise<Asset>
   remove: (asset: Asset) => Promise<void>
+  /** Adds one of the maps that come with the table to the library. */
+  addStarter?: (starter: StarterMap) => Promise<Asset>
 }
 
 type StageViewProps = {
@@ -289,6 +298,11 @@ export function StageView({
             }
             onUpload={uploadArt}
             onDelete={(asset) => void remove(asset)}
+            onAddStarter={async (starter) => {
+              const add = actions.addStarter
+              const added = add ? await attempt(() => add(starter)) : null
+              if (added) library.put(added)
+            }}
           />
         </div>
 

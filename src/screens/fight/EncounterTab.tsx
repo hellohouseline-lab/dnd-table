@@ -13,6 +13,7 @@ import {
   type SrdSpell,
 } from '../../rules/srd/index.ts'
 import { fightRows, turnLimits, type FightRow } from './fightRows.ts'
+import { actionFree } from '../../rules/turn.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
@@ -40,6 +41,8 @@ type TurnOrderProps = {
   rolling?: boolean
   /** Narrower rows, for the Battle screen's left column. */
   compact?: boolean
+  /** The SRD monsters, so a monster's pips count its Multiattack. */
+  monsters?: SrdMonster[] | null
   className?: string
 }
 
@@ -55,6 +58,7 @@ export function TurnOrder({
   aiming = null,
   rolling,
   compact = false,
+  monsters = null,
   className,
 }: TurnOrderProps) {
   const waiting = rows.filter((r) => r.combatant.initiative === null)
@@ -114,7 +118,7 @@ export function TurnOrder({
                   )}
                   {row.status === 'acting' && (
                     <span className={styles.rowPips}>
-                      <TurnPips turn={row.combatant.turn} {...turnLimits(row)} />
+                      <TurnPips turn={row.combatant.turn} {...turnLimits(row, monsters)} />
                     </span>
                   )}
                 </button>
@@ -227,6 +231,10 @@ export function ActingNow({
   const monster = row.secret?.monster ? monsters?.find((m) => m.index === row.secret?.monster) : undefined
   const available = CONDITIONS.filter((c) => c.index !== 'exhaustion' && !row.conditions.includes(c.index))
   const attacks = monster?.actions.filter(isAttack) ?? []
+  // What it can do with a bonus action, from its stat block (a goblin's Nimble Escape).
+  const bonusActions = [...(monster?.traits ?? []), ...(monster?.actions ?? [])].filter((a) =>
+    /bonus action/i.test(a.desc),
+  )
   const defences = defencesText(row.character ?? row.secret ?? NO_DEFENCES)
 
   return (
@@ -243,7 +251,7 @@ export function ActingNow({
                 : ''}
           </div>
           <div className={styles.actingPips}>
-            <TurnPips turn={row.combatant.turn} {...turnLimits(row)} />
+            <TurnPips turn={row.combatant.turn} {...turnLimits(row, monsters)} />
           </div>
           {defences && <div className={styles.defences}>{defences}</div>}
         </div>
@@ -356,6 +364,47 @@ export function ActingNow({
                   </li>
                 ))}
               </ul>
+              <div className={styles.legend}>Also on its turn</div>
+              <div className={styles.turnButtons}>
+                {(['dash', 'disengage', 'dodge'] as const).map((what) => (
+                  <button
+                    key={what}
+                    type="button"
+                    className={styles.turnButton}
+                    disabled={!actionFree(row.combatant.turn)}
+                    title={`Spends its action: ${what === 'dash' ? 'its speed again' : what === 'disengage' ? 'no opportunity attacks as it moves away' : 'attacks against it have disadvantage'}`}
+                    onClick={() => controls.act(row.combatant, what)}
+                  >
+                    {what[0].toUpperCase() + what.slice(1)}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className={styles.turnButton}
+                  disabled={row.combatant.turn.bonusUsed}
+                  title={
+                    bonusActions.map((a) => `${a.name}: ${a.desc}`).join('\n\n') ||
+                    'Click when it uses its bonus action'
+                  }
+                  onClick={() => controls.act(row.combatant, 'bonus')}
+                >
+                  {row.combatant.turn.bonusUsed ? 'Bonus action used' : 'Bonus action'}
+                  {bonusActions.length > 0 && `: ${bonusActions.map((a) => a.name).join(', ')}`}
+                </button>
+                <button
+                  type="button"
+                  className={styles.turnButton}
+                  disabled={row.combatant.turn.reactionUsed}
+                  title={
+                    monster.reactions.map((a) => `${a.name}: ${a.desc}`).join('\n\n') ||
+                    'Click when it uses its reaction'
+                  }
+                  onClick={() => controls.act(row.combatant, 'reaction')}
+                >
+                  {row.combatant.turn.reactionUsed ? 'Reaction used' : 'Reaction'}
+                  {monster.reactions.length > 0 && `: ${monster.reactions.map((a) => a.name).join(', ')}`}
+                </button>
+              </div>
               <p className={styles.hint}>
                 Initiative {formatBonus(abilityModifier(monster.scores.dexterity))} · passive Perception{' '}
                 {monster.passivePerception} · CR {crText(monster.cr)}
@@ -455,6 +504,7 @@ export function EncounterTab({
     <div className={styles.encounter}>
       <div className={styles.encounterLeft}>
         <TurnOrder
+          monsters={monsters}
           fight={fight}
           rows={rows}
           controls={controls}

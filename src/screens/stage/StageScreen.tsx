@@ -9,7 +9,15 @@ import { PageHeader } from '../../components/PageHeader.tsx'
 import { useOnlineIds } from '../../live/campaignChannel.ts'
 import { getCampaign, listMembers } from '../../live/campaigns.ts'
 import { serverNow, syncClock } from '../../live/clock.ts'
-import { deleteAsset, updateAsset, uploadArt, uploadSound, type Asset, type AssetPatch } from '../../live/library.ts'
+import {
+  addStarterMap,
+  deleteAsset,
+  updateAsset,
+  uploadArt,
+  uploadSound,
+  type Asset,
+  type AssetPatch,
+} from '../../live/library.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
 import { useLibrary, useStage } from '../../live/useStage.ts'
@@ -83,6 +91,7 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
     uploadSound: (file, details) => uploadSound(campaignId, file, details),
     update: updateAsset,
     remove: deleteAsset,
+    addStarter: (starter) => addStarterMap(campaignId, starter),
   }
 
   function changeHp(character: Character, change: number) {
@@ -116,6 +125,11 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
         asking={asking}
         areas={areas}
         onGrid={changeGrid}
+        onAddStarter={async (starter) => {
+          const added = await addStarterMap(campaignId, starter)
+          library.put(added)
+          return added
+        }}
         onShowStage={() => setStageDuring(fighting.encounter.id)}
       />
     )

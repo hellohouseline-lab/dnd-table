@@ -1202,6 +1202,24 @@ export type Database = {
         Returns: string
       }
       death_save: { Args: { p_combatant_id: string }; Returns: Json }
+      end_fight: {
+        Args: { p_encounter_id: string }
+        Returns: {
+          campaign_id: string
+          current_id: string | null
+          ended_at: string | null
+          id: string
+          round: number
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "encounters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       end_turn: {
         Args: { p_encounter_id: string }
         Returns: {

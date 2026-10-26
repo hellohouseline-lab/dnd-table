@@ -7,8 +7,9 @@ import { feetBetween, monsterAttack } from '../../rules/combat.ts'
 import { attackRoll } from '../../rules/rolls.ts'
 import { combineModes, type RollRequest } from '../../rules/dice.ts'
 import { findWeapon, type SrdMonsterAction } from '../../rules/srd/index.ts'
-import { actionReach, attackMode, inReach, weaponReach, type Reach } from '../../rules/turn.ts'
-import type { FightRow } from './fightRows.ts'
+import { actionReach, attackMode, attacksLeft, inReach, weaponReach, type Reach } from '../../rules/turn.ts'
+import type { SrdMonster } from '../../rules/srd/index.ts'
+import { turnLimits, type FightRow } from './fightRows.ts'
 import { targetState } from './strikes.ts'
 
 type Aim = {
@@ -37,8 +38,17 @@ export function useAiming(
   attack: FightControls['attack'],
   rollWith: (work: () => Promise<Roll>) => Promise<Roll | null>,
   tokens: Token[] = [],
+  monsters: SrdMonster[] | null = null,
 ) {
   const [aim, setAim] = useState<Aim | null>(null)
+
+  // The DM can do anything, but is asked before an attack the turn has no room for.
+  const roomFor = useCallback(
+    (row: FightRow) =>
+      attacksLeft(row.combatant.turn, turnLimits(row, monsters).perAction) > 0 ||
+      window.confirm(`${row.name} has used its action this turn. Attack again anyway?`),
+    [monsters],
+  )
 
   useEffect(() => {
     if (!aim) return
@@ -47,31 +57,38 @@ export function useAiming(
     return () => window.removeEventListener('keydown', cancel)
   }, [aim])
 
-  const aimMonster = useCallback((row: FightRow, action: SrdMonsterAction) => {
-    setAim({
-      label: `${row.name}: ${action.name}`,
-      attacker: row.combatant,
-      reach: actionReach(action.desc),
-      build: (target, feet) => {
-        const request = monsterAttack(row.name, action)
-        return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
-      },
-    })
-  }, [])
+  const aimMonster = useCallback(
+    (row: FightRow, action: SrdMonsterAction) => {
+      if (!roomFor(row)) return
+      setAim({
+        label: `${row.name}: ${action.name}`,
+        attacker: row.combatant,
+        reach: actionReach(action.desc),
+        build: (target, feet) => {
+          const request = monsterAttack(row.name, action)
+          return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
+        },
+      })
+    },
+    [roomFor],
+  )
 
-  const aimCharacter = useCallback((row: FightRow, weapon: AttackEntry) => {
-    const character = row.character
-    if (!character) return
-    setAim({
-      label: `${character.name}: ${weapon.name || 'Attack'}`,
-      attacker: row.combatant,
-      reach: weaponReach(findWeapon(weapon.weapon)),
-      build: (target, feet) => {
-        const request = attackRoll(character, weapon)
-        return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
-      },
-    })
-  }, [])
+  const aimCharacter = useCallback(
+    (row: FightRow, weapon: AttackEntry) => {
+      const character = row.character
+      if (!character || !roomFor(row)) return
+      setAim({
+        label: `${character.name}: ${weapon.name || 'Attack'}`,
+        attacker: row.combatant,
+        reach: weaponReach(findWeapon(weapon.weapon)),
+        build: (target, feet) => {
+          const request = attackRoll(character, weapon)
+          return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
+        },
+      })
+    },
+    [roomFor],
+  )
 
   const pick = useCallback(
     (target: FightRow) => {

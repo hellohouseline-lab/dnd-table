@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Notice } from '../../components/Notice.tsx'
+import { Backdrop } from '../../components/Backdrop.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { RollToasts } from '../../dice/RollToasts.tsx'
 import { useDiceTray } from '../../dice/useDiceTray.ts'
@@ -9,7 +10,7 @@ import { useTableRolls } from '../../dice/useTableRolls.ts'
 import type { Member } from '../../live/campaigns.ts'
 import { placeFighters, type Combatant, type Token } from '../../live/combat.ts'
 import { messageFor } from '../../live/errors.ts'
-import type { Asset, AssetPatch } from '../../live/library.ts'
+import { STARTER_MAPS, starterMapUrl, type Asset, type AssetPatch, type StarterMap } from '../../live/library.ts'
 import type { Roll } from '../../live/rolls.ts'
 import type { StageControls } from '../../live/useStage.ts'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
@@ -69,6 +70,8 @@ type BattleViewProps = {
   /** Areas on the map on stage: spells' lasting shapes and the DM's own. */
   areas: AreaControls
   onGrid: (map: Asset, patch: AssetPatch) => void
+  /** Adds one of the maps that come with the table to the library (there's no map yet). */
+  onAddStarter?: (starter: StarterMap) => Promise<Asset>
   /** Back to the stage (pictures, music, the library) without ending the fight. */
   onShowStage: () => void
   /** Throws in the browser instead of on the server (the design preview, which has no database). */
@@ -99,6 +102,7 @@ export function BattleView({
   asking,
   areas,
   onGrid,
+  onAddStarter,
   onShowStage,
   thrower,
 }: BattleViewProps) {
@@ -123,7 +127,7 @@ export function BattleView({
     aimMonster,
     aimCharacter,
     cancel: cancelAttack,
-  } = useAiming(controls.attack, table.rollWith, tokens.tokens)
+  } = useAiming(controls.attack, table.rollWith, tokens.tokens, monsters)
 
   const rows = fightRows(fight, characters, 'dm')
   const {
@@ -302,6 +306,7 @@ export function BattleView({
       <div className={styles.body}>
         <div className={styles.left}>
           <TurnOrder
+            monsters={monsters}
             className={styles.order}
             fight={fight}
             rows={rows}
@@ -346,7 +351,8 @@ export function BattleView({
               type="button"
               className={styles.footButton}
               onClick={() => {
-                if (window.confirm('End the fight? The monsters leave the turn order and the map.')) controls.end()
+                if (window.confirm('End the fight? Every miniature leaves the map, and the map stays up as a picture.'))
+                  controls.end()
               }}
             >
               End fight
@@ -488,7 +494,28 @@ export function BattleView({
                   </button>
                 ))}
               </div>
-              {maps.length === 0 && <p className={styles.hint}>Upload one under Maps on the stage.</p>}
+              {onAddStarter && (
+                <div className={styles.mapChoices}>
+                  {STARTER_MAPS.filter((s) => !maps.some((m) => m.name === s.name)).map((starter) => (
+                    <button
+                      key={starter.file}
+                      type="button"
+                      className={styles.mapChoice}
+                      title={starter.hint}
+                      onClick={() =>
+                        void onAddStarter(starter).then(
+                          (added) => putUp(added.id),
+                          (caught: unknown) => setProblem(messageFor(caught)),
+                        )
+                      }
+                    >
+                      <img className={styles.mapThumb} src={starterMapUrl(starter)} alt="" />
+                      <span>{starter.name} (comes with the table)</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {maps.length === 0 && <p className={styles.hint}>Or upload your own under Maps on the stage.</p>}
             </section>
           )}
           <div className={styles.strip}>
@@ -532,7 +559,10 @@ export function BattleView({
       />
 
       {(askFor || showResults) && !adding && (
-        <div className={styles.overlay}>
+        <Backdrop
+          className={styles.overlay}
+          onClose={() => (askFor ? setAskFor(null) : request && setHiddenFor(request.id))}
+        >
           {askFor ? (
             <AskRollDialog
               characters={characters}
@@ -562,17 +592,17 @@ export function BattleView({
               />
             )
           )}
-        </div>
+        </Backdrop>
       )}
 
       {drawing && !drawing.draft && (
-        <div className={styles.overlay}>
+        <Backdrop className={styles.overlay} onClose={() => setDrawing(null)}>
           <AreaDialog onPlace={(draft) => setDrawing({ draft })} onCancel={() => setDrawing(null)} />
-        </div>
+        </Backdrop>
       )}
 
       {adding && (
-        <div className={styles.overlay}>
+        <Backdrop className={styles.overlay} onClose={() => setAdding(false)}>
           <AddMonsterDialog
             monsters={monsters}
             onAdd={async (pick) => {
@@ -581,7 +611,7 @@ export function BattleView({
             }}
             onClose={() => setAdding(false)}
           />
-        </div>
+        </Backdrop>
       )}
     </main>
   )

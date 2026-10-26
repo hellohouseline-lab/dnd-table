@@ -4,7 +4,8 @@
 import type { Combatant, CombatantSecret } from '../../live/combat.ts'
 import type { Character } from '../../rules/character.ts'
 import { healthState, turnOrder, upNext, type HealthState } from '../../rules/combat.ts'
-import { attacksPerAction } from '../../rules/turn.ts'
+import { attacksPerAction, monsterAttacksPerAction } from '../../rules/turn.ts'
+import type { SrdMonster } from '../../rules/srd/index.ts'
 
 export type FightRow = {
   combatant: Combatant
@@ -68,9 +69,14 @@ export function cameraTurn(rows: FightRow[], dmId: string): CameraTurn {
   }
 }
 
-/** Attacks one Attack action gives this combatant, and its speed: from the sheet for characters. */
-export function turnLimits(row: FightRow): { perAction: number; speed: number } {
-  return row.character
-    ? { perAction: attacksPerAction(row.character.className, row.character.level), speed: row.character.speed }
-    : { perAction: 1, speed: row.combatant.speed }
+/**
+ * Attacks one Attack action gives this combatant, and its speed: from the sheet for characters, and
+ * from its stat block's Multiattack for a monster (when the DM's screen has the monsters loaded).
+ */
+export function turnLimits(row: FightRow, monsters: SrdMonster[] | null = null): { perAction: number; speed: number } {
+  if (row.character) {
+    return { perAction: attacksPerAction(row.character.className, row.character.level), speed: row.character.speed }
+  }
+  const monster = row.secret?.monster ? monsters?.find((m) => m.index === row.secret?.monster) : undefined
+  return { perAction: monster ? monsterAttacksPerAction(monster.actions) : 1, speed: row.combatant.speed }
 }
