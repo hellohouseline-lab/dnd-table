@@ -317,3 +317,6 @@ export function applyChoice(build: CharacterBuild, group: ChoiceGroup, picked: s
     }))
   return { ...build, features: [...kept, ...added] }
 }
+
+/** "Cantrip", "Level 2". */
+export const levelWord = (level: number) => (level === 0 ? 'Cantrip' : `Level ${level}`)

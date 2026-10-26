@@ -174,6 +174,11 @@ const ROUTES: Route[] = [
         { pattern: '/dev/stage', title: `Stage preview · ${APP_NAME}`, render: () => <StagePreview /> },
         { pattern: '/dev/level-up', title: `Level up preview · ${APP_NAME}`, render: () => <LevelUpPreview /> },
         {
+          pattern: '/dev/level-up/:who',
+          title: `Level up preview · ${APP_NAME}`,
+          render: ({ who }: Record<string, string>) => <LevelUpPreview who={who} />,
+        },
+        {
           pattern: '/dev/change/:who',
           title: `Change your character preview · ${APP_NAME}`,
           render: ({ who }: Record<string, string>) => <ManagePreview who={who} />,
