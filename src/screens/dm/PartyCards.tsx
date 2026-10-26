@@ -17,6 +17,8 @@ import { attacksPerAction } from '../../rules/turn.ts'
 import { TurnPips } from '../fight/TurnParts.tsx'
 import { levelWords, srdSpellFor } from '../fight/useCasting.ts'
 import { QuickChecks } from './QuickChecks.tsx'
+import { DeathSaves } from '../fight/Reactions.tsx'
+import type { TrackerPatch } from '../../live/characterRows.ts'
 import styles from './PartyCards.module.css'
 
 type PartyCardsProps = {
@@ -35,6 +37,11 @@ type PartyCardsProps = {
   combatants?: Combatant[]
   /** Lets characters go up a level (one, or the whole party). */
   onLevelUp?: (characterIds: string[]) => void
+  /** At 0 hit points: roll a character's death save for them. */
+  onDeathSave?: (character: Character) => void
+  /** Stabilise a dying character, or bring them up with 1 hit point. */
+  onUpdate?: (characterId: string, patch: TrackerPatch) => void
+  rolling?: boolean
 }
 
 export type HitPointChange = 'damage' | 'heal' | 'temp'
@@ -52,6 +59,9 @@ export function PartyCards({
   spells = null,
   combatants = [],
   onLevelUp,
+  onDeathSave,
+  onUpdate,
+  rolling,
 }: PartyCardsProps) {
   const [hpFor, setHpFor] = useState<string | null>(null)
   // Who the quick checks go to: those here tonight, until the DM ticks otherwise.
@@ -160,13 +170,22 @@ export function PartyCards({
                 {character.exhaustion > 0 && (
                   <span className={styles.condition}>Exhaustion {character.exhaustion}</span>
                 )}
-                {character.currentHp === 0 && (
-                  <span className={styles.condition}>
-                    {character.dead ? 'Dead' : character.stable ? 'Stable' : 'Dying'} · {character.deathSaveSuccesses}{' '}
-                    saved, {character.deathSaveFailures} failed
-                  </span>
-                )}
               </div>
+              {character.currentHp === 0 && (
+                <DeathSaves
+                  who={character.name}
+                  saves={{
+                    successes: character.deathSaveSuccesses,
+                    failures: character.deathSaveFailures,
+                    stable: character.stable,
+                    dead: character.dead,
+                  }}
+                  onRoll={onDeathSave && (() => onDeathSave(character))}
+                  onStabilise={onUpdate && (() => onUpdate(character.id, { stable: true }))}
+                  onWake={onUpdate && (() => onUpdate(character.id, { currentHp: 1 }))}
+                  rolling={rolling}
+                />
+              )}
               {character.effects.length > 0 && (
                 <div className={styles.chips}>
                   {character.effects.map((effect) => (

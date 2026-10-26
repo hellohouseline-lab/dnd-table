@@ -1082,6 +1082,19 @@ export function TableView({
           </div>
         </section>
 
+        {/* Outside a fight there's no turn to wait for: roll when the DM says. */}
+        {!fight && character.currentHp === 0 && (
+          <DeathSaves
+            saves={{
+              successes: character.deathSaveSuccesses,
+              failures: character.deathSaveFailures,
+              stable: character.stable,
+              dead: character.dead,
+            }}
+            onRoll={() => void rollDeathSave()}
+            rolling={table.rolling}
+          />
+        )}
         {fight && mine && combat && dyingNow && (
           <DeathSaves
             saves={{

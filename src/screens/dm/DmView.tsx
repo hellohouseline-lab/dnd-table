@@ -181,7 +181,7 @@ export function DmView({
   const { attach: attachTray, throwDice } = useDiceTray()
   const table = useTableRolls({ campaignId: campaign.id, userId: me.user_id, throwDice, thrower })
   // Rolls players made for the DM, outside a fight: the DM says what each was.
-  const forDm = useRollsForDm(campaign.id, me.user_id)
+  const forDm = useRollsForDm(campaign.id, me.user_id, !thrower)
   const { aiming, aimMonster, aimCharacter } = useAiming(fight.attack, table.rollWith, [], monsters)
   const [placeProblem, setPlaceProblem] = useState<string | null>(null)
 
@@ -466,6 +466,9 @@ export function DmView({
           ) : tab === 'party' ? (
             <PartyCards
               onLevelUp={onLevelUp}
+              onDeathSave={(character) => void rollDeathSaveFor(character)}
+              onUpdate={onUpdate}
+              rolling={table.rolling}
               onQuickCheck={asking.ask}
               quickError={asking.error}
               spells={spells}
