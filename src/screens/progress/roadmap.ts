@@ -18,8 +18,17 @@ export const ROADMAP: Milestone[] = [
   { name: 'Combat', detail: 'The battle map, tokens and turn order', status: 'ready' },
   { name: 'Cameras and voice', detail: 'Everyone on camera and talking, inside the table', status: 'ready' },
   { name: 'Turns and attacks', detail: 'Whose turn it is, what you have left, and attacks that land', status: 'ready' },
+  {
+    name: 'Spells and the fight’s rules',
+    detail: 'Spells with slots and concentration, areas on the map, opportunity attacks and death saves',
+    status: 'ready',
+  },
   { name: 'Character builder', detail: 'Build a character step by step: scores, gear and spells', status: 'next' },
-  { name: 'The full combat rules', detail: 'Opportunity attacks, death saves, talking your way out', status: 'later' },
+  {
+    name: 'The rest of the combat rules',
+    detail: 'Talking your way out, two weapons, hiding and searching',
+    status: 'later',
+  },
   { name: 'Stream overlay', detail: "The table on everyone's Twitch stream", status: 'later' },
   { name: 'Rehearsal', detail: 'A full dry run and final polish before the first stream', status: 'later' },
 ]
