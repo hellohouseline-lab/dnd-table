@@ -3,7 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
-- **Matt's latest list: stage sync, cards, timed effects, quick rolls, bonus actions (live).**
+- **Matt's latest list: stage sync, cards, timed effects, quick rolls, bonus actions (live, tested by Matt with a player on 26 October: works).**
   - **Stage sync, found and fixed.** Every stage save from the DM after the very first had been refused by the database ("permission denied"), because the save also rewrote the table's own ID column, which nobody may change. The DM's screen changed at once, so it looked as if it worked, but players never got the picture, the cleared stage, the music or the "players move tokens" switch. The DM notebook (Where we are, What happens next, Key items) had the same fault. Both now save properly, and a failed stage save puts the DM's screen back to what everyone really sees.
   - **Example pictures:** a market city (Places), a campfire at night (Moments) and an innkeeper (People), simple drawings in `public/art/`, offered at the top of each section of the art library like the starter maps. Use them to check pictures reach the players and stay up.
   - **Player waiting screen:** while nothing is on stage, players see the campaign's name in old-style lettering on a sheet of parchment.
@@ -152,13 +152,6 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Try this round** with a player in a second browser (hard-refresh both first):
-  - **Stage:** on Screen 2 add the example Market city (Places), put it on stage, and check the player sees it. Try the campfire and the innkeeper, then **Clear the stage**: the player should see the parchment with your campaign's name. Play some music and check they hear it.
-  - **Notebook:** edit Where we are on Screen 1, refresh, and check it kept your words.
-  - **Cards:** hold the mouse on a spell or weapon card for 3 seconds.
-  - **Rage:** a barbarian rages in a fight; At a glance shows "10 rounds left", counting down each of their turns.
-  - **Quick rolls:** on the Party tab pick how hard, tick who rolls, click Perception.
-  - **Bonus actions:** a character with a shortsword and a dagger attacks with one; a blue "Bonus action ready" card offers the other.
 - **Say if the parchment lettering suits** (it's the Cinzel Decorative already used for titles; a blackletter style is another option).
 - **Try T1** with a player in a second browser (older steps):
   - As the player: click a weapon card, then a goblin, then **Attack**. Click a spell card and follow the panel. A barbarian presses **Rage!**, and a fighter **Roll Second Wind** then **Undo**.
