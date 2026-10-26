@@ -236,6 +236,7 @@ export type Database = {
           class: string
           concentration: string | null
           concentration_dc: number | null
+          concentration_queue: number[]
           conditions: string[]
           constitution: number
           created_at: string
@@ -285,6 +286,7 @@ export type Database = {
           class?: string
           concentration?: string | null
           concentration_dc?: number | null
+          concentration_queue?: number[]
           conditions?: string[]
           constitution?: number
           created_at?: string
@@ -334,6 +336,7 @@ export type Database = {
           class?: string
           concentration?: string | null
           concentration_dc?: number | null
+          concentration_queue?: number[]
           conditions?: string[]
           constitution?: number
           created_at?: string
@@ -1159,6 +1162,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_dice: {
+        Args: { p_request_id: string }
+        Returns: {
+          campaign_id: string
+          character_id: string | null
+          created_at: string
+          damage: Json | null
+          dice: Json
+          id: string
+          kind: string
+          label: string
+          mode: string
+          modifier: number
+          natural_d20: number | null
+          parts: Json
+          passed: boolean | null
+          passed_by_dice: boolean | null
+          request_id: string | null
+          roller_id: string
+          secret: boolean
+          style: Json
+          total: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "rolls"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       ask_for_roll: {
         Args: { p_campaign_id: string; p_request: Json }
         Returns: {

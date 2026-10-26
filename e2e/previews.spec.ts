@@ -17,17 +17,21 @@ test('the DM asks for a save, sees the answers come in, changes one and plays on
   const results = page.getByRole('region', { name: 'Constitution saving throw' })
   await expect(results).toContainText('Waiting for the dice')
   await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
-  const flip = results.getByRole('button', { name: /Make it a (pass|fail)/ })
+  // The DM rules on each answer: here, against what the dice say for the first one.
+  const first = results.getByRole('group', { name: /Rule on .*'s roll/ }).first()
+  const said = (await results.textContent())?.match(/dice say (pass|fail)/)?.[1]
+  await first.getByRole('button', { name: said === 'pass' ? 'Fail' : 'Pass', exact: true }).click()
+  await expect(results).toContainText('by you')
+  const flip = results.getByRole('button', { name: /Make it a (pass|fail)/ }).first()
   const before = await flip.textContent()
   await flip.click()
-  await expect(results.getByRole('button', { name: /Make it a (pass|fail)/ })).not.toHaveText(before ?? '')
-  await expect(results).toContainText('by you')
+  await expect(results.getByRole('button', { name: /Make it a (pass|fail)/ }).first()).not.toHaveText(before ?? '')
 
   await results.getByRole('button', { name: 'Done, play on' }).click()
   await expect(results).toBeHidden()
 })
 
-test('the player gets the prompt, rolls, and sees pass or fail', async ({ page }) => {
+test('the player gets the prompt, rolls, and waits for the DM to rule', async ({ page }) => {
   await page.goto('#/dev/table/asked')
   const prompt = page.getByRole('dialog', { name: 'Constitution saving throw' })
   await expect(prompt).toContainText('Your bonus +4')
@@ -38,8 +42,9 @@ test('the player gets the prompt, rolls, and sees pass or fail', async ({ page }
   const result = page.getByRole('status').filter({ hasText: 'Everyone at the table sees your result' })
   await expect(result).toBeVisible({ timeout: 30_000 })
   await expect(result).toContainText(/\d+ \+ 4 = \d+/)
-  await expect(result).toContainText(/Passed|Failed|Natural/)
-  await expect(page.getByLabel('The table')).toContainText(/Passed|Failed/)
+  // No pass or fail until the DM rules on it.
+  await expect(result).toContainText('The DM is deciding whether it passes')
+  await expect(page.getByLabel('The table')).toContainText('Rolled')
 
   await result.getByRole('button', { name: 'Back to the table' }).click()
   await expect(result).toBeHidden()
@@ -322,8 +327,14 @@ test('the DM asks the party for a Perception check in one click', async ({ page 
   const results = page.getByRole('region', { name: 'Perception check' })
   await expect(results).toContainText('Needed 20 or more')
   await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
-  // Every saving throw is in its own section.
+  // Nobody sees pass or fail until the DM rules: here, going with the dice.
+  await expect(results).toContainText('to rule on')
+  await expect(results).toContainText(/dice say (pass|fail)/)
+  await results.getByRole('button', { name: 'Go with the dice for everyone' }).click()
+  await expect(results).not.toContainText('to rule on')
+  await expect(results).toContainText(/Passed|Failed/)
   await page.keyboard.press('Escape')
+  // Every saving throw is in its own section.
   await quick.getByText('Saving throws').click()
   await expect(quick.getByRole('button', { name: 'Charisma save' })).toBeVisible()
 })

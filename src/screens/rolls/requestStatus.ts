@@ -43,7 +43,8 @@ export function requestChips({
     if (!answer) {
       chips[character.ownerId] =
         character.ownerId === viewerId ? { label: 'Your roll', tone: 'gold' } : { label: 'Rolling', tone: 'quiet' }
-    } else if (!seeVerdicts) {
+    } else if (!seeVerdicts || answer.passed === null) {
+      // Rolled, and waiting for the DM's ruling.
       chips[character.ownerId] = { label: 'Rolled', tone: 'pass' }
     } else {
       chips[character.ownerId] = answer.passed ? { label: 'Passed', tone: 'pass' } : { label: 'Failed', tone: 'fail' }
@@ -51,7 +52,13 @@ export function requestChips({
   }
 
   const dm = members.find((m) => m.role === 'dm')
-  if (dm) chips[dm.user_id] = { label: allAnswered(request, answers) ? 'Results in' : 'Waiting', tone: 'quiet' }
+  if (dm) {
+    const toRule = answers.some((a) => a.passed === null)
+    chips[dm.user_id] = {
+      label: allAnswered(request, answers) ? (toRule ? 'Deciding' : 'Results in') : 'Waiting',
+      tone: 'quiet',
+    }
+  }
   return chips
 }
 

@@ -217,6 +217,12 @@
   --tone-glow: rgba(224, 123, 66, 0.3);
 }
 
+.wait {
+  --tone: var(--text-2);
+  --tone-soft: rgba(217, 205, 182, 0.4);
+  --tone-glow: rgba(217, 205, 182, 0.2);
+}
+
 .gold {
   --tone: var(--gold-light);
   --tone-soft: rgba(240, 213, 138, 0.5);

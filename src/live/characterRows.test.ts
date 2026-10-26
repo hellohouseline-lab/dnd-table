@@ -47,6 +47,7 @@ const row: CharacterRow = {
   stable: false,
   dead: false,
   concentration_dc: null,
+  concentration_queue: [],
   effects: [],
   conditions: [],
   resistances: [],

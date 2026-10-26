@@ -100,22 +100,24 @@ test('the DM asks for a save, the player rolls it, and both see the same result'
   await expect(prompt).toContainText('Target kept secret')
   await prompt.getByRole('button', { name: 'Roll the d20' }).click()
 
-  // Once the dice land, the player sees pass or fail and their total...
+  // Once the dice land, the player sees their total, and waits for the DM's ruling...
   const result = playerPage.getByRole('status').filter({ hasText: 'Everyone at the table sees your result' })
   await expect(result).toBeVisible({ timeout: 30_000 })
+  await expect(result).toContainText('Waiting for the DM')
   const sum = (await result.textContent()) ?? ''
   const total = Number(/= (\d+)/.exec(sum)?.[1])
   const passed = total >= 15
   expect(sum).not.toContain('DC 15')
 
-  // ...and the DM sees the same total and verdict, with the camera chip to match.
+  // ...the DM sees the same total and what the dice say, and rules against the dice...
   const results = dmPage.getByRole('region', { name: 'Constitution saving throw' })
   await expect(results).toContainText(`= ${total}`)
-  await expect(results).toContainText(passed ? 'Passed' : 'Failed')
+  await expect(results).toContainText(`dice say ${passed ? 'pass' : 'fail'}`)
   await expect(results).toContainText('everyone has rolled')
+  await results.getByRole('button', { name: passed ? 'Fail' : 'Pass', exact: true }).click()
+  await expect(results).toContainText(passed ? 'Failed by you' : 'Passed by you')
 
-  // The DM changes the result; the player's card follows.
-  await results.getByRole('button', { name: passed ? 'Make it a fail' : 'Make it a pass' }).click()
+  // ...and only now does the player see it.
   await expect(result).toContainText(passed ? 'The DM turned it into a fail.' : 'The DM turned it into a pass.')
 
   // Done, play on: the request closes and the player's card goes away.

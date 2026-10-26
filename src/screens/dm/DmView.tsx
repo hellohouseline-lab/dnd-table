@@ -578,6 +578,7 @@ export function DmView({
                 dc={asking.dc}
                 characters={characters}
                 onOverride={asking.override}
+                onAccept={asking.accept}
                 onRollFor={(character) => void rollFor(character)}
                 onDamage={damage}
                 onCondition={addCondition}

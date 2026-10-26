@@ -42,15 +42,16 @@ export function previewAnswer(character: Character, request: AskedRoll, dc: numb
     rollerId: character.ownerId,
     style: owner ? parseDiceStyle(owner.dice_style) : DEFAULT_DICE_STYLE,
   })
-  const passed = passes(roll.total, dc)
-  return { ...roll, passed, passedByDice: passed }
+  void dc
+  // Like the server, the answer waits for the DM's ruling.
+  return { ...roll, passed: null, passedByDice: null }
 }
 
 /** Judges a preview throw that answers a request, as the server would. */
 export function judgePreview(roll: Roll, request: RollRequest, dc: number): Roll {
   if (!request.requestId) return roll
-  const passed = passes(roll.total, dc)
-  return { ...roll, passed, passedByDice: passed }
+  void dc
+  return { ...roll, passed: null, passedByDice: null }
 }
 
 export function usePreviewAsking(
@@ -101,7 +102,15 @@ export function usePreviewAsking(
     dc: request ? dc : null,
     error: null,
     ask,
-    override: (roll, passed) => putAnswer({ ...roll, passed }),
+    override: (roll, passed) => putAnswer({ ...roll, passed, passedByDice: passes(roll.total, dc) }),
+    accept: () =>
+      setAnswers((now) =>
+        now.map((roll) =>
+          roll.passed === null && roll.requestId
+            ? { ...roll, passed: passes(roll.total, dc), passedByDice: passes(roll.total, dc) }
+            : roll,
+        ),
+      ),
     close: () => setRequest(null),
     putAnswer,
   }
