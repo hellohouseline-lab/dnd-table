@@ -70,6 +70,7 @@ const secretRoll: Roll = {
   requestId: null,
   passed: null,
   passedByDice: null,
+  forDm: false,
 }
 
 function render(startTab: 'party' | 'log') {

@@ -59,6 +59,8 @@ import { NotebookPanel } from './NotebookPanel.tsx'
 import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { useSessionClock } from './useSessionClock.ts'
+import { useRollsForDm } from '../../live/useRollsForDm.ts'
+import { RollsForDm } from '../rolls/RollsForDm.tsx'
 import styles from './DmView.module.css'
 
 type DmTab = 'party' | 'encounter' | 'log'
@@ -175,6 +177,8 @@ export function DmView({
   const [secret, setSecret] = useState(false)
   const { attach: attachTray, throwDice } = useDiceTray()
   const table = useTableRolls({ campaignId: campaign.id, userId: me.user_id, throwDice, thrower })
+  // Rolls players made for the DM, outside a fight: the DM says what each was.
+  const forDm = useRollsForDm(campaign.id, me.user_id)
   const { aiming, aimMonster, aimCharacter } = useAiming(fight.attack, table.rollWith, [], monsters)
   const [placeProblem, setPlaceProblem] = useState<string | null>(null)
 
@@ -521,6 +525,7 @@ export function DmView({
           characters={characters}
           onDismiss={table.dismiss}
         />
+        <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
       </section>
 
       {(askFor || showResults || resting || fightDialog) && (

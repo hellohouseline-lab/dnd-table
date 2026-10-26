@@ -14,7 +14,8 @@ import { useDiceTray } from '../../dice/useDiceTray.ts'
 import { useTableRolls } from '../../dice/useTableRolls.ts'
 import type { Member } from '../../live/campaigns.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
-import type { Roll } from '../../live/rolls.ts'
+import { rollForDm, type Roll } from '../../live/rolls.ts'
+import { useRollChanges } from '../../live/campaignChannel.ts'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { Asset } from '../../live/library.ts'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
@@ -519,6 +520,41 @@ export function TableView({
 
   // Saying when a timed effect runs out (Rage after its 10 rounds).
   const [ranOut, setRanOut] = useState<string | null>(null)
+
+  // A roll for the DM: a plain d20 (with advantage or disadvantage); the DM says what it was.
+  const [dmSaid, setDmSaid] = useState<string | null>(null)
+  const forTheDm = useRef(new Set<string>())
+  function rollForTheDm() {
+    const how = mode
+    setMode('normal')
+    if (thrower) {
+      // The previews throw in the browser, with no DM to say what it was.
+      void table.roll({
+        ...freeRoll([{ sides: 20, count: 1 }], { characterId: character.id, mode: how }),
+        label: 'A roll for the DM',
+        kind: 'check',
+      })
+      return
+    }
+    void table
+      .rollWith(() => rollForDm(campaignId, character.id, how))
+      .then((thrown) => {
+        if (thrown) forTheDm.current.add(thrown.id)
+      })
+  }
+  const onRollChanged = useCallback((changed: Roll) => {
+    if (!forTheDm.current.has(changed.id) || changed.forDm) return
+    forTheDm.current.delete(changed.id)
+    if (changed.label === 'A roll for the DM') return
+    const verdict = changed.passed === null ? '' : changed.passed ? ' You passed.' : ' You failed.'
+    setDmSaid(`The DM counted your roll as ${changed.label}: ${changed.total}.${verdict}`)
+  }, [])
+  useRollChanges(campaignId, me.user_id, onRollChanged)
+  useEffect(() => {
+    if (!dmSaid) return
+    const timer = setTimeout(() => setDmSaid(null), 12_000)
+    return () => clearTimeout(timer)
+  }, [dmSaid])
   const before = useRef<Effect[]>(effects)
   useEffect(() => {
     const gone = before.current.filter(
@@ -943,10 +979,11 @@ export function TableView({
         </div>
       )}
 
-      {(lastUse || ranOut) && (
+      {(lastUse || ranOut || dmSaid) && (
         <div className={styles.cardPanel}>
           {lastUse && <UndoChip text={lastUse.text} onUndo={undoLastUse} onClose={() => setLastUse(null)} />}
           {ranOut && <UndoChip text={ranOut} onClose={() => setRanOut(null)} />}
+          {dmSaid && <UndoChip text={dmSaid} onClose={() => setDmSaid(null)} />}
         </div>
       )}
 
@@ -956,13 +993,7 @@ export function TableView({
         checks={
           // Outside a fight, players roll any check themselves ("I search the room").
           fight ? null : (
-            <CheckPanel
-              character={character}
-              rolls={rolls}
-              mode={mode}
-              onModeChange={setMode}
-              disabled={table.rolling}
-            />
+            <CheckPanel mode={mode} onModeChange={setMode} onRoll={rollForTheDm} disabled={table.rolling} />
           )
         }
         onAttack={attackWith}
