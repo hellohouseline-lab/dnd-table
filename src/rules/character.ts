@@ -87,6 +87,8 @@ export type Character = {
   exhaustion: number
   inspiration: boolean
   concentration: string | null
+  /** The Constitution save owed after taking damage while concentrating (set by the server). */
+  concentrationDc: number | null
   portraitPath: string | null
   updatedAt: string
 }
@@ -111,6 +113,7 @@ export type CharacterBuild = Omit<
   | 'exhaustion'
   | 'inspiration'
   | 'concentration'
+  | 'concentrationDc'
   | 'portraitPath'
   | 'updatedAt'
 >

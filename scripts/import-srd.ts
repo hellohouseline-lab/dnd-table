@@ -189,6 +189,18 @@ async function main(): Promise<void> {
       higherLevel: s.higher_level ? text(s.higher_level) : undefined,
       attackType: s.attack_type,
       save: s.dc ? ABILITY[s.dc.dc_type.index] : undefined,
+      // What a save does on a success: half the damage, or none.
+      dcSuccess: s.dc?.dc_success === 'half' || s.dc?.dc_success === 'none' ? s.dc.dc_success : undefined,
+      // Damage by slot level ("8d6" at 3rd), or for cantrips by character level ("2d10" from 5th).
+      damage: s.damage?.damage_type
+        ? {
+            type: (s.damage.damage_type.name as string).toLowerCase(),
+            slots: s.damage.damage_at_slot_level,
+            levels: s.damage.damage_at_character_level,
+          }
+        : undefined,
+      heal: s.heal_at_slot_level ?? undefined,
+      area: s.area_of_effect ? { type: s.area_of_effect.type, size: s.area_of_effect.size } : undefined,
     })),
   })
 
@@ -228,6 +240,12 @@ async function main(): Promise<void> {
       vulnerabilities: ((m.damage_vulnerabilities ?? []) as string[]).flatMap(parseDefence),
       immunities: ((m.damage_immunities ?? []) as string[]).flatMap(parseDefence),
       conditionImmunities: ((m.condition_immunities ?? []) as Raw[]).map((c) => c.index as string),
+      // Saving throws it's proficient in, as the whole bonus: { dexterity: 5 }.
+      saves: Object.fromEntries(
+        ((m.proficiencies ?? []) as Raw[])
+          .filter((p) => String(p.proficiency?.index ?? '').startsWith('saving-throw-'))
+          .map((p) => [ABILITY[String(p.proficiency.index).slice('saving-throw-'.length)], p.value as number]),
+      ),
     })),
   })
 }

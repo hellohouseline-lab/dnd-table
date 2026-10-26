@@ -122,6 +122,7 @@ export function rowToCharacter(row: CharacterRow): Character {
     exhaustion: row.exhaustion,
     inspiration: row.inspiration,
     concentration: row.concentration,
+    concentrationDc: row.concentration_dc,
     portraitPath: row.portrait_path,
     updatedAt: row.updated_at,
   }

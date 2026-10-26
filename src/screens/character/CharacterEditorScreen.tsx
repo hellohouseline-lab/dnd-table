@@ -104,6 +104,7 @@ function toBuild(character: Character): CharacterBuild {
     exhaustion: _exhaustion,
     inspiration: _inspiration,
     concentration: _concentration,
+    concentrationDc: _concentrationDc,
     portraitPath: _portraitPath,
     updatedAt: _updatedAt,
     ...build

@@ -46,6 +46,7 @@ const row: CharacterRow = {
   death_save_failures: 0,
   stable: false,
   dead: false,
+  concentration_dc: null,
   conditions: [],
   resistances: [],
   vulnerabilities: [],

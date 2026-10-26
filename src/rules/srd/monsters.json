@@ -114,7 +114,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 6,
+        "intelligence": 8,
+        "wisdom": 6
+      }
     },
     {
       "index": "acolyte",
@@ -161,7 +166,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "adult-black-dragon",
@@ -294,7 +300,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 10,
+        "wisdom": 6,
+        "charisma": 8
+      }
     },
     {
       "index": "adult-blue-dragon",
@@ -423,7 +435,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 11,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "adult-brass-dragon",
@@ -538,7 +556,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 10,
+        "wisdom": 6,
+        "charisma": 8
+      }
     },
     {
       "index": "adult-bronze-dragon",
@@ -657,7 +681,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 11,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "adult-copper-dragon",
@@ -772,7 +802,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 10,
+        "wisdom": 7,
+        "charisma": 8
+      }
     },
     {
       "index": "adult-gold-dragon",
@@ -891,7 +927,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 8,
+        "constitution": 13,
+        "wisdom": 8,
+        "charisma": 13
+      }
     },
     {
       "index": "adult-green-dragon",
@@ -1024,7 +1066,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 10,
+        "wisdom": 7,
+        "charisma": 8
+      }
     },
     {
       "index": "adult-red-dragon",
@@ -1153,7 +1201,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 13,
+        "wisdom": 7,
+        "charisma": 11
+      }
     },
     {
       "index": "adult-silver-dragon",
@@ -1268,7 +1322,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 12,
+        "wisdom": 6,
+        "charisma": 10
+      }
     },
     {
       "index": "adult-white-dragon",
@@ -1401,7 +1461,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 11,
+        "wisdom": 6,
+        "charisma": 6
+      }
     },
     {
       "index": "air-elemental",
@@ -1467,7 +1533,8 @@
         "prone",
         "restrained",
         "unconscious"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "ancient-black-dragon",
@@ -1600,7 +1667,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 9,
+        "constitution": 14,
+        "wisdom": 9,
+        "charisma": 11
+      }
     },
     {
       "index": "ancient-blue-dragon",
@@ -1729,7 +1802,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 15,
+        "wisdom": 10,
+        "charisma": 12
+      }
     },
     {
       "index": "ancient-brass-dragon",
@@ -1849,7 +1928,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 13,
+        "wisdom": 8,
+        "charisma": 10
+      }
     },
     {
       "index": "ancient-bronze-dragon",
@@ -1973,7 +2058,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 15,
+        "wisdom": 10,
+        "charisma": 12
+      }
     },
     {
       "index": "ancient-copper-dragon",
@@ -2093,7 +2184,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 8,
+        "constitution": 14,
+        "wisdom": 10,
+        "charisma": 11
+      }
     },
     {
       "index": "ancient-gold-dragon",
@@ -2217,7 +2314,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 9,
+        "constitution": 16,
+        "wisdom": 10,
+        "charisma": 16
+      }
     },
     {
       "index": "ancient-green-dragon",
@@ -2350,7 +2453,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 8,
+        "constitution": 14,
+        "wisdom": 10,
+        "charisma": 11
+      }
     },
     {
       "index": "ancient-red-dragon",
@@ -2479,7 +2588,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 16,
+        "wisdom": 9,
+        "charisma": 13
+      }
     },
     {
       "index": "ancient-silver-dragon",
@@ -2599,7 +2714,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 16,
+        "wisdom": 9,
+        "charisma": 13
+      }
     },
     {
       "index": "ancient-white-dragon",
@@ -2732,7 +2853,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 14,
+        "wisdom": 7,
+        "charisma": 8
+      }
     },
     {
       "index": "androsphinx",
@@ -2813,7 +2940,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["charmed", "frightened"]
+      "conditionImmunities": ["charmed", "frightened"],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 11,
+        "intelligence": 9,
+        "wisdom": 10
+      }
     },
     {
       "index": "animated-armor",
@@ -2878,7 +3011,8 @@
         "paralyzed",
         "petrified",
         "poisoned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "ankheg",
@@ -2939,7 +3073,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "ape",
@@ -2997,7 +3132,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "archmage",
@@ -3048,7 +3184,11 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "intelligence": 9,
+        "wisdom": 6
+      }
     },
     {
       "index": "assassin",
@@ -3127,7 +3267,11 @@
       "resistances": ["poison"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "intelligence": 4
+      }
     },
     {
       "index": "awakened-shrub",
@@ -3174,7 +3318,8 @@
       "resistances": ["piercing"],
       "vulnerabilities": ["fire"],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "awakened-tree",
@@ -3221,7 +3366,8 @@
       "resistances": ["bludgeoning", "piercing"],
       "vulnerabilities": ["fire"],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "axe-beak",
@@ -3263,7 +3409,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "azer",
@@ -3322,7 +3469,10 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "constitution": 4
+      }
     },
     {
       "index": "baboon",
@@ -3369,7 +3519,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "badger",
@@ -3416,7 +3567,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "balor",
@@ -3504,7 +3656,13 @@
       "resistances": ["cold", "lightning", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 14,
+        "constitution": 12,
+        "wisdom": 9,
+        "charisma": 12
+      }
     },
     {
       "index": "bandit",
@@ -3557,7 +3715,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "bandit-captain",
@@ -3621,7 +3780,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "strength": 4,
+        "dexterity": 5,
+        "wisdom": 2
+      }
     },
     {
       "index": "barbed-devil",
@@ -3703,7 +3867,13 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 6,
+        "constitution": 7,
+        "wisdom": 5,
+        "charisma": 5
+      }
     },
     {
       "index": "basilisk",
@@ -3754,7 +3924,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "bat",
@@ -3805,7 +3976,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "bearded-devil",
@@ -3876,7 +4048,12 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 5,
+        "constitution": 4,
+        "wisdom": 2
+      }
     },
     {
       "index": "behir",
@@ -3963,7 +4140,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "berserker",
@@ -4010,7 +4188,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "black-bear",
@@ -4073,7 +4252,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "black-dragon-wyrmling",
@@ -4139,7 +4319,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 3,
+        "wisdom": 2,
+        "charisma": 3
+      }
     },
     {
       "index": "black-pudding",
@@ -4204,7 +4390,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid", "cold", "lightning", "slashing"],
-      "conditionImmunities": ["blinded", "charmed", "exhaustion", "frightened", "prone"]
+      "conditionImmunities": ["blinded", "charmed", "exhaustion", "frightened", "prone"],
+      "saves": {}
     },
     {
       "index": "blink-dog",
@@ -4256,7 +4443,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "blood-hawk",
@@ -4307,7 +4495,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "blue-dragon-wyrmling",
@@ -4368,7 +4557,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 2,
+        "constitution": 4,
+        "wisdom": 2,
+        "charisma": 4
+      }
     },
     {
       "index": "boar",
@@ -4419,7 +4614,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "bone-devil",
@@ -4490,7 +4686,12 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "intelligence": 5,
+        "wisdom": 6,
+        "charisma": 7
+      }
     },
     {
       "index": "brass-dragon-wyrmling",
@@ -4537,7 +4738,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 2,
+        "constitution": 3,
+        "wisdom": 2,
+        "charisma": 3
+      }
     },
     {
       "index": "bronze-dragon-wyrmling",
@@ -4589,7 +4796,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 2,
+        "constitution": 4,
+        "wisdom": 2,
+        "charisma": 4
+      }
     },
     {
       "index": "brown-bear",
@@ -4652,7 +4865,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "bugbear",
@@ -4714,7 +4928,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "bulette",
@@ -4766,7 +4981,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "camel",
@@ -4808,7 +5024,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "cat",
@@ -4855,7 +5072,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "centaur",
@@ -4929,7 +5147,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "chain-devil",
@@ -5001,7 +5220,12 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "constitution": 7,
+        "wisdom": 4,
+        "charisma": 5
+      }
     },
     {
       "index": "chimera",
@@ -5085,7 +5309,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "chuul",
@@ -5151,7 +5376,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "clay-golem",
@@ -5231,7 +5457,8 @@
         "piercing:nonmagical",
         "slashing:nonmagical"
       ],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "saves": {}
     },
     {
       "index": "cloaker",
@@ -5317,7 +5544,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "cloud-giant",
@@ -5384,7 +5612,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 10,
+        "wisdom": 7,
+        "charisma": 7
+      }
     },
     {
       "index": "cockatrice",
@@ -5426,7 +5659,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "commoner",
@@ -5468,7 +5702,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "constrictor-snake",
@@ -5521,7 +5756,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "copper-dragon-wyrmling",
@@ -5568,7 +5804,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 3,
+        "wisdom": 2,
+        "charisma": 3
+      }
     },
     {
       "index": "couatl",
@@ -5639,7 +5881,12 @@
       "resistances": ["radiant"],
       "vulnerabilities": [],
       "immunities": ["psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 5,
+        "wisdom": 7,
+        "charisma": 6
+      }
     },
     {
       "index": "crab",
@@ -5686,7 +5933,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "crocodile",
@@ -5733,7 +5981,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "cult-fanatic",
@@ -5789,7 +6038,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "cultist",
@@ -5836,7 +6086,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "darkmantle",
@@ -5892,7 +6143,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "death-dog",
@@ -5944,7 +6196,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "deep-gnome-svirfneblin",
@@ -6010,7 +6263,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "deer",
@@ -6052,7 +6306,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "deva",
@@ -6126,7 +6381,11 @@
       "resistances": ["radiant", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened"],
+      "saves": {
+        "wisdom": 9,
+        "charisma": 9
+      }
     },
     {
       "index": "dire-wolf",
@@ -6177,7 +6436,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "djinni",
@@ -6243,7 +6503,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning", "thunder"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "doppelganger",
@@ -6308,7 +6573,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["charmed"]
+      "conditionImmunities": ["charmed"],
+      "saves": {}
     },
     {
       "index": "draft-horse",
@@ -6350,7 +6616,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "dragon-turtle",
@@ -6439,7 +6706,12 @@
       "resistances": ["fire"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 11,
+        "wisdom": 7
+      }
     },
     {
       "index": "dretch",
@@ -6507,7 +6779,8 @@
       "resistances": ["cold", "fire", "lightning"],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "drider",
@@ -6600,7 +6873,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "drow",
@@ -6666,7 +6940,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "druid",
@@ -6708,7 +6983,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "dryad",
@@ -6777,7 +7053,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "duergar",
@@ -6849,7 +7126,8 @@
       "resistances": ["poison"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "dust-mephit",
@@ -6910,7 +7188,8 @@
       "resistances": [],
       "vulnerabilities": ["fire"],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "eagle",
@@ -6957,7 +7236,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "earth-elemental",
@@ -7013,7 +7293,8 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": ["thunder"],
       "immunities": ["poison"],
-      "conditionImmunities": ["exhaustion", "paralyzed", "petrified", "poisoned", "unconscious"]
+      "conditionImmunities": ["exhaustion", "paralyzed", "petrified", "poisoned", "unconscious"],
+      "saves": {}
     },
     {
       "index": "efreeti",
@@ -7084,7 +7365,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "intelligence": 7,
+        "wisdom": 6,
+        "charisma": 7
+      }
     },
     {
       "index": "elephant",
@@ -7142,7 +7428,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "elk",
@@ -7200,7 +7487,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "erinyes",
@@ -7277,7 +7565,13 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 8,
+        "wisdom": 6,
+        "charisma": 8
+      }
     },
     {
       "index": "ettercap",
@@ -7358,7 +7652,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "ettin",
@@ -7425,7 +7720,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "fire-elemental",
@@ -7494,7 +7790,8 @@
         "prone",
         "restrained",
         "unconscious"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "fire-giant",
@@ -7552,7 +7849,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 10,
+        "charisma": 5
+      }
     },
     {
       "index": "flesh-golem",
@@ -7624,7 +7926,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "saves": {}
     },
     {
       "index": "flying-snake",
@@ -7675,7 +7978,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "flying-sword",
@@ -7726,7 +8030,10 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison", "psychic"],
-      "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"]
+      "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"],
+      "saves": {
+        "dexterity": 4
+      }
     },
     {
       "index": "frog",
@@ -7765,7 +8072,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "frost-giant",
@@ -7823,7 +8131,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 8,
+        "wisdom": 3,
+        "charisma": 4
+      }
     },
     {
       "index": "gargoyle",
@@ -7886,7 +8199,8 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["exhaustion", "petrified", "poisoned"]
+      "conditionImmunities": ["exhaustion", "petrified", "poisoned"],
+      "saves": {}
     },
     {
       "index": "gelatinous-cube",
@@ -7952,7 +8266,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"]
+      "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"],
+      "saves": {}
     },
     {
       "index": "ghast",
@@ -8014,7 +8329,8 @@
       "resistances": ["necrotic"],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned", "charmed", "exhaustion"]
+      "conditionImmunities": ["poisoned", "charmed", "exhaustion"],
+      "saves": {}
     },
     {
       "index": "ghost",
@@ -8108,7 +8424,8 @@
         "poisoned",
         "prone",
         "restrained"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "ghoul",
@@ -8161,7 +8478,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned", "charmed", "exhaustion"]
+      "conditionImmunities": ["poisoned", "charmed", "exhaustion"],
+      "saves": {}
     },
     {
       "index": "giant-ape",
@@ -8219,7 +8537,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-badger",
@@ -8282,7 +8601,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-bat",
@@ -8333,7 +8653,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-boar",
@@ -8384,7 +8705,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-centipede",
@@ -8426,7 +8748,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-constrictor-snake",
@@ -8479,7 +8802,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-crab",
@@ -8526,7 +8850,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-crocodile",
@@ -8589,7 +8914,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-eagle",
@@ -8652,7 +8978,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-elk",
@@ -8710,7 +9037,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-fire-beetle",
@@ -8757,7 +9085,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-frog",
@@ -8813,7 +9142,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-goat",
@@ -8864,7 +9194,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-hyena",
@@ -8911,7 +9242,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-lizard",
@@ -8953,7 +9285,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-octopus",
@@ -9013,7 +9346,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-owl",
@@ -9064,7 +9398,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-poisonous-snake",
@@ -9106,7 +9441,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-rat",
@@ -9157,7 +9493,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-rat-diseased",
@@ -9208,7 +9545,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-scorpion",
@@ -9266,7 +9604,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-sea-horse",
@@ -9317,7 +9656,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-shark",
@@ -9368,7 +9708,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-spider",
@@ -9429,7 +9770,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-toad",
@@ -9489,7 +9831,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-vulture",
@@ -9556,7 +9899,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-wasp",
@@ -9598,7 +9942,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-weasel",
@@ -9645,7 +9990,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "giant-wolf-spider",
@@ -9700,7 +10046,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "gibbering-mouther",
@@ -9766,7 +10113,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["prone"]
+      "conditionImmunities": ["prone"],
+      "saves": {}
     },
     {
       "index": "glabrezu",
@@ -9840,7 +10188,13 @@
       ],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 9,
+        "constitution": 9,
+        "wisdom": 7,
+        "charisma": 7
+      }
     },
     {
       "index": "gladiator",
@@ -9908,7 +10262,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "strength": 7,
+        "dexterity": 5,
+        "constitution": 6
+      }
     },
     {
       "index": "gnoll",
@@ -9972,7 +10331,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "goat",
@@ -10023,7 +10383,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "goblin",
@@ -10081,7 +10442,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "gold-dragon-wyrmling",
@@ -10133,7 +10495,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 5,
+        "wisdom": 2,
+        "charisma": 5
+      }
     },
     {
       "index": "gorgon",
@@ -10201,7 +10569,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["petrified"]
+      "conditionImmunities": ["petrified"],
+      "saves": {}
     },
     {
       "index": "gray-ooze",
@@ -10260,7 +10629,8 @@
       "resistances": ["acid", "cold", "fire"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"]
+      "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"],
+      "saves": {}
     },
     {
       "index": "green-dragon-wyrmling",
@@ -10326,7 +10696,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 3,
+        "wisdom": 2,
+        "charisma": 3
+      }
     },
     {
       "index": "green-hag",
@@ -10391,7 +10767,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "grick",
@@ -10454,7 +10831,8 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "griffon",
@@ -10517,7 +10895,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "grimlock",
@@ -10576,7 +10955,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["blinded"]
+      "conditionImmunities": ["blinded"],
+      "saves": {}
     },
     {
       "index": "guard",
@@ -10613,7 +10993,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "guardian-naga",
@@ -10670,7 +11051,14 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["charmed", "poisoned"]
+      "conditionImmunities": ["charmed", "poisoned"],
+      "saves": {
+        "dexterity": 8,
+        "constitution": 7,
+        "intelligence": 7,
+        "wisdom": 8,
+        "charisma": 8
+      }
     },
     {
       "index": "gynosphinx",
@@ -10746,7 +11134,8 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["psychic"],
-      "conditionImmunities": ["charmed", "frightened"]
+      "conditionImmunities": ["charmed", "frightened"],
+      "saves": {}
     },
     {
       "index": "half-red-dragon-veteran",
@@ -10825,7 +11214,8 @@
       "resistances": ["fire"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "harpy",
@@ -10888,7 +11278,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hawk",
@@ -10935,7 +11326,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hell-hound",
@@ -11005,7 +11397,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hezrou",
@@ -11079,7 +11472,12 @@
       ],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 7,
+        "constitution": 8,
+        "wisdom": 4
+      }
     },
     {
       "index": "hill-giant",
@@ -11137,7 +11535,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hippogriff",
@@ -11200,7 +11599,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hobgoblin",
@@ -11253,7 +11653,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "homunculus",
@@ -11300,7 +11701,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["charmed", "poisoned"]
+      "conditionImmunities": ["charmed", "poisoned"],
+      "saves": {}
     },
     {
       "index": "horned-devil",
@@ -11378,7 +11780,13 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 10,
+        "dexterity": 7,
+        "wisdom": 7,
+        "charisma": 7
+      }
     },
     {
       "index": "hunter-shark",
@@ -11429,7 +11837,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hydra",
@@ -11493,7 +11902,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "hyena",
@@ -11540,7 +11950,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "ice-devil",
@@ -11635,7 +12046,13 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 7,
+        "constitution": 9,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "ice-mephit",
@@ -11709,7 +12126,8 @@
       "resistances": [],
       "vulnerabilities": ["bludgeoning", "fire"],
       "immunities": ["cold", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "imp",
@@ -11769,7 +12187,8 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "invisible-stalker",
@@ -11834,7 +12253,8 @@
         "prone",
         "restrained",
         "unconscious"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "iron-golem",
@@ -11931,7 +12351,8 @@
         "piercing:nonmagical",
         "slashing:nonmagical"
       ],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "saves": {}
     },
     {
       "index": "jackal",
@@ -11982,7 +12403,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "killer-whale",
@@ -12037,7 +12459,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "knight",
@@ -12111,7 +12534,11 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 4,
+        "wisdom": 2
+      }
     },
     {
       "index": "kobold",
@@ -12173,7 +12600,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "kraken",
@@ -12292,7 +12720,14 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["frightened", "paralyzed"]
+      "conditionImmunities": ["frightened", "paralyzed"],
+      "saves": {
+        "strength": 17,
+        "dexterity": 7,
+        "constitution": 14,
+        "intelligence": 13,
+        "wisdom": 11
+      }
     },
     {
       "index": "lamia",
@@ -12361,7 +12796,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "lemure",
@@ -12412,7 +12848,8 @@
       "resistances": ["cold"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["charmed", "frightened", "poisoned"]
+      "conditionImmunities": ["charmed", "frightened", "poisoned"],
+      "saves": {}
     },
     {
       "index": "lich",
@@ -12507,7 +12944,12 @@
       "resistances": ["cold", "lightning", "necrotic"],
       "vulnerabilities": [],
       "immunities": ["poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "saves": {
+        "constitution": 10,
+        "intelligence": 12,
+        "wisdom": 9
+      }
     },
     {
       "index": "lion",
@@ -12577,7 +13019,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "lizard",
@@ -12619,7 +13062,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "lizardfolk",
@@ -12704,7 +13148,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "mage",
@@ -12751,7 +13196,11 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "intelligence": 6,
+        "wisdom": 4
+      }
     },
     {
       "index": "magma-mephit",
@@ -12825,7 +13274,8 @@
       "resistances": [],
       "vulnerabilities": ["cold"],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "magmin",
@@ -12876,7 +13326,8 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "mammoth",
@@ -12934,7 +13385,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "manticore",
@@ -13008,7 +13460,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "marilith",
@@ -13097,7 +13550,13 @@
       ],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "strength": 9,
+        "constitution": 10,
+        "wisdom": 8,
+        "charisma": 10
+      }
     },
     {
       "index": "mastiff",
@@ -13144,7 +13603,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "medusa",
@@ -13226,7 +13686,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "merfolk",
@@ -13268,7 +13729,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "merrow",
@@ -13342,7 +13804,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "mimic",
@@ -13416,7 +13879,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": ["prone"]
+      "conditionImmunities": ["prone"],
+      "saves": {}
     },
     {
       "index": "minotaur",
@@ -13482,7 +13946,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "minotaur-skeleton",
@@ -13540,7 +14005,8 @@
       "resistances": [],
       "vulnerabilities": ["bludgeoning"],
       "immunities": ["poison"],
-      "conditionImmunities": ["exhaustion", "poisoned"]
+      "conditionImmunities": ["exhaustion", "poisoned"],
+      "saves": {}
     },
     {
       "index": "mule",
@@ -13591,7 +14057,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "mummy",
@@ -13652,7 +14119,10 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": ["fire"],
       "immunities": ["necrotic", "poison"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "saves": {
+        "wisdom": 2
+      }
     },
     {
       "index": "mummy-lord",
@@ -13762,7 +14232,13 @@
       "resistances": [],
       "vulnerabilities": ["fire"],
       "immunities": ["necrotic", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "saves": {
+        "constitution": 8,
+        "intelligence": 5,
+        "wisdom": 9,
+        "charisma": 8
+      }
     },
     {
       "index": "nalfeshnee",
@@ -13847,7 +14323,13 @@
       ],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "constitution": 11,
+        "intelligence": 9,
+        "wisdom": 6,
+        "charisma": 7
+      }
     },
     {
       "index": "night-hag",
@@ -13917,7 +14399,8 @@
       "resistances": ["cold", "fire", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["charmed"]
+      "conditionImmunities": ["charmed"],
+      "saves": {}
     },
     {
       "index": "nightmare",
@@ -13977,7 +14460,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "noble",
@@ -14025,7 +14509,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "ochre-jelly",
@@ -14086,7 +14571,8 @@
       "resistances": ["acid"],
       "vulnerabilities": [],
       "immunities": ["lightning", "slashing"],
-      "conditionImmunities": ["blinded", "charmed", "blinded", "exhaustion", "frightened", "prone"]
+      "conditionImmunities": ["blinded", "charmed", "blinded", "exhaustion", "frightened", "prone"],
+      "saves": {}
     },
     {
       "index": "octopus",
@@ -14147,7 +14633,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "ogre",
@@ -14200,7 +14687,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "ogre-zombie",
@@ -14247,7 +14735,10 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "wisdom": 0
+      }
     },
     {
       "index": "oni",
@@ -14323,7 +14814,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 6,
+        "wisdom": 4,
+        "charisma": 5
+      }
     },
     {
       "index": "orc",
@@ -14381,7 +14878,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "otyugh",
@@ -14458,7 +14956,10 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 7
+      }
     },
     {
       "index": "owl",
@@ -14509,7 +15010,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "owlbear",
@@ -14572,7 +15074,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "panther",
@@ -14634,7 +15137,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "pegasus",
@@ -14676,7 +15180,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "wisdom": 4,
+        "charisma": 3
+      }
     },
     {
       "index": "phase-spider",
@@ -14731,7 +15240,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "pit-fiend",
@@ -14828,7 +15338,12 @@
       "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 8,
+        "constitution": 13,
+        "wisdom": 10
+      }
     },
     {
       "index": "planetar",
@@ -14901,7 +15416,12 @@
       "resistances": ["radiant", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened"],
+      "saves": {
+        "constitution": 12,
+        "wisdom": 11,
+        "charisma": 12
+      }
     },
     {
       "index": "plesiosaurus",
@@ -14948,7 +15468,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "poisonous-snake",
@@ -14990,7 +15511,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "polar-bear",
@@ -15053,7 +15575,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "pony",
@@ -15095,7 +15618,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "priest",
@@ -15146,7 +15670,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "pseudodragon",
@@ -15212,7 +15737,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "purple-worm",
@@ -15275,7 +15801,11 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "constitution": 11,
+        "wisdom": 4
+      }
     },
     {
       "index": "quasit",
@@ -15348,7 +15878,8 @@
       ],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "quipper",
@@ -15399,7 +15930,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "rakshasa",
@@ -15455,7 +15987,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "rat",
@@ -15502,7 +16035,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "raven",
@@ -15549,7 +16083,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "red-dragon-wyrmling",
@@ -15610,7 +16145,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 2,
+        "constitution": 5,
+        "wisdom": 2,
+        "charisma": 4
+      }
     },
     {
       "index": "reef-shark",
@@ -15661,7 +16202,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "remorhaz",
@@ -15717,7 +16259,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold", "fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "rhinoceros",
@@ -15764,7 +16307,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "riding-horse",
@@ -15806,7 +16350,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "roc",
@@ -15869,7 +16414,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 9,
+        "wisdom": 4,
+        "charisma": 3
+      }
     },
     {
       "index": "roper",
@@ -15940,7 +16491,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "rug-of-smothering",
@@ -15990,7 +16542,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison", "psychic"],
-      "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"]
+      "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"],
+      "saves": {}
     },
     {
       "index": "rust-monster",
@@ -16046,7 +16599,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "saber-toothed-tiger",
@@ -16108,7 +16662,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "sahuagin",
@@ -16185,7 +16740,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "salamander",
@@ -16256,7 +16812,8 @@
       "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": ["cold"],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "satyr",
@@ -16325,7 +16882,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "scorpion",
@@ -16367,7 +16925,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "scout",
@@ -16430,7 +16989,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "sea-hag",
@@ -16496,7 +17056,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "sea-horse",
@@ -16531,7 +17092,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "shadow",
@@ -16604,7 +17166,8 @@
         "poisoned",
         "prone",
         "restrained"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "shambling-mound",
@@ -16661,7 +17224,8 @@
       "resistances": ["cold", "fire"],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": ["blinded", "blinded", "exhaustion"]
+      "conditionImmunities": ["blinded", "blinded", "exhaustion"],
+      "saves": {}
     },
     {
       "index": "shield-guardian",
@@ -16727,7 +17291,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "saves": {}
     },
     {
       "index": "shrieker",
@@ -16768,7 +17333,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["blinded", "blinded", "frightened"]
+      "conditionImmunities": ["blinded", "blinded", "frightened"],
+      "saves": {}
     },
     {
       "index": "silver-dragon-wyrmling",
@@ -16815,7 +17381,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 2,
+        "constitution": 5,
+        "wisdom": 2,
+        "charisma": 4
+      }
     },
     {
       "index": "skeleton",
@@ -16868,7 +17440,8 @@
       "resistances": [],
       "vulnerabilities": ["bludgeoning"],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned", "exhaustion"]
+      "conditionImmunities": ["poisoned", "exhaustion"],
+      "saves": {}
     },
     {
       "index": "solar",
@@ -16996,7 +17569,12 @@
       "resistances": ["radiant", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["necrotic", "poison"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "poisoned"],
+      "saves": {
+        "intelligence": 14,
+        "wisdom": 14,
+        "charisma": 17
+      }
     },
     {
       "index": "specter",
@@ -17066,7 +17644,8 @@
         "prone",
         "restrained",
         "unconscious"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "spider",
@@ -17121,7 +17700,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "spirit-naga",
@@ -17172,7 +17752,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["charmed", "poisoned"]
+      "conditionImmunities": ["charmed", "poisoned"],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 5,
+        "wisdom": 5,
+        "charisma": 6
+      }
     },
     {
       "index": "sprite",
@@ -17240,7 +17826,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "spy",
@@ -17307,7 +17894,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "steam-mephit",
@@ -17377,7 +17965,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {}
     },
     {
       "index": "stirge",
@@ -17419,7 +18008,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "stone-giant",
@@ -17488,7 +18078,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 8,
+        "wisdom": 4
+      }
     },
     {
       "index": "stone-golem",
@@ -17558,7 +18153,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison", "psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "saves": {}
     },
     {
       "index": "storm-giant",
@@ -17640,7 +18236,13 @@
       "resistances": ["cold"],
       "vulnerabilities": [],
       "immunities": ["lightning", "thunder"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "strength": 14,
+        "constitution": 10,
+        "wisdom": 9,
+        "charisma": 9
+      }
     },
     {
       "index": "succubus-incubus",
@@ -17724,7 +18326,8 @@
       ],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "swarm-of-bats",
@@ -17788,7 +18391,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-beetles",
@@ -17844,7 +18448,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-centipedes",
@@ -17900,7 +18505,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-insects",
@@ -17956,7 +18562,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-poisonous-snakes",
@@ -18012,7 +18619,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-quippers",
@@ -18076,7 +18684,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-rats",
@@ -18136,7 +18745,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-ravens",
@@ -18192,7 +18802,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "swarm-of-spiders",
@@ -18251,7 +18862,8 @@
       "resistances": ["bludgeoning", "piercing", "slashing"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["charmed", "frightened", "paralyzed", "petrified", "prone", "restrained", "stunned"]
+      "conditionImmunities": ["charmed", "frightened", "paralyzed", "petrified", "prone", "restrained", "stunned"],
+      "saves": {}
     },
     {
       "index": "swarm-of-wasps",
@@ -18307,7 +18919,8 @@
         "prone",
         "restrained",
         "stunned"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "tarrasque",
@@ -18435,7 +19048,12 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": ["charmed", "frightened", "paralyzed", "poisoned"]
+      "conditionImmunities": ["charmed", "frightened", "paralyzed", "poisoned"],
+      "saves": {
+        "intelligence": 5,
+        "wisdom": 9,
+        "charisma": 9
+      }
     },
     {
       "index": "thug",
@@ -18498,7 +19116,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "tiger",
@@ -18560,7 +19179,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "treant",
@@ -18632,7 +19252,8 @@
       "resistances": ["bludgeoning", "piercing"],
       "vulnerabilities": ["fire"],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "tribal-warrior",
@@ -18674,7 +19295,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "triceratops",
@@ -18732,7 +19354,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "troll",
@@ -18799,7 +19422,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "tyrannosaurus-rex",
@@ -18857,7 +19481,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "unicorn",
@@ -18958,7 +19583,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["charmed", "paralyzed", "poisoned"]
+      "conditionImmunities": ["charmed", "paralyzed", "poisoned"],
+      "saves": {}
     },
     {
       "index": "vampire-vampire",
@@ -19079,7 +19705,12 @@
       "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 9,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "vampire-bat",
@@ -19184,7 +19815,12 @@
       "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 9,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "vampire-mist",
@@ -19258,7 +19894,12 @@
       "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 9,
+        "wisdom": 7,
+        "charisma": 9
+      }
     },
     {
       "index": "vampire-spawn",
@@ -19333,7 +19974,11 @@
       "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "wisdom": 3
+      }
     },
     {
       "index": "veteran",
@@ -19397,7 +20042,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "violet-fungus",
@@ -19449,7 +20095,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": ["blinded", "blinded", "frightened"]
+      "conditionImmunities": ["blinded", "blinded", "frightened"],
+      "saves": {}
     },
     {
       "index": "vrock",
@@ -19539,7 +20186,12 @@
       ],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 5,
+        "wisdom": 4,
+        "charisma": 2
+      }
     },
     {
       "index": "vulture",
@@ -19590,7 +20242,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "warhorse",
@@ -19637,7 +20290,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "warhorse-skeleton",
@@ -19679,7 +20333,8 @@
       "resistances": [],
       "vulnerabilities": ["bludgeoning"],
       "immunities": ["poison"],
-      "conditionImmunities": ["exhaustion", "poisoned"]
+      "conditionImmunities": ["exhaustion", "poisoned"],
+      "saves": {}
     },
     {
       "index": "water-elemental",
@@ -19759,7 +20414,8 @@
         "prone",
         "restrained",
         "unconscious"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "weasel",
@@ -19806,7 +20462,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "werebear-bear",
@@ -19873,7 +20530,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "werebear-human",
@@ -19929,7 +20587,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "werebear-hybrid",
@@ -20007,7 +20666,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wereboar-boar",
@@ -20062,7 +20722,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wereboar-human",
@@ -20118,7 +20779,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wereboar-hybrid",
@@ -20189,7 +20851,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wererat-human",
@@ -20256,7 +20919,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wererat-hybrid",
@@ -20334,7 +20998,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wererat-rat",
@@ -20385,7 +21050,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "weretiger-human",
@@ -20452,7 +21118,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "weretiger-hybrid",
@@ -20545,7 +21212,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "weretiger-tiger",
@@ -20611,7 +21279,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "werewolf-human",
@@ -20662,7 +21331,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "werewolf-hybrid",
@@ -20729,7 +21399,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "werewolf-wolf",
@@ -20780,7 +21451,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "white-dragon-wyrmling",
@@ -20841,7 +21513,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 2,
+        "constitution": 4,
+        "wisdom": 2,
+        "charisma": 2
+      }
     },
     {
       "index": "wight",
@@ -20910,7 +21588,8 @@
       "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["exhaustion", "poisoned"]
+      "conditionImmunities": ["exhaustion", "poisoned"],
+      "saves": {}
     },
     {
       "index": "will-o-wisp",
@@ -20983,7 +21662,8 @@
       ],
       "vulnerabilities": [],
       "immunities": ["lightning", "poison"],
-      "conditionImmunities": ["exhaustion", "grappled", "paralyzed", "poisoned", "prone", "restrained", "unconscious"]
+      "conditionImmunities": ["exhaustion", "grappled", "paralyzed", "poisoned", "prone", "restrained", "unconscious"],
+      "saves": {}
     },
     {
       "index": "winter-wolf",
@@ -21053,7 +21733,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wolf",
@@ -21104,7 +21785,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "worg",
@@ -21151,7 +21833,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "wraith",
@@ -21225,7 +21908,8 @@
         "poisoned",
         "prone",
         "restrained"
-      ]
+      ],
+      "saves": {}
     },
     {
       "index": "wyvern",
@@ -21294,7 +21978,8 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "xorn",
@@ -21365,7 +22050,8 @@
       "resistances": ["piercing:nonmagical", "slashing:nonmagical"],
       "vulnerabilities": [],
       "immunities": [],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {}
     },
     {
       "index": "young-black-dragon",
@@ -21447,7 +22133,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 5,
+        "constitution": 6,
+        "wisdom": 3,
+        "charisma": 5
+      }
     },
     {
       "index": "young-blue-dragon",
@@ -21524,7 +22216,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 8,
+        "wisdom": 5,
+        "charisma": 7
+      }
     },
     {
       "index": "young-brass-dragon",
@@ -21587,7 +22285,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 6,
+        "wisdom": 3,
+        "charisma": 5
+      }
     },
     {
       "index": "young-bronze-dragon",
@@ -21655,7 +22359,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["lightning"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 7,
+        "wisdom": 4,
+        "charisma": 6
+      }
     },
     {
       "index": "young-copper-dragon",
@@ -21718,7 +22428,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["acid"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 6,
+        "wisdom": 4,
+        "charisma": 5
+      }
     },
     {
       "index": "young-gold-dragon",
@@ -21786,7 +22502,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 6,
+        "constitution": 9,
+        "wisdom": 5,
+        "charisma": 9
+      }
     },
     {
       "index": "young-green-dragon",
@@ -21868,7 +22590,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 6,
+        "wisdom": 4,
+        "charisma": 5
+      }
     },
     {
       "index": "young-red-dragon",
@@ -21945,7 +22673,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["fire"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 9,
+        "wisdom": 4,
+        "charisma": 8
+      }
     },
     {
       "index": "young-silver-dragon",
@@ -22008,7 +22742,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 4,
+        "constitution": 9,
+        "wisdom": 4,
+        "charisma": 8
+      }
     },
     {
       "index": "young-white-dragon",
@@ -22090,7 +22830,13 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["cold"],
-      "conditionImmunities": []
+      "conditionImmunities": [],
+      "saves": {
+        "dexterity": 3,
+        "constitution": 7,
+        "wisdom": 3,
+        "charisma": 4
+      }
     },
     {
       "index": "zombie",
@@ -22137,7 +22883,10 @@
       "resistances": [],
       "vulnerabilities": [],
       "immunities": ["poison"],
-      "conditionImmunities": ["poisoned"]
+      "conditionImmunities": ["poisoned"],
+      "saves": {
+        "wisdom": 0
+      }
     }
   ]
 }

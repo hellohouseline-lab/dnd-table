@@ -14,6 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
+      areas: {
+        Row: {
+          campaign_id: string
+          character_id: string | null
+          concentration: boolean
+          created_at: string
+          direction: number
+          hidden: boolean
+          id: string
+          label: string
+          map_id: string
+          origin_x: number
+          origin_y: number
+          shape: string
+          size_ft: number
+          tone: string
+        }
+        Insert: {
+          campaign_id: string
+          character_id?: string | null
+          concentration?: boolean
+          created_at?: string
+          direction?: number
+          hidden?: boolean
+          id?: string
+          label?: string
+          map_id: string
+          origin_x: number
+          origin_y: number
+          shape: string
+          size_ft: number
+          tone?: string
+        }
+        Update: {
+          campaign_id?: string
+          character_id?: string | null
+          concentration?: boolean
+          created_at?: string
+          direction?: number
+          hidden?: boolean
+          id?: string
+          label?: string
+          map_id?: string
+          origin_x?: number
+          origin_y?: number
+          shape?: string
+          size_ft?: number
+          tone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "areas_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "areas_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "areas_map_id_fkey"
+            columns: ["map_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
           campaign_id: string
@@ -162,6 +235,7 @@ export type Database = {
           charisma: number
           class: string
           concentration: string | null
+          concentration_dc: number | null
           conditions: string[]
           constitution: number
           created_at: string
@@ -209,6 +283,7 @@ export type Database = {
           charisma?: number
           class?: string
           concentration?: string | null
+          concentration_dc?: number | null
           conditions?: string[]
           constitution?: number
           created_at?: string
@@ -256,6 +331,7 @@ export type Database = {
           charisma?: number
           class?: string
           concentration?: string | null
+          concentration_dc?: number | null
           conditions?: string[]
           constitution?: number
           created_at?: string
@@ -437,6 +513,7 @@ export type Database = {
           monster: string | null
           name: string
           resistances: string[]
+          saves: Json
           vulnerabilities: string[]
         }
         Insert: {
@@ -450,6 +527,7 @@ export type Database = {
           monster?: string | null
           name: string
           resistances?: string[]
+          saves?: Json
           vulnerabilities?: string[]
         }
         Update: {
@@ -463,6 +541,7 @@ export type Database = {
           monster?: string | null
           name?: string
           resistances?: string[]
+          saves?: Json
           vulnerabilities?: string[]
         }
         Relationships: [
@@ -1100,7 +1179,19 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      cast_spell: {
+        Args: {
+          p_area: Json
+          p_combatant_id: string
+          p_roll: Json
+          p_slot_level: number
+          p_spell: Json
+          p_target_ids: string[]
+        }
+        Returns: Json
+      }
       close_roll_request: { Args: { p_request_id: string }; Returns: undefined }
+      concentration_save: { Args: { p_character_id: string }; Returns: Json }
       create_campaign: {
         Args: {
           p_dm_name: string

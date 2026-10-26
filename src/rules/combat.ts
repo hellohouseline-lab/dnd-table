@@ -123,6 +123,16 @@ export function unknownNames(shown: string[], count: number): string[] {
   return Array.from({ length: count }, (_, i) => `Unknown creature ${start + i}`)
 }
 
+/** A monster's six saving throw bonuses: its stat block's where it lists one, otherwise the ability modifier. */
+export function monsterSaves(monster: Pick<SrdMonster, 'scores' | 'saves'>): Record<string, number> {
+  return Object.fromEntries(
+    (Object.keys(ABILITY_NAME) as (keyof typeof ABILITY_NAME)[]).map((ability) => [
+      ability,
+      monster.saves?.[ability] ?? abilityModifier(monster.scores[ability]),
+    ]),
+  )
+}
+
 /** A monster's initiative: a d20 plus its Dexterity modifier, behind the screen. */
 export function monsterInitiative(monster: Pick<SrdMonster, 'scores'>): RollRequest {
   const dex = abilityModifier(monster.scores.dexterity)

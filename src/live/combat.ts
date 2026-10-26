@@ -7,6 +7,7 @@ import {
   healthState,
   letteredNames,
   monsterInitiative,
+  monsterSaves,
   startingSquares,
   unknownNames,
   type HealthState,
@@ -321,6 +322,7 @@ export async function addMonsters(
     vulnerabilities: monster.vulnerabilities ?? [],
     immunities: monster.immunities ?? [],
     condition_immunities: monster.conditionImmunities ?? [],
+    saves: monsterSaves(monster),
   }))
   const secrets = await db().from('combatant_secrets').insert(secretRows).select('*')
   if (secrets.error) throw fromDatabaseError(secrets.error)
