@@ -1028,3 +1028,11 @@ button.stepItem:disabled {
   align-items: center;
   gap: 16px;
 }
+
+/* Levelling up: one column of cards. */
+.levelBody {
+  flex: 1;
+  width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 24px 28px;
+}

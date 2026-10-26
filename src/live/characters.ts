@@ -59,6 +59,13 @@ export async function saveCharacterBuild(character: Character, build: CharacterB
 }
 
 /** Saves things that change in play: hit points, uses, slots, conditions and so on. */
+/** The DM lets characters go up a level (one more each time). */
+export async function grantLevelUp(characterIds: string[]): Promise<Character[]> {
+  const { data, error } = await db().rpc('grant_level_up', { p_character_ids: characterIds })
+  if (error) throw characterError(error)
+  return (data ?? []).map(rowToCharacter)
+}
+
 export async function saveTrackers(characterId: string, patch: TrackerPatch): Promise<Character> {
   const { data, error } = await db()
     .from('characters')

@@ -109,6 +109,8 @@ type DmViewProps = {
   characters: Character[]
   online: ReadonlySet<string>
   onUpdate: (characterId: string, patch: TrackerPatch) => void
+  /** Lets characters go up a level (left out in the previews). */
+  onLevelUp?: (characterIds: string[]) => void
   saveError?: string | null
   log: RollLogState
   diceStyle: DiceStyle
@@ -144,6 +146,7 @@ export function DmView({
   characters,
   online,
   onUpdate,
+  onLevelUp,
   saveError,
   log,
   diceStyle,
@@ -462,6 +465,7 @@ export function DmView({
             )
           ) : tab === 'party' ? (
             <PartyCards
+              onLevelUp={onLevelUp}
               onQuickCheck={asking.ask}
               quickError={asking.error}
               spells={spells}

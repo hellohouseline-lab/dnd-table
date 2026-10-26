@@ -738,3 +738,28 @@
 .itemChoiceOther:hover {
   border-color: var(--gold-rule);
 }
+
+/* The DM has let you level up. */
+.levelUp {
+  display: block;
+  margin: 8px 0 2px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 0 0 3px rgba(212, 175, 90, 0.25);
+  animation: levelGlow 2s ease-in-out infinite;
+}
+
+@keyframes levelGlow {
+  50% {
+    box-shadow: 0 0 0 6px rgba(212, 175, 90, 0.1);
+  }
+}

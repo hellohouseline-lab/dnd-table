@@ -172,6 +172,13 @@ export function DmPreview({ tab }: { tab: string }) {
         characters={characters}
         online={online}
         onUpdate={update}
+        onLevelUp={(ids) =>
+          setCharacters((list) =>
+            list.map((c) =>
+              ids.includes(c.id) ? { ...c, levelUpTo: Math.max(c.levelUpTo ?? c.level, c.level) + 1 } : c,
+            ),
+          )
+        }
         log={{ status: 'ready', rolls }}
         diceStyle={diceStyle}
         onDiceStyleChange={setDiceStyle}

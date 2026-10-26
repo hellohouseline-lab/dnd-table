@@ -60,6 +60,7 @@ const trackers = {
   dead: false,
   concentrationDc: null,
   effects: [],
+  levelUpTo: null,
   conditions: [],
   resistances: [],
   vulnerabilities: [],

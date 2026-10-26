@@ -8,6 +8,7 @@ import { PageHeader } from '../../components/PageHeader.tsx'
 import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
 import { useOnlineIds } from '../../live/campaignChannel.ts'
 import { getCampaign, listMembers } from '../../live/campaigns.ts'
+import { grantLevelUp } from '../../live/characters.ts'
 import { messageFor } from '../../live/errors.ts'
 import { saveDiceStyle } from '../../live/rolls.ts'
 import { useLoad } from '../../live/useLoad.ts'
@@ -92,6 +93,10 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       characters={party.characters}
       online={online}
       onUpdate={party.update}
+      onLevelUp={(ids) => {
+        setStyleError(null)
+        grantLevelUp(ids).catch((caught: unknown) => setStyleError(messageFor(caught)))
+      }}
       saveError={party.saveError ?? styleError}
       log={log}
       diceStyle={diceStyle}

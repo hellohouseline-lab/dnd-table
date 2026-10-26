@@ -148,6 +148,8 @@ export type Character = {
   concentrationDc: number | null
   /** Things running on the character, such as Raging. */
   effects: Effect[]
+  /** The level the DM has let them reach; above `level` means "Level up!" is waiting. */
+  levelUpTo: number | null
   portraitPath: string | null
   updatedAt: string
 }
@@ -174,6 +176,7 @@ export type CharacterBuild = Omit<
   | 'concentration'
   | 'concentrationDc'
   | 'effects'
+  | 'levelUpTo'
   | 'portraitPath'
   | 'updatedAt'
 >
