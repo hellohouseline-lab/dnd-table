@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import type { AttackEntry, Character, FeatureEntry, InventoryItem } from '../../rules/character.ts'
@@ -22,6 +22,7 @@ import {
   weaponIcon,
   type CardDetails,
 } from './cardDetails.ts'
+import type { RollMode } from '../../rules/dice.ts'
 import styles from './Hand.module.css'
 
 /** A caster's spells for the hand: the SRD list, why one can't be cast now (or null), and casting one. */
@@ -53,8 +54,8 @@ type HandProps = {
   /** A monk's unarmed strike and Flurry of Blows, a berserker's frenzy: why each can't be used now, or null. */
   bonusAttacks?: (BonusChoice & { why: string | null })[]
   onBonusAttack?: (choice: BonusChoice) => void
-  /** Outside a fight: the Checks set, a panel to roll any skill, save or ability check. */
-  checks?: ReactNode
+  /** Outside a fight: the Checks set, a d20 rolled for the DM (who says what it was), in one of three ways. */
+  onRollForDm?: ((mode: RollMode) => void) | null
   /** Things in the pack that can be used (a potion, a kit, a flask), and why each can't be now, or null. */
   items?: { item: InventoryItem; use: Usable; why: string | null }[]
   onUseItem?: (entry: { item: InventoryItem; use: Usable }) => void
@@ -65,7 +66,7 @@ type HandProps = {
 type Card = {
   key: string
   tag: string
-  tone: 'action' | 'feature' | 'spell' | 'bonus'
+  tone: 'action' | 'feature' | 'spell' | 'bonus' | 'roll'
   icon: IconName
   name: string
   detail: string
@@ -105,7 +106,7 @@ export function Hand({
   onBonusMove,
   bonusAttacks = [],
   onBonusAttack,
-  checks = null,
+  onRollForDm = null,
   items = [],
   onUseItem,
   disabled,
@@ -280,16 +281,46 @@ export function Hand({
     play: () => onUseItem?.({ item, use }),
   })
 
+  // Rolls for the DM: the same size as every other card, so the hand doesn't jump.
+  const rollCard = (mode: RollMode, name: string, detail: string, what: string): Card => ({
+    key: `roll-${mode}`,
+    tag: 'Check',
+    tone: 'roll',
+    icon: 'd20',
+    name,
+    detail,
+    why: null,
+    info: {
+      kind: 'move',
+      title: name,
+      icon: 'd20',
+      stats: [
+        { label: 'Dice', value: mode === 'normal' ? 'One d20' : 'Two d20s' },
+        { label: 'Keeps', value: mode === 'advantage' ? 'The higher' : mode === 'disadvantage' ? 'The lower' : 'It' },
+      ],
+      bullets: [what, 'The DM says what it was for, adds your bonus and tells you how it went'],
+      footer: ['A roll for the DM', ''],
+      cost: 'free',
+    },
+    spent: false,
+    play: () => onRollForDm?.(mode),
+  })
+  const checkCards = onRollForDm
+    ? [
+        rollCard('advantage', 'Advantage', 'Two dice, higher counts', 'When the DM says you have advantage'),
+        rollCard('normal', 'Roll a d20', 'When the DM asks', 'When the DM asks you to roll'),
+        rollCard('disadvantage', 'Disadvantage', 'Two dice, lower counts', 'When the DM says you have disadvantage'),
+      ]
+    : []
+
   const all: { key: CardSet; name: string; cards: Card[] }[] = [
     { key: 'weapons', name: 'Attacks and features', cards: weaponCards },
     { key: 'spells', name: 'Spells', cards: spells ? spellCards : [] },
     { key: 'bonus', name: 'Bonus actions', cards: bonusCards },
     { key: 'items', name: 'Items', cards: items.map(itemCard) },
+    { key: 'checks', name: 'Checks', cards: checkCards },
   ]
-  const sets = [
-    ...all.filter((s) => s.cards.length > 0),
-    ...(checks ? [{ key: 'checks' as const, name: 'Checks', cards: [] as Card[] }] : []),
-  ]
+  const sets = all.filter((s) => s.cards.length > 0)
   // A caster with nothing else to play starts on their spells.
   const set = sets.find((s) => s.key === showing) ?? sets[0]
   if (!set) return null
@@ -319,8 +350,7 @@ export function Hand({
           {set.key === 'spells' && <SlotPips spellcasting={character.spellcasting} />}
         </div>
       )}
-      {set.key === 'checks' && checks}
-      <div className={cx(styles.hand, set.key === 'checks' && styles.handHidden)} aria-label="Your hand">
+      <div className={styles.hand} aria-label="Your hand">
         {cards.map((card, i) => {
           const offset = i - middle
           return (

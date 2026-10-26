@@ -12,6 +12,7 @@ import { CallPreview } from '../screens/dev/CallPreview.tsx'
 import { CheckEmailPreview } from '../screens/dev/CheckEmailPreview.tsx'
 import { DmPreview } from '../screens/dev/DmPreview.tsx'
 import { StagePreview } from '../screens/dev/StagePreview.tsx'
+import { RollsForDmPreview } from '../screens/dev/RollsForDmPreview.tsx'
 import { BuilderPreview } from '../screens/dev/BuilderPreview.tsx'
 import { LevelUpPreview } from '../screens/dev/LevelUpPreview.tsx'
 import { CharacterFormPreview, JoinScreenPreview, TablePreview } from '../screens/dev/JoinScreenPreview.tsx'
@@ -161,6 +162,11 @@ const ROUTES: Route[] = [
         },
         { pattern: '/dev/stage', title: `Stage preview · ${APP_NAME}`, render: () => <StagePreview /> },
         { pattern: '/dev/level-up', title: `Level up preview · ${APP_NAME}`, render: () => <LevelUpPreview /> },
+        {
+          pattern: '/dev/dm-rolls',
+          title: `Rolls for the DM preview · ${APP_NAME}`,
+          render: () => <RollsForDmPreview />,
+        },
         { pattern: '/dev/builder', title: `Builder preview · ${APP_NAME}`, render: () => <BuilderPreview /> },
         { pattern: '/dev/battle', title: `Battle preview · ${APP_NAME}`, render: () => <BattlePreview /> },
         {

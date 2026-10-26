@@ -3,6 +3,16 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C2d: the builder finished, saving, and levelling up (live).**
+  - **New characters now open the builder** (`#/c/<campaign>/character/new`); "Type it in instead" leads to the old form. All nine steps work:
+    - **Spells:** cantrips and level 1 spells for every caster, as many as the class allows: spells known (bard, sorcerer, warlock), a cleric's or druid's prepared spells, a wizard's six spellbook spells and the ones prepared from them. A Life cleric's Bless and Cure Wounds are always ready. C marks concentration; hold the mouse on a spell to read it.
+    - **Who they are:** the name (the only thing needed), alignment (nine cards with a line each), age, height, weight, eyes, skin and hair, personality, ideals, bonds and flaws with the Acolyte's ideas to pick or rewrite, goals and a backstory (new `story` column).
+    - **Review:** the whole character (scores, hit points, AC, speed, coins, skills with expertise, saves, languages, weapons, spells, features with their uses, everything carried), anything still to pick with a link to its step, and **Save and go to the table**.
+    - Features come with their uses: rages, Second Wind, Bardic Inspiration, Channel Divinity, Wild Shape, Lay on Hands, Arcane Recovery, and Ki and Sorcery Points as their own trackers.
+  - **Levelling up when the DM says so:** **Level up** on a character's card in the Party tab, or **Everyone levels up**; the card then says "Level up waiting". The player gets a glowing gold **Level up!** on their plate, opening a walk-through: what's new at the level (and the training bonus going up, and the class numbers that grow), hit points (the average, or roll the hit die once for the table), their path when it's due, an ability score increase (+2 or +1 and +1, never past 20; a Constitution increase counts for every level), every choice the level brings with anything not allowed yet greyed out and why, and new cantrips and spells. **Take level N** saves it all. The server refuses a player raising their own level without the DM's say (`level_up_to`, `grant_level_up`).
+  - Previews: `#/dev/builder` (the whole builder) and `#/dev/level-up` (Thorin taking level 3).
+  - Tests: 439 database (8 new), 395 unit (7 new), 30 preview browser tests (3 new).
+- **Rolls for the DM, tidied (live).** The player's Checks set is now three cards the same size as the rest of the hand (**Advantage**, **Roll a d20**, **Disadvantage**), each rolling in one click, so the hand no longer jumps. On the DM's card, **What was it?** is buttons, not a dropdown: the six saving throws first (STR to CHA), then the six most asked skills, then **More checks** for every other skill and ability check, each button showing what the roll comes to for that character. Preview: `#/dev/dm-rolls`. Tests: 388 unit, 28 preview browser tests.
 - **C2c: gear, coins, armour class and items in a fight (live).**
   - **Every character now carries an inventory and a wallet** (copper, silver, electrum, gold, platinum). The sheet's **Inventory** tab lists what's carried with how many and the weight against what they can carry; **Wear it** on armour or a shield sets the AC by itself (one suit at a time); add anything from the free rules' equipment list or type it in; edit coins.
   - **Builder step 5, Level:** everyone starts at level 1 for now (the DM's starting level comes in C2e). **Step 6, Gear:** each of the class's starting choices as cards, in plain British words ("Leather Armour, Longbow and 20 × Arrow"), with a list to pick from for "a martial weapon"; the background's kit and coins (the Acolyte's 15 gp and a holy symbol); then everything together: the AC and how it's worked out ("Chain Mail 16, shield +2"), weight carried, coins, and a warning for armour that's too heavy or noisy. The summary shows AC and weapons.
@@ -189,7 +199,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C2d next:** levelling up (the DM grants it; the player picks every choice), spells, Who they are, review and save.
+- **C2e next:** quick starts (twelve ready-made characters and Surprise me), Your path (looking ahead, a druid's beasts), giving characters to players, and the DM's starting level and gold.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -197,6 +207,10 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try the builder and levelling up** (refresh first):
+  1. With a player account that has no character yet, open the table: the builder opens. Make a character all the way through and press **Save and go to the table**.
+  2. As the DM, on Screen 1's Party tab press **Level up** on their card.
+  3. As the player, press the gold **Level up!** on your plate and take the level.
 - **Say if the parchment lettering suits** (it's the Cinzel Decorative already used for titles; a blackletter style is another option).
 - **Try T1** with a player in a second browser (older steps):
   - As the player: click a weapon card, then a goblin, then **Attack**. Click a spell card and follow the panel. A barbarian presses **Rage!**, and a fighter **Roll Second Wind** then **Undo**.
