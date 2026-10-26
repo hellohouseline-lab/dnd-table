@@ -3,6 +3,10 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Rolls for the DM, outside a fight (live).** When you say "roll for me", a player opens **Checks** in their hand (beside Bonus actions, only outside a fight), picks **Advantage / Normal / Disadvantage** and presses **Roll a d20**. They don't choose what it's for. The dice land for everyone, with the gold burst for a natural 20 and the shake for a natural 1.
+  - **On your screen** (Screen 1 or Screen 2) a card pops up: "Thorin rolled for you with advantage", both dice, and **What was it?** (every skill, save and ability check). Picking one adds that character's bonus from their sheet ("Perception check: 14 +3 = 17"). Then either **Count it as Perception check** (named in the log, no verdict), or pick how hard (Easy 10, Medium 15, Hard 20 or a DC) and see **dice say pass**, then rule **Pass** or **Fail**. **Let it go** just clears it. A natural 20 card glows gold, a natural 1 card shakes red.
+  - **The player** is told when you've counted it: "The DM counted your roll as Perception check: 17. You passed." Only you can name or judge a roll, once, on the server (`roll_for_dm`, `name_roll`, `rolls.for_dm` in `supabase/migrations/20261027133000_rolls_for_the_dm.sql`).
+  - Tests: 8 new database tests, 380 unit (3 new), 24 preview browser tests.
 - **C2b part 2: Class, Background and Ability scores in the builder (live for Matt to try at `#/c/<campaign>/build`; players still use the old form).**
   - **Class:** twelve cards with an emblem, a line and the hit die; picking one shows **How it plays**, the skills to choose (any your race gives are marked "have it"), and whatever its level 1 features ask: a fighter's fighting style, a rogue's expertise (from skills they have, or thieves' tools), a ranger's favoured enemy and terrain, a draconic sorcerer's dragon. Clerics, sorcerers and warlocks get the free rules' one subclass, said plainly.
   - **Background:** the Acolyte (Insight, Religion, two languages, Shelter of the Faithful), or **Your own** with a name, two skills and two languages. A skill you'd get twice is crossed out and you pick another, as the 2014 rules allow.

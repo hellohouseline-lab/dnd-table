@@ -44,6 +44,7 @@ function sample(id: string, minutesAgo: number, roll: Partial<Roll>): Roll {
     requestId: null,
     passed: null,
     passedByDice: null,
+    forDm: false,
     ...roll,
   }
 }

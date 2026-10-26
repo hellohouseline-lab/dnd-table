@@ -38,6 +38,8 @@ export type Roll = RollOutcome & {
   passed: boolean | null
   /** What the dice said against the DC, before any change by the DM. */
   passedByDice: boolean | null
+  /** A plain d20 a player rolled for the DM, waiting for the DM to say what it was. */
+  forDm: boolean
 }
 
 const LOG_LENGTH = 150
@@ -103,6 +105,7 @@ export function rowToRoll(row: RollRow): Roll {
     requestId: row.request_id,
     passed: row.passed,
     passedByDice: row.passed_by_dice,
+    forDm: row.for_dm,
   }
 }
 
@@ -126,6 +129,39 @@ export function requestToJson(request: RollRequest): Json {
 /** Asks the server to throw the dice. Returns the roll, which everyone at the table also receives. */
 export async function throwDice(campaignId: string, request: RollRequest): Promise<Roll> {
   const { data, error } = await db().rpc('throw_dice', { p_campaign_id: campaignId, p_roll: requestToJson(request) })
+  if (error) throw rollError(error)
+  return rowToRoll(data)
+}
+
+/** A player rolls a plain d20 for the DM, who then says what it was for. */
+export async function rollForDm(campaignId: string, characterId: string, mode: RollMode): Promise<Roll> {
+  const { data, error } = await db().rpc('roll_for_dm', {
+    p_campaign_id: campaignId,
+    p_character_id: characterId,
+    p_mode: mode,
+  })
+  if (error) throw rollError(error)
+  return rowToRoll(data)
+}
+
+/**
+ * The DM says what a roll for the DM was (its name, kind and the character's bonus), and may judge
+ * it against a DC. With no naming, the DM lets it go as it is.
+ */
+export async function nameRoll(
+  rollId: string,
+  naming: { label: string; kind: 'check' | 'save'; modifier: number; parts: RollPart[] } | null,
+  judged: { dc: number; passed: boolean } | null = null,
+): Promise<Roll> {
+  const { data, error } = await db().rpc('name_roll', {
+    p_roll_id: rollId,
+    p_label: naming?.label ?? (null as unknown as string),
+    p_kind: naming?.kind ?? (null as unknown as string),
+    p_modifier: naming?.modifier ?? (null as unknown as number),
+    p_parts: (naming?.parts ?? null) as unknown as Json,
+    p_dc: judged?.dc ?? (null as unknown as number),
+    p_passed: judged?.passed ?? (null as unknown as boolean),
+  })
   if (error) throw rollError(error)
   return rowToRoll(data)
 }

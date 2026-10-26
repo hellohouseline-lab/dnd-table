@@ -442,3 +442,19 @@ test('the builder: a hill dwarf fighter, acolyte, with the standard set, in four
   await page.getByRole('button', { name: 'Raise Strength' }).click()
   await expect(page.getByText(/Points left: 26/)).toBeVisible()
 })
+
+test('outside a fight, a player rolls a d20 for the DM, with advantage', async ({ page }) => {
+  await page.goto('#/dev/table')
+  await page.getByRole('button', { name: 'Checks', exact: true }).click()
+  const panel = page.getByRole('region', { name: 'Roll for the DM' })
+  await panel.getByRole('button', { name: 'Advantage', exact: true }).click()
+  await panel.getByRole('button', { name: 'Roll a d20 with advantage' }).click()
+  // The advantage is spent on that roll, and the dice land for everyone.
+  await expect(panel.getByRole('button', { name: 'Normal', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('status').filter({ hasText: 'A roll for the DM' })).toBeVisible({ timeout: 10_000 })
+
+  // In a fight the hand is for fighting: no Checks set.
+  await page.goto('#/dev/table/fight')
+  await expect(page.getByRole('button', { name: 'Bonus actions' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Checks', exact: true })).toHaveCount(0)
+})

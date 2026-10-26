@@ -52,6 +52,7 @@ function answer(characterId: string, rollerId: string, d20: number, modifier: nu
     requestId: conSave.id,
     passed: total >= dc,
     passedByDice: total >= dc,
+    forDm: false,
   }
 }
 

@@ -1,0 +1,7 @@
+/* Rolls players made for the DM, over the Stage screen. */
+.forDm {
+  position: fixed;
+  top: 84px;
+  right: 368px;
+  z-index: 40;
+}

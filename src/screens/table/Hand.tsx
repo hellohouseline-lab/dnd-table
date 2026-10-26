@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import type { AttackEntry, Character, FeatureEntry } from '../../rules/character.ts'
@@ -52,6 +52,8 @@ type HandProps = {
   /** A monk's unarmed strike and Flurry of Blows, a berserker's frenzy: why each can't be used now, or null. */
   bonusAttacks?: (BonusChoice & { why: string | null })[]
   onBonusAttack?: (choice: BonusChoice) => void
+  /** Outside a fight: the Checks set, a panel to roll any skill, save or ability check. */
+  checks?: ReactNode
   disabled?: boolean
   className?: string
 }
@@ -71,7 +73,7 @@ type Card = {
   play: () => void
 }
 
-type CardSet = 'weapons' | 'spells' | 'bonus'
+type CardSet = 'weapons' | 'spells' | 'bonus' | 'checks'
 
 const MOST_CARDS = 9
 
@@ -99,6 +101,7 @@ export function Hand({
   onBonusMove,
   bonusAttacks = [],
   onBonusAttack,
+  checks = null,
   disabled,
   className,
 }: HandProps) {
@@ -252,7 +255,10 @@ export function Hand({
     { key: 'spells', name: 'Spells', cards: spells ? spellCards : [] },
     { key: 'bonus', name: 'Bonus actions', cards: bonusCards },
   ]
-  const sets = all.filter((s) => s.cards.length > 0)
+  const sets = [
+    ...all.filter((s) => s.cards.length > 0),
+    ...(checks ? [{ key: 'checks' as const, name: 'Checks', cards: [] as Card[] }] : []),
+  ]
   // A caster with nothing else to play starts on their spells.
   const set = sets.find((s) => s.key === showing) ?? sets[0]
   if (!set) return null
@@ -282,7 +288,8 @@ export function Hand({
           {set.key === 'spells' && <SlotPips spellcasting={character.spellcasting} />}
         </div>
       )}
-      <div className={styles.hand} aria-label="Your hand">
+      {set.key === 'checks' && checks}
+      <div className={cx(styles.hand, set.key === 'checks' && styles.handHidden)} aria-label="Your hand">
         {cards.map((card, i) => {
           const offset = i - middle
           return (
