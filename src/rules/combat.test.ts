@@ -8,6 +8,7 @@ import {
   monsterAttack,
   monsterInitiative,
   nextTurn,
+  startingSquares,
   turnOrder,
   unknownNames,
   upNext,
@@ -132,5 +133,24 @@ describe('monster rolls', () => {
     expect(
       actionSummary({ name: 'Multiattack', desc: 'The bugbear makes two attacks. Then it rests.', damage: [] }),
     ).toBe('The bugbear makes two attacks.')
+  })
+})
+
+describe('where miniatures start a fight', () => {
+  it('fills columns of six from the given column, skipping squares already taken', () => {
+    expect(startingSquares([], 3, 1)).toEqual([
+      { x: 1, y: 1 },
+      { x: 1, y: 2 },
+      { x: 1, y: 3 },
+    ])
+    expect(startingSquares([{ x: 7, y: 1 }], 7, 7)).toEqual([
+      { x: 7, y: 2 },
+      { x: 7, y: 3 },
+      { x: 7, y: 4 },
+      { x: 7, y: 5 },
+      { x: 7, y: 6 },
+      { x: 8, y: 1 },
+      { x: 8, y: 2 },
+    ])
   })
 })

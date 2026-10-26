@@ -33,6 +33,8 @@ type BattleMapProps = {
   selectedId?: string | null
   /** Your token's reach this turn: a circle of `feet` around it. */
   reach?: { tokenId: string; feet: number } | null
+  /** Picking a target: miniatures glow, and clicking one picks it (through onSelect). */
+  targeting?: boolean
   hands?: Pointer[]
   pings?: (Pointer & { id: number })[]
   onHand?: (x: number, y: number) => void
@@ -83,6 +85,7 @@ export default function BattleMap({
   onSelect,
   selectedId = null,
   reach = null,
+  targeting = false,
   hands = [],
   pings = [],
   onHand,
@@ -223,13 +226,23 @@ export default function BattleMap({
                   }}
                   onMouseEnter={(event) => {
                     const container = event.target.getStage()?.container()
-                    if (container) container.style.cursor = token.canMove ? 'grab' : 'pointer'
+                    if (container) container.style.cursor = targeting ? 'crosshair' : token.canMove ? 'grab' : 'pointer'
                   }}
                   onMouseLeave={(event) => {
                     const container = event.target.getStage()?.container()
                     if (container) container.style.cursor = ''
                   }}
                 >
+                  {targeting && !token.acting && (
+                    <Circle
+                      radius={radius + size * 0.14}
+                      stroke="#e07b42"
+                      strokeWidth={2 / scale}
+                      dash={[6 / scale, 4 / scale]}
+                      shadowColor="#e07b42"
+                      shadowBlur={10}
+                    />
+                  )}
                   {(token.acting || token.id === selectedId) && (
                     <Circle
                       radius={radius + size * 0.08}

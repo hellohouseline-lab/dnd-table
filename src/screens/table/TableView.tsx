@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { aOrAn } from '../../components/words.ts'
@@ -26,7 +26,7 @@ import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
 import { abilityModifier } from '../../rules/maths/core.ts'
 import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
-import type { Character, FeatureEntry } from '../../rules/character.ts'
+import type { AttackEntry, Character, FeatureEntry } from '../../rules/character.ts'
 import { isSingleD20, type RollMode, type RollRequest } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import {
@@ -45,10 +45,13 @@ import type { SheetRolls } from '../sheet/SheetTab.tsx'
 import { requestChips, type CameraChip } from '../rolls/requestStatus.ts'
 import { RollPrompt, RollResult } from '../rolls/RollPrompt.tsx'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
+import type { CombatEvent } from '../../live/combat.ts'
+import { attackMode, attacksLeft, attacksPerAction, movementLeft } from '../../rules/turn.ts'
 import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
-import { cameraTurn, fightRows, type CameraTurn } from '../fight/fightRows.ts'
-import { InitiativePrompt, InitiativeRibbon, InspectCard, ThisTurn, TurnBanner } from '../fight/PlayerCombat.tsx'
+import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/fightRows.ts'
+import { InitiativePrompt, InitiativeRibbon, InspectCard, TurnBanner, YourTurn } from '../fight/PlayerCombat.tsx'
+import { CombatFeed } from '../fight/TurnParts.tsx'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
 import styles from './TableView.module.css'
@@ -83,6 +86,10 @@ export type PlayerCombatProps = {
   fight: FightControls['fight']
   rollInitiative: FightControls['rollInitiative']
   endTurn: () => void
+  /** What has happened in the fight. */
+  events: CombatEvent[]
+  attack: FightControls['attack']
+  act: FightControls['act']
   /** The battle map on stage, or null when the stage shows a picture. */
   map: Asset | null
   tokens: TokenControls
@@ -125,6 +132,9 @@ export function TableView({
   combat,
 }: TableViewProps) {
   const [inspected, setInspected] = useState<string | null>(null)
+  // The attack you're about to make, while you pick its target.
+  const [aiming, setAiming] = useState<AttackEntry | null>(null)
+  const [fightProblem, setFightProblem] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName | null>(null)
   const [mode, setMode] = useState<RollMode>('normal')
   const [secret, setSecret] = useState(false)
@@ -158,21 +168,49 @@ export function TableView({
       badges[row.character.ownerId] = String(row.combatant.initiative)
   }
 
-  // How far you've moved this turn: from where your token stood when your turn began.
+  // Your turn, as the server keeps it: movement left, and attacks left from your action.
   const tokens = combat?.tokens.tokens ?? []
   const myToken = tokens.find((t) => t.characterId === character.id)
-  const turnKey = myTurn && fight ? `${fight.encounter.id}:${fight.encounter.round}` : null
-  const [turnStart, setTurnStart] = useState<{ key: string; x: number; y: number } | null>(null)
-  if (turnKey && myToken && turnStart?.key !== turnKey) setTurnStart({ key: turnKey, x: myToken.x, y: myToken.y })
-  const moved = turnStart && turnStart.key === turnKey && myToken ? feetBetween(turnStart, myToken) : 0
-  const feetLeft = Math.max(0, character.speed - moved)
+  const feetLeft = mine ? movementLeft(mine.turn, character.speed) : character.speed
+  const perAction = attacksPerAction(character.className, character.level)
   const mapView = combat
     ? mapTokens(
         tokens,
         { characters, combatants: fight?.combatants ?? [], secrets: [], currentId: fight?.encounter.currentId ?? null },
-        { userId: me.user_id, isDm: false, playersMove: combat.playersMove },
+        { userId: me.user_id, isDm: false, playersMove: combat.playersMove, moveNow: !mine || myTurn },
       )
     : []
+  const nameOf = (id: string | null) => rows.find((r) => r.combatant.id === id)?.name ?? 'Someone'
+
+  // Attacking in a fight: pick the attack, then its target; the server does the rest.
+  function attackWith(attack: AttackEntry) {
+    setFightProblem(null)
+    if (!fight || !mine) return roll(attackRoll(character, attack, choices))
+    if (!myTurn) return setFightProblem('Wait for your turn to attack.')
+    if (attacksLeft(mine.turn, perAction) === 0) return setFightProblem('You have used your action this turn.')
+    setAiming(attack)
+  }
+
+  function pickTarget(row: FightRow) {
+    if (!aiming || !mine || !combat) return
+    const targetToken = tokens.find((t) =>
+      row.combatant.characterId ? t.characterId === row.combatant.characterId : t.combatantId === row.combatant.id,
+    )
+    const feet = myToken && targetToken ? feetBetween(myToken, targetToken) : null
+    const target = { conditions: row.character?.conditions ?? row.combatant.conditions, dodging: row.combatant.turn.dodging }
+    const request = attackRoll(character, aiming, { ...choices, mode: attackMode(mode, target, feet), secret: false })
+    setAiming(null)
+    setMode('normal')
+    void table.rollWith(() => combat.attack(mine, row.combatant, request))
+  }
+
+  // Escape puts the attack away again.
+  useEffect(() => {
+    if (!aiming) return
+    const cancel = (event: KeyboardEvent) => event.key === 'Escape' && setAiming(null)
+    window.addEventListener('keydown', cancel)
+    return () => window.removeEventListener('keydown', cancel)
+  }, [aiming])
   const inspectedToken = tokens.find((t) => t.id === inspected)
   const inspectedRow = inspectedToken
     ? (rows.find((r) =>
@@ -203,7 +241,7 @@ export function TableView({
     save: (ability) => roll(savingThrow(character, ability, choices)),
     skill: (index) => roll(skillCheck(character, index, choices)),
     initiative: () => roll(initiativeRoll(character, choices)),
-    attack: (attack) => roll(attackRoll(character, attack, choices)),
+    attack: attackWith,
     hitDie: () => void spendHitDie(),
     disabled: table.rolling,
   }
@@ -251,12 +289,22 @@ export function TableView({
               map={combat.map}
               tokens={mapView}
               selectedId={inspected}
-              onSelect={setInspected}
+              onSelect={(id) => {
+                const token = tokens.find((t) => t.id === id)
+                const row = token
+                  ? rows.find((r) =>
+                      token.characterId ? r.combatant.characterId === token.characterId : r.combatant.id === token.combatantId,
+                    )
+                  : undefined
+                if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
+                else setInspected(id)
+              }}
               onMove={(id, x, y) => {
                 const token = tokens.find((t) => t.id === id)
                 if (token) combat.tokens.move(token, x, y)
               }}
               reach={myTurn && myToken ? { tokenId: myToken.id, feet: feetLeft } : null}
+              targeting={aiming !== null}
               hands={combat.pointers.hands}
               pings={combat.pointers.pings}
               onHand={combat.pointers.sendHand}
@@ -280,7 +328,25 @@ export function TableView({
         {fight && (
           <TurnBanner round={fight.encounter.round} mine={myTurn} acting={acting && !myTurn ? acting.name : null} />
         )}
-        {fight && <InitiativeRibbon rows={rows} />}
+        {fight && (
+          <InitiativeRibbon
+            rows={rows}
+            picking={
+              aiming ? { canPick: (row) => row.combatant.id !== mine?.id, onPick: (row) => pickTarget(row) } : null
+            }
+          />
+        )}
+        {aiming && (
+          <div className={styles.aiming} role="status">
+            Pick a target for {aiming.name || 'your attack'}: click a miniature or a name above.
+            <button type="button" className={styles.aimingCancel} onClick={() => setAiming(null)}>
+              Cancel
+            </button>
+          </div>
+        )}
+        {fight && combat && combat.events.length > 0 && (
+          <CombatFeed className={styles.feed} events={combat.events} nameOf={nameOf} youId={mine?.id} limit={3} />
+        )}
         {audio && <NowPlaying audio={audio} />}
       </div>
       {inspectedRow && (
@@ -292,7 +358,7 @@ export function TableView({
       <Hand
         className={styles.hand}
         character={character}
-        onAttack={rolls.attack}
+        onAttack={attackWith}
         onUseFeature={spendFeature}
         disabled={table.rolling}
       />
@@ -349,13 +415,15 @@ export function TableView({
           </div>
         </section>
 
-        {fight && mine && (
-          <ThisTurn
-            key={turnKey ?? 'waiting'}
+        {fight && mine && combat && (
+          <YourTurn
+            turn={mine.turn}
             speed={character.speed}
-            feetLeft={feetLeft}
+            perAction={perAction}
             myTurn={myTurn}
-            onEndTurn={() => combat?.endTurn()}
+            started={fight.encounter.currentId !== null}
+            onAct={(what) => combat.act(mine, what)}
+            onEndTurn={combat.endTurn}
           />
         )}
 
@@ -413,6 +481,7 @@ export function TableView({
         </a>
         {saveError && <Notice tone="error">{saveError}</Notice>}
         {table.error && <Notice tone="error">{table.error}</Notice>}
+        {fightProblem && <Notice tone="error">{fightProblem}</Notice>}
       </div>
 
       <CameraColumn

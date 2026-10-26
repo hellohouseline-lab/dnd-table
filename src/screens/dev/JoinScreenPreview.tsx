@@ -7,7 +7,9 @@ import { localRoll } from '../../dice/localRoll.ts'
 import { parseDiceStyle, type DiceStyle } from '../../dice/style.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import { newBuild, type Character } from '../../rules/character.ts'
+import { feetBetween } from '../../rules/combat.ts'
 import type { RollRequest } from '../../rules/dice.ts'
+import { movementLeft } from '../../rules/turn.ts'
 import { CampaignView } from '../campaign/CampaignScreen.tsx'
 import { CharacterForm } from '../character/CharacterForm.tsx'
 import { Page } from '../../components/Page.tsx'
@@ -62,17 +64,28 @@ export function TablePreview({ asked = false, fighting = false }: { asked?: bool
   const asking = usePreviewAsking(sampleCharacters, { start: start.request, startAnswers: start.answers })
   // #/dev/table/fight: Thorin's turn against two goblins on a made-up battle map.
   const [fightStart] = useState(() => (fighting ? sampleFight(sampleCharacters) : null))
-  const fight = usePreviewFight(fightStart)
+  const update = (id: string, patch: TrackerPatch) =>
+    setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
+  const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
   const [map] = useState(() => (fighting ? previewMap() : null))
-  const tokens = usePreviewTokens(map?.id ?? null, map ? previewMapTokens(map.id, fightStart) : [])
+  // Moves follow the server's rule: on your turn, as far as your movement left.
+  const tokens = usePreviewTokens(map?.id ?? null, map ? previewMapTokens(map.id, fightStart) : [], (token, x, y) => {
+    const now = fight.fight
+    const who = now?.combatants.find((c) => c.characterId === token.characterId)
+    if (!now || !who) return true
+    if (now.encounter.currentId !== who.id) return false
+    const character = characters.find((c) => c.id === who.characterId)
+    const feet = feetBetween(token, { x, y })
+    if (feet > movementLeft(who.turn, character?.speed ?? who.speed)) return false
+    fight.walk(who.id, feet)
+    return true
+  })
   // The preview throws dice in the browser; there's no database to ask.
   const thrower = useCallback(
     async (request: RollRequest) =>
       judgePreview(localRoll(request, { campaignId: 'preview', rollerId: 'p1', style: diceStyle }), request, 15),
     [diceStyle],
   )
-  const update = (id: string, patch: TrackerPatch) =>
-    setCharacters((list) => list.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   return (
     <SignedInAs userId="p1">
       <TableView
@@ -93,6 +106,9 @@ export function TablePreview({ asked = false, fighting = false }: { asked?: bool
                 fight: fight.fight,
                 rollInitiative: fight.rollInitiative,
                 endTurn: fight.next,
+                events: fight.events,
+                attack: fight.attack,
+                act: fight.act,
                 map,
                 tokens,
                 playersMove: true,

@@ -4,6 +4,7 @@
 import type { Combatant, CombatantSecret } from '../../live/combat.ts'
 import type { Character } from '../../rules/character.ts'
 import { healthState, turnOrder, upNext, type HealthState } from '../../rules/combat.ts'
+import { attacksPerAction } from '../../rules/turn.ts'
 
 export type FightRow = {
   combatant: Combatant
@@ -65,4 +66,11 @@ export function cameraTurn(rows: FightRow[], dmId: string): CameraTurn {
     acting: whose(rows.find((row) => row.status === 'acting')),
     next: whose(rows.find((row) => row.status === 'next')),
   }
+}
+
+/** Attacks one Attack action gives this combatant, and its speed: from the sheet for characters. */
+export function turnLimits(row: FightRow): { perAction: number; speed: number } {
+  return row.character
+    ? { perAction: attacksPerAction(row.character.className, row.character.level), speed: row.character.speed }
+    : { perAction: 1, speed: row.combatant.speed }
 }

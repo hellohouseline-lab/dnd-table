@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon } from '../../components/Icon.tsx'
 import type { Character } from '../../rules/character.ts'
@@ -6,27 +5,45 @@ import { HEALTH_WORDS } from '../../rules/combat.ts'
 import type { RollMode } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import { initiativeRoll } from '../../rules/rolls.ts'
+import { actionFree, attacksLeft, movementLeft, type TurnRecord } from '../../rules/turn.ts'
+import type { TurnAction } from '../../live/combat.ts'
 import type { FightRow } from './fightRows.ts'
 import styles from './PlayerCombat.module.css'
 
+type RibbonProps = {
+  rows: FightRow[]
+  /** While picking a target: who can be picked, and what happens when one is. */
+  picking?: { canPick: (row: FightRow) => boolean; onPick: (row: FightRow) => void } | null
+}
+
 /** The initiative ribbon along the top in design 05: everyone in turn order, whoever's acting lit. */
-export function InitiativeRibbon({ rows }: { rows: FightRow[] }) {
+export function InitiativeRibbon({ rows, picking = null }: RibbonProps) {
   return (
     <ol className={styles.ribbon} aria-label="Turn order">
-      {rows.map((row) => (
-        <li
-          key={row.combatant.id}
-          className={cx(
-            styles.pill,
-            row.combatant.kind === 'monster' && styles.pillMonster,
-            row.status === 'acting' && styles.pillActing,
-            row.health === 'down' && styles.pillDown,
-          )}
-          aria-current={row.status === 'acting' ? 'true' : undefined}
-        >
-          <span className={styles.pillInit}>{row.combatant.initiative ?? '?'}</span> {row.name}
-        </li>
-      ))}
+      {rows.map((row) => {
+        const className = cx(
+          styles.pill,
+          row.combatant.kind === 'monster' && styles.pillMonster,
+          row.status === 'acting' && styles.pillActing,
+          row.health === 'down' && styles.pillDown,
+        )
+        const label = (
+          <>
+            <span className={styles.pillInit}>{row.combatant.initiative ?? '?'}</span> {row.name}
+          </>
+        )
+        return (
+          <li key={row.combatant.id} aria-current={row.status === 'acting' ? 'true' : undefined}>
+            {picking && picking.canPick(row) ? (
+              <button type="button" className={cx(className, styles.pillPick)} onClick={() => picking.onPick(row)}>
+                {label}
+              </button>
+            ) : (
+              <span className={className}>{label}</span>
+            )}
+          </li>
+        )
+      })}
     </ol>
   )
 }
@@ -41,42 +58,78 @@ export function TurnBanner({ round, mine, acting }: { round: number; mine: boole
   )
 }
 
-type ThisTurnProps = {
+type YourTurnProps = {
+  turn: TurnRecord
+  /** Your speed from your sheet. */
   speed: number
-  feetLeft: number
+  /** Attacks your Attack action gives (Extra Attack). */
+  perAction: number
   myTurn: boolean
+  /** Everyone has initiative and turns have begun. */
+  started: boolean
+  onAct: (what: TurnAction) => void
   onEndTurn: () => void
 }
 
-type Spent = { action: boolean; bonus: boolean; reaction: boolean }
-
 /**
- * "This turn" from design 05: what you've used of your action, bonus action and reaction (a reminder
- * you tick yourself), how far you can still move, and End turn. Reset by its parent on each new turn.
+ * "This turn" from design 05, kept by the server: your action (and attacks left), bonus action,
+ * reaction and movement, Dash, Disengage and Dodge, and End turn. It all comes back at the start of
+ * your next turn. Bonus action and reaction are clicked when you use one for a spell or feature.
  */
-export function ThisTurn({ speed, feetLeft, myTurn, onEndTurn }: ThisTurnProps) {
-  const [spent, setSpent] = useState<Spent>({ action: false, bonus: false, reaction: false })
-  const rows: { key: keyof Spent; label: string; tone: string }[] = [
-    { key: 'action', label: 'Action', tone: styles.gold },
-    { key: 'bonus', label: 'Bonus action', tone: styles.blue },
-    { key: 'reaction', label: 'Reaction', tone: styles.grey },
+export function YourTurn({ turn, speed, perAction, myTurn, started, onAct, onEndTurn }: YourTurnProps) {
+  const attacks = attacksLeft(turn, perAction)
+  const free = actionFree(turn)
+  const action =
+    turn.attacksMade > 0 && attacks > 0
+      ? `${attacks} attack${attacks === 1 ? '' : 's'} left`
+      : turn.actionUsed
+        ? 'Used'
+        : 'Ready'
+  const rows: { key: 'bonus' | 'reaction'; label: string; tone: string; used: boolean; can: boolean; hint: string }[] = [
+    {
+      key: 'bonus',
+      label: 'Bonus action',
+      tone: styles.blue,
+      used: turn.bonusUsed,
+      can: myTurn,
+      hint: 'Click when you use your bonus action, for a spell or feature',
+    },
+    {
+      key: 'reaction',
+      label: 'Reaction',
+      tone: styles.grey,
+      used: turn.reactionUsed,
+      can: started,
+      hint: 'Click when you use your reaction, such as an opportunity attack',
+    },
   ]
+  const moves: [TurnAction, string, string][] = [
+    ['dash', 'Dash', 'Spend your action to move your speed again'],
+    ['disengage', 'Disengage', 'Spend your action so moving away draws no opportunity attacks'],
+    ['dodge', 'Dodge', 'Spend your action: attacks against you have disadvantage until your next turn'],
+  ]
+  const title = myTurn ? 'Your turn' : started ? 'Waiting for your turn' : 'Waiting for everyone’s initiative'
   return (
     <section className={styles.thisTurn} aria-label="This turn">
-      <div className={styles.thisTurnTitle}>{myTurn ? 'This turn' : 'Waiting for your turn'}</div>
+      <div className={styles.thisTurnTitle}>{title}</div>
       <ul className={styles.turnRows}>
+        <li className={styles.turnRow}>
+          <span className={cx(styles.dot, styles.gold, turn.actionUsed && attacks === 0 && styles.dotUsed)} />
+          <span className={styles.turnLabel}>Action</span>
+          <span className={styles.turnState}>{action}</span>
+        </li>
         {rows.map((row) => (
           <li key={row.key}>
             <button
               type="button"
               className={styles.turnRow}
-              aria-pressed={spent[row.key]}
-              title="Click when you've used it"
-              onClick={() => setSpent({ ...spent, [row.key]: !spent[row.key] })}
+              title={row.hint}
+              disabled={row.used || !row.can}
+              onClick={() => onAct(row.key)}
             >
-              <span className={cx(styles.dot, row.tone, spent[row.key] && styles.dotUsed)} />
+              <span className={cx(styles.dot, row.tone, row.used && styles.dotUsed)} />
               <span className={styles.turnLabel}>{row.label}</span>
-              <span className={styles.turnState}>{spent[row.key] ? 'Used' : 'Ready'}</span>
+              <span className={styles.turnState}>{row.used ? 'Used' : 'Ready'}</span>
             </button>
           </li>
         ))}
@@ -84,10 +137,24 @@ export function ThisTurn({ speed, feetLeft, myTurn, onEndTurn }: ThisTurnProps) 
           <span className={cx(styles.dot, styles.ring)} />
           <span className={styles.turnLabel}>Movement</span>
           <span className={styles.turnState}>
-            {myTurn ? feetLeft : speed} of {speed} ft
+            {movementLeft(turn, speed)} of {speed + turn.extraFeet} ft
           </span>
         </li>
       </ul>
+      <div className={styles.moves} role="group" aria-label="Other actions">
+        {moves.map(([what, label, hint]) => (
+          <button
+            key={what}
+            type="button"
+            className={styles.move}
+            title={hint}
+            disabled={!myTurn || !free}
+            onClick={() => onAct(what)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <button type="button" className={styles.endTurn} disabled={!myTurn} onClick={onEndTurn}>
         End turn
       </button>

@@ -6,7 +6,13 @@ import type { Character } from '../rules/character.ts'
 import { initials } from '../rules/combat.ts'
 import type { MapToken } from './BattleMap.tsx'
 
-type Viewer = { userId: string; isDm: boolean; playersMove: boolean }
+type Viewer = {
+  userId: string
+  isDm: boolean
+  playersMove: boolean
+  /** In a fight, players move only on their own turn. */
+  moveNow?: boolean
+}
 
 type People = {
   characters: Character[]
@@ -32,7 +38,7 @@ export function mapTokens(tokens: Token[], people: People, viewer: Viewer): MapT
           tone: mine ? 'you' : 'party',
           hidden: token.hidden,
           acting: Boolean(combatant && combatant.id === people.currentId),
-          canMove: viewer.isDm || (mine && viewer.playersMove),
+          canMove: viewer.isDm || (mine && viewer.playersMove && (viewer.moveNow ?? true)),
         },
       ]
     }

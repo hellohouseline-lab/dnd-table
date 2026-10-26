@@ -15,6 +15,11 @@ import {
   addMonsters,
   endFight,
   getActiveFight,
+  listEvents,
+  resolveAttack,
+  rowToEvent,
+  spendAction,
+  undoEvent,
   listTokens,
   moveToken,
   placeTokens,
@@ -31,7 +36,9 @@ import {
   updateCombatant,
   type Combatant,
   type CombatantSecret,
+  type CombatEvent,
   type FightState,
+  type TurnAction,
   type NewToken,
   type Token,
 } from './combat.ts'
@@ -44,10 +51,14 @@ export type FightControls = {
   fight: Fight | null
   status: 'loading' | 'ready'
   error: string | null
-  /** DM: starts a fight with these characters. */
-  start: (characters: Character[]) => Promise<Fight | null>
-  /** DM: adds monsters of one kind, each rolling initiative behind the screen. */
-  addMonsters: (monster: SrdMonster, count: number) => Promise<{ combatants: Combatant[]; rolls: Roll[] } | null>
+  /** DM: starts a fight with these characters, with this battle map on stage (or none). */
+  start: (characters: Character[], mapId: string | null) => Promise<Fight | null>
+  /** DM: adds monsters of one kind, each rolling initiative behind the screen; `known` shows players their names. */
+  addMonsters: (
+    monster: SrdMonster,
+    count: number,
+    known?: boolean,
+  ) => Promise<{ combatants: Combatant[]; rolls: Roll[] } | null>
   /** Rolls initiative for a combatant (players their own; the DM anyone). */
   rollInitiative: (combatant: Combatant, request: RollRequest) => Promise<Roll | null>
   next: () => void
@@ -56,6 +67,17 @@ export type FightControls = {
   setConditions: (combatant: Combatant, conditions: string[]) => void
   remove: (combatant: Combatant) => void
   end: () => void
+  /** What has happened in this fight, oldest first. */
+  events: CombatEvent[]
+  /**
+   * Settles an attack on the server against the target's armour class and takes the damage off.
+   * Resolves with the roll, to be shown with the dice; throws in plain words if it's refused.
+   */
+  attack: (attacker: Combatant, target: Combatant, request: RollRequest) => Promise<Roll>
+  /** Spends part of a turn: Dash, Disengage, Dodge, or the action, bonus action or reaction. */
+  act: (combatant: Combatant, what: TurnAction) => void
+  /** DM: takes back the newest thing that happened. */
+  undo: () => void
 }
 
 /** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
@@ -68,6 +90,7 @@ function withRow<T extends { id: string }>(list: T[], item: T): T[] {
 /** The fight at this table, kept up to date live, with what the DM can do. */
 export function useFight(campaignId: string, userId: string): FightControls {
   const [fight, setFight] = useState<Fight | null>(null)
+  const [events, setEvents] = useState<CombatEvent[]>([])
   const [status, setStatus] = useState<FightControls['status']>('loading')
   const [error, setError] = useState<string | null>(null)
   const current = useRef<Fight | null>(null)
@@ -87,6 +110,13 @@ export function useFight(campaignId: string, userId: string): FightControls {
         current.current = loaded
         setFight(loaded)
         setStatus('ready')
+        if (!loaded) setEvents([])
+        else {
+          listEvents(loaded.encounter.id).then(
+            (list) => load === loads.current && setEvents(list),
+            () => undefined,
+          )
+        }
       },
       (caught: unknown) => {
         if (load !== loads.current) return
@@ -150,6 +180,20 @@ export function useFight(campaignId: string, userId: string): FightControls {
   )
   useTableChanges(campaignId, userId, 'combatants', onCombatant)
 
+  // The feed. Each event changed someone's hit points or turn too (and, for the DM, a monster's
+  // secret hit points, which aren't sent live), so the whole fight is loaded again once things settle.
+  const onEvent = useCallback(
+    (change: RowChange<'combat_events'>) => {
+      if (change.type === 'delete') return
+      const event = rowToEvent(change.row)
+      if (current.current?.encounter.id !== event.encounterId) return
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reloadSoon()
+    },
+    [reloadSoon],
+  )
+  useTableChanges(campaignId, userId, 'combat_events', onEvent)
+
   const attempt = useCallback(async <T>(work: () => Promise<T>): Promise<T | null> => {
     setError(null)
     try {
@@ -168,11 +212,12 @@ export function useFight(campaignId: string, userId: string): FightControls {
   }, [])
 
   const start = useCallback(
-    async (characters: Character[]) => {
-      const started = await attempt(() => startFight(campaignId, characters))
+    async (characters: Character[], mapId: string | null) => {
+      const started = await attempt(() => startFight(campaignId, characters, mapId))
       if (started) {
         current.current = started
         setFight(started)
+        setEvents([])
       }
       return started
     },
@@ -180,10 +225,10 @@ export function useFight(campaignId: string, userId: string): FightControls {
   )
 
   const addMonstersTo = useCallback(
-    async (monster: SrdMonster, count: number) => {
+    async (monster: SrdMonster, count: number, known = false) => {
       const now = current.current
       if (!now) return null
-      const added = await attempt(() => addMonsters(now.encounter, monster, count, now))
+      const added = await attempt(() => addMonsters(now.encounter, monster, count, now, known))
       if (added) {
         patchLocal((f) => ({
           ...f,
@@ -278,10 +323,41 @@ export function useFight(campaignId: string, userId: string): FightControls {
     void attempt(() => endFight(now.encounter, now.combatants))
   }, [attempt])
 
+  const attack = useCallback(
+    async (attacker: Combatant, target: Combatant, request: RollRequest) => {
+      setError(null)
+      const { roll, event } = await resolveAttack(attacker.id, target.id, request)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
+  const act = useCallback(
+    (combatant: Combatant, what: TurnAction) => {
+      void attempt(() => spendAction(combatant.id, what)).then((event) => {
+        if (event) setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+        reload()
+      })
+    },
+    [attempt, reload],
+  )
+
+  const undo = useCallback(() => {
+    const newest = [...events].reverse().find((e) => !e.undone)
+    if (!newest) return
+    void attempt(() => undoEvent(newest.id)).then(() => reload())
+  }, [attempt, events, reload])
+
   return {
     fight,
     status,
     error,
+    events,
+    attack,
+    act,
+    undo,
     start,
     addMonsters: addMonstersTo,
     rollInitiative: rollFor,
