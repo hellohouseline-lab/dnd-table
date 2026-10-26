@@ -4,6 +4,7 @@
 import type { Effect } from '../rules/features.ts'
 import { ABILITIES, isAbility, type Ability } from '../rules/abilities.ts'
 import {
+  EMPTY_STORY,
   EMPTY_WALLET,
   NO_SPELLCASTING,
   type AttackEntry,
@@ -13,6 +14,7 @@ import {
   type InventoryItem,
   type SpellEntry,
   type Spellcasting,
+  type Story,
   type Wallet,
 } from '../rules/character.ts'
 import type { Json, Tables, TablesUpdate } from './database.types.ts'
@@ -107,6 +109,14 @@ export function parseWallet(value: Json): Wallet {
   return { cp: coin('cp'), sp: coin('sp'), ep: coin('ep'), gp: coin('gp'), pp: coin('pp') }
 }
 
+/** Who they are: each part as text, up to 2000 characters. */
+export function parseStory(value: Json): Story {
+  if (!isObject(value)) return EMPTY_STORY
+  return Object.fromEntries(
+    (Object.keys(EMPTY_STORY) as (keyof Story)[]).map((key) => [key, str(value[key]).slice(0, 2000)]),
+  ) as Story
+}
+
 export function parseSpellcasting(value: Json): Spellcasting {
   if (!isObject(value)) return NO_SPELLCASTING
   const spells: SpellEntry[] = Array.isArray(value.spells)
@@ -164,6 +174,7 @@ export function rowToCharacter(row: CharacterRow): Character {
     spellcasting: parseSpellcasting(row.spellcasting),
     inventory: parseInventory(row.inventory),
     wallet: parseWallet(row.wallet),
+    story: parseStory(row.story),
     deathSaveSuccesses: row.death_save_successes,
     deathSaveFailures: row.death_save_failures,
     stable: row.stable,
@@ -208,6 +219,7 @@ export function buildToRow(build: CharacterBuild): CharacterRowPatch {
     spellcasting: build.spellcasting as unknown as Json,
     inventory: build.inventory as unknown as Json,
     wallet: build.wallet as unknown as Json,
+    story: build.story as unknown as Json,
   }
 }
 
@@ -235,6 +247,7 @@ export type TrackerPatch = Partial<
     | 'portraitPath'
     | 'inventory'
     | 'wallet'
+    | 'story'
     | 'armourClass'
   >
 >
@@ -261,6 +274,7 @@ export function trackersToRow(patch: TrackerPatch): CharacterRowPatch {
   if (patch.portraitPath !== undefined) row.portrait_path = patch.portraitPath
   if (patch.inventory !== undefined) row.inventory = patch.inventory as unknown as Json
   if (patch.wallet !== undefined) row.wallet = patch.wallet as unknown as Json
+  if (patch.story !== undefined) row.story = patch.story as unknown as Json
   if (patch.armourClass !== undefined) row.armour_class = patch.armourClass
   return row
 }

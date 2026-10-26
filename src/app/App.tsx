@@ -79,6 +79,13 @@ const ROUTES: Route[] = [
   },
   {
     pattern: '/c/:campaignId/character/new',
+    title: `Make your character · ${APP_NAME}`,
+    signedIn: true,
+    render: ({ campaignId }) => <BuilderScreen key={campaignId} campaignId={campaignId} />,
+  },
+  {
+    // The plain form, for anyone who'd rather type their sheet in.
+    pattern: '/c/:campaignId/character/new/form',
     title: `Your character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <CharacterEditorScreen key={campaignId} campaignId={campaignId} />,
