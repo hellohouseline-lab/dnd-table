@@ -58,8 +58,40 @@ const NATURE: {
  * cards for the DM.
  */
 export function WhoStep({ draft, onDraft, background, race }: WhoStepProps) {
-  const story = draft.story
-  const set = (key: keyof Story, value: string) => onDraft({ ...draft, story: { ...story, [key]: value } })
+  return (
+    <StoryFields
+      name={draft.name}
+      onName={(name) => onDraft({ ...draft, name })}
+      story={draft.story}
+      onStory={(story) => onDraft({ ...draft, story })}
+      background={background}
+      race={race}
+    />
+  )
+}
+
+type StoryFieldsProps = {
+  name: string
+  onName: (name: string) => void
+  story: Story
+  onStory: (story: Story) => void
+  background: SrdBackground | null
+  race: { index: string | null; name: string } | null
+  /** The heading: "Who are you?" in the builder. */
+  title?: string
+}
+
+/** Name, alignment, looks (height and weight pickers) and nature: the builder's step, and Change your character. */
+export function StoryFields({
+  name,
+  onName,
+  story,
+  onStory,
+  background,
+  race,
+  title = 'Who are you?',
+}: StoryFieldsProps) {
+  const set = (key: keyof Story, value: string) => onStory({ ...story, [key]: value })
   const [metric, setMetric] = useState(true)
   const typical = race ? typicalWords(race.index, race.name) : null
   const inches = parseHeight(story.height)
@@ -68,7 +100,7 @@ export function WhoStep({ draft, onDraft, background, race }: WhoStepProps) {
   return (
     <div className={styles.step}>
       <div className={styles.stepIntro}>
-        <h2 className={styles.stepTitle}>Who are you?</h2>
+        <h2 className={styles.stepTitle}>{title}</h2>
         <p className={styles.stepLead}>
           Only your name is needed. The rest helps you play your character and gives the DM threads to pull.
         </p>
@@ -78,10 +110,10 @@ export function WhoStep({ draft, onDraft, background, race }: WhoStepProps) {
         <label className={styles.field}>
           <span className={styles.fieldLabel}>Your character&rsquo;s name</span>
           <input
-            value={draft.name}
+            value={name}
             maxLength={60}
             placeholder="Bruenna Stonehelm"
-            onChange={(event) => onDraft({ ...draft, name: event.target.value })}
+            onChange={(event) => onName(event.target.value)}
           />
         </label>
 
