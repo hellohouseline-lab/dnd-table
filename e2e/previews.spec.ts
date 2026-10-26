@@ -66,7 +66,7 @@ test('the DM uploads a picture, puts it on stage and plays music', async ({ page
     .locator('input[type=file]')
     .setInputFiles({ name: 'merry-inn.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from([0]) })
   await music.getByRole('button', { name: 'Merry inn', exact: true }).click()
-  await expect(music).toContainText('Tavern · stream-safe')
+  await expect(music).toContainText('Merry inn')
   await expect(page.getByRole('button', { name: 'Pause the music' })).toBeVisible()
 })
 
@@ -253,6 +253,10 @@ test('a wizard puts Darkness on the map and concentrates on it', async ({ page }
   await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.5)
   await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeVisible()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You cast Darkness.')
+  // Its timer: 10 minutes.
+  await expect(page.getByRole('region', { name: 'At a glance' })).toContainText(
+    'Darkness (concentration) · about 10 minutes left',
+  )
   await page.getByRole('button', { name: 'Lost it' }).click()
   await expect(page.getByText(/Concentrating:\s*Darkness/)).toBeHidden()
 })
@@ -299,7 +303,8 @@ test('hovering on a card for a few seconds shows what it does', async ({ page })
   const info = page.getByRole('tooltip', { name: 'About Longsword' })
   await expect(info).toBeHidden()
   await expect(info).toBeVisible({ timeout: 5000 })
-  await expect(info).toContainText('+5 to hit')
+  await expect(info.getByRole('term').filter({ hasText: 'To hit' })).toBeVisible()
+  await expect(info).toContainText('Martial melee weapon')
   await page.mouse.move(5, 5)
   await expect(info).toBeHidden()
 })
@@ -307,13 +312,17 @@ test('hovering on a card for a few seconds shows what it does', async ({ page })
 test('the DM asks the party for a Perception check in one click', async ({ page }) => {
   await page.goto('#/dev/dm/party')
   const quick = page.getByRole('region', { name: 'Quick checks' })
-  await quick.getByRole('button', { name: 'Perception', exact: true }).click()
   await quick.getByRole('button', { name: 'Hard 20' }).click()
   await page.getByRole('checkbox', { name: 'Elowen rolls the quick check' }).check()
-  await quick.getByRole('button', { name: 'Perception: ask 2 players' }).click()
+  await expect(quick).toContainText('ask the 2 players ticked')
+  await quick.getByRole('button', { name: 'Perception', exact: true }).click()
   const results = page.getByRole('region', { name: 'Perception check' })
   await expect(results).toContainText('Needed 20 or more')
   await expect(results).toContainText('everyone has rolled', { timeout: 10_000 })
+  // Every saving throw is in its own section.
+  await page.keyboard.press('Escape')
+  await quick.getByText('Saving throws').click()
+  await expect(quick.getByRole('button', { name: 'Charisma save' })).toBeVisible()
 })
 
 test('a fighter has a Bonus actions set, in blue, that greys out once the bonus action is used', async ({ page }) => {
@@ -324,4 +333,31 @@ test('a fighter has a Bonus actions set, in blue, that greys out once the bonus 
   await hand.getByRole('button', { name: /Second Wind/ }).click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText('You use Second Wind.')
   await expect(hand.getByRole('button', { name: /Second Wind/ })).toBeDisabled()
+})
+
+test('after attacking with one light weapon, the player is offered an off-hand attack with the other', async ({
+  page,
+}) => {
+  await page.goto('#/dev/table/dual')
+  const ready = page.getByRole('region', { name: 'Bonus action ready' })
+  await expect(ready).toHaveCount(0)
+  await page
+    .getByLabel('Your hand')
+    .getByRole('button', { name: /Shortsword/ })
+    .click()
+  await page
+    .getByRole('list', { name: 'Turn order' })
+    .getByRole('button', { name: /Goblin A/ })
+    .click()
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText(/You (hit|miss) Goblin A with Shortsword/)
+  await expect(ready).toContainText('You attacked, so you can also use your bonus action')
+  await ready.getByRole('button', { name: /Off-hand attack: Dagger/ }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Off-hand attack with Dagger' })).toBeVisible()
+  await page
+    .getByRole('list', { name: 'Turn order' })
+    .getByRole('button', { name: /Goblin A/ })
+    .click()
+  await expect(feed).toContainText(/Dagger/)
+  await expect(ready).toHaveCount(0)
 })

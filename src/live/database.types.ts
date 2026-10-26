@@ -1182,6 +1182,15 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      bonus_attack: {
+        Args: {
+          p_attacker_id: string
+          p_kind: string
+          p_roll: Json
+          p_target_id: string
+        }
+        Returns: Json
+      }
       cast_spell: {
         Args: {
           p_area: Json

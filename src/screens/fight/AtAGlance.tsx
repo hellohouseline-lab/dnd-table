@@ -1,6 +1,6 @@
 import { Pips } from '../../components/Pips.tsx'
 import type { Character, FeatureEntry } from '../../rules/character.ts'
-import { featureCost } from '../../rules/features.ts'
+import { featureCost, roundsLeftWords } from '../../rules/features.ts'
 import { castingCost } from '../../rules/spells.ts'
 import { findCondition, type SrdSpell } from '../../rules/srd/index.ts'
 import styles from './AtAGlance.module.css'
@@ -75,6 +75,9 @@ export function AtAGlance({ character, spells = null, onOpen, onEndEffect }: AtA
           {character.effects.map((effect) => (
             <span key={effect.key} className={styles.effect}>
               {effect.name}
+              {effect.roundsLeft !== undefined && (
+                <span className={styles.roundsLeft}> · {roundsLeftWords(effect.roundsLeft)}</span>
+              )}
               {onEndEffect && (
                 <button type="button" className={styles.end} onClick={() => onEndEffect(effect.key)}>
                   End

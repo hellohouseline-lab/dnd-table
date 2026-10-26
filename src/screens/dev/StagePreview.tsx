@@ -72,7 +72,7 @@ export function StagePreview() {
     addStarter: async (starter) => {
       const drawing = await (await fetch(starterMapUrl(starter))).blob()
       const file = new File([drawing], `${starter.name}.svg`, { type: 'image/svg+xml' })
-      return { ...previewAsset(file, { kind: 'art', category: 'maps' }), name: starter.name }
+      return { ...previewAsset(file, { kind: 'art', category: starter.category }), name: starter.name }
     },
   }
 

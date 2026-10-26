@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+<radialGradient id="room" cx="0.5" cy="0.45" r="0.75"><stop offset="0" stop-color="#7a4d2a"/><stop offset="0.6" stop-color="#3d2616"/><stop offset="1" stop-color="#170d07"/></radialGradient>
+<linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8b48a"/><stop offset="1" stop-color="#c98a62"/></linearGradient>
+<linearGradient id="shirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d7f5a"/><stop offset="1" stop-color="#36503a"/></linearGradient>
+<linearGradient id="apron" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe4cc"/><stop offset="1" stop-color="#c9b896"/></linearGradient>
+<radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffd27a" stop-opacity="0.6"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1600" height="900" fill="url(#room)"/>
+<!-- shelves of bottles behind -->
+<g stroke="#1a0f08" stroke-width="4"><rect x="120" y="230" width="420" height="16" fill="#5a3820"/><rect x="120" y="420" width="420" height="16" fill="#5a3820"/><rect x="1060" y="230" width="420" height="16" fill="#5a3820"/><rect x="1060" y="420" width="420" height="16" fill="#5a3820"/></g>
+<g stroke="#1a0f08" stroke-width="3">
+<rect x="150" y="160" width="34" height="70" rx="8" fill="#3f6a4a"/><rect x="210" y="150" width="30" height="80" rx="8" fill="#7a2f2a"/><rect x="270" y="170" width="40" height="60" rx="10" fill="#8a6a2a"/><rect x="340" y="160" width="30" height="70" rx="8" fill="#2f4a6a"/><rect x="400" y="175" width="48" height="55" rx="20" fill="#6a4a2a"/><rect x="470" y="155" width="30" height="75" rx="8" fill="#3f6a4a"/>
+<rect x="160" y="360" width="60" height="60" rx="26" fill="#6a4a2a"/><rect x="250" y="350" width="30" height="70" rx="8" fill="#7a2f2a"/><rect x="310" y="345" width="30" height="75" rx="8" fill="#2f4a6a"/><rect x="380" y="360" width="60" height="60" rx="26" fill="#6a4a2a"/>
+<rect x="1090" y="160" width="30" height="70" rx="8" fill="#7a2f2a"/><rect x="1150" y="170" width="48" height="60" rx="20" fill="#6a4a2a"/><rect x="1230" y="155" width="30" height="75" rx="8" fill="#3f6a4a"/><rect x="1300" y="165" width="34" height="65" rx="8" fill="#8a6a2a"/><rect x="1380" y="150" width="30" height="80" rx="8" fill="#2f4a6a"/>
+<rect x="1100" y="355" width="60" height="65" rx="26" fill="#6a4a2a"/><rect x="1200" y="350" width="30" height="70" rx="8" fill="#3f6a4a"/><rect x="1260" y="345" width="30" height="75" rx="8" fill="#7a2f2a"/><rect x="1340" y="360" width="60" height="60" rx="26" fill="#6a4a2a"/>
+</g>
+<circle cx="800" cy="200" r="300" fill="url(#lamp)"/>
+<!-- the innkeeper -->
+<path d="M470 900 C 480 690 600 610 800 600 C 1000 610 1120 690 1130 900Z" fill="url(#shirt)" stroke="#1a0f08" stroke-width="5"/>
+<path d="M610 900 C 620 730 680 690 800 690 C 920 690 980 730 990 900Z" fill="url(#apron)" stroke="#1a0f08" stroke-width="4"/>
+<path d="M680 700 L640 600 M920 700 L960 600" stroke="#c9b896" stroke-width="14"/>
+<rect x="760" y="540" width="80" height="80" fill="url(#skin)"/>
+<ellipse cx="800" cy="400" rx="150" ry="175" fill="url(#skin)" stroke="#1a0f08" stroke-width="5"/>
+<ellipse cx="652" cy="410" rx="22" ry="38" fill="#d39c74" stroke="#1a0f08" stroke-width="4"/><ellipse cx="948" cy="410" rx="22" ry="38" fill="#d39c74" stroke="#1a0f08" stroke-width="4"/>
+<path d="M650 340 C 650 230 720 210 800 210 C 880 210 950 230 950 340 C 920 290 880 270 800 270 C 720 270 680 290 650 340Z" fill="#6a3a1e" stroke="#1a0f08" stroke-width="4"/>
+<path d="M690 470 C 700 600 760 640 800 640 C 840 640 900 600 910 470 C 880 520 860 500 800 500 C 740 500 720 520 690 470Z" fill="#8a4a24" stroke="#1a0f08" stroke-width="4"/>
+<path d="M740 490 Q 800 470 860 490" stroke="#6a3a1e" stroke-width="16" fill="none" stroke-linecap="round"/>
+<path d="M780 520 Q 800 535 820 520" stroke="#1a0f08" stroke-width="4" fill="none"/>
+<g fill="#1a0f08"><ellipse cx="745" cy="390" rx="12" ry="14"/><ellipse cx="855" cy="390" rx="12" ry="14"/></g>
+<g fill="#ffffff"><circle cx="749" cy="385" r="4"/><circle cx="859" cy="385" r="4"/></g>
+<path d="M715 355 Q 745 340 775 355 M825 355 Q 855 340 885 355" stroke="#5a2f18" stroke-width="9" fill="none" stroke-linecap="round"/>
+<path d="M800 400 Q 790 450 805 460" stroke="#a8684a" stroke-width="5" fill="none"/>
+<circle cx="700" cy="450" r="24" fill="#e08a70" opacity="0.4"/><circle cx="900" cy="450" r="24" fill="#e08a70" opacity="0.4"/>
+<!-- a tankard held up -->
+<g stroke="#1a0f08" stroke-width="5"><path d="M1130 900 C 1140 780 1170 740 1200 720" fill="none" stroke="#36503a" stroke-width="70"/>
+<rect x="1150" y="600" width="130" height="150" rx="10" fill="#9a7a4a"/><path d="M1280 630 C 1340 630 1340 720 1280 720" fill="none" stroke-width="16" stroke="#6a5030"/>
+<path d="M1150 600 C 1160 560 1200 570 1215 585 C 1230 560 1270 565 1280 600Z" fill="#f6efdc"/>
+<path d="M1150 640 H1280 M1150 710 H1280" stroke="#6a5030" stroke-width="8"/></g>
+<rect width="1600" height="900" fill="#000" opacity="0.06"/>
+</svg>

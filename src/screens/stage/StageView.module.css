@@ -717,3 +717,8 @@ button.padButton:active {
   object-fit: cover;
   border-radius: 4px;
 }
+
+.storage {
+  margin: 0;
+  padding: 0 4px;
+}

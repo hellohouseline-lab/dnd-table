@@ -13,7 +13,7 @@ import {
   type Asset,
   type AssetPatch,
   type SoundDetails,
-  type StarterMap,
+  type StarterArt,
 } from '../../live/library.ts'
 import type { LibraryControls, StageControls } from '../../live/useStage.ts'
 import type { Character } from '../../rules/character.ts'
@@ -37,8 +37,11 @@ export type LibraryActions = {
   update: (id: string, patch: AssetPatch) => Promise<Asset>
   remove: (asset: Asset) => Promise<void>
   /** Adds one of the maps that come with the table to the library. */
-  addStarter?: (starter: StarterMap) => Promise<Asset>
+  addStarter?: (starter: StarterArt) => Promise<Asset>
 }
+
+/** Sounds are marked stream-safe when uploaded; the table no longer asks about licences or credits. */
+const UPLOAD_OPTIONS = { streamSafe: true, credit: '' }
 
 type StageViewProps = {
   campaign: Campaign
@@ -76,7 +79,6 @@ export function StageView({
 }: StageViewProps) {
   const { stage, change } = controls
   const [problem, setProblem] = useState<string | null>(null)
-  const [options, setOptions] = useState({ streamSafe: true, credit: '' })
   const [sceneName, setSceneName] = useState<string | null>(null)
   const art = library.assets.filter((a) => a.kind === 'art')
   const onStage = art.find((a) => a.id === stage.imageId) ?? null
@@ -138,11 +140,6 @@ export function StageView({
     if (updated) library.put(updated)
   }
 
-  async function toggleSafe(asset: Asset) {
-    const updated = await attempt(() => actions.update(asset.id, { streamSafe: !asset.streamSafe }))
-    if (updated) library.put(updated)
-  }
-
   function saveSceneName() {
     if (sceneName !== null && sceneName !== stage.sceneName) change({ sceneName: sceneName.trim() })
     setSceneName(null)
@@ -194,31 +191,10 @@ export function StageView({
               Phase 2. For now, pick a picture and music here.
             </p>
           </section>
-          <section className={styles.panel} aria-labelledby="uploads-title">
-            <h2 id="uploads-title" className={styles.panelTitle}>
-              New sounds
-            </h2>
-            <label className={styles.check}>
-              <input
-                type="checkbox"
-                checked={options.streamSafe}
-                onChange={(event) => setOptions({ ...options, streamSafe: event.target.checked })}
-              />
-              Licensed for streaming (stream-safe)
-            </label>
-            <input
-              className={styles.sceneInput}
-              aria-label="Credit for new sounds"
-              placeholder="Credit, such as Envato Elements"
-              maxLength={200}
-              value={options.credit}
-              onChange={(event) => setOptions({ ...options, credit: event.target.value })}
-            />
-            <p className={styles.hint}>
-              MP3 or OGG up to 15 MB. Library: {sizeText(used)} of the 1 GB free storage (
-              {Math.round((used / FREE_STORAGE_BYTES) * 100)}%).
-            </p>
-          </section>
+          <p className={cx(styles.hint, styles.storage)}>
+            Sounds: MP3 or OGG up to 15 MB. Storage used: {sizeText(used)} of the 1 GB free (
+            {Math.round((used / FREE_STORAGE_BYTES) * 100)}%).
+          </p>
         </aside>
 
         <div className={styles.centre}>
@@ -313,8 +289,7 @@ export function StageView({
             onChange={change}
             onUpload={uploadSound}
             onDelete={(asset) => void remove(asset)}
-            onToggleSafe={(asset) => void toggleSafe(asset)}
-            options={options}
+            options={UPLOAD_OPTIONS}
             now={now}
           />
           <AmbiencePanel
@@ -323,14 +298,14 @@ export function StageView({
             onChange={change}
             onUpload={uploadSound}
             onDelete={(asset) => void remove(asset)}
-            options={options}
+            options={UPLOAD_OPTIONS}
           />
           <EffectsPanel
             effects={effects}
             onPlay={(asset) => audio?.playEffect(asset)}
             onUpload={uploadSound}
             onDelete={(asset) => void remove(asset)}
-            options={options}
+            options={UPLOAD_OPTIONS}
           />
         </div>
       </div>

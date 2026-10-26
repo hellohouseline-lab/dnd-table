@@ -157,6 +157,26 @@
   gap: 14px;
 }
 
+/* The players down the middle, the quick rolls in a column beside the cameras. */
+.withChecks {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+}
+
+.withChecks .grid {
+  grid-template-columns: minmax(0, 1fr);
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.withChecks .checks {
+  grid-row: 1;
+  grid-column: 2;
+  position: sticky;
+  top: 0;
+}
+
 /* Rolls the quick check. */
 .tick {
   width: 20px;

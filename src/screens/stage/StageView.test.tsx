@@ -81,9 +81,11 @@ describe('the stage screen', () => {
     expect(html).toContain('On stage')
   })
 
-  it('shows the music playing, by mood, and which tracks are stream-safe', () => {
-    expect(html).toMatch(/Merry inn Tavern · stream-safe/)
-    expect(html).toMatch(/Risky tune not safe/)
+  it('shows the music playing, by mood, with no licence questions', () => {
+    expect(html).toMatch(/Merry inn Tavern/)
+    expect(html).toContain('Risky tune')
+    expect(html).not.toContain('stream-safe')
+    expect(html).not.toContain('New sounds')
   })
 
   it('shows ambience levels and the sound effects pad on keys 1 to 9', () => {
@@ -95,6 +97,6 @@ describe('the stage screen', () => {
   it('keeps the later features visible but switched off', () => {
     expect(html).toContain('Switch to battle map')
     expect(html).toContain('Players move their own tokens: on')
-    expect(html).toMatch(/Library: 5\.0 MB of the 1 GB free storage/)
+    expect(html).toMatch(/Storage used: 5\.0 MB of the 1 GB free/)
   })
 })

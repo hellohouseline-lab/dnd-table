@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { aOrAn } from '../../components/words.ts'
@@ -74,7 +74,17 @@ import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { deathSavePatch, isDying } from '../../rules/dying.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { UndoChip } from './CardPanel.tsx'
-import { featureCost, featureRule, isRaging, RAGE } from '../../rules/features.ts'
+import { concentrationTimer, featureCost, featureRule, isRaging, RAGE, type Effect } from '../../rules/features.ts'
+import {
+  bonusEntries,
+  isReady,
+  lightWeapons,
+  triggeredBonus,
+  unarmedStrike,
+  type BonusAttackKind,
+  type BonusEntry,
+} from '../../rules/bonusActions.ts'
+import { BonusReady, type BonusChoice } from '../fight/BonusReady.tsx'
 import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
@@ -97,6 +107,8 @@ type TableViewProps = {
   asking: Pick<RequestControls, 'request' | 'answers' | 'putAnswer'>
   /** The picture the DM has put on stage. */
   stageImage?: Asset | null
+  /** Shown on parchment while the DM hasn't put anything on stage. */
+  campaignName?: string
   /** The table's sound in this tab (left out in the previews). */
   audio?: TableAudio
   /** Fights and the battle map (left out in the tests). */
@@ -171,12 +183,21 @@ export function TableView({
   thrower,
   asking,
   stageImage = null,
+  campaignName,
   audio,
   combat,
 }: TableViewProps) {
   const [inspected, setInspected] = useState<string | null>(null)
   // The attack you're about to make, while you pick its target.
   const [aiming, setAiming] = useState<AttackEntry | null>(null)
+  // What kind of bonus attack the aimed attack is, if it's one (chosen from the Bonus action ready card).
+  const [aimingBonus, setAimingBonus] = useState<BonusAttackKind | null>(null)
+  // The weapon last used with the Attack action, so the off-hand attack offers the other one.
+  const [mainAttack, setMainAttack] = useState<string | null>(null)
+  // Flurry of Blows is two strikes: which one is next.
+  const [flurryStrike, setFlurryStrike] = useState<1 | 2>(1)
+  // The round the Bonus action ready card was put away in, so it stays away for the rest of the turn.
+  const [bonusDismissed, setBonusDismissed] = useState<string | null>(null)
   // The last feature used, for a while, so it can be undone.
   const [lastUse, setLastUse] = useState<LastUse | null>(null)
   const [fightProblem, setFightProblem] = useState<string | null>(null)
@@ -288,18 +309,53 @@ export function TableView({
 
   function pickTarget(row: FightRow) {
     if (!aiming || !mine || !combat) return
-    const offhand = attacksLeft(mine.turn, perAction) === 0
-    const { range, request } = attackPlan(aiming, row, offhand)
+    const kind: BonusAttackKind | null = aimingBonus ?? (attacksLeft(mine.turn, perAction) === 0 ? 'offhand' : null)
+    const { range, request } = attackPlan(aiming, row, kind === 'offhand')
     if (range && !range.allowed) {
       setFightProblem(`${range.why}. Move closer, or pick another attack.`)
       setAiming(null)
+      setAimingBonus(null)
       return
     }
+    const attack = aiming
+    if (!kind) setMainAttack(attack.id)
     setAiming(null)
+    setAimingBonus(null)
     setMode('normal')
-    void table.rollWith(() =>
-      offhand ? combat.offhandAttack(mine, row.combatant, request) : combat.attack(mine, row.combatant, request),
-    )
+    void table
+      .rollWith(() =>
+        kind ? combat.offhandAttack(mine, row.combatant, request, kind) : combat.attack(mine, row.combatant, request),
+      )
+      .then((thrown) => {
+        // Flurry of Blows is two strikes: aim the second straight away.
+        if (thrown && kind === 'flurry' && flurryStrike === 1) {
+          setFlurryStrike(2)
+          setAiming(attack)
+          setAimingBonus('flurry')
+        }
+      })
+  }
+
+  // Taking a bonus action the turn has just made ready: aim the attack, and spend a ki point if it costs one.
+  function takeBonus(choice: BonusChoice) {
+    setFightProblem(null)
+    casting.cancel()
+    if (choice.entry.cost === '1 ki point' && !spendKi()) return
+    if (choice.entry.attack === 'flurry') setFlurryStrike(1)
+    setAiming(choice.attack)
+    setAimingBonus(choice.entry.attack ?? null)
+  }
+
+  // A monk's ki points, kept as a feature named Ki (or Ki Points) on the sheet.
+  function spendKi(): boolean {
+    const ki = character.features.find((f) => /^ki\b/i.test(f.name.trim()) && f.usesMax !== null)
+    if (!ki) return true
+    if (ki.usesLeft <= 0) {
+      setFightProblem('No ki points left until you rest.')
+      return false
+    }
+    update({ features: character.features.map((f) => (f.id === ki.id ? { ...f, usesLeft: f.usesLeft - 1 } : f)) })
+    return true
   }
 
   // Undo stays on offer for half a minute.
@@ -312,7 +368,11 @@ export function TableView({
   // Escape puts the attack away again.
   useEffect(() => {
     if (!aiming) return
-    const cancel = (event: KeyboardEvent) => event.key === 'Escape' && setAiming(null)
+    const cancel = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setAiming(null)
+      setAimingBonus(null)
+    }
     window.addEventListener('keydown', cancel)
     return () => window.removeEventListener('keydown', cancel)
   }, [aiming])
@@ -338,6 +398,32 @@ export function TableView({
   // Spells from the hand: in a fight, a target or where it goes next (the server settles it);
   // outside one, the slot is spent and the dice rolled here.
   const spellList = useSrd(loadSpells)
+  // A concentration spell's timer starts with it (the server counts it down in a fight).
+  const concentrating = character.concentration
+  const effects = character.effects
+  useEffect(() => {
+    if (!concentrating || effects.some((e) => e.key === 'concentration' && e.spell === concentrating)) return
+    const spell = spellList?.find((s) => s.name === concentrating)
+    const timer = spell ? concentrationTimer(spell.name, spell.duration) : null
+    if (timer) onUpdate(character.id, { effects: [...effects.filter((e) => e.key !== 'concentration'), timer] })
+  }, [concentrating, effects, spellList, character.id, onUpdate])
+
+  // Saying when a timed effect runs out (Rage after its 10 rounds).
+  const [ranOut, setRanOut] = useState<string | null>(null)
+  const before = useRef<Effect[]>(effects)
+  useEffect(() => {
+    const gone = before.current.filter(
+      (e) => e.roundsLeft !== undefined && e.roundsLeft <= 1 && !effects.some((now) => now.key === e.key),
+    )
+    before.current = effects
+    if (gone.length > 0) setRanOut(`Time's up: ${gone.map((e) => e.name).join(' and ')} ended.`)
+  }, [effects])
+  useEffect(() => {
+    if (!ranOut) return
+    const timer = setTimeout(() => setRanOut(null), 8000)
+    return () => clearTimeout(timer)
+  }, [ranOut])
+
   const casting = useCasting(combat?.cast ?? NO_CAST, table.rollWith, tokens, rows)
   const aimingSpell = casting.casting
   function castSpell(spell: SrdSpell) {
@@ -488,6 +574,59 @@ export function TableView({
     update({ effects: character.effects.filter((e) => e.key !== RAGE.key) })
   }
 
+  // Bonus actions something on this turn has just made ready (you attacked; you're raging), offered
+  // once a turn with a card the player can put away.
+  const bonusKey = fight && mine ? `${fight.encounter.id}-${fight.encounter.round}` : ''
+  const readyEntries: BonusEntry[] =
+    fight && mine && !dyingNow && bonusDismissed !== bonusKey
+      ? triggeredBonus(character, { myTurn, bonusUsed: mine.turn.bonusUsed, attacksMade: mine.turn.attacksMade })
+      : []
+  const readyNow: BonusChoice[] = readyEntries.flatMap((entry): BonusChoice[] => {
+    if (entry.attack === 'offhand') {
+      const light = lightWeapons(character)
+      const others = light.filter((a) => a.id !== mainAttack)
+      return (others.length > 0 ? others : light).map((attack) => ({
+        entry,
+        attack,
+        label: `Off-hand attack: ${attack.name}`,
+      }))
+    }
+    if (entry.attack === 'martialArts' || entry.attack === 'flurry') {
+      return [{ entry, attack: unarmedStrike(character), label: entry.name }]
+    }
+    if (entry.attack === 'frenzy') {
+      return character.attacks
+        .filter((a) => findWeapon(a.weapon)?.range !== 'Ranged')
+        .map((attack) => ({ entry, attack, label: `Frenzy attack: ${attack.name}` }))
+    }
+    return []
+  })
+
+  // The bonus attacks this character has at all, as cards in the Bonus actions set.
+  const meleeAttack = character.attacks.find((a) => findWeapon(a.weapon)?.range !== 'Ranged') ?? null
+  const bonusAttackCards = bonusEntries(character)
+    .filter((entry) => entry.attack && entry.attack !== 'offhand')
+    .flatMap((entry) => {
+      const attack = entry.attack === 'frenzy' ? meleeAttack : unarmedStrike(character)
+      if (!attack) return []
+      const ready =
+        fight && mine
+          ? isReady(entry, character, {
+              myTurn,
+              bonusUsed: mine.turn.bonusUsed,
+              attacksMade: mine.turn.attacksMade,
+            })
+          : false
+      const why = ready
+        ? null
+        : !fight
+          ? 'in a fight, on your turn'
+          : entry.trigger === 'afterAttack'
+            ? 'attack with your action first'
+            : 'while raging, from the turn after it starts'
+      return [{ entry, attack, label: entry.name, why }]
+    })
+
   return (
     <main className={styles.screen}>
       <div className={styles.floor} aria-hidden="true" />
@@ -571,9 +710,17 @@ export function TableView({
         </div>
       ) : (
         <div className={styles.scene}>
-          <div className={styles.sceneTitle}>The DM&rsquo;s scene appears here</div>
-          <div className={styles.sceneNote}>
-            When the DM puts a picture on stage, it fills this space. Dice land here.
+          <div className={styles.parchment}>
+            <div className={styles.parchmentEyebrow}>Welcome to</div>
+            <h1 className={styles.parchmentTitle}>{campaignName || 'The Adventure'}</h1>
+            <div className={styles.flourish} aria-hidden="true">
+              <span />
+              ✦
+              <span />
+            </div>
+            <p className={styles.parchmentNote}>
+              The DM will set the scene soon. Pictures, maps and your dice appear here.
+            </p>
           </div>
         </div>
       )}
@@ -595,11 +742,24 @@ export function TableView({
         )}
         {aiming && (
           <div className={styles.aiming} role="status">
-            {mine && attacksLeft(mine.turn, perAction) === 0
-              ? `Off-hand attack with ${aiming.name || 'your weapon'} (your bonus action)`
-              : `Pick a target for ${aiming.name || 'your attack'}`}
+            {aimingBonus === 'flurry'
+              ? `Flurry of Blows, ${flurryStrike === 2 ? 'second' : 'first'} strike (your bonus action)`
+              : aimingBonus === 'martialArts'
+                ? 'Unarmed strike (your bonus action)'
+                : aimingBonus === 'frenzy'
+                  ? `Frenzy attack with ${aiming.name || 'your weapon'} (your bonus action)`
+                  : mine && (aimingBonus === 'offhand' || attacksLeft(mine.turn, perAction) === 0)
+                    ? `Off-hand attack with ${aiming.name || 'your weapon'} (your bonus action)`
+                    : `Pick a target for ${aiming.name || 'your attack'}`}
             : click a miniature or a name above.
-            <button type="button" className={styles.aimingCancel} onClick={() => setAiming(null)}>
+            <button
+              type="button"
+              className={styles.aimingCancel}
+              onClick={() => {
+                setAiming(null)
+                setAimingBonus(null)
+              }}
+            >
               Cancel
             </button>
           </div>
@@ -626,9 +786,16 @@ export function TableView({
         </div>
       )}
 
-      {lastUse && (
+      {readyNow.length > 0 && !aiming && (
+        <div className={styles.bonusReady}>
+          <BonusReady choices={readyNow} onTake={takeBonus} onNotNow={() => setBonusDismissed(bonusKey)} />
+        </div>
+      )}
+
+      {(lastUse || ranOut) && (
         <div className={styles.cardPanel}>
-          <UndoChip text={lastUse.text} onUndo={undoLastUse} onClose={() => setLastUse(null)} />
+          {lastUse && <UndoChip text={lastUse.text} onUndo={undoLastUse} onClose={() => setLastUse(null)} />}
+          {ranOut && <UndoChip text={ranOut} onClose={() => setRanOut(null)} />}
         </div>
       )}
 
@@ -641,8 +808,12 @@ export function TableView({
           fight && mine ? { myTurn, bonusUsed: mine.turn.bonusUsed, offhand: (attack) => offhandReady(attack) } : null
         }
         bonusMoves={bonusMoves(character.className, character.level)}
+        bonusAttacks={bonusAttackCards}
+        onBonusAttack={takeBonus}
         onBonusMove={(move) => {
           if (!mine || !combat) return
+          // A monk's Patient Defense and Step of the Wind cost a ki point.
+          if (/monk/i.test(character.className) && !spendKi()) return
           combat.act(mine, `bonus_${move}`)
           if (move === 'hide') roll(skillCheck(character, 'stealth', choices))
         }}
@@ -741,6 +912,7 @@ export function TableView({
             bonusMoves={bonusMoves(character.className, character.level)}
             strength={character.scores.strength}
             onAct={(what) => {
+              if (what.startsWith('bonus_') && /monk/i.test(character.className) && !spendKi()) return
               combat.act(mine, what)
               // Hiding and searching come with a roll.
               if (what === 'hide' || what === 'bonus_hide') roll(skillCheck(character, 'stealth', choices))
@@ -754,7 +926,13 @@ export function TableView({
             character={character}
             spells={spellList}
             onOpen={(open) => (open.kind === 'feature' ? void playFeature(open.feature) : castSpell(open.spell))}
-            onEndEffect={(key) => update({ effects: character.effects.filter((e) => e.key !== key) })}
+            onEndEffect={(key) =>
+              update({
+                effects: character.effects.filter((e) => e.key !== key),
+                // Ending a concentration timer ends the concentration.
+                ...(key === 'concentration' ? { concentration: null } : {}),
+              })
+            }
           />
         )}
 

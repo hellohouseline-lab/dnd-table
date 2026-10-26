@@ -9,6 +9,35 @@ export type Effect = {
   resistances?: string[]
   /** Ends when the character drops to 0 hit points. */
   endsWhenDown?: boolean
+  /**
+   * Rounds left in a fight; one goes at the start of each of the character's turns, and at 0 the
+   * effect ends (the server counts them). A fight's end takes 10 more (a minute passes).
+   */
+  roundsLeft?: number
+  /** A concentration timer's spell; it goes when the concentration does. */
+  spell?: string
+}
+
+/** A duration in rounds of 6 seconds: "1 minute" or "Up to 1 minute" is 10; none for "Instantaneous". */
+export function durationRounds(duration: string): number | null {
+  const match = duration.toLowerCase().match(/(\d+)\s*(round|minute|hour|day)s?\b/)
+  if (!match) return null
+  const per = { round: 1, minute: 10, hour: 600, day: 14400 }[match[2] as 'round' | 'minute' | 'hour' | 'day']
+  return Number(match[1]) * per
+}
+
+/** The timer for a concentration spell, if its duration is one the table counts. */
+export function concentrationTimer(spell: string, duration: string): Effect | null {
+  const rounds = durationRounds(duration)
+  return rounds === null ? null : { key: 'concentration', name: `${spell} (concentration)`, spell, roundsLeft: rounds }
+}
+
+/** "7 rounds left", "about 10 minutes left". */
+export function roundsLeftWords(rounds: number): string {
+  if (rounds <= 1) return 'last round'
+  if (rounds < 20) return `${rounds} rounds left`
+  if (rounds < 1200) return `about ${Math.round(rounds / 10)} minutes left`
+  return `about ${Math.round(rounds / 600)} hours left`
 }
 
 /** What using a feature takes from your turn; 'surge' is Action Surge, which gives the action back. */
@@ -47,6 +76,7 @@ export const RAGE: Effect = {
   name: 'Raging',
   resistances: ['bludgeoning', 'piercing', 'slashing'],
   endsWhenDown: true,
+  roundsLeft: 10,
 }
 
 export function isRaging(character: { effects?: Effect[] }): boolean {
@@ -61,7 +91,7 @@ export function rageDamage(level: number): number {
 /** What a feature the table runs does, in plain words, for its card. */
 export function featureSummary(rule: FeatureRule, level: number): string | null {
   if (rule === 'rage') {
-    return `For 1 minute: advantage on Strength checks and saves, +${rageDamage(level)} damage on Strength melee attacks, resistance to bludgeoning, piercing and slashing damage. Ends early if you drop to 0 hit points.`
+    return `For 1 minute (10 rounds in a fight): advantage on Strength checks and saves, +${rageDamage(level)} damage on Strength melee attacks, resistance to bludgeoning, piercing and slashing damage. Ends early if you drop to 0 hit points.`
   }
   if (rule === 'secondWind') return `Regain 1d10 + ${level} hit points.`
   if (rule === 'actionSurge') return 'Take one more action this turn (not a second bonus action).'

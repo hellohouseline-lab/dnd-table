@@ -125,18 +125,75 @@
   text-align: center;
 }
 
-.sceneTitle {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 30px;
-  letter-spacing: 0.08em;
-  color: #8f8780;
+/* The waiting screen: the campaign's name on a sheet of old parchment. */
+.parchment {
+  position: relative;
+  width: min(760px, 100%);
+  padding: 64px 72px 56px;
+  border-radius: 6px 10px 8px 12px / 12px 6px 10px 8px;
+  color: #3a2414;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255, 248, 225, 0.75), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(150, 105, 50, 0.35), transparent 60%),
+    radial-gradient(ellipse at 50% 50%, #f0dfb6 0%, #e4cc96 70%, #c9a86a 100%);
+  box-shadow:
+    inset 0 0 60px rgba(110, 70, 25, 0.55),
+    inset 0 0 12px rgba(80, 45, 15, 0.5),
+    0 30px 80px rgba(0, 0, 0, 0.6);
+  transform: rotate(-0.6deg);
 }
 
-.sceneNote {
-  font-size: 19px;
+/* Paper grain. */
+.parchment::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.22 0 0 0 0 0.08 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.parchmentEyebrow {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #7a5230;
+}
+
+.parchmentTitle {
+  margin: 10px 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 1.1;
+  color: #3a2414;
+  text-shadow: 0 1px 0 rgba(255, 245, 215, 0.6);
+}
+
+.flourish {
+  margin: 18px auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 18px;
+  color: #8a5a2a;
+}
+
+.flourish span {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #8a5a2a, transparent);
+}
+
+.parchmentNote {
+  margin: 0;
+  font-size: 21px;
   font-style: italic;
-  color: #8f8780;
+  color: #5a3a20;
 }
 
 /* Stops above the dice controls, and scrolls when a fight fills it (the turn, the cheat card). */
@@ -571,4 +628,13 @@
   z-index: 13;
   max-height: calc(100% - 320px);
   display: flex;
+}
+
+/* Bonus action ready: just above the hand, in the middle. */
+.bonusReady {
+  position: absolute;
+  left: 50%;
+  bottom: 200px;
+  transform: translateX(-50%);
+  z-index: 14;
 }

@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { featureCost, featureRule, isRaging, rageDamage, RAGE } from './features.ts'
+import {
+  concentrationTimer,
+  durationRounds,
+  featureCost,
+  featureRule,
+  isRaging,
+  rageDamage,
+  RAGE,
+  roundsLeftWords,
+} from './features.ts'
 
 describe('features', () => {
   it('reads what a feature costs from its text', () => {
@@ -22,5 +31,31 @@ describe('features', () => {
     expect([rageDamage(1), rageDamage(9), rageDamage(16)]).toEqual([2, 3, 4])
     expect(isRaging({ effects: [RAGE] })).toBe(true)
     expect(isRaging({ effects: [] })).toBe(false)
+  })
+
+  it('counts durations in rounds', () => {
+    expect(durationRounds('1 minute')).toBe(10)
+    expect(durationRounds('Up to 1 minute')).toBe(10)
+    expect(durationRounds('Up to 10 minutes')).toBe(100)
+    expect(durationRounds('1 round')).toBe(1)
+    expect(durationRounds('Up to 1 hour')).toBe(600)
+    expect(durationRounds('Instantaneous')).toBeNull()
+    expect(durationRounds('Until dispelled')).toBeNull()
+    expect(RAGE.roundsLeft).toBe(10)
+  })
+
+  it('makes concentration timers', () => {
+    expect(concentrationTimer('Bless', 'Up to 1 minute')).toEqual({
+      key: 'concentration',
+      name: 'Bless (concentration)',
+      spell: 'Bless',
+      roundsLeft: 10,
+    })
+    expect(concentrationTimer('Odd', 'Special')).toBeNull()
+    expect([roundsLeftWords(1), roundsLeftWords(7), roundsLeftWords(100)]).toEqual([
+      'last round',
+      '7 rounds left',
+      'about 10 minutes left',
+    ])
   })
 })

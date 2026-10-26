@@ -4,11 +4,11 @@ import { Icon } from '../../components/Icon.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import {
   ART_CATEGORIES,
-  STARTER_MAPS,
+  STARTER_ART,
   starterMapUrl,
   type ArtCategory,
   type Asset,
-  type StarterMap,
+  type StarterArt,
 } from '../../live/library.ts'
 import styles from './StageView.module.css'
 
@@ -18,8 +18,8 @@ type ArtLibraryProps = {
   onShow: (asset: Asset) => void
   onUpload: (files: File[], category: ArtCategory) => Promise<void>
   onDelete: (asset: Asset) => void
-  /** Adds one of the maps that come with the table. */
-  onAddStarter?: (starter: StarterMap) => Promise<void>
+  /** Adds one of the pictures or maps that come with the table. */
+  onAddStarter?: (starter: StarterArt) => Promise<void>
 }
 
 /** The art library from design 11: your pictures by kind; click one to put it on stage. */
@@ -29,6 +29,9 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStar
   const input = useRef<HTMLInputElement>(null)
   const shown = art.filter((a) => a.category === category)
   const about = ART_CATEGORIES.find((c) => c.key === category)
+  const starters = STARTER_ART.filter(
+    (s) => s.category === category && !art.some((a) => a.category === category && a.name === s.name),
+  )
 
   async function upload(files: FileList | null) {
     if (!files || files.length === 0) return
@@ -72,10 +75,12 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStar
           />
         </label>
       </div>
-      {category === 'maps' && onAddStarter && (
-        <div className={styles.starters} aria-label="Starter maps">
-          <span className={styles.startersTitle}>Maps that come with the table:</span>
-          {STARTER_MAPS.filter((s) => !art.some((a) => a.category === 'maps' && a.name === s.name)).map((starter) => (
+      {starters.length > 0 && onAddStarter && (
+        <div className={styles.starters} aria-label="Pictures that come with the table">
+          <span className={styles.startersTitle}>
+            {category === 'maps' ? 'Maps that come with the table:' : 'An example to try the stage with:'}
+          </span>
+          {starters.map((starter) => (
             <button
               key={starter.file}
               type="button"

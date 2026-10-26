@@ -62,18 +62,19 @@ export async function getNotebook(campaignId: string): Promise<Notebook> {
   return data ? rowToNotebook(data) : EMPTY_NOTEBOOK
 }
 
+/** An update, then an insert the first time: an upsert also rewrites campaign_id, which is refused. */
 export async function saveNotebook(campaignId: string, notebook: Notebook): Promise<void> {
+  const row = {
+    where_we_are: notebook.whereWeAre.slice(0, 4000),
+    next_steps: notebook.nextSteps,
+    key_items: notebook.keyItems,
+  }
+  const updated = await db().from('dm_notebooks').update(row).eq('campaign_id', campaignId).select('campaign_id')
+  if (updated.error) throw fromDatabaseError(updated.error)
+  if (updated.data.length > 0) return
   const { error } = await db()
     .from('dm_notebooks')
-    .upsert(
-      {
-        campaign_id: campaignId,
-        where_we_are: notebook.whereWeAre.slice(0, 4000),
-        next_steps: notebook.nextSteps,
-        key_items: notebook.keyItems,
-      },
-      { onConflict: 'campaign_id' },
-    )
+    .insert({ campaign_id: campaignId, ...row })
   if (error) throw fromDatabaseError(error)
 }
 
