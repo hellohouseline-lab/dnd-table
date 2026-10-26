@@ -235,3 +235,23 @@
   font-style: italic;
   color: var(--text-3);
 }
+
+/* Levelling up. */
+.partyBar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.partyBar .action {
+  padding: 0 14px;
+}
+
+.levelWaiting {
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  background: rgba(212, 175, 90, 0.1);
+  font-size: 14px;
+  color: var(--gold-light);
+}

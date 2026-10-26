@@ -188,6 +188,7 @@ export function rowToCharacter(row: CharacterRow): Character {
     concentration: row.concentration,
     concentrationDc: row.concentration_dc,
     effects: parseEffects(row.effects),
+    levelUpTo: row.level_up_to,
     portraitPath: row.portrait_path,
     updatedAt: row.updated_at,
   }

@@ -257,6 +257,7 @@ export type Database = {
           inventory: Json
           languages: string
           level: number
+          level_up_to: number | null
           max_hp: number
           name: string
           other_proficiencies: string
@@ -310,6 +311,7 @@ export type Database = {
           inventory?: Json
           languages?: string
           level?: number
+          level_up_to?: number | null
           max_hp?: number
           name: string
           other_proficiencies?: string
@@ -363,6 +365,7 @@ export type Database = {
           inventory?: Json
           languages?: string
           level?: number
+          level_up_to?: number | null
           max_hp?: number
           name?: string
           other_proficiencies?: string
@@ -1294,6 +1297,69 @@ export type Database = {
           to: "encounters"
           isOneToOne: true
           isSetofReturn: false
+        }
+      }
+      grant_level_up: {
+        Args: { p_character_ids: string[] }
+        Returns: {
+          armour_class: number
+          attacks: Json
+          background: string
+          campaign_id: string
+          charisma: number
+          class: string
+          concentration: string | null
+          concentration_dc: number | null
+          concentration_queue: number[]
+          conditions: string[]
+          constitution: number
+          created_at: string
+          current_hp: number
+          dead: boolean
+          death_save_failures: number
+          death_save_successes: number
+          dexterity: number
+          effects: Json
+          exhaustion: number
+          features: Json
+          hit_dice_used: number
+          hit_die: number
+          id: string
+          immunities: string[]
+          inspiration: boolean
+          intelligence: number
+          inventory: Json
+          languages: string
+          level: number
+          level_up_to: number | null
+          max_hp: number
+          name: string
+          other_proficiencies: string
+          owner_id: string
+          portrait_path: string | null
+          race: string
+          resistances: string[]
+          save_proficiencies: string[]
+          skill_expertise: string[]
+          skill_proficiencies: string[]
+          speed: number
+          spellcasting: Json
+          stable: boolean
+          story: Json
+          strength: number
+          subclass: string
+          subrace: string
+          temp_hp: number
+          updated_at: string
+          vulnerabilities: string[]
+          wallet: Json
+          wisdom: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "characters"
+          isOneToOne: false
+          isSetofReturn: true
         }
       }
       join_campaign: {

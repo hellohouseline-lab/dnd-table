@@ -50,6 +50,7 @@ const row: CharacterRow = {
   stable: false,
   dead: false,
   concentration_dc: null,
+  level_up_to: null,
   concentration_queue: [],
   inventory: [],
   wallet: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },

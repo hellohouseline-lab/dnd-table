@@ -1057,6 +1057,11 @@ export function TableView({
               </div>
             </div>
           </div>
+          {character.levelUpTo !== null && character.levelUpTo > character.level && (
+            <a className={styles.levelUp} href={href(`/c/${campaignId}/level-up`)}>
+              Level up! Go to level {character.level + 1}
+            </a>
+          )}
           <div>
             <div className={styles.hpLine}>
               <span className={styles.label}>Hit points</span>

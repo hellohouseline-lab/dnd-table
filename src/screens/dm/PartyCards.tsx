@@ -33,6 +33,8 @@ type PartyCardsProps = {
   spells?: SrdSpell[] | null
   /** In a fight: who's in it, for what's left of each character's turn. */
   combatants?: Combatant[]
+  /** Lets characters go up a level (one, or the whole party). */
+  onLevelUp?: (characterIds: string[]) => void
 }
 
 export type HitPointChange = 'damage' | 'heal' | 'temp'
@@ -49,6 +51,7 @@ export function PartyCards({
   quickError = null,
   spells = null,
   combatants = [],
+  onLevelUp,
 }: PartyCardsProps) {
   const [hpFor, setHpFor] = useState<string | null>(null)
   // Who the quick checks go to: those here tonight, until the DM ticks otherwise.
@@ -79,6 +82,20 @@ export function PartyCards({
         <QuickChecks className={styles.checks} characterIds={chosen} onSend={onQuickCheck} error={quickError} />
       )}
       <div className={styles.grid}>
+        {onLevelUp && (
+          <div className={styles.partyBar}>
+            <button
+              type="button"
+              className={styles.action}
+              title="After a milestone: everyone may take their next level, on their own screen"
+              onClick={() => {
+                if (window.confirm('Let every character go up a level?')) onLevelUp(cards.map((c) => c.character.id))
+              }}
+            >
+              Everyone levels up
+            </button>
+          </div>
+        )}
         {cards.map(({ member, character }) => {
           const combatant = combatants.find((c) => c.characterId === character.id)
           const who = [
@@ -119,6 +136,11 @@ export function PartyCards({
                 </div>
               </div>
               <HpBar current={character.currentHp} max={character.maxHp} temp={character.tempHp} height={6} />
+              {character.levelUpTo !== null && character.levelUpTo > character.level && (
+                <p className={styles.levelWaiting}>
+                  Level up waiting: {character.name} can go to level {character.levelUpTo} on their screen.
+                </p>
+              )}
               <div className={styles.chips}>
                 <span className={styles.chip}>AC {character.armourClass}</span>
                 <span className={styles.chip} title="Passive Perception: they notice anything this hard or easier">
@@ -239,9 +261,17 @@ export function PartyCards({
                 <button type="button" className={styles.action} onClick={() => onAsk(character)}>
                   Ask to roll
                 </button>
-                <button type="button" className={styles.action} disabled title="Giving items arrives in Phase 2">
-                  Give item
-                </button>
+                {onLevelUp && (
+                  <button
+                    type="button"
+                    className={styles.action}
+                    disabled={character.level >= 20}
+                    title={`Let ${character.name} go up to level ${(character.levelUpTo ?? character.level) + 1}`}
+                    onClick={() => onLevelUp([character.id])}
+                  >
+                    Level up
+                  </button>
+                )}
               </div>
             </article>
           )

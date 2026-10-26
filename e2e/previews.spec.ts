@@ -524,3 +524,22 @@ test('the sheet has an Inventory tab with coins, and worn armour', async ({ page
   await expect(page.getByRole('button', { name: 'Worn' }).first()).toBeVisible()
   await expect(page.getByLabel('Gold pieces')).toHaveValue('15')
 })
+
+test('levelling up: a fighter takes level 3, picks a path and the average hit points', async ({ page }) => {
+  await page.goto('#/dev/level-up')
+  await expect(page.getByRole('heading', { name: 'Level up to 3' })).toBeVisible()
+  await expect(page.getByText(/Still to pick: Pick your path/)).toBeVisible()
+  await page.getByRole('button', { name: 'Champion' }).click()
+  await expect(page.getByText('Improved Critical')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Champion' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByText(/\+8 hit points/)).toBeVisible()
+  await page.getByRole('button', { name: 'Take level 3' }).click()
+  await expect(page.getByText(/Saved in the preview: level 3/)).toBeVisible()
+})
+
+test('the DM lets a character level up from the Party tab', async ({ page }) => {
+  await page.goto('#/dev/dm/party')
+  const card = page.getByRole('article', { name: 'Thorin Ironfist' })
+  await card.getByRole('button', { name: 'Level up' }).click()
+  await expect(card).toContainText('Level up waiting: Thorin Ironfist can go to level 3 on their screen.')
+})
