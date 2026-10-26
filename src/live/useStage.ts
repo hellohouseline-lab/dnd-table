@@ -32,6 +32,14 @@ export function useStage(campaignId: string, userId: string): StageControls {
   useEffect(load, [load])
   useCatchUp(campaignId, userId, load)
 
+  // A safety net in case a live change is missed: look again every 20 seconds while the tab is open.
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') load()
+    }, 20_000)
+    return () => clearInterval(timer)
+  }, [load])
+
   const onChange = useCallback((change: RowChange<'stage'>) => {
     if (change.type === 'upsert' && saving.current === 0) setStage(rowToStage(change.row))
   }, [])
@@ -120,10 +128,18 @@ export function useStageImage(imageId: string | null, library: Asset[]): Asset |
   useEffect(() => {
     if (!imageId || inLibrary) return
     let live = true
-    getAsset(imageId).then(
-      (asset) => live && setFetched(asset),
-      () => live && setFetched(null),
-    )
+    let tries = 0
+    // Try a few times: the picture may not be visible for the first moment after it goes up.
+    const fetchIt = () =>
+      getAsset(imageId).then(
+        (asset) => {
+          if (!live) return
+          setFetched(asset)
+          if (!asset && ++tries < 5) setTimeout(fetchIt, 1500)
+        },
+        () => live && ++tries < 5 && setTimeout(fetchIt, 1500),
+      )
+    void fetchIt()
     return () => {
       live = false
     }
