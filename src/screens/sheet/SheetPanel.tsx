@@ -3,7 +3,9 @@ import { ButtonLink } from '../../components/Button.tsx'
 import { cx } from '../../components/cx.ts'
 import type { TrackerPatch } from '../../live/characterRows.ts'
 import type { Character } from '../../rules/character.ts'
+import { characterText, sheetFileName } from '../../rules/sheetText.ts'
 import { InventoryTab } from './InventoryTab.tsx'
+import { SheetExport } from './SheetExport.tsx'
 import { PowersTab } from './PowersTab.tsx'
 import { SheetTab, type SheetRolls } from './SheetTab.tsx'
 import styles from './SheetPanel.module.css'
@@ -70,6 +72,7 @@ export function SheetPanel({
           </button>
         ))}
         <span className={styles.spacer} />
+        <SheetExport text={() => characterText(character)} fileName={sheetFileName(character)} />
         {canEdit && (
           <ButtonLink href={editHref} variant="quiet" className={styles.edit}>
             Edit character

@@ -19,6 +19,8 @@ import { levelWords, srdSpellFor } from '../fight/useCasting.ts'
 import { QuickChecks } from './QuickChecks.tsx'
 import { DeathSaves } from '../fight/Reactions.tsx'
 import type { TrackerPatch } from '../../live/characterRows.ts'
+import { characterText } from '../../rules/sheetText.ts'
+import { SheetExport } from '../sheet/SheetExport.tsx'
 import styles from './PartyCards.module.css'
 
 type PartyCardsProps = {
@@ -94,6 +96,11 @@ export function PartyCards({
       <div className={styles.grid}>
         {onLevelUp && (
           <div className={styles.partyBar}>
+            <SheetExport
+              copyLabel="Copy everyone’s sheets"
+              fileName="party.txt"
+              text={() => cards.map(({ character }) => characterText(character)).join('\n\n' + '='.repeat(40) + '\n\n')}
+            />
             <button
               type="button"
               className={styles.action}
