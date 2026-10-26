@@ -3,7 +3,7 @@ import { cx } from '../../components/cx.ts'
 import { DiceFaces } from '../../dice/DiceFaces.tsx'
 import { modeText, naturalMoment } from '../../dice/rollText.ts'
 import type { Roll } from '../../live/rolls.ts'
-import { ABILITIES, ABILITY_NAME } from '../../rules/abilities.ts'
+import { ABILITIES, ABILITY_NAME, ABILITY_SHORT } from '../../rules/abilities.ts'
 import { ASKABLES, DIFFICULTIES, PRESET_KEYS, findAskable, passes, type Askable } from '../../rules/askable.ts'
 import type { Character } from '../../rules/character.ts'
 import type { RollRequest } from '../../rules/dice.ts'
@@ -78,11 +78,32 @@ function RollForDm({
   const moment = naturalMoment(roll)
   const name = character?.name ?? 'Someone'
 
-  const option = (a: Askable, label = a.name) => (
-    <option key={a.key} value={a.key}>
-      {label}
-    </option>
-  )
+  // Saves first (they matter most to track), then the checks asked for most, then everything else.
+  const saves = ABILITIES.map((ab) => findAskable(`save:${ab}`)).filter((a): a is Askable => Boolean(a))
+  const common = PRESET_KEYS.map((k) => findAskable(k)).filter((a): a is Askable => Boolean(a) && a?.kind === 'skill')
+  const others = [
+    ...ASKABLES.filter((a) => a.kind === 'skill' && !common.includes(a)),
+    ...ABILITIES.map((ab) => findAskable(`ability:${ab}`)).filter((a): a is Askable => Boolean(a)),
+  ]
+  const moreOpen = askable ? others.includes(askable) : undefined
+  // Each button shows what the roll comes to for this character, so the DM sees it before picking.
+  const pick = (a: Askable, label: string, title = a.label) => {
+    const result = character ? roll.total + namingFor(character, a).modifier : null
+    return (
+      <button
+        key={a.key}
+        type="button"
+        className={cx(styles.pick, a.kind === 'save' && styles.pickSave, key === a.key && styles.on)}
+        aria-pressed={key === a.key}
+        title={title}
+        disabled={!character}
+        onClick={() => setKey(key === a.key ? '' : a.key)}
+      >
+        {label}
+        {result !== null && <span className={styles.pickTotal}>{result}</span>}
+      </button>
+    )
+  }
 
   return (
     <section className={cx(styles.card, moment && styles[moment])} aria-label={`${name}'s roll for you`}>
@@ -101,28 +122,19 @@ function RollForDm({
         </span>
       </div>
 
-      <label className={styles.field}>
+      <div className={styles.picks} role="group" aria-label="What was it?">
         <span className={styles.fieldLabel}>What was it?</span>
-        <select value={key} onChange={(event) => setKey(event.target.value)} disabled={!character}>
-          <option value="">Pick a check or save…</option>
-          <optgroup label="Most asked">
-            {PRESET_KEYS.map((k) => findAskable(k))
-              .filter((a): a is Askable => Boolean(a))
-              .map((a) => option(a))}
-          </optgroup>
-          <optgroup label="Skills">{ASKABLES.filter((a) => a.kind === 'skill').map((a) => option(a))}</optgroup>
-          <optgroup label="Saving throws">
-            {ABILITIES.map((ab) => findAskable(`save:${ab}`))
-              .filter((a): a is Askable => Boolean(a))
-              .map((a) => option(a, `${ABILITY_NAME[a.ability]} save`))}
-          </optgroup>
-          <optgroup label="Ability checks">
-            {ABILITIES.map((ab) => findAskable(`ability:${ab}`))
-              .filter((a): a is Askable => Boolean(a))
-              .map((a) => option(a, `${ABILITY_NAME[a.ability]} check`))}
-          </optgroup>
-        </select>
-      </label>
+        <div className={styles.pickRow}>
+          {saves.map((a) => pick(a, ABILITY_SHORT[a.ability], `${ABILITY_NAME[a.ability]} save`))}
+        </div>
+        <div className={styles.pickRow}>{common.map((a) => pick(a, a.name))}</div>
+        <details className={styles.more} open={moreOpen}>
+          <summary>More checks</summary>
+          <div className={styles.pickRow}>
+            {others.map((a) => pick(a, a.kind === 'ability' ? `${ABILITY_NAME[a.ability]} check` : a.name))}
+          </div>
+        </details>
+      </div>
 
       {naming && (
         <>

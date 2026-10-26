@@ -93,7 +93,6 @@ import type { InventoryItem } from '../../rules/character.ts'
 type ItemEntry = { item: InventoryItem; use: Usable }
 import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
-import { CheckPanel } from './CheckPanel.tsx'
 import { Hand } from './Hand.tsx'
 import styles from './TableView.module.css'
 
@@ -524,8 +523,7 @@ export function TableView({
   // A roll for the DM: a plain d20 (with advantage or disadvantage); the DM says what it was.
   const [dmSaid, setDmSaid] = useState<string | null>(null)
   const forTheDm = useRef(new Set<string>())
-  function rollForTheDm() {
-    const how = mode
+  function rollForTheDm(how: RollMode) {
     setMode('normal')
     if (thrower) {
       // The previews throw in the browser, with no DM to say what it was.
@@ -990,12 +988,8 @@ export function TableView({
       <Hand
         className={styles.hand}
         character={character}
-        checks={
-          // Outside a fight, players roll any check themselves ("I search the room").
-          fight ? null : (
-            <CheckPanel mode={mode} onModeChange={setMode} onRoll={rollForTheDm} disabled={table.rolling} />
-          )
-        }
+        // Outside a fight, players roll a d20 for the DM, who says what it was.
+        onRollForDm={fight ? null : rollForTheDm}
         onAttack={attackWith}
         onUseFeature={(feature) => void playFeature(feature)}
         turn={
