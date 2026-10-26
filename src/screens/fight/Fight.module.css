@@ -639,3 +639,9 @@ button.action:disabled {
 .secret:hover:not(:disabled) {
   background: rgba(224, 123, 66, 0.1);
 }
+
+.defences {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--pass);
+}

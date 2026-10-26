@@ -9,6 +9,7 @@
 
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { parseDefence } from '../src/rules/damage.ts'
 
 const COMMIT = '386930c2e93a7f2c9ba2a9715ccc5b95d8926e41'
 const BASE = `https://raw.githubusercontent.com/5e-bits/5e-srd-api/${COMMIT}/packages/5e-database/src/2014/en`
@@ -223,6 +224,10 @@ async function main(): Promise<void> {
       actions: ((m.actions ?? []) as Raw[]).map(action),
       reactions: ((m.reactions ?? []) as Raw[]).map(action),
       legendary: ((m.legendary_actions ?? []) as Raw[]).map(action),
+      resistances: ((m.damage_resistances ?? []) as string[]).flatMap(parseDefence),
+      vulnerabilities: ((m.damage_vulnerabilities ?? []) as string[]).flatMap(parseDefence),
+      immunities: ((m.damage_immunities ?? []) as string[]).flatMap(parseDefence),
+      conditionImmunities: ((m.condition_immunities ?? []) as Raw[]).map((c) => c.index as string),
     })),
   })
 }

@@ -110,7 +110,11 @@
             }
           ]
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "acolyte",
@@ -153,7 +157,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "adult-black-dragon",
@@ -282,7 +290,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-blue-dragon",
@@ -407,7 +419,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-brass-dragon",
@@ -518,7 +534,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-bronze-dragon",
@@ -633,7 +653,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-copper-dragon",
@@ -744,7 +768,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-gold-dragon",
@@ -859,7 +887,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-green-dragon",
@@ -988,7 +1020,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "adult-red-dragon",
@@ -1113,7 +1149,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-silver-dragon",
@@ -1224,7 +1264,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "adult-white-dragon",
@@ -1353,7 +1397,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "air-elemental",
@@ -1406,7 +1454,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["lightning", "thunder", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": [
+        "exhaustion",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "unconscious"
+      ]
     },
     {
       "index": "ancient-black-dragon",
@@ -1535,7 +1596,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-blue-dragon",
@@ -1660,7 +1725,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-brass-dragon",
@@ -1776,7 +1845,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-bronze-dragon",
@@ -1896,7 +1969,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-copper-dragon",
@@ -2012,7 +2089,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-gold-dragon",
@@ -2132,7 +2213,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-green-dragon",
@@ -2261,7 +2346,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "ancient-red-dragon",
@@ -2386,7 +2475,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-silver-dragon",
@@ -2502,7 +2595,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "ancient-white-dragon",
@@ -2631,7 +2728,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "androsphinx",
@@ -2708,7 +2809,11 @@
           "desc": "The sphinx casts a spell from its list of prepared spells, using a spell slot as normal.",
           "damage": []
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["charmed", "frightened"]
     },
     {
       "index": "animated-armor",
@@ -2760,7 +2865,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison", "psychic"],
+      "conditionImmunities": [
+        "blinded",
+        "charmed",
+        "deafened",
+        "exhaustion",
+        "frightened",
+        "paralyzed",
+        "petrified",
+        "poisoned"
+      ]
     },
     {
       "index": "ankheg",
@@ -2817,7 +2935,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "ape",
@@ -2871,7 +2993,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "archmage",
@@ -2918,7 +3044,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "assassin",
@@ -2993,7 +3123,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["poison"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "awakened-shrub",
@@ -3036,7 +3170,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["piercing"],
+      "vulnerabilities": ["fire"],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "awakened-tree",
@@ -3079,7 +3217,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing"],
+      "vulnerabilities": ["fire"],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "axe-beak",
@@ -3117,7 +3259,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "azer",
@@ -3172,7 +3318,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "baboon",
@@ -3215,7 +3365,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "badger",
@@ -3258,7 +3412,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "balor",
@@ -3342,7 +3500,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "lightning", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "bandit",
@@ -3391,7 +3553,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "bandit-captain",
@@ -3451,7 +3617,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "barbed-devil",
@@ -3529,7 +3699,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "basilisk",
@@ -3576,7 +3750,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "bat",
@@ -3623,7 +3801,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "bearded-devil",
@@ -3690,7 +3872,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "behir",
@@ -3773,7 +3959,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "berserker",
@@ -3816,7 +4006,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "black-bear",
@@ -3875,7 +4069,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "black-dragon-wyrmling",
@@ -3937,7 +4135,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "black-pudding",
@@ -3998,7 +4200,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid", "cold", "lightning", "slashing"],
+      "conditionImmunities": ["blinded", "charmed", "exhaustion", "frightened", "prone"]
     },
     {
       "index": "blink-dog",
@@ -4046,7 +4252,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "blood-hawk",
@@ -4093,7 +4303,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "blue-dragon-wyrmling",
@@ -4150,7 +4364,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "boar",
@@ -4197,7 +4415,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "bone-devil",
@@ -4264,7 +4486,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "brass-dragon-wyrmling",
@@ -4307,7 +4533,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "bronze-dragon-wyrmling",
@@ -4355,7 +4585,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "brown-bear",
@@ -4414,7 +4648,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "bugbear",
@@ -4472,7 +4710,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "bulette",
@@ -4520,7 +4762,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "camel",
@@ -4558,7 +4804,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "cat",
@@ -4601,7 +4851,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "centaur",
@@ -4671,7 +4925,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "chain-devil",
@@ -4739,7 +4997,11 @@
           }
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "chimera",
@@ -4819,7 +5081,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "chuul",
@@ -4881,7 +5147,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "clay-golem",
@@ -4950,7 +5220,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [
+        "acid",
+        "poison",
+        "psychic",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
     },
     {
       "index": "cloaker",
@@ -5032,7 +5313,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "cloud-giant",
@@ -5095,7 +5380,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "cockatrice",
@@ -5133,7 +5422,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "commoner",
@@ -5171,7 +5464,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "constrictor-snake",
@@ -5220,7 +5517,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "copper-dragon-wyrmling",
@@ -5263,7 +5564,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "couatl",
@@ -5330,7 +5635,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["radiant"],
+      "vulnerabilities": [],
+      "immunities": ["psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "crab",
@@ -5373,7 +5682,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "crocodile",
@@ -5416,7 +5729,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "cult-fanatic",
@@ -5468,7 +5785,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "cultist",
@@ -5511,7 +5832,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "darkmantle",
@@ -5563,7 +5888,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "death-dog",
@@ -5611,7 +5940,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "deep-gnome-svirfneblin",
@@ -5673,7 +6006,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "deer",
@@ -5711,7 +6048,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "deva",
@@ -5781,7 +6122,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["radiant", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened"]
     },
     {
       "index": "dire-wolf",
@@ -5828,7 +6173,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "djinni",
@@ -5890,7 +6239,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning", "thunder"],
+      "conditionImmunities": []
     },
     {
       "index": "doppelganger",
@@ -5951,7 +6304,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["charmed"]
     },
     {
       "index": "draft-horse",
@@ -5989,7 +6346,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "dragon-turtle",
@@ -6074,7 +6435,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["fire"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "dretch",
@@ -6138,7 +6503,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "fire", "lightning"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "drider",
@@ -6227,7 +6596,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "drow",
@@ -6289,7 +6662,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "druid",
@@ -6327,7 +6704,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "dryad",
@@ -6392,7 +6773,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "duergar",
@@ -6460,7 +6845,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["poison"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "dust-mephit",
@@ -6517,7 +6906,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": ["fire"],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "eagle",
@@ -6560,7 +6953,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "earth-elemental",
@@ -6612,7 +7009,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": ["thunder"],
+      "immunities": ["poison"],
+      "conditionImmunities": ["exhaustion", "paralyzed", "petrified", "poisoned", "unconscious"]
     },
     {
       "index": "efreeti",
@@ -6679,7 +7080,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "elephant",
@@ -6733,7 +7138,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "elk",
@@ -6787,7 +7196,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "erinyes",
@@ -6860,7 +7273,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "ettercap",
@@ -6937,7 +7354,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "ettin",
@@ -7000,7 +7421,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "fire-elemental",
@@ -7056,7 +7481,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": [
+        "exhaustion",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "unconscious"
+      ]
     },
     {
       "index": "fire-giant",
@@ -7110,7 +7548,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "flesh-golem",
@@ -7178,7 +7620,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
     },
     {
       "index": "flying-snake",
@@ -7225,7 +7671,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "flying-sword",
@@ -7272,7 +7722,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison", "psychic"],
+      "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"]
     },
     {
       "index": "frog",
@@ -7307,7 +7761,11 @@
       ],
       "actions": [],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "frost-giant",
@@ -7361,7 +7819,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "gargoyle",
@@ -7420,7 +7882,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["exhaustion", "petrified", "poisoned"]
     },
     {
       "index": "gelatinous-cube",
@@ -7482,7 +7948,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"]
     },
     {
       "index": "ghast",
@@ -7540,7 +8010,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["necrotic"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned", "charmed", "exhaustion"]
     },
     {
       "index": "ghost",
@@ -7612,7 +8086,29 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "acid",
+        "fire",
+        "lightning",
+        "thunder",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["cold", "necrotic", "poison"],
+      "conditionImmunities": [
+        "charmed",
+        "exhaustion",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained"
+      ]
     },
     {
       "index": "ghoul",
@@ -7661,7 +8157,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned", "charmed", "exhaustion"]
     },
     {
       "index": "giant-ape",
@@ -7715,7 +8215,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-badger",
@@ -7774,7 +8278,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-bat",
@@ -7821,7 +8329,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-boar",
@@ -7868,7 +8380,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-centipede",
@@ -7906,7 +8422,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-constrictor-snake",
@@ -7955,7 +8475,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-crab",
@@ -7998,7 +8522,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-crocodile",
@@ -8057,7 +8585,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-eagle",
@@ -8116,7 +8648,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-elk",
@@ -8170,7 +8706,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-fire-beetle",
@@ -8213,7 +8753,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-frog",
@@ -8265,7 +8809,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-goat",
@@ -8312,7 +8860,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-hyena",
@@ -8355,7 +8907,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-lizard",
@@ -8393,7 +8949,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-octopus",
@@ -8449,7 +9009,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-owl",
@@ -8496,7 +9060,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-poisonous-snake",
@@ -8534,7 +9102,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-rat",
@@ -8581,7 +9153,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-rat-diseased",
@@ -8628,7 +9204,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-scorpion",
@@ -8682,7 +9262,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-sea-horse",
@@ -8729,7 +9313,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-shark",
@@ -8776,7 +9364,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-spider",
@@ -8833,7 +9425,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-toad",
@@ -8889,7 +9485,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-vulture",
@@ -8952,7 +9552,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-wasp",
@@ -8990,7 +9594,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-weasel",
@@ -9033,7 +9641,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "giant-wolf-spider",
@@ -9084,7 +9696,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "gibbering-mouther",
@@ -9146,7 +9762,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["prone"]
     },
     {
       "index": "glabrezu",
@@ -9209,7 +9829,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "gladiator",
@@ -9273,7 +9904,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "gnoll",
@@ -9333,7 +9968,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "goat",
@@ -9380,7 +10019,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "goblin",
@@ -9434,7 +10077,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "gold-dragon-wyrmling",
@@ -9482,7 +10129,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "gorgon",
@@ -9546,7 +10197,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["petrified"]
     },
     {
       "index": "gray-ooze",
@@ -9601,7 +10256,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["acid", "cold", "fire"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"]
     },
     {
       "index": "green-dragon-wyrmling",
@@ -9663,7 +10322,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "green-hag",
@@ -9724,7 +10387,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "grick",
@@ -9783,7 +10450,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "griffon",
@@ -9842,7 +10513,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "grimlock",
@@ -9897,7 +10572,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["blinded"]
     },
     {
       "index": "guard",
@@ -9930,7 +10609,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "guardian-naga",
@@ -9983,7 +10666,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["charmed", "poisoned"]
     },
     {
       "index": "gynosphinx",
@@ -10055,7 +10742,11 @@
           "desc": "The sphinx casts a spell from its list of prepared spells, using a spell slot as normal.",
           "damage": []
         }
-      ]
+      ],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["psychic"],
+      "conditionImmunities": ["charmed", "frightened"]
     },
     {
       "index": "half-red-dragon-veteran",
@@ -10130,7 +10821,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["fire"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "harpy",
@@ -10189,7 +10884,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "hawk",
@@ -10232,7 +10931,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "hell-hound",
@@ -10298,7 +11001,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "hezrou",
@@ -10361,7 +11068,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "hill-giant",
@@ -10415,7 +11133,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "hippogriff",
@@ -10474,7 +11196,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "hobgoblin",
@@ -10523,7 +11249,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "homunculus",
@@ -10566,7 +11296,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["charmed", "poisoned"]
     },
     {
       "index": "horned-devil",
@@ -10640,7 +11374,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "hunter-shark",
@@ -10687,7 +11425,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "hydra",
@@ -10747,7 +11489,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "hyena",
@@ -10790,7 +11536,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "ice-devil",
@@ -10881,7 +11631,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "ice-mephit",
@@ -10951,7 +11705,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": ["bludgeoning", "fire"],
+      "immunities": ["cold", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "imp",
@@ -11007,7 +11765,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "invisible-stalker",
@@ -11059,7 +11821,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": [
+        "exhaustion",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "unconscious"
+      ]
     },
     {
       "index": "iron-golem",
@@ -11145,7 +11920,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [
+        "fire",
+        "poison",
+        "psychic",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
     },
     {
       "index": "jackal",
@@ -11192,7 +11978,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "killer-whale",
@@ -11243,7 +12033,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "knight",
@@ -11313,7 +12107,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "kobold",
@@ -11371,7 +12169,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "kraken",
@@ -11486,7 +12288,11 @@
             "success": "half"
           }
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["frightened", "paralyzed"]
     },
     {
       "index": "lamia",
@@ -11551,7 +12357,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "lemure",
@@ -11598,7 +12408,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["charmed", "frightened", "poisoned"]
     },
     {
       "index": "lich",
@@ -11689,7 +12503,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": ["cold", "lightning", "necrotic"],
+      "vulnerabilities": [],
+      "immunities": ["poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
     },
     {
       "index": "lion",
@@ -11755,7 +12573,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "lizard",
@@ -11793,7 +12615,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "lizardfolk",
@@ -11874,7 +12700,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "mage",
@@ -11917,7 +12747,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "magma-mephit",
@@ -11987,7 +12821,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": ["cold"],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "magmin",
@@ -12034,7 +12872,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "mammoth",
@@ -12088,7 +12930,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "manticore",
@@ -12158,7 +13004,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "marilith",
@@ -12236,7 +13086,18 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "mastiff",
@@ -12279,7 +13140,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "medusa",
@@ -12357,7 +13222,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "merfolk",
@@ -12395,7 +13264,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "merrow",
@@ -12465,7 +13338,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "mimic",
@@ -12535,7 +13412,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": ["prone"]
     },
     {
       "index": "minotaur",
@@ -12597,7 +13478,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "minotaur-skeleton",
@@ -12651,7 +13536,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": ["bludgeoning"],
+      "immunities": ["poison"],
+      "conditionImmunities": ["exhaustion", "poisoned"]
     },
     {
       "index": "mule",
@@ -12698,7 +13587,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "mummy",
@@ -12755,7 +13648,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": ["fire"],
+      "immunities": ["necrotic", "poison"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
     },
     {
       "index": "mummy-lord",
@@ -12861,7 +13758,11 @@
           "desc": "The mummy lord magically transforms into a whirlwind of sand, moves up to 60 feet, and reverts to its normal form. While in whirlwind form, the mummy lord is immune to all damage, and it can't be grappled, petrified, knocked prone, restrained, or stunned. Equipment worn or carried by the mummy lord remain in its possession.",
           "damage": []
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": ["fire"],
+      "immunities": ["necrotic", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
     },
     {
       "index": "nalfeshnee",
@@ -12935,7 +13836,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "night-hag",
@@ -13001,7 +13913,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "fire", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["charmed"]
     },
     {
       "index": "nightmare",
@@ -13057,7 +13973,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "noble",
@@ -13101,7 +14021,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "ochre-jelly",
@@ -13158,7 +14082,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["acid"],
+      "vulnerabilities": [],
+      "immunities": ["lightning", "slashing"],
+      "conditionImmunities": ["blinded", "charmed", "blinded", "exhaustion", "frightened", "prone"]
     },
     {
       "index": "octopus",
@@ -13215,7 +14143,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "ogre",
@@ -13264,7 +14196,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "ogre-zombie",
@@ -13307,7 +14243,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "oni",
@@ -13379,7 +14319,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "orc",
@@ -13433,7 +14377,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "otyugh",
@@ -13506,7 +14454,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "owl",
@@ -13553,7 +14505,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "owlbear",
@@ -13612,7 +14568,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "panther",
@@ -13670,7 +14630,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "pegasus",
@@ -13708,7 +14672,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "phase-spider",
@@ -13759,7 +14727,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "pit-fiend",
@@ -13852,7 +14824,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "planetar",
@@ -13921,7 +14897,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["radiant", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened"]
     },
     {
       "index": "plesiosaurus",
@@ -13964,7 +14944,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "poisonous-snake",
@@ -14002,7 +14986,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "polar-bear",
@@ -14061,7 +15049,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "pony",
@@ -14099,7 +15091,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "priest",
@@ -14146,7 +15142,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "pseudodragon",
@@ -14208,7 +15208,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "purple-worm",
@@ -14267,7 +15271,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "quasit",
@@ -14329,7 +15337,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "quipper",
@@ -14376,7 +15395,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "rakshasa",
@@ -14428,7 +15451,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "rat",
@@ -14471,7 +15498,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "raven",
@@ -14514,7 +15545,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "red-dragon-wyrmling",
@@ -14571,7 +15606,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "reef-shark",
@@ -14618,7 +15657,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "remorhaz",
@@ -14670,7 +15713,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold", "fire"],
+      "conditionImmunities": []
     },
     {
       "index": "rhinoceros",
@@ -14713,7 +15760,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "riding-horse",
@@ -14751,7 +15802,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "roc",
@@ -14810,7 +15865,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "roper",
@@ -14877,7 +15936,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "rug-of-smothering",
@@ -14923,7 +15986,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison", "psychic"],
+      "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"]
     },
     {
       "index": "rust-monster",
@@ -14975,7 +16042,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "saber-toothed-tiger",
@@ -15033,7 +16104,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "sahuagin",
@@ -15106,7 +16181,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "salamander",
@@ -15173,7 +16252,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": ["cold"],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "satyr",
@@ -15238,7 +16321,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "scorpion",
@@ -15276,7 +16363,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "scout",
@@ -15335,7 +16426,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "sea-hag",
@@ -15397,7 +16492,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "sea-horse",
@@ -15428,7 +16527,11 @@
       ],
       "actions": [],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "shadow",
@@ -15479,7 +16582,29 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "acid",
+        "cold",
+        "fire",
+        "lightning",
+        "thunder",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": ["radiant"],
+      "immunities": ["necrotic", "poison"],
+      "conditionImmunities": [
+        "exhaustion",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained"
+      ]
     },
     {
       "index": "shambling-mound",
@@ -15532,7 +16657,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold", "fire"],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": ["blinded", "blinded", "exhaustion"]
     },
     {
       "index": "shield-guardian",
@@ -15594,7 +16723,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"]
     },
     {
       "index": "shrieker",
@@ -15631,7 +16764,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["blinded", "blinded", "frightened"]
     },
     {
       "index": "silver-dragon-wyrmling",
@@ -15674,7 +16811,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "skeleton",
@@ -15723,7 +16864,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": ["bludgeoning"],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned", "exhaustion"]
     },
     {
       "index": "solar",
@@ -15847,7 +16992,11 @@
             "success": "none"
           }
         }
-      ]
+      ],
+      "resistances": ["radiant", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["necrotic", "poison"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "poisoned"]
     },
     {
       "index": "specter",
@@ -15894,7 +17043,30 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "acid",
+        "cold",
+        "fire",
+        "lightning",
+        "thunder",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["necrotic", "poison"],
+      "conditionImmunities": [
+        "charmed",
+        "exhaustion",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "unconscious"
+      ]
     },
     {
       "index": "spider",
@@ -15945,7 +17117,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "spirit-naga",
@@ -15992,7 +17168,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["charmed", "poisoned"]
     },
     {
       "index": "sprite",
@@ -16056,7 +17236,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "spy",
@@ -16119,7 +17303,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "steam-mephit",
@@ -16185,7 +17373,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "stirge",
@@ -16223,7 +17415,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "stone-giant",
@@ -16288,7 +17484,11 @@
           "damage": []
         }
       ],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "stone-golem",
@@ -16354,7 +17554,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison", "psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"]
     },
     {
       "index": "storm-giant",
@@ -16432,7 +17636,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["cold"],
+      "vulnerabilities": [],
+      "immunities": ["lightning", "thunder"],
+      "conditionImmunities": []
     },
     {
       "index": "succubus-incubus",
@@ -16504,7 +17712,19 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "poison",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "swarm-of-bats",
@@ -16555,7 +17775,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-beetles",
@@ -16598,7 +17831,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-centipedes",
@@ -16641,7 +17887,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-insects",
@@ -16684,7 +17943,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-poisonous-snakes",
@@ -16727,7 +17999,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-quippers",
@@ -16778,7 +18063,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-rats",
@@ -16825,7 +18123,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-ravens",
@@ -16868,7 +18179,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "swarm-of-spiders",
@@ -16923,7 +18247,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["charmed", "frightened", "paralyzed", "petrified", "prone", "restrained", "stunned"]
     },
     {
       "index": "swarm-of-wasps",
@@ -16966,7 +18294,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing", "slashing"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": [
+        "charmed",
+        "frightened",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "prone",
+        "restrained",
+        "stunned"
+      ]
     },
     {
       "index": "tarrasque",
@@ -17090,7 +18431,11 @@
           "desc": "The tarrasque makes one bite attack or uses its Swallow.",
           "damage": []
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": ["charmed", "frightened", "paralyzed", "poisoned"]
     },
     {
       "index": "thug",
@@ -17149,7 +18494,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "tiger",
@@ -17207,7 +18556,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "treant",
@@ -17275,7 +18628,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["bludgeoning", "piercing"],
+      "vulnerabilities": ["fire"],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "tribal-warrior",
@@ -17313,7 +18670,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "triceratops",
@@ -17367,7 +18728,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "troll",
@@ -17430,7 +18795,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "tyrannosaurus-rex",
@@ -17484,7 +18853,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "unicorn",
@@ -17581,7 +18954,11 @@
           "desc": "The unicorn magically regains 11 (2d8 + 2) hit points.",
           "damage": []
         }
-      ]
+      ],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["charmed", "paralyzed", "poisoned"]
     },
     {
       "index": "vampire-vampire",
@@ -17698,7 +19075,11 @@
           "attackBonus": 0,
           "damage": []
         }
-      ]
+      ],
+      "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "vampire-bat",
@@ -17799,7 +19180,11 @@
           "attackBonus": 0,
           "damage": []
         }
-      ]
+      ],
+      "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "vampire-mist",
@@ -17869,7 +19254,11 @@
           "attackBonus": 0,
           "damage": []
         }
-      ]
+      ],
+      "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "vampire-spawn",
@@ -17940,7 +19329,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "veteran",
@@ -18000,7 +19393,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "violet-fungus",
@@ -18048,7 +19445,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": ["blinded", "blinded", "frightened"]
     },
     {
       "index": "vrock",
@@ -18127,7 +19528,18 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "cold",
+        "fire",
+        "lightning",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "vulture",
@@ -18174,7 +19586,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "warhorse",
@@ -18217,7 +19633,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "warhorse-skeleton",
@@ -18255,7 +19675,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": ["bludgeoning"],
+      "immunities": ["poison"],
+      "conditionImmunities": ["exhaustion", "poisoned"]
     },
     {
       "index": "water-elemental",
@@ -18322,7 +19746,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["acid", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": [
+        "exhaustion",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "unconscious"
+      ]
     },
     {
       "index": "weasel",
@@ -18365,7 +19802,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "werebear-bear",
@@ -18428,7 +19869,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "werebear-human",
@@ -18480,7 +19925,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "werebear-hybrid",
@@ -18554,7 +20003,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "wereboar-boar",
@@ -18605,7 +20058,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "wereboar-human",
@@ -18657,7 +20114,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "wereboar-hybrid",
@@ -18724,7 +20185,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "wererat-human",
@@ -18787,7 +20252,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "wererat-hybrid",
@@ -18861,7 +20330,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "wererat-rat",
@@ -18908,7 +20381,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "weretiger-human",
@@ -18971,7 +20448,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "weretiger-hybrid",
@@ -19060,7 +20541,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "weretiger-tiger",
@@ -19122,7 +20607,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "werewolf-human",
@@ -19169,7 +20658,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "werewolf-hybrid",
@@ -19232,7 +20725,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "werewolf-wolf",
@@ -19279,7 +20776,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "conditionImmunities": []
     },
     {
       "index": "white-dragon-wyrmling",
@@ -19336,7 +20837,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "wight",
@@ -19401,7 +20906,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["necrotic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["exhaustion", "poisoned"]
     },
     {
       "index": "will-o-wisp",
@@ -19461,7 +20970,20 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "acid",
+        "cold",
+        "fire",
+        "necrotic",
+        "thunder",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["lightning", "poison"],
+      "conditionImmunities": ["exhaustion", "grappled", "paralyzed", "poisoned", "prone", "restrained", "unconscious"]
     },
     {
       "index": "winter-wolf",
@@ -19527,7 +21049,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "wolf",
@@ -19574,7 +21100,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "worg",
@@ -19617,7 +21147,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "wraith",
@@ -19669,7 +21203,29 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [
+        "acid",
+        "cold",
+        "fire",
+        "lightning",
+        "thunder",
+        "bludgeoning:nonmagical",
+        "piercing:nonmagical",
+        "slashing:nonmagical"
+      ],
+      "vulnerabilities": [],
+      "immunities": ["necrotic", "poison"],
+      "conditionImmunities": [
+        "charmed",
+        "exhaustion",
+        "grappled",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained"
+      ]
     },
     {
       "index": "wyvern",
@@ -19734,7 +21290,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "xorn",
@@ -19801,7 +21361,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": ["piercing:nonmagical", "slashing:nonmagical"],
+      "vulnerabilities": [],
+      "immunities": [],
+      "conditionImmunities": []
     },
     {
       "index": "young-black-dragon",
@@ -19879,7 +21443,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "young-blue-dragon",
@@ -19952,7 +21520,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "young-brass-dragon",
@@ -20011,7 +21583,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "young-bronze-dragon",
@@ -20075,7 +21651,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["lightning"],
+      "conditionImmunities": []
     },
     {
       "index": "young-copper-dragon",
@@ -20134,7 +21714,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["acid"],
+      "conditionImmunities": []
     },
     {
       "index": "young-gold-dragon",
@@ -20198,7 +21782,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "young-green-dragon",
@@ -20276,7 +21864,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     },
     {
       "index": "young-red-dragon",
@@ -20349,7 +21941,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["fire"],
+      "conditionImmunities": []
     },
     {
       "index": "young-silver-dragon",
@@ -20408,7 +22004,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "young-white-dragon",
@@ -20486,7 +22086,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["cold"],
+      "conditionImmunities": []
     },
     {
       "index": "zombie",
@@ -20529,7 +22133,11 @@
         }
       ],
       "reactions": [],
-      "legendary": []
+      "legendary": [],
+      "resistances": [],
+      "vulnerabilities": [],
+      "immunities": ["poison"],
+      "conditionImmunities": ["poisoned"]
     }
   ]
 }

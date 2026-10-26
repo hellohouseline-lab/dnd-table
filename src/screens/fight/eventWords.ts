@@ -36,8 +36,19 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
   if (!event.shown.hit) return `${actor} ${verb('misses', 'miss')} ${target}${weapon}${rolled}.`
 
   const damage = event.shown.damage ?? 0
-  const amount = damage > 0 ? ` for ${damage}${event.shown.damageType ? ` ${event.shown.damageType}` : ''}` : ''
+  const type = event.shown.damageType ? ` ${event.shown.damageType}` : ''
+  const amount = damage > 0 ? ` for ${damage}${type}` : ''
+  const adjusted =
+    event.shown.adjust === 'resisted'
+      ? ' (resisted, so halved)'
+      : event.shown.adjust === 'vulnerable'
+        ? ' (vulnerable, so doubled)'
+        : ''
   const critical = event.shown.critical ? ' A critical hit!' : ''
   const down = event.shown.down ? ` ${targetIsYou ? 'You go' : `${target} goes`} down.` : ''
-  return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${amount}${rolled}.${critical}${down}`
+  if (event.shown.adjust === 'immune') {
+    const immune = targetIsYou ? 'You are' : `${target} is`
+    return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${rolled}, but ${immune} immune to${type || ' it'}.${critical}`
+  }
+  return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${amount}${adjusted}${rolled}.${critical}${down}`
 }

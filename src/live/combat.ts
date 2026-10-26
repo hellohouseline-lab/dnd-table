@@ -13,6 +13,7 @@ import {
 } from '../rules/combat.ts'
 import type { RollRequest } from '../rules/dice.ts'
 import type { TurnRecord } from '../rules/turn.ts'
+import type { Defences } from '../rules/damage.ts'
 import type { SrdMonster } from '../rules/srd/index.ts'
 import type { Tables } from './database.types.ts'
 import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './errors.ts'
@@ -67,6 +68,8 @@ export type CombatEvent = {
     total?: number | null
     /** The target dropped to 0 hit points. */
     down?: boolean
+    /** What the target's defences did to the damage. */
+    adjust?: 'resisted' | 'vulnerable' | 'immune' | null
     /** For actions: 'dash', 'disengage', 'dodge', 'action', 'bonus' or 'reaction'. */
     what?: string
   }
@@ -76,7 +79,7 @@ export type CombatEvent = {
 }
 
 /** A monster's real name and numbers, which only the DM can read. */
-export type CombatantSecret = {
+export type CombatantSecret = Defences & {
   combatantId: string
   name: string
   monster: string | null
@@ -167,6 +170,9 @@ function rowToSecret(row: Tables<'combatant_secrets'>): CombatantSecret {
     hp: row.hp,
     maxHp: row.max_hp,
     ac: row.ac,
+    resistances: row.resistances,
+    vulnerabilities: row.vulnerabilities,
+    immunities: row.immunities,
   }
 }
 
@@ -270,6 +276,10 @@ export async function addMonsters(
     hp: Math.max(1, monster.hp),
     max_hp: Math.max(1, monster.hp),
     ac: monster.ac,
+    resistances: monster.resistances ?? [],
+    vulnerabilities: monster.vulnerabilities ?? [],
+    immunities: monster.immunities ?? [],
+    condition_immunities: monster.conditionImmunities ?? [],
   }))
   const secrets = await db().from('combatant_secrets').insert(secretRows).select('*')
   if (secrets.error) throw fromDatabaseError(secrets.error)

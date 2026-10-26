@@ -57,6 +57,9 @@ const trackers = {
   deathSaveSuccesses: 0,
   deathSaveFailures: 0,
   conditions: [],
+  resistances: [],
+  vulnerabilities: [],
+  immunities: [],
   exhaustion: 0,
   inspiration: false,
   concentration: null,
@@ -163,6 +166,9 @@ export const sampleWizard: Character = {
     ],
   },
   conditions: ['poisoned'],
+  resistances: [],
+  vulnerabilities: [],
+  immunities: [],
 }
 
 export const sampleCharacters = [sampleFighter, sampleWizard]

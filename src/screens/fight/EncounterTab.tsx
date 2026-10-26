@@ -3,6 +3,7 @@ import type { Combatant } from '../../live/combat.ts'
 import type { FightControls } from '../../live/useFight.ts'
 import type { AttackEntry, Character } from '../../rules/character.ts'
 import { actionSummary, crText, HEALTH_WORDS, isAttack } from '../../rules/combat.ts'
+import { defencesText, NO_DEFENCES } from '../../rules/damage.ts'
 import { abilityModifier, formatBonus } from '../../rules/maths/core.ts'
 import { CONDITIONS, findCondition, type SrdMonster, type SrdMonsterAction } from '../../rules/srd/index.ts'
 import { fightRows, turnLimits, type FightRow } from './fightRows.ts'
@@ -188,6 +189,7 @@ export function ActingNow({
   const monster = row.secret?.monster ? monsters?.find((m) => m.index === row.secret?.monster) : undefined
   const available = CONDITIONS.filter((c) => c.index !== 'exhaustion' && !row.conditions.includes(c.index))
   const attacks = monster?.actions.filter(isAttack) ?? []
+  const defences = defencesText(row.character ?? row.secret ?? NO_DEFENCES)
 
   return (
     <section className={cx(styles.actingCard, className)} aria-label="Acting now">
@@ -205,6 +207,7 @@ export function ActingNow({
           <div className={styles.actingPips}>
             <TurnPips turn={row.combatant.turn} {...turnLimits(row)} />
           </div>
+          {defences && <div className={styles.defences}>{defences}</div>}
         </div>
       </div>
 

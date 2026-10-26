@@ -108,6 +108,11 @@ export type SrdMonster = {
   actions: SrdMonsterAction[]
   reactions: SrdMonsterAction[]
   legendary: SrdMonsterAction[]
+  /** Damage types it resists, is vulnerable to or immune to ('cold', or 'slashing:nonmagical'). */
+  resistances: string[]
+  vulnerabilities: string[]
+  immunities: string[]
+  conditionImmunities: string[]
 }
 
 export const SKILLS = basics.skills as SrdSkill[]

@@ -150,6 +150,7 @@ export function attackRoll(character: RollCharacter, attack: AttackEntry, choice
   )
   return {
     ...request,
+    magical: attack.magicBonus > 0,
     damage: {
       dice,
       // With no dice the damage is flat: 1 + the bonus, as for an unarmed strike.

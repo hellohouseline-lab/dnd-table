@@ -174,6 +174,7 @@ export type Database = {
           hit_dice_used: number
           hit_die: number
           id: string
+          immunities: string[]
           inspiration: boolean
           intelligence: number
           languages: string
@@ -184,6 +185,7 @@ export type Database = {
           owner_id: string
           portrait_path: string | null
           race: string
+          resistances: string[]
           save_proficiencies: string[]
           skill_expertise: string[]
           skill_proficiencies: string[]
@@ -194,6 +196,7 @@ export type Database = {
           subrace: string
           temp_hp: number
           updated_at: string
+          vulnerabilities: string[]
           wisdom: number
         }
         Insert: {
@@ -216,6 +219,7 @@ export type Database = {
           hit_dice_used?: number
           hit_die?: number
           id?: string
+          immunities?: string[]
           inspiration?: boolean
           intelligence?: number
           languages?: string
@@ -226,6 +230,7 @@ export type Database = {
           owner_id: string
           portrait_path?: string | null
           race?: string
+          resistances?: string[]
           save_proficiencies?: string[]
           skill_expertise?: string[]
           skill_proficiencies?: string[]
@@ -236,6 +241,7 @@ export type Database = {
           subrace?: string
           temp_hp?: number
           updated_at?: string
+          vulnerabilities?: string[]
           wisdom?: number
         }
         Update: {
@@ -258,6 +264,7 @@ export type Database = {
           hit_dice_used?: number
           hit_die?: number
           id?: string
+          immunities?: string[]
           inspiration?: boolean
           intelligence?: number
           languages?: string
@@ -268,6 +275,7 @@ export type Database = {
           owner_id?: string
           portrait_path?: string | null
           race?: string
+          resistances?: string[]
           save_proficiencies?: string[]
           skill_expertise?: string[]
           skill_proficiencies?: string[]
@@ -278,6 +286,7 @@ export type Database = {
           subrace?: string
           temp_hp?: number
           updated_at?: string
+          vulnerabilities?: string[]
           wisdom?: number
         }
         Relationships: [
@@ -415,28 +424,40 @@ export type Database = {
           ac: number
           campaign_id: string
           combatant_id: string
+          condition_immunities: string[]
           hp: number
+          immunities: string[]
           max_hp: number
           monster: string | null
           name: string
+          resistances: string[]
+          vulnerabilities: string[]
         }
         Insert: {
           ac?: number
           campaign_id: string
           combatant_id: string
+          condition_immunities?: string[]
           hp?: number
+          immunities?: string[]
           max_hp?: number
           monster?: string | null
           name: string
+          resistances?: string[]
+          vulnerabilities?: string[]
         }
         Update: {
           ac?: number
           campaign_id?: string
           combatant_id?: string
+          condition_immunities?: string[]
           hp?: number
+          immunities?: string[]
           max_hp?: number
           monster?: string | null
           name?: string
+          resistances?: string[]
+          vulnerabilities?: string[]
         }
         Relationships: [
           {

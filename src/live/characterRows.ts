@@ -114,6 +114,9 @@ export function rowToCharacter(row: CharacterRow): Character {
     deathSaveSuccesses: row.death_save_successes,
     deathSaveFailures: row.death_save_failures,
     conditions: row.conditions,
+    resistances: row.resistances,
+    vulnerabilities: row.vulnerabilities,
+    immunities: row.immunities,
     exhaustion: row.exhaustion,
     inspiration: row.inspiration,
     concentration: row.concentration,
@@ -159,6 +162,9 @@ export type TrackerPatch = Partial<
     | 'deathSaveSuccesses'
     | 'deathSaveFailures'
     | 'conditions'
+    | 'resistances'
+    | 'vulnerabilities'
+    | 'immunities'
     | 'exhaustion'
     | 'inspiration'
     | 'concentration'
@@ -176,6 +182,9 @@ export function trackersToRow(patch: TrackerPatch): CharacterRowPatch {
   if (patch.deathSaveSuccesses !== undefined) row.death_save_successes = patch.deathSaveSuccesses
   if (patch.deathSaveFailures !== undefined) row.death_save_failures = patch.deathSaveFailures
   if (patch.conditions !== undefined) row.conditions = patch.conditions
+  if (patch.resistances !== undefined) row.resistances = patch.resistances
+  if (patch.vulnerabilities !== undefined) row.vulnerabilities = patch.vulnerabilities
+  if (patch.immunities !== undefined) row.immunities = patch.immunities
   if (patch.exhaustion !== undefined) row.exhaustion = patch.exhaustion
   if (patch.inspiration !== undefined) row.inspiration = patch.inspiration
   if (patch.concentration !== undefined) row.concentration = patch.concentration

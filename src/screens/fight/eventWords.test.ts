@@ -33,17 +33,35 @@ describe('the feed in plain words', () => {
       'You miss Goblin A with Longsword (rolled 9).',
     )
     expect(
-      eventWords(attack({ label: 'Scimitar', hit: true, damage: 5, damageType: 'slashing', total: null }, 'unknown', 'thorin'), {
-        nameOf,
-        youId: 'thorin',
-      }),
+      eventWords(
+        attack({ label: 'Scimitar', hit: true, damage: 5, damageType: 'slashing', total: null }, 'unknown', 'thorin'),
+        {
+          nameOf,
+          youId: 'thorin',
+        },
+      ),
     ).toBe('Unknown creature 2 hits you with Scimitar for 5 slashing.')
   })
 
   it('marks critical hits and anyone who goes down', () => {
-    expect(eventWords(attack({ label: 'Longsword', hit: true, critical: true, damage: 15, down: true }), { nameOf })).toBe(
-      'Thorin hits Goblin A with Longsword for 15. A critical hit! Goblin A goes down.',
-    )
+    expect(
+      eventWords(attack({ label: 'Longsword', hit: true, critical: true, damage: 15, down: true }), { nameOf }),
+    ).toBe('Thorin hits Goblin A with Longsword for 15. A critical hit! Goblin A goes down.')
+  })
+
+  it('says what defences did to the damage', () => {
+    expect(
+      eventWords(
+        attack({ label: 'Ray of Frost', hit: true, damage: 4, damageType: 'cold', adjust: 'resisted', total: 15 }),
+        { nameOf },
+      ),
+    ).toBe('Thorin hits Goblin A with Ray of Frost for 4 cold (resisted, so halved) (rolled 15).')
+    expect(
+      eventWords(
+        attack({ label: 'Poison dart', hit: true, damage: 0, damageType: 'poison', adjust: 'immune', total: 15 }),
+        { nameOf },
+      ),
+    ).toBe('Thorin hits Goblin A with Poison dart (rolled 15), but Goblin A is immune to poison.')
   })
 
   it('names the actions people take', () => {

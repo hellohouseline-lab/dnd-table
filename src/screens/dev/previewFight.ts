@@ -13,6 +13,7 @@ import { healthState, letteredNames, nextTurn, unknownNames } from '../../rules/
 import { secureDraw } from '../../rules/dice.ts'
 import { abilityModifier } from '../../rules/maths/core.ts'
 import { takeDamage } from '../../rules/maths/hitPoints.ts'
+import { adjustDamage, NO_DEFENCES } from '../../rules/damage.ts'
 import { attackHits, attacksLeft, attacksPerAction, FRESH_TURN, type TurnRecord } from '../../rules/turn.ts'
 
 type Fight = NonNullable<FightControls['fight']>
@@ -62,7 +63,7 @@ export function sampleFight(characters: Character[]): Fight {
       turn: FRESH_TURN,
       createdAt: stamp(),
     })
-    secrets.push({ combatantId: id, name, monster: 'goblin', hp: i === 1 ? 3 : 7, maxHp: 7, ac: 15 })
+    secrets.push({ combatantId: id, name, monster: 'goblin', hp: i === 1 ? 3 : 7, maxHp: 7, ac: 15, ...NO_DEFENCES })
   })
   return {
     encounter: {
@@ -188,6 +189,9 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
             hp: monster.hp,
             maxHp: monster.hp,
             ac: monster.ac,
+            resistances: monster.resistances,
+            vulnerabilities: monster.vulnerabilities,
+            immunities: monster.immunities,
           })),
         ],
       }))
@@ -248,7 +252,13 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       const secret = f.secrets.find((s) => s.combatantId === target.id)
       const ac = targetCharacter?.armourClass ?? secret?.ac ?? 10
       const hit = attackHits(roll.natural ?? 0, roll.total, ac)
-      const damage = hit ? (roll.damage?.total ?? 0) : 0
+      const defences = targetCharacter ?? secret ?? NO_DEFENCES
+      const { amount: damage, adjust } = adjustDamage(
+        hit ? (roll.damage?.total ?? 0) : 0,
+        roll.damage?.type ?? '',
+        Boolean(request.magical),
+        defences,
+      )
       let undoTarget: Undo['target'] = null
       let down = false
       if (targetCharacter) {
@@ -287,6 +297,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
             critical: hit && roll.natural === 20,
             damage,
             damageType: roll.damage?.type ?? '',
+            adjust,
             total: me.kind === 'character' ? roll.total : null,
             down,
           },

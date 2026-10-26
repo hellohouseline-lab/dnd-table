@@ -76,6 +76,10 @@ export type Character = {
   deathSaveSuccesses: number
   deathSaveFailures: number
   conditions: string[]
+  /** Damage types this character resists, is vulnerable to or immune to. */
+  resistances: string[]
+  vulnerabilities: string[]
+  immunities: string[]
   exhaustion: number
   inspiration: boolean
   concentration: string | null
@@ -95,6 +99,9 @@ export type CharacterBuild = Omit<
   | 'deathSaveSuccesses'
   | 'deathSaveFailures'
   | 'conditions'
+  | 'resistances'
+  | 'vulnerabilities'
+  | 'immunities'
   | 'exhaustion'
   | 'inspiration'
   | 'concentration'
