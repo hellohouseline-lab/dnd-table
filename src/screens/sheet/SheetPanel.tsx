@@ -38,6 +38,8 @@ type SheetPanelProps = {
   /** Handing things to someone else in the party, from the Inventory tab. */
   handing?: { party: Character[]; handOver: HandOver }
   stash?: StashControls
+  /** Whether the Add box shows (the DM can stop players adding gear for free). */
+  canAddGear?: boolean
   className?: string
 }
 
@@ -54,6 +56,7 @@ export function SheetPanel({
   rolls,
   handing,
   stash,
+  canAddGear = true,
   className,
 }: SheetPanelProps) {
   useEffect(() => {
@@ -97,7 +100,14 @@ export function SheetPanel({
         {tab === 'sheet' ? (
           <SheetTab character={character} canEdit={canEdit} onUpdate={onUpdate} rolls={rolls} />
         ) : tab === 'inventory' ? (
-          <InventoryTab character={character} canEdit={canEdit} onUpdate={onUpdate} handing={handing} stash={stash} />
+          <InventoryTab
+            character={character}
+            canEdit={canEdit}
+            onUpdate={onUpdate}
+            handing={handing}
+            stash={stash}
+            canAddGear={canAddGear}
+          />
         ) : tab === 'path' ? (
           <PathTab character={character} />
         ) : (

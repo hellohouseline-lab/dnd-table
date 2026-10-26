@@ -22,6 +22,8 @@ type ManageGearProps = {
   build: CharacterBuild
   onBuild: (build: CharacterBuild) => void
   equipment: SrdEquipment
+  /** The DM can stop players adding gear for free (then it comes from shops and the DM). */
+  canAdd?: boolean
 }
 
 type Shelf = 'weapons' | 'armour' | 'gear' | 'tools' | 'potions'
@@ -57,7 +59,7 @@ type Card = { index: string; name: string; weight: number; cost: number | null; 
  * weapon puts it in your hand of cards; wearing armour sets your AC. Adding is free here: buying
  * in a shop comes later, so take the coins off below if you paid.
  */
-export function ManageGear({ build, onBuild, equipment }: ManageGearProps) {
+export function ManageGear({ build, onBuild, equipment, canAdd = true }: ManageGearProps) {
   const [shelf, setShelf] = useState<Shelf>('weapons')
   const [search, setSearch] = useState('')
   const { inventory, wallet } = build
@@ -144,7 +146,9 @@ export function ManageGear({ build, onBuild, equipment }: ManageGearProps) {
             />
           </label>
           <p className={styles.note}>
-            Adding something here doesn&rsquo;t spend your coins. If you bought it, take the cost off your coins.
+            {canAdd
+              ? 'Adding something here doesn\u2019t spend your coins. If you bought it, take the cost off your coins.'
+              : 'Your DM adds things for now: buy them in a shop when one is open. You can still see what everything does.'}
           </p>
         </div>
 
@@ -163,14 +167,16 @@ export function ManageGear({ build, onBuild, equipment }: ManageGearProps) {
                 <span className={styles.optionLine}>{words(card)}</span>
                 {train && <span className={train.good ? own.good : own.bad}>{train.text}</span>}
                 <span className={own.cardActions}>
-                  <button
-                    type="button"
-                    className={own.cardButton}
-                    aria-label={`Add ${card.name}`}
-                    onClick={() => save(addToInventory(inventory, card, equipment))}
-                  >
-                    Add
-                  </button>
+                  {canAdd && (
+                    <button
+                      type="button"
+                      className={own.cardButton}
+                      aria-label={`Add ${card.name}`}
+                      onClick={() => save(addToInventory(inventory, card, equipment))}
+                    >
+                      Add
+                    </button>
+                  )}
                   {count > 0 && <span className={own.tag}>You carry {count}</span>}
                 </span>
               </li>

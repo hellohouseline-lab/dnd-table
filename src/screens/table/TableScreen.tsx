@@ -19,6 +19,7 @@ import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { useAreas } from '../../live/areas.ts'
 import { TableView, type Arrival } from './TableView.tsx'
 import { answerOffer, handOver, useGiftArrivals, useOffers, useStashControls } from '../../live/giving.ts'
+import { useShopping } from '../../live/shops.ts'
 import type { Gift } from '../../live/notebook.ts'
 import { giftWords } from '../../rules/money.ts'
 import { playChime } from '../../audio/chime.ts'
@@ -62,6 +63,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
   useGiftArrivals(campaignId, user.id, character?.id ?? null, onGift)
   const allOffers = useOffers(campaignId, user.id)
   const stash = useStashControls(campaignId, user.id, character?.id ?? null)
+  const shopping = useShopping(campaignId, user.id, character?.id ?? null)
   const ready = members.status === 'ready' && party.status === 'ready'
 
   useEffect(() => {
@@ -118,6 +120,8 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       offers={allOffers.filter((o) => o.characterId === character.id && o.status === 'open')}
       onAnswerOffer={answerOffer}
       stash={stash}
+      shopping={shopping}
+      canAddGear={campaign.status === 'ready' ? (campaign.data?.players_add_gear ?? true) : true}
       combat={{
         fight: fight.fight,
         rollInitiative: fight.rollInitiative,

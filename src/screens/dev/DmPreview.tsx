@@ -4,6 +4,8 @@ import type { User } from '@supabase/supabase-js'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { EMPTY_STASH, type GivingControls, type Offer, type PartyStash } from '../../live/giving.ts'
 import type { DmItem } from '../../rules/catalogue.ts'
+import type { Sale, ShopControls } from '../../live/shops.ts'
+import type { Shop } from '../../rules/shops.ts'
 import { entryId } from '../../rules/character.ts'
 import { useSrd } from '../../live/useSrd.ts'
 import { mergeItems } from '../../rules/magic.ts'
@@ -154,6 +156,7 @@ export function DmPreview({ tab }: { tab: string }) {
   const fight = usePreviewFight(fightStart, { characters, onCharacter: update })
   const events = usePreviewEvents()
   const giving = usePreviewGiving(characters, setCharacters)
+  const shops = usePreviewShops()
   const asking = usePreviewAsking(characters, {
     start: start.request,
     startAnswers: start.answers,
@@ -199,6 +202,7 @@ export function DmPreview({ tab }: { tab: string }) {
         fight={fight}
         startTab={tab === 'log' ? 'log' : tab === 'fight' ? 'encounter' : tab === 'items' ? 'items' : 'party'}
         giving={giving}
+        shops={shops}
       />
     </AuthContext.Provider>
   )
@@ -300,6 +304,55 @@ function usePreviewGiving(
       const { each, left } = splitCoins(copper, ids.length)
       ids.forEach((id) => change(id, (c) => ({ ...c, wallet: addWallets(c.wallet, coinsFor(each)) })))
       if (left > 0) setStash((s) => ({ ...s, wallet: addWallets(s.wallet, coinsFor(left)) }))
+      return null
+    },
+  }
+}
+
+/** Shops in the preview: made, changed, opened and closed on the page, with one sale to undo. */
+function usePreviewShops(): ShopControls {
+  const [shops, setShops] = useState<Shop[]>([])
+  const [notes, setNotes] = useState<Record<string, string>>({})
+  const [addGear, setAddGear] = useState(true)
+  const [sales, setSales] = useState<Sale[]>([
+    {
+      id: 'sale-1',
+      shopId: null,
+      characterId: sampleCharacters[1].id,
+      kind: 'buy',
+      item: { id: 'x', item: 'torch', name: 'Torch', quantity: 2, weight: 1, worn: false, uses: null },
+      quantity: 2,
+      copper: 2,
+      undone: false,
+      createdAt: '2026-11-21T19:00:00Z',
+    },
+  ])
+  return {
+    shops,
+    notes,
+    sales,
+    save: async (shop, note) => {
+      setShops((now) =>
+        now.some((s) => s.id === shop.id) ? now.map((s) => (s.id === shop.id ? shop : s)) : [...now, shop],
+      )
+      setNotes((now) => ({ ...now, [shop.id]: note }))
+      return null
+    },
+    remove: async (id) => {
+      setShops((now) => now.filter((s) => s.id !== id))
+      return null
+    },
+    setOpen: async (id, open) => {
+      setShops((now) => now.map((s) => (s.id === id ? { ...s, open } : s)))
+      return null
+    },
+    undo: async (id) => {
+      setSales((now) => now.map((s) => (s.id === id ? { ...s, undone: true } : s)))
+      return null
+    },
+    playersAddGear: addGear,
+    setPlayersAddGear: async (value) => {
+      setAddGear(value)
       return null
     },
   }

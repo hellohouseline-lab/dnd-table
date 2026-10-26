@@ -5,7 +5,7 @@ import { LoadingScreen } from '../../components/LoadingScreen.tsx'
 import { Notice } from '../../components/Notice.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
-import { listMembers } from '../../live/campaigns.ts'
+import { getCampaign, listMembers } from '../../live/campaigns.ts'
 import { listCharacters, saveCharacterBuild } from '../../live/characters.ts'
 import { messageFor } from '../../live/errors.ts'
 import { useLoad } from '../../live/useLoad.ts'
@@ -25,7 +25,10 @@ type ManageScreenProps = { campaignId: string; characterId: string }
 /** Change your character: your own, or any in the campaign as the DM. */
 export function ManageScreen({ campaignId, characterId }: ManageScreenProps) {
   const user = useSignedInUser()
-  const loaded = useLoad(() => Promise.all([listMembers(campaignId), listCharacters(campaignId)]), [campaignId])
+  const loaded = useLoad(
+    () => Promise.all([listMembers(campaignId), listCharacters(campaignId), getCampaign(campaignId)]),
+    [campaignId],
+  )
   const classes = useSrd(loadClasses)
   const races = useSrd(loadRaces)
   const backgrounds = useSrd(loadBackgrounds)
@@ -49,7 +52,7 @@ export function ManageScreen({ campaignId, characterId }: ManageScreenProps) {
     return <LoadingScreen />
   }
 
-  const [members, characters] = loaded.data
+  const [members, characters, campaign] = loaded.data
   const isDm = members.find((m) => m.user_id === user.id)?.role === 'dm'
   const character = characters.find((c) => c.id === characterId)
   if (!character || (character.ownerId !== user.id && !isDm)) {
@@ -70,6 +73,7 @@ export function ManageScreen({ campaignId, characterId }: ManageScreenProps) {
         character.ownerId === user.id ? `/c/${campaignId}/play` : `/c/${campaignId}/sheet/${character.id}`,
       )}
       formHref={href(`/c/${campaignId}/character/${character.id}/form`)}
+      canAddGear={isDm || (campaign?.players_add_gear ?? true)}
       onSave={async (build) => {
         try {
           await saveCharacterBuild(character, build)

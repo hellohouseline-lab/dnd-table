@@ -60,6 +60,9 @@ import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { GiveDialog } from './GiveDialog.tsx'
 import { BoxDialog } from './give/BoxDialog.tsx'
+import { ShopDialog } from './give/ShopDialog.tsx'
+import type { ShopControls } from '../../live/shops.ts'
+import type { Shop } from '../../rules/shops.ts'
 import { entryId } from '../../rules/character.ts'
 import { ItemsTab } from './ItemsTab.tsx'
 import type { GivingControls } from '../../live/giving.ts'
@@ -139,6 +142,8 @@ type DmViewProps = {
   startTab?: DmTab
   /** Giving items and coins, and the party stash. */
   giving: GivingControls
+  /** Shops, their sales and the free-adding setting. */
+  shops: ShopControls
 }
 
 /**
@@ -169,6 +174,7 @@ export function DmView({
   mapOnStage = null,
   startTab = 'party',
   giving,
+  shops,
 }: DmViewProps) {
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
   const [selectedCombatant, setSelectedCombatant] = useState<string | null>(null)
@@ -179,6 +185,8 @@ export function DmView({
   // The Give card, optionally for one character.
   const [giveTo, setGiveTo] = useState<{ only: string | null } | null>(null)
   const [boxOpen, setBoxOpen] = useState(false)
+  // The shop editor: a shop to change, or null for a new one.
+  const [shopEdit, setShopEdit] = useState<{ shop: Shop | null } | null>(null)
   const equipment = useSrd(loadEquipment)
   const magicItems = useSrd(loadMagicItems)
   const noteInput = useRef<HTMLInputElement>(null)
@@ -495,6 +503,8 @@ export function DmView({
               giving={giving}
               onGive={(character) => setGiveTo({ only: character?.id ?? null })}
               onOpenBox={() => setBoxOpen(true)}
+              shops={shops}
+              onShop={(shop) => setShopEdit({ shop })}
             />
           ) : tab === 'party' ? (
             <PartyCards
@@ -569,13 +579,14 @@ export function DmView({
         <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={characters} onSettle={forDm.settle} />
       </section>
 
-      {(askFor || showResults || resting || fightDialog || giveTo || boxOpen) && (
+      {(askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit) && (
         <Backdrop
           className={styles.overlay}
           onClose={() => {
             if (fightDialog) setFightDialog(null)
             else if (giveTo) setGiveTo(null)
             else if (boxOpen) setBoxOpen(false)
+            else if (shopEdit) setShopEdit(null)
             else if (resting) setResting(false)
             else if (askFor) setAskFor(null)
             else if (request) setHiddenFor(request.id)
@@ -610,6 +621,17 @@ export function DmView({
                 giving={giving}
                 onKeyItem={keyItemGiven}
                 onClose={() => setGiveTo(null)}
+              />
+            ) : null
+          ) : shopEdit ? (
+            equipment && magicItems ? (
+              <ShopDialog
+                shop={shopEdit.shop}
+                equipment={equipment}
+                magicItems={magicItems}
+                giving={giving}
+                shops={shops}
+                onClose={() => setShopEdit(null)}
               />
             ) : null
           ) : boxOpen ? (

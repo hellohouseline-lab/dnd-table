@@ -834,3 +834,50 @@ test('a player takes from the party stash and shares out its coins', async ({ pa
     'The coins are shared out across the party.',
   )
 })
+
+test('the DM makes a pricey blacksmith with a magic cloak, opens it, and undoes a sale', async ({ page }) => {
+  await page.goto('#/dev/dm/items')
+  const shops = page.getByRole('region', { name: 'Shops' })
+  await shops.getByRole('button', { name: 'Make a shop' }).click()
+  const dialog = page.getByRole('dialog', { name: 'Make a shop' })
+  await dialog.getByRole('radio', { name: /^Blacksmith/ }).click()
+  await dialog.getByPlaceholder('Brenna').fill('Old Harl')
+  await dialog.getByRole('radio', { name: 'Pricey' }).click()
+  const shelves = dialog.getByRole('table', { name: 'On the shelves' })
+  await expect(shelves.getByRole('textbox', { name: 'Price of Longsword' })).toHaveAttribute(
+    'placeholder',
+    '18 gp 7 sp 5 cp',
+  )
+  await dialog.getByRole('textbox', { name: 'Add to the shelves' }).fill('cloak of protection')
+  await dialog.getByRole('button', { name: 'Cloak of Protection' }).click()
+  await expect(dialog.getByText(/Set a price for Cloak of Protection/)).toBeVisible()
+  await shelves.getByRole('textbox', { name: 'Price of Cloak of Protection' }).fill('400')
+  await expect(dialog.getByText(/Set a price for/)).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Make the shop' }).click()
+
+  await expect(shops).toContainText('Blacksmith')
+  await expect(shops).toContainText('Old Harl')
+  await shops.getByRole('button', { name: 'Open Blacksmith' }).click()
+  await expect(shops.getByRole('button', { name: 'Close Blacksmith' })).toHaveAttribute('aria-pressed', 'true')
+
+  const sales = shops.getByRole('list', { name: 'Sales' })
+  await expect(sales).toContainText('Elowen bought 2 × Torch for 2 cp')
+  await sales.getByRole('button', { name: 'Undo' }).click()
+  await expect(sales).toContainText('undone')
+  await shops.getByRole('checkbox', { name: /Players can add gear for free/ }).uncheck()
+  await expect(shops.getByRole('checkbox', { name: /Players can add gear for free/ })).not.toBeChecked()
+})
+
+test('a player buys rope and sells a handaxe in an open shop', async ({ page }) => {
+  await page.goto('#/dev/table/gift')
+  await page.getByRole('button', { name: 'Brenna’s Goods is open' }).click()
+  const shop = page.getByRole('region', { name: 'Shop' })
+  await expect(shop).toContainText('Your purse: 15 gp 4 sp 8 cp')
+  await shop.getByRole('button', { name: 'Buy Rope, hempen (50 feet)' }).click()
+  await expect(shop.getByRole('status')).toHaveText('You bought Rope, hempen (50 feet) for 1 gp.')
+  await expect(shop).toContainText('Your purse: 14 gp 4 sp 8 cp')
+  await shop.getByRole('tab', { name: 'Sell' }).click()
+  await shop.getByRole('button', { name: 'Sell Handaxe for 2 gp 5 sp' }).click()
+  await expect(shop.getByRole('status')).toHaveText('You sold Handaxe for 2 gp 5 sp.')
+  await expect(shop).toContainText('Your purse: 16 gp 9 sp 8 cp')
+})
