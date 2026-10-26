@@ -115,6 +115,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "history": 12,
+        "perception": 10
+      },
       "saves": {
         "constitution": 6,
         "intelligence": 8,
@@ -167,6 +171,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "medicine": 4,
+        "religion": 2
+      },
       "saves": {}
     },
     {
@@ -301,6 +309,10 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 11,
+        "stealth": 7
+      },
       "saves": {
         "dexterity": 7,
         "constitution": 10,
@@ -436,6 +448,10 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 12,
+        "stealth": 5
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 11,
@@ -557,6 +573,12 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "history": 7,
+        "perception": 11,
+        "persuasion": 8,
+        "stealth": 5
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 10,
@@ -682,6 +704,11 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 7,
+        "perception": 12,
+        "stealth": 5
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 11,
@@ -803,6 +830,11 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 8,
+        "perception": 12,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 10,
@@ -928,6 +960,12 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 8,
+        "perception": 14,
+        "persuasion": 13,
+        "stealth": 8
+      },
       "saves": {
         "dexterity": 8,
         "constitution": 13,
@@ -1067,6 +1105,13 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "deception": 8,
+        "insight": 7,
+        "perception": 12,
+        "persuasion": 8,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 10,
@@ -1202,6 +1247,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 13,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 13,
@@ -1323,6 +1372,12 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 8,
+        "history": 8,
+        "perception": 11,
+        "stealth": 5
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 12,
@@ -1462,6 +1517,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 11,
+        "stealth": 5
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 11,
@@ -1534,6 +1593,7 @@
         "restrained",
         "unconscious"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -1668,6 +1728,10 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 16,
+        "stealth": 9
+      },
       "saves": {
         "dexterity": 9,
         "constitution": 14,
@@ -1803,6 +1867,10 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 17,
+        "stealth": 7
+      },
       "saves": {
         "dexterity": 7,
         "constitution": 15,
@@ -1929,6 +1997,12 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "history": 9,
+        "perception": 14,
+        "persuasion": 10,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 13,
@@ -2059,6 +2133,11 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 10,
+        "perception": 17,
+        "stealth": 7
+      },
       "saves": {
         "dexterity": 7,
         "constitution": 15,
@@ -2185,6 +2264,11 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 11,
+        "perception": 17,
+        "stealth": 8
+      },
       "saves": {
         "dexterity": 8,
         "constitution": 14,
@@ -2315,6 +2399,12 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 10,
+        "perception": 17,
+        "persuasion": 16,
+        "stealth": 9
+      },
       "saves": {
         "dexterity": 9,
         "constitution": 16,
@@ -2454,6 +2544,13 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "deception": 11,
+        "insight": 10,
+        "perception": 17,
+        "persuasion": 11,
+        "stealth": 8
+      },
       "saves": {
         "dexterity": 8,
         "constitution": 14,
@@ -2589,6 +2686,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 16,
+        "stealth": 7
+      },
       "saves": {
         "dexterity": 7,
         "constitution": 16,
@@ -2715,6 +2816,12 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 11,
+        "history": 11,
+        "perception": 16,
+        "stealth": 7
+      },
       "saves": {
         "dexterity": 7,
         "constitution": 16,
@@ -2854,6 +2961,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 13,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 14,
@@ -2941,6 +3052,11 @@
       "vulnerabilities": [],
       "immunities": ["psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["charmed", "frightened"],
+      "skills": {
+        "arcana": 9,
+        "perception": 10,
+        "religion": 15
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 11,
@@ -3012,6 +3128,7 @@
         "petrified",
         "poisoned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3074,6 +3191,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3133,6 +3251,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 5,
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -3185,6 +3307,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 13,
+        "history": 13
+      },
       "saves": {
         "intelligence": 9,
         "wisdom": 6
@@ -3268,6 +3394,12 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "acrobatics": 6,
+        "deception": 3,
+        "perception": 3,
+        "stealth": 9
+      },
       "saves": {
         "dexterity": 6,
         "intelligence": 4
@@ -3319,6 +3451,7 @@
       "vulnerabilities": ["fire"],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3367,6 +3500,7 @@
       "vulnerabilities": ["fire"],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3410,6 +3544,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3470,6 +3605,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "constitution": 4
       }
@@ -3520,6 +3656,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3568,6 +3705,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3657,6 +3795,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "strength": 14,
         "constitution": 12,
@@ -3716,6 +3855,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3781,6 +3921,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 4,
+        "deception": 4
+      },
       "saves": {
         "strength": 4,
         "dexterity": 5,
@@ -3868,6 +4012,11 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "deception": 5,
+        "insight": 5,
+        "perception": 8
+      },
       "saves": {
         "strength": 6,
         "constitution": 7,
@@ -3925,6 +4074,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -3977,6 +4127,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -4049,6 +4200,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "strength": 5,
         "constitution": 4,
@@ -4141,6 +4293,10 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6,
+        "stealth": 7
+      },
       "saves": {}
     },
     {
@@ -4189,6 +4345,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -4253,6 +4410,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -4320,6 +4478,10 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 3,
@@ -4391,6 +4553,7 @@
       "vulnerabilities": [],
       "immunities": ["acid", "cold", "lightning", "slashing"],
       "conditionImmunities": ["blinded", "charmed", "exhaustion", "frightened", "prone"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -4444,6 +4607,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -4496,6 +4663,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -4558,6 +4728,10 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 2
+      },
       "saves": {
         "dexterity": 2,
         "constitution": 4,
@@ -4615,6 +4789,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -4687,6 +4862,10 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "deception": 7,
+        "insight": 6
+      },
       "saves": {
         "intelligence": 5,
         "wisdom": 6,
@@ -4739,6 +4918,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 2
+      },
       "saves": {
         "dexterity": 2,
         "constitution": 3,
@@ -4797,6 +4980,10 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 2
+      },
       "saves": {
         "dexterity": 2,
         "constitution": 4,
@@ -4866,6 +5053,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -4929,6 +5119,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 6,
+        "survival": 2
+      },
       "saves": {}
     },
     {
@@ -4982,6 +5176,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6
+      },
       "saves": {}
     },
     {
@@ -5025,6 +5222,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -5073,6 +5271,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -5148,6 +5350,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 6,
+        "perception": 3,
+        "survival": 3
+      },
       "saves": {}
     },
     {
@@ -5221,6 +5428,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "constitution": 7,
         "wisdom": 4,
@@ -5310,6 +5518,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 8
+      },
       "saves": {}
     },
     {
@@ -5377,6 +5588,9 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -5458,6 +5672,7 @@
         "slashing:nonmagical"
       ],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -5545,6 +5760,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -5613,6 +5831,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 7,
+        "perception": 7
+      },
       "saves": {
         "constitution": 10,
         "wisdom": 7,
@@ -5660,6 +5882,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -5703,6 +5926,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -5757,6 +5981,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -5805,6 +6030,10 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 3
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 3,
@@ -5882,6 +6111,7 @@
       "vulnerabilities": [],
       "immunities": ["psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "constitution": 5,
         "wisdom": 7,
@@ -5934,6 +6164,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 2
+      },
       "saves": {}
     },
     {
@@ -5982,6 +6215,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 2
+      },
       "saves": {}
     },
     {
@@ -6039,6 +6275,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 4,
+        "persuasion": 4,
+        "religion": 2
+      },
       "saves": {}
     },
     {
@@ -6087,6 +6328,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 2,
+        "religion": 2
+      },
       "saves": {}
     },
     {
@@ -6144,6 +6389,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -6197,6 +6445,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -6264,6 +6516,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "investigation": 3,
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -6307,6 +6564,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -6382,6 +6640,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["charmed", "exhaustion", "frightened"],
+      "skills": {
+        "insight": 9,
+        "perception": 9
+      },
       "saves": {
         "wisdom": 9,
         "charisma": 9
@@ -6437,6 +6699,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -6504,6 +6770,7 @@
       "vulnerabilities": [],
       "immunities": ["lightning", "thunder"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "dexterity": 6,
         "wisdom": 7,
@@ -6574,6 +6841,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["charmed"],
+      "skills": {
+        "deception": 6,
+        "insight": 3
+      },
       "saves": {}
     },
     {
@@ -6617,6 +6888,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -6707,6 +6979,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "dexterity": 6,
         "constitution": 11,
@@ -6780,6 +7053,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -6874,6 +7148,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 9
+      },
       "saves": {}
     },
     {
@@ -6941,6 +7219,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -6984,6 +7266,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "medicine": 4,
+        "nature": 3,
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -7054,6 +7341,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -7127,6 +7418,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -7189,6 +7481,10 @@
       "vulnerabilities": ["fire"],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -7237,6 +7533,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -7294,6 +7593,7 @@
       "vulnerabilities": ["thunder"],
       "immunities": ["poison"],
       "conditionImmunities": ["exhaustion", "paralyzed", "petrified", "poisoned", "unconscious"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -7366,6 +7666,7 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "intelligence": 7,
         "wisdom": 6,
@@ -7429,6 +7730,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -7488,6 +7790,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -7566,6 +7869,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 7,
         "constitution": 8,
@@ -7653,6 +7957,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4,
+        "survival": 3
+      },
       "saves": {}
     },
     {
@@ -7721,6 +8030,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -7791,6 +8103,7 @@
         "restrained",
         "unconscious"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -7850,6 +8163,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 11,
+        "perception": 6
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 10,
@@ -7927,6 +8244,7 @@
       "vulnerabilities": [],
       "immunities": ["lightning", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -7979,6 +8297,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8031,6 +8350,7 @@
       "vulnerabilities": [],
       "immunities": ["poison", "psychic"],
       "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 4
       }
@@ -8073,6 +8393,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 1,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -8132,6 +8456,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 9,
+        "perception": 3
+      },
       "saves": {
         "constitution": 8,
         "wisdom": 3,
@@ -8200,6 +8528,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["exhaustion", "petrified", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8267,6 +8596,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8330,6 +8660,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned", "charmed", "exhaustion"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8425,6 +8756,7 @@
         "prone",
         "restrained"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8479,6 +8811,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned", "charmed", "exhaustion"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8538,6 +8871,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 9,
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -8602,6 +8939,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8654,6 +8992,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8706,6 +9045,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8749,6 +9089,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -8803,6 +9144,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -8851,6 +9195,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -8915,6 +9262,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -8979,6 +9329,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -9038,6 +9391,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -9086,6 +9442,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9143,6 +9500,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -9195,6 +9556,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9243,6 +9605,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -9286,6 +9651,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9347,6 +9713,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -9399,6 +9769,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -9442,6 +9816,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -9494,6 +9871,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9546,6 +9924,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9605,6 +9984,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9657,6 +10037,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9709,6 +10090,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -9771,6 +10155,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 7
+      },
       "saves": {}
     },
     {
@@ -9832,6 +10219,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9900,6 +10288,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -9943,6 +10334,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -9991,6 +10383,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -10047,6 +10443,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 7
+      },
       "saves": {}
     },
     {
@@ -10114,6 +10514,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["prone"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -10189,6 +10590,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "strength": 9,
         "constitution": 9,
@@ -10263,6 +10665,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 10,
+        "intimidation": 5
+      },
       "saves": {
         "strength": 7,
         "dexterity": 5,
@@ -10332,6 +10738,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -10384,6 +10791,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -10443,6 +10851,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -10496,6 +10907,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 5,
@@ -10570,6 +10985,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["petrified"],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -10630,6 +11048,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"],
+      "skills": {
+        "stealth": 2
+      },
       "saves": {}
     },
     {
@@ -10697,6 +11118,10 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "perception": 4,
+        "stealth": 3
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 3,
@@ -10768,6 +11193,12 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 3,
+        "deception": 4,
+        "perception": 4,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -10832,6 +11263,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -10896,6 +11328,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5
+      },
       "saves": {}
     },
     {
@@ -10956,6 +11391,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["blinded"],
+      "skills": {
+        "athletics": 5,
+        "perception": 3,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -10994,6 +11434,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -11052,6 +11495,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["charmed", "poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 8,
         "constitution": 7,
@@ -11135,6 +11579,12 @@
       "vulnerabilities": [],
       "immunities": ["psychic"],
       "conditionImmunities": ["charmed", "frightened"],
+      "skills": {
+        "arcana": 12,
+        "history": 12,
+        "perception": 8,
+        "religion": 8
+      },
       "saves": {}
     },
     {
@@ -11215,6 +11665,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -11279,6 +11730,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -11327,6 +11779,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -11398,6 +11853,9 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5
+      },
       "saves": {}
     },
     {
@@ -11473,6 +11931,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "strength": 7,
         "constitution": 8,
@@ -11536,6 +11995,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -11600,6 +12062,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5
+      },
       "saves": {}
     },
     {
@@ -11654,6 +12119,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -11702,6 +12168,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["charmed", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -11781,6 +12248,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "strength": 10,
         "dexterity": 7,
@@ -11838,6 +12306,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -11903,6 +12374,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6
+      },
       "saves": {}
     },
     {
@@ -11951,6 +12425,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -12047,6 +12524,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 7,
         "constitution": 9,
@@ -12127,6 +12605,10 @@
       "vulnerabilities": ["bludgeoning", "fire"],
       "immunities": ["cold", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "perception": 2,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -12188,6 +12670,12 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "deception": 4,
+        "insight": 3,
+        "persuasion": 4,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -12254,6 +12742,10 @@
         "restrained",
         "unconscious"
       ],
+      "skills": {
+        "perception": 8,
+        "stealth": 10
+      },
       "saves": {}
     },
     {
@@ -12352,6 +12844,7 @@
         "slashing:nonmagical"
       ],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -12404,6 +12897,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -12460,6 +12956,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -12535,6 +13034,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "constitution": 4,
         "wisdom": 2
@@ -12601,6 +13101,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -12721,6 +13222,7 @@
       "vulnerabilities": [],
       "immunities": ["lightning", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["frightened", "paralyzed"],
+      "skills": {},
       "saves": {
         "strength": 17,
         "dexterity": 7,
@@ -12797,6 +13299,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 7,
+        "insight": 4,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -12849,6 +13356,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["charmed", "frightened", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -12945,6 +13453,12 @@
       "vulnerabilities": [],
       "immunities": ["poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "skills": {
+        "arcana": 18,
+        "history": 12,
+        "insight": 9,
+        "perception": 9
+      },
       "saves": {
         "constitution": 10,
         "intelligence": 12,
@@ -13020,6 +13534,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -13063,6 +13581,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -13149,6 +13668,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4,
+        "survival": 5
+      },
       "saves": {}
     },
     {
@@ -13197,6 +13721,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 6,
+        "history": 6
+      },
       "saves": {
         "intelligence": 6,
         "wisdom": 4
@@ -13275,6 +13803,9 @@
       "vulnerabilities": ["cold"],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -13327,6 +13858,7 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -13386,6 +13918,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -13461,6 +13994,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -13551,6 +14085,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "strength": 9,
         "constitution": 10,
@@ -13604,6 +14139,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -13687,6 +14225,12 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 5,
+        "insight": 4,
+        "perception": 4,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -13730,6 +14274,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -13805,6 +14352,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -13880,6 +14428,9 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": ["prone"],
+      "skills": {
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -13947,6 +14498,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7
+      },
       "saves": {}
     },
     {
@@ -14006,6 +14560,7 @@
       "vulnerabilities": ["bludgeoning"],
       "immunities": ["poison"],
       "conditionImmunities": ["exhaustion", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -14058,6 +14613,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -14120,6 +14676,7 @@
       "vulnerabilities": ["fire"],
       "immunities": ["necrotic", "poison"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "skills": {},
       "saves": {
         "wisdom": 2
       }
@@ -14233,6 +14790,10 @@
       "vulnerabilities": ["fire"],
       "immunities": ["necrotic", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "skills": {
+        "history": 5,
+        "religion": 5
+      },
       "saves": {
         "constitution": 8,
         "intelligence": 5,
@@ -14324,6 +14885,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "constitution": 11,
         "intelligence": 9,
@@ -14400,6 +14962,12 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["charmed"],
+      "skills": {
+        "deception": 7,
+        "insight": 6,
+        "perception": 6,
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -14461,6 +15029,7 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -14510,6 +15079,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 5,
+        "insight": 4,
+        "persuasion": 5
+      },
       "saves": {}
     },
     {
@@ -14572,6 +15146,7 @@
       "vulnerabilities": [],
       "immunities": ["lightning", "slashing"],
       "conditionImmunities": ["blinded", "charmed", "blinded", "exhaustion", "frightened", "prone"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -14634,6 +15209,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -14688,6 +15267,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -14736,6 +15316,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "wisdom": 0
       }
@@ -14815,6 +15396,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 5,
+        "deception": 8,
+        "perception": 4
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 6,
@@ -14879,6 +15465,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "intimidation": 2
+      },
       "saves": {}
     },
     {
@@ -14957,6 +15546,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "constitution": 7
       }
@@ -15011,6 +15601,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -15075,6 +15669,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -15138,6 +15735,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -15181,6 +15782,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6
+      },
       "saves": {
         "dexterity": 4,
         "wisdom": 4,
@@ -15241,6 +15845,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -15339,6 +15946,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 8,
         "constitution": 13,
@@ -15417,6 +16025,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["charmed", "exhaustion", "frightened"],
+      "skills": {
+        "perception": 11
+      },
       "saves": {
         "constitution": 12,
         "wisdom": 11,
@@ -15469,6 +16080,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -15512,6 +16127,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -15576,6 +16192,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -15619,6 +16238,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -15671,6 +16291,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "medicine": 7,
+        "persuasion": 3,
+        "religion": 4
+      },
       "saves": {}
     },
     {
@@ -15738,6 +16363,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -15802,6 +16431,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {
         "constitution": 11,
         "wisdom": 4
@@ -15879,6 +16509,9 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -15931,6 +16564,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -15988,6 +16622,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 10,
+        "insight": 8
+      },
       "saves": {}
     },
     {
@@ -16036,6 +16674,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16084,6 +16723,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -16146,6 +16788,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 2
+      },
       "saves": {
         "dexterity": 2,
         "constitution": 5,
@@ -16203,6 +16849,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -16260,6 +16909,7 @@
       "vulnerabilities": [],
       "immunities": ["cold", "fire"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16308,6 +16958,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16351,6 +17002,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16415,6 +17067,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 9,
@@ -16492,6 +17147,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -16543,6 +17202,7 @@
       "vulnerabilities": [],
       "immunities": ["poison", "psychic"],
       "conditionImmunities": ["blinded", "charmed", "blinded", "frightened", "paralyzed", "petrified", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16600,6 +17260,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16663,6 +17324,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -16741,6 +17406,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5
+      },
       "saves": {}
     },
     {
@@ -16813,6 +17481,7 @@
       "vulnerabilities": ["cold"],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16883,6 +17552,11 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "performance": 6,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -16926,6 +17600,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -16990,6 +17665,12 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "nature": 4,
+        "perception": 5,
+        "stealth": 6,
+        "survival": 5
+      },
       "saves": {}
     },
     {
@@ -17057,6 +17738,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -17093,6 +17775,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -17167,6 +17850,9 @@
         "prone",
         "restrained"
       ],
+      "skills": {
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -17225,6 +17911,9 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": ["blinded", "blinded", "exhaustion"],
+      "skills": {
+        "stealth": 2
+      },
       "saves": {}
     },
     {
@@ -17292,6 +17981,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -17334,6 +18024,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["blinded", "blinded", "frightened"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -17382,6 +18073,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 2
+      },
       "saves": {
         "dexterity": 2,
         "constitution": 5,
@@ -17441,6 +18136,7 @@
       "vulnerabilities": ["bludgeoning"],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned", "exhaustion"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -17570,6 +18266,9 @@
       "vulnerabilities": [],
       "immunities": ["necrotic", "poison"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "poisoned"],
+      "skills": {
+        "perception": 14
+      },
       "saves": {
         "intelligence": 14,
         "wisdom": 14,
@@ -17645,6 +18344,7 @@
         "restrained",
         "unconscious"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -17701,6 +18401,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -17753,6 +18456,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["charmed", "poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 6,
         "constitution": 5,
@@ -17827,6 +18531,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 8
+      },
       "saves": {}
     },
     {
@@ -17895,6 +18603,14 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 5,
+        "insight": 4,
+        "investigation": 5,
+        "perception": 6,
+        "persuasion": 5,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -17966,6 +18682,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18009,6 +18726,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18079,6 +18797,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 12,
+        "perception": 4
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 8,
@@ -18154,6 +18876,7 @@
       "vulnerabilities": [],
       "immunities": ["poison", "psychic", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18237,6 +18960,12 @@
       "vulnerabilities": [],
       "immunities": ["lightning", "thunder"],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 8,
+        "athletics": 14,
+        "history": 8,
+        "perception": 9
+      },
       "saves": {
         "strength": 14,
         "constitution": 10,
@@ -18327,6 +19056,13 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 9,
+        "insight": 5,
+        "perception": 5,
+        "persuasion": 9,
+        "stealth": 7
+      },
       "saves": {}
     },
     {
@@ -18392,6 +19128,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18449,6 +19186,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18506,6 +19244,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18563,6 +19302,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18620,6 +19360,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18685,6 +19426,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18746,6 +19488,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18803,6 +19546,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18863,6 +19607,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["charmed", "frightened", "paralyzed", "petrified", "prone", "restrained", "stunned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -18920,6 +19665,7 @@
         "restrained",
         "stunned"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -19049,6 +19795,7 @@
       "vulnerabilities": [],
       "immunities": ["fire", "poison", "bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": ["charmed", "frightened", "paralyzed", "poisoned"],
+      "skills": {},
       "saves": {
         "intelligence": 5,
         "wisdom": 9,
@@ -19117,6 +19864,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "intimidation": 2
+      },
       "saves": {}
     },
     {
@@ -19180,6 +19930,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 6
+      },
       "saves": {}
     },
     {
@@ -19253,6 +20007,7 @@
       "vulnerabilities": ["fire"],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -19296,6 +20051,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -19355,6 +20111,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -19423,6 +20180,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -19482,6 +20242,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -19584,6 +20347,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["charmed", "paralyzed", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -19706,6 +20470,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7,
+        "stealth": 9
+      },
       "saves": {
         "dexterity": 9,
         "wisdom": 7,
@@ -19816,6 +20584,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7,
+        "stealth": 9
+      },
       "saves": {
         "dexterity": 9,
         "wisdom": 7,
@@ -19895,6 +20667,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7,
+        "stealth": 9
+      },
       "saves": {
         "dexterity": 9,
         "wisdom": 7,
@@ -19975,6 +20751,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "wisdom": 3
@@ -20043,6 +20823,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "athletics": 5,
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -20096,6 +20880,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": ["blinded", "blinded", "frightened"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -20187,6 +20972,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "dexterity": 5,
         "wisdom": 4,
@@ -20243,6 +21029,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3
+      },
       "saves": {}
     },
     {
@@ -20291,6 +21080,7 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {},
       "saves": {}
     },
     {
@@ -20334,6 +21124,7 @@
       "vulnerabilities": ["bludgeoning"],
       "immunities": ["poison"],
       "conditionImmunities": ["exhaustion", "poisoned"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -20415,6 +21206,7 @@
         "restrained",
         "unconscious"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -20463,6 +21255,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 5
+      },
       "saves": {}
     },
     {
@@ -20531,6 +21327,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7
+      },
       "saves": {}
     },
     {
@@ -20588,6 +21387,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7
+      },
       "saves": {}
     },
     {
@@ -20667,6 +21469,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 7
+      },
       "saves": {}
     },
     {
@@ -20723,6 +21528,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -20780,6 +21588,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -20852,6 +21663,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2
+      },
       "saves": {}
     },
     {
@@ -20920,6 +21734,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -20999,6 +21817,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21051,6 +21873,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 2,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21119,6 +21945,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21213,6 +22043,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21280,6 +22114,10 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21332,6 +22170,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -21400,6 +22241,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -21452,6 +22296,9 @@
       "vulnerabilities": [],
       "immunities": ["bludgeoning:nonmagical", "piercing:nonmagical", "slashing:nonmagical"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -21514,6 +22361,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4,
+        "stealth": 2
+      },
       "saves": {
         "dexterity": 2,
         "constitution": 4,
@@ -21589,6 +22440,10 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["exhaustion", "poisoned"],
+      "skills": {
+        "perception": 3,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21663,6 +22518,7 @@
       "vulnerabilities": [],
       "immunities": ["lightning", "poison"],
       "conditionImmunities": ["exhaustion", "grappled", "paralyzed", "poisoned", "prone", "restrained", "unconscious"],
+      "skills": {},
       "saves": {}
     },
     {
@@ -21734,6 +22590,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 5,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -21786,6 +22646,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 3,
+        "stealth": 4
+      },
       "saves": {}
     },
     {
@@ -21834,6 +22698,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -21909,6 +22776,7 @@
         "prone",
         "restrained"
       ],
+      "skills": {},
       "saves": {}
     },
     {
@@ -21979,6 +22847,9 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 4
+      },
       "saves": {}
     },
     {
@@ -22051,6 +22922,10 @@
       "vulnerabilities": [],
       "immunities": [],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6,
+        "stealth": 3
+      },
       "saves": {}
     },
     {
@@ -22134,6 +23009,10 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6,
+        "stealth": 5
+      },
       "saves": {
         "dexterity": 5,
         "constitution": 6,
@@ -22217,6 +23096,10 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 9,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 8,
@@ -22286,6 +23169,11 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6,
+        "persuasion": 5,
+        "stealth": 3
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 6,
@@ -22360,6 +23248,11 @@
       "vulnerabilities": [],
       "immunities": ["lightning"],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 4,
+        "perception": 7,
+        "stealth": 3
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 7,
@@ -22429,6 +23322,11 @@
       "vulnerabilities": [],
       "immunities": ["acid"],
       "conditionImmunities": [],
+      "skills": {
+        "deception": 5,
+        "perception": 7,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 6,
@@ -22503,6 +23401,12 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "insight": 5,
+        "perception": 9,
+        "persuasion": 9,
+        "stealth": 6
+      },
       "saves": {
         "dexterity": 6,
         "constitution": 9,
@@ -22591,6 +23495,11 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {
+        "deception": 5,
+        "perception": 7,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 6,
@@ -22674,6 +23583,10 @@
       "vulnerabilities": [],
       "immunities": ["fire"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 8,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 9,
@@ -22743,6 +23656,12 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "arcana": 6,
+        "history": 6,
+        "perception": 8,
+        "stealth": 4
+      },
       "saves": {
         "dexterity": 4,
         "constitution": 9,
@@ -22831,6 +23750,10 @@
       "vulnerabilities": [],
       "immunities": ["cold"],
       "conditionImmunities": [],
+      "skills": {
+        "perception": 6,
+        "stealth": 3
+      },
       "saves": {
         "dexterity": 3,
         "constitution": 7,
@@ -22884,6 +23807,7 @@
       "vulnerabilities": [],
       "immunities": ["poison"],
       "conditionImmunities": ["poisoned"],
+      "skills": {},
       "saves": {
         "wisdom": 0
       }

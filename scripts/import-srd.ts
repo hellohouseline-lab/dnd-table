@@ -478,6 +478,12 @@ async function main(): Promise<void> {
       vulnerabilities: ((m.damage_vulnerabilities ?? []) as string[]).flatMap(parseDefence),
       immunities: ((m.damage_immunities ?? []) as string[]).flatMap(parseDefence),
       conditionImmunities: ((m.condition_immunities ?? []) as Raw[]).map((c) => c.index as string),
+      // Skills it's proficient in, as the whole bonus: { stealth: 6 }.
+      skills: Object.fromEntries(
+        ((m.proficiencies ?? []) as Raw[])
+          .filter((p) => String(p.proficiency?.index ?? '').startsWith('skill-'))
+          .map((p) => [String(p.proficiency.index).slice('skill-'.length), p.value as number]),
+      ),
       // Saving throws it's proficient in, as the whole bonus: { dexterity: 5 }.
       saves: Object.fromEntries(
         ((m.proficiencies ?? []) as Raw[])

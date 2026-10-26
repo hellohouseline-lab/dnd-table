@@ -442,6 +442,7 @@ export function DmView({
                 onCharacterHp={nudgeHp}
                 onAttack={aimMonster}
                 onCharacterAttack={aimCharacter}
+                onRoll={roll}
                 aiming={aiming}
                 onRollInitiative={rollInitiativeFor}
                 onOpenSheet={(character) => {

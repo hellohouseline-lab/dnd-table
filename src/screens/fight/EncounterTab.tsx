@@ -20,6 +20,10 @@ import { DeathSaves } from './Reactions.tsx'
 import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
 import { AtAGlance } from './AtAGlance.tsx'
 import bonusStyles from './BonusReady.module.css'
+import { monsterBonusActions, monsterSkill, WHEN_WORDS } from '../../rules/monsterBonus.ts'
+import { freeRoll } from '../../rules/rolls.ts'
+import type { BonusMove } from '../../rules/turn.ts'
+import type { RollRequest } from '../../rules/dice.ts'
 import { triggeredBonus } from '../../rules/bonusActions.ts'
 import { SheetLink } from '../../components/SheetLink.tsx'
 import type { TrackerPatch } from '../../live/characterRows.ts'
@@ -179,8 +183,8 @@ type ActingNowProps = {
   row: FightRow | null
   controls: FightControls
   monsters: SrdMonster[] | null
-  /** A monster's attack: pick its target next. */
-  onAttack: (row: FightRow, action: SrdMonsterAction) => void
+  /** A monster's attack: pick its target next. A bonus-action attack says so. */
+  onAttack: (row: FightRow, action: SrdMonsterAction, bonus?: boolean) => void
   /** Acting for a player: one of their attacks, then its target. */
   onCharacterAttack: (row: FightRow, attack: AttackEntry) => void
   /** Opens a sheet in the app on a plain click (Screen 1's panel); otherwise it opens in a new tab. */
@@ -195,6 +199,8 @@ type ActingNowProps = {
   onCast?: (row: FightRow, spell: SrdSpell) => void
   /** Rolls the save a caster owes to keep concentrating. */
   onConcentrationSave?: (character: Character) => void
+  /** A roll for a monster, such as Stealth when it hides. */
+  onRoll?: (request: RollRequest) => void
   /** Show the number key for each attack (the Battle screen's keyboard). */
   numbered?: boolean
   rolling?: boolean
@@ -215,6 +221,7 @@ export function ActingNow({
   spells = null,
   onCast,
   onConcentrationSave,
+  onRoll,
   numbered = false,
   rolling,
   className,
@@ -234,9 +241,24 @@ export function ActingNow({
   const available = CONDITIONS.filter((c) => c.index !== 'exhaustion' && !row.conditions.includes(c.index))
   const attacks = monster?.actions.filter(isAttack) ?? []
   // What it can do with a bonus action, from its stat block (a goblin's Nimble Escape).
-  const bonusActions = [...(monster?.traits ?? []), ...(monster?.actions ?? [])].filter((a) =>
-    /bonus action/i.test(a.desc),
-  )
+  const bonusActions = monster ? monsterBonusActions(monster) : []
+  const bonusFree = !row.combatant.turn.bonusUsed
+  const reactionFree = !row.combatant.turn.reactionUsed
+  const MOVE_NAMES = { dash: 'Dash', disengage: 'Disengage', hide: 'Hide', dodge: 'Dodge' } as const
+  function bonusMove(move: BonusMove) {
+    if (!row) return
+    controls.act(row.combatant, `bonus_${move}`)
+    // Hiding rolls Stealth, secretly, against the players' passive Perception.
+    if (move === 'hide' && monster && onRoll) {
+      onRoll({
+        ...freeRoll([{ sides: 20, count: 1 }], {
+          modifier: monsterSkill(monster, 'stealth', 'dexterity'),
+          secret: true,
+        }),
+        label: `${row.name}: Stealth`,
+      })
+    }
+  }
   const defences = defencesText(row.character ?? row.secret ?? NO_DEFENCES)
   // What the acting player's turn has just opened up (shown to them too).
   const readyBonus =
@@ -381,7 +403,7 @@ export function ActingNow({
                   </li>
                 ))}
               </ul>
-              <div className={styles.legend}>Also on its turn</div>
+              <div className={styles.legend}>Instead of attacking (its action)</div>
               <div className={styles.turnButtons}>
                 {(['dash', 'disengage', 'dodge'] as const).map((what) => (
                   <button
@@ -392,36 +414,133 @@ export function ActingNow({
                     title={`Spends its action: ${what === 'dash' ? 'its speed again' : what === 'disengage' ? 'no opportunity attacks as it moves away' : 'attacks against it have disadvantage'}`}
                     onClick={() => controls.act(row.combatant, what)}
                   >
-                    {what[0].toUpperCase() + what.slice(1)}
+                    {MOVE_NAMES[what]}
                   </button>
                 ))}
-                <button
-                  type="button"
-                  className={styles.turnButton}
-                  disabled={row.combatant.turn.bonusUsed}
-                  title={
-                    bonusActions.map((a) => `${a.name}: ${a.desc}`).join('\n\n') ||
-                    'Click when it uses its bonus action'
-                  }
-                  onClick={() => controls.act(row.combatant, 'bonus')}
-                >
-                  {row.combatant.turn.bonusUsed ? 'Bonus action used' : 'Bonus action'}
-                  {bonusActions.length > 0 && `: ${bonusActions.map((a) => a.name).join(', ')}`}
-                </button>
-                <button
-                  type="button"
-                  className={styles.turnButton}
-                  disabled={row.combatant.turn.reactionUsed}
-                  title={
-                    monster.reactions.map((a) => `${a.name}: ${a.desc}`).join('\n\n') ||
-                    'Click when it uses its reaction'
-                  }
-                  onClick={() => controls.act(row.combatant, 'reaction')}
-                >
-                  {row.combatant.turn.reactionUsed ? 'Reaction used' : 'Reaction'}
-                  {monster.reactions.length > 0 && `: ${monster.reactions.map((a) => a.name).join(', ')}`}
-                </button>
               </div>
+
+              <section
+                className={cx(bonusStyles.dmBonus, !bonusFree && bonusStyles.dmBonusUsed)}
+                aria-label="Its bonus action"
+              >
+                <div className={bonusStyles.dmBonusTitle}>Bonus action {bonusFree ? '· free' : '· used this turn'}</div>
+                {bonusActions.length === 0 ? (
+                  <p className={bonusStyles.dmBonusNone}>
+                    Nothing in its stat block.{' '}
+                    <button
+                      type="button"
+                      className={styles.link}
+                      disabled={!bonusFree}
+                      onClick={() => controls.act(row.combatant, 'bonus')}
+                    >
+                      Mark it used anyway
+                    </button>
+                  </p>
+                ) : (
+                  bonusActions.map((bonus) => {
+                    const attack = bonus.attack ? monster.actions.find((a) => a.name === bonus.attack) : undefined
+                    return (
+                      <div key={bonus.name} className={bonusStyles.dmBonusRow} title={bonus.desc}>
+                        <div className={bonusStyles.dmBonusName}>
+                          {bonus.name}
+                          {WHEN_WORDS[bonus.when] && (
+                            <span className={bonusStyles.dmBonusWhen}> · {WHEN_WORDS[bonus.when]}</span>
+                          )}
+                        </div>
+                        <div className={bonusStyles.dmBonusButtons}>
+                          {bonus.moves.map((move) => (
+                            <button
+                              key={move}
+                              type="button"
+                              className={bonusStyles.dmBonusButton}
+                              disabled={!bonusFree || rolling}
+                              onClick={() => bonusMove(move)}
+                            >
+                              {bonus.moves.length === 1 && move === 'dash' && !/\bdash\b/i.test(bonus.desc)
+                                ? 'Move its speed'
+                                : MOVE_NAMES[move]}
+                              {move === 'hide' &&
+                                monster &&
+                                ` (Stealth ${formatBonus(monsterSkill(monster, 'stealth', 'dexterity'))})`}
+                            </button>
+                          ))}
+                          {attack && (
+                            <button
+                              type="button"
+                              className={bonusStyles.dmBonusButton}
+                              disabled={!bonusFree || rolling}
+                              onClick={() => {
+                                controls.act(row.combatant, 'bonus')
+                                onAttack(row, attack, true)
+                              }}
+                            >
+                              {attack.name}, then pick a target
+                            </button>
+                          )}
+                          {bonus.moves.length === 0 && !attack && (
+                            <button
+                              type="button"
+                              className={bonusStyles.dmBonusButton}
+                              disabled={!bonusFree}
+                              onClick={() => void controls.applyFeature(row.combatant, bonus.name, 'bonus')}
+                            >
+                              Use {bonus.name}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </section>
+
+              <div className={styles.legend}>Reaction {reactionFree ? '' : '(used)'}</div>
+              <div className={styles.turnButtons}>
+                {monster.reactions.map((reaction) => (
+                  <button
+                    key={reaction.name}
+                    type="button"
+                    className={styles.turnButton}
+                    disabled={!reactionFree}
+                    title={reaction.desc}
+                    onClick={() => void controls.applyFeature(row.combatant, reaction.name, 'reaction')}
+                  >
+                    Use {reaction.name}
+                  </button>
+                ))}
+                <span className={styles.hint}>
+                  {monster.reactions.length === 0
+                    ? 'Its reaction is an opportunity attack, '
+                    : 'Or an opportunity attack, '}
+                  offered by itself when someone leaves its reach.
+                </span>
+              </div>
+
+              {monster.legendary.length > 0 && (
+                <>
+                  <div className={styles.legend}>Legendary actions (3 a round, at the end of others&rsquo; turns)</div>
+                  <div className={styles.turnButtons}>
+                    {monster.legendary.map((legendary) => (
+                      <button
+                        key={legendary.name}
+                        type="button"
+                        className={styles.turnButton}
+                        title={legendary.desc}
+                        onClick={() => {
+                          const asAttack = monster.actions.find(
+                            (a) => isAttack(a) && new RegExp(`\\b${a.name}\\b`, 'i').test(legendary.desc),
+                          )
+                          if (isAttack(legendary)) onAttack(row, legendary, true)
+                          else if (asAttack) onAttack(row, asAttack, true)
+                          else void controls.applyFeature(row.combatant, legendary.name, 'free')
+                        }}
+                      >
+                        {legendary.name}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
               <p className={styles.hint}>
                 Initiative {formatBonus(abilityModifier(monster.scores.dexterity))} · passive Perception{' '}
                 {monster.passivePerception} · CR {crText(monster.cr)}
@@ -488,8 +607,10 @@ type EncounterTabProps = {
   selectedId: string | null
   onSelect: (id: string) => void
   onCharacterHp: (character: Character, change: number) => void
-  onAttack: (row: FightRow, action: SrdMonsterAction) => void
+  onAttack: (row: FightRow, action: SrdMonsterAction, bonus?: boolean) => void
   onCharacterAttack: (row: FightRow, attack: AttackEntry) => void
+  /** A roll for a monster, such as Stealth when it hides. */
+  onRoll?: (request: RollRequest) => void
   onRollInitiative: (combatant: Combatant, row: FightRow) => void
   onOpenSheet: (character: Character) => void
   aiming?: Aiming
@@ -508,6 +629,7 @@ export function EncounterTab({
   onCharacterHp,
   onAttack,
   onCharacterAttack,
+  onRoll,
   onRollInitiative,
   onOpenSheet,
   aiming = null,
@@ -542,6 +664,7 @@ export function EncounterTab({
         onAttack={onAttack}
         onCharacterAttack={onCharacterAttack}
         onOpenSheet={onOpenSheet}
+        onRoll={onRoll}
         rolling={rolling}
       />
     </div>
