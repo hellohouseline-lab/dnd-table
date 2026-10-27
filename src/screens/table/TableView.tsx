@@ -68,7 +68,14 @@ import {
 import { feetBetween } from '../../rules/combat.ts'
 import { mapTokens } from '../../map/mapTokens.ts'
 import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/fightRows.ts'
-import { InitiativePrompt, InitiativeRibbon, InspectCard, TurnBanner, YourTurn } from '../fight/PlayerCombat.tsx'
+import {
+  InitiativePrompt,
+  InitiativeRibbon,
+  InspectCard,
+  TurnBanner,
+  YourConditions,
+  YourTurn,
+} from '../fight/PlayerCombat.tsx'
 import { ConcentrationPrompt, DeathSaves, StrikePrompt } from '../fight/Reactions.tsx'
 import { ConcentrationChip } from '../fight/SpellParts.tsx'
 import { useRulesKey } from '../rules/useRulesKey.ts'
@@ -224,6 +231,10 @@ export type PlayerCombatProps = {
   strike: FightControls['strike']
   letGo: FightControls['letGo']
   deathSave: FightControls['deathSave']
+  /** Conditions that wear off (C3a): a save to shake one off, standing up, breaking free. */
+  conditionSave: FightControls['conditionSave']
+  standUp: FightControls['standUp']
+  breakFree: FightControls['breakFree']
   /** The battle map on stage, or null when the stage shows a picture. */
   map: Asset | null
   tokens: TokenControls
@@ -1263,6 +1274,24 @@ export function TableView({
               if (what === 'search') roll(skillCheck(character, 'perception', choices))
             }}
             onEndTurn={combat.endTurn}
+          />
+        )}
+        {fight && mine && combat && (
+          <YourConditions
+            conditions={character.conditions}
+            clocks={mine.clocks}
+            myTurn={myTurn}
+            feetLeft={character.speed + mine.turn.extraFeet - mine.turn.feetMoved}
+            speed={character.speed}
+            actionFree={!mine.turn.actionUsed && mine.turn.attacksMade === 0}
+            rolling={table.rolling}
+            onSave={(condition) => void table.rollWith(() => combat.conditionSave(mine, condition))}
+            onStandUp={() =>
+              void combat
+                .standUp(mine)
+                .catch((caught: unknown) => setFightProblem(caught instanceof Error ? caught.message : String(caught)))
+            }
+            onBreakFree={() => void table.rollWith(() => combat.breakFree(mine))}
           />
         )}
         {fight && mine && (

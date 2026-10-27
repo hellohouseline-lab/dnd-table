@@ -53,11 +53,17 @@ import {
   type NewToken,
   type Token,
   itemInFight,
+  setCondition as putCondition,
+  conditionSave as rollConditionSave,
+  standUp as standUpNow,
+  breakFree as breakFreeNow,
 } from './combat.ts'
 import { messageFor } from './errors.ts'
 import type { Roll } from './rolls.ts'
 import type { FeatureCost } from '../rules/features.ts'
 import type { BonusAttackKind } from '../rules/bonusActions.ts'
+import type { Ability } from '../rules/abilities.ts'
+import type { ClockChoice } from '../rules/conditionClocks.ts'
 
 type Fight = NonNullable<FightState>
 
@@ -129,6 +135,24 @@ export type FightControls = {
   ) => Promise<Roll | null>
   /** Takes back one thing that happened: a player their own newest action, the DM anything newest first. */
   takeBack: (event: CombatEvent) => Promise<void>
+  /**
+   * DM: puts a condition on with how long it lasts (null: until taken off), or takes it off. With
+   * `resist`, the creature first makes that save. Resolves with whether it was resisted; throws in
+   * plain words if refused.
+   */
+  setCondition: (
+    combatant: Combatant,
+    condition: string,
+    on: boolean,
+    choice: ClockChoice | null,
+    resist?: { ability: Ability; dc: number } | null,
+  ) => Promise<{ resisted: boolean; roll: Roll | null }>
+  /** A player's save each turn to shake off a condition. Throws in plain words if refused. */
+  conditionSave: (combatant: Combatant, condition: string) => Promise<Roll>
+  /** Stands up from prone for half your speed. Throws in plain words if refused. */
+  standUp: (combatant: Combatant) => Promise<void>
+  /** Breaks free of a grab or a web with your action. Throws in plain words if refused. */
+  breakFree: (combatant: Combatant) => Promise<Roll>
 }
 
 /** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
@@ -513,6 +537,55 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reload],
   )
 
+  const setCondition = useCallback(
+    async (
+      combatant: Combatant,
+      condition: string,
+      on: boolean,
+      choice: ClockChoice | null,
+      resist: { ability: Ability; dc: number } | null = null,
+    ) => {
+      setError(null)
+      const result = await putCondition(combatant.id, condition, on, choice, resist)
+      setEvents((list) => withRow(list, result.event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return { resisted: result.resisted, roll: result.roll }
+    },
+    [reload],
+  )
+
+  const conditionSave = useCallback(
+    async (combatant: Combatant, condition: string) => {
+      setError(null)
+      const { roll, event } = await rollConditionSave(combatant.id, condition)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
+  const standUp = useCallback(
+    async (combatant: Combatant) => {
+      setError(null)
+      const event = await standUpNow(combatant.id)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+    },
+    [reload],
+  )
+
+  const breakFree = useCallback(
+    async (combatant: Combatant) => {
+      setError(null)
+      const { roll, event } = await breakFreeNow(combatant.id)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
   const undo = useCallback(() => {
     const newest = [...events].reverse().find((e) => !e.undone)
     if (!newest) return
@@ -537,6 +610,10 @@ export function useFight(campaignId: string, userId: string): FightControls {
     applyFeature,
     applyItem,
     takeBack,
+    setCondition,
+    conditionSave,
+    standUp,
+    breakFree,
     start,
     addMonsters: addMonstersTo,
     rollInitiative: rollFor,

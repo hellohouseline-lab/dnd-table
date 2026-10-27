@@ -44,6 +44,11 @@ describe('how long a condition lasts', () => {
     expect(clockWords(secret, { forPlayers: true })).toBe(
       '10 rounds · saves each turn (Wisdom) · while the caster concentrates',
     )
+    // As the server sends it, with a secret DC left off.
+    const fromServer = { ...hold, save: { ability: 'wisdom' as const, dc: null, secret: true } }
+    expect(clockWords(fromServer)).toBe(
+      '10 rounds · saves each turn (Wisdom, secret DC) · while the caster concentrates',
+    )
     expect(clockWords(makeClock('blinded', { howLong: { kind: 'end-of-turn' } })!)).toBe(
       'until the end of its next turn',
     )

@@ -1,0 +1,71 @@
+/* How long? under Add a condition (C3a). */
+
+.picker {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--gold-rule);
+  border-radius: 6px;
+  background: var(--card-fill);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--gold);
+}
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.field > span:first-child {
+  width: 96px;
+  color: var(--label);
+}
+
+.dc {
+  width: 56px;
+}
+
+.tick {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.apply,
+.cancel {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.apply {
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: var(--on-gold);
+}
+
+.cancel {
+  background: none;
+  border: 1px solid var(--chip-border);
+  color: var(--text-2);
+}

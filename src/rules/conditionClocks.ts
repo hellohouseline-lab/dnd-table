@@ -14,7 +14,7 @@ export type ConditionClock = {
   /** Ends at the end of the creature's next turn. */
   endOfNextTurn: boolean
   /** A save at the end of each of the creature's turns ends it. A secret DC stays with the DM. */
-  save: { ability: Ability; dc: number; secret: boolean } | null
+  save: { ability: Ability; dc: number | null; secret: boolean } | null
   /** Ends when this caster stops concentrating on this spell. */
   caster: { characterId: string; spell: string } | null
   /** The DC to break free with Athletics or Acrobatics (grappled, restrained). */
@@ -61,7 +61,8 @@ export function clockWords(
   if (clock.endOfNextTurn) bits.push(clock.started ? 'ends this turn' : 'until the end of its next turn')
   if (clock.rounds !== null) bits.push(clock.rounds === 1 ? '1 round' : `${clock.rounds} rounds`)
   if (clock.save) {
-    const dc = forPlayers && clock.save.secret ? '' : ` DC ${clock.save.dc}`
+    // The DM's own screen gets a secret DC's number from clock_secrets, or says it's secret.
+    const dc = forPlayers && clock.save.secret ? '' : clock.save.dc === null ? ', secret DC' : ` DC ${clock.save.dc}`
     bits.push(`saves each turn (${ABILITY_NAME[clock.save.ability]}${dc})`)
   }
   if (clock.caster) bits.push(`while ${casterName ?? 'the caster'} concentrates`)

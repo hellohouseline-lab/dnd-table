@@ -152,3 +152,55 @@ describe('the feed in plain words', () => {
     )
   })
 })
+
+describe('conditions in the feed', () => {
+  const names = { nameOf: (id: string | null) => (id === 'g' ? 'Goblin A' : 'Thorin'), youId: 't' }
+  const line = (shown: CombatEvent['shown'], actorId = 'g') =>
+    eventWords(
+      {
+        id: 'e',
+        encounterId: 'f',
+        round: 1,
+        actorId,
+        targetId: actorId,
+        kind: 'condition',
+        rollId: null,
+        shown,
+        undone: false,
+        seq: 1,
+        createdAt: '',
+      },
+      names,
+    )
+
+  it('says what was put on, and for how long', () => {
+    expect(line({ condition: 'paralyzed', on: true, rounds: 10, saveEachTurn: 'wisdom', spell: 'Hold Person' })).toBe(
+      'Goblin A is now paralysed for 10 rounds, with a Wisdom save each turn, while Hold Person lasts.',
+    )
+    expect(line({ condition: 'blinded', on: true, endOfNextTurn: true }, 't')).toBe(
+      'You are now blinded until the end of your next turn.',
+    )
+    expect(line({ condition: 'prone', on: true, resisted: false, saveAbility: 'strength', total: 7 }, 't')).toBe(
+      'You fail the Strength save (rolled 7) and are now prone.',
+    )
+    expect(line({ condition: 'prone', on: true, resisted: true, saveAbility: 'strength' })).toBe(
+      'Goblin A makes the Strength save and is not prone.',
+    )
+  })
+
+  it('says how it ended', () => {
+    expect(line({ condition: 'frightened', ended: 'time' })).toBe('Goblin A is no longer frightened.')
+    expect(line({ condition: 'paralyzed', ended: 'saved' })).toBe('Goblin A shakes off being paralysed.')
+    expect(line({ condition: 'paralyzed', still: true })).toBe('Goblin A is still paralysed.')
+    expect(line({ condition: 'paralyzed', ended: 'concentration', spell: 'Hold Person' })).toBe(
+      'Goblin A is no longer paralysed: Hold Person has ended.',
+    )
+    expect(line({ condition: 'poisoned', saved: true, total: 15 }, 't')).toBe(
+      'You shake off being poisoned (rolled 15).',
+    )
+    expect(line({ condition: 'prone', stood: true, feet: 15 }, 't')).toBe('You stand up (15 feet of movement).')
+    expect(line({ condition: 'grappled', brokeFree: false, total: 6 }, 't')).toBe(
+      "You struggle but can't break free (rolled 6).",
+    )
+  })
+})

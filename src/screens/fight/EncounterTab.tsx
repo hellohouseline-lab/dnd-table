@@ -5,20 +5,16 @@ import type { AttackEntry, Character } from '../../rules/character.ts'
 import { actionSummary, crText, HEALTH_WORDS, isAttack } from '../../rules/combat.ts'
 import { defencesText, NO_DEFENCES } from '../../rules/damage.ts'
 import { abilityModifier, formatBonus } from '../../rules/maths/core.ts'
-import {
-  CONDITIONS,
-  findCondition,
-  type SrdMonster,
-  type SrdMonsterAction,
-  type SrdSpell,
-} from '../../rules/srd/index.ts'
-import { fightRows, turnLimits, type FightRow } from './fightRows.ts'
+import { findCondition, type SrdMonster, type SrdMonsterAction, type SrdSpell } from '../../rules/srd/index.ts'
+import { concentratingIn, fightRows, turnLimits, type FightRow } from './fightRows.ts'
 import { actionFree } from '../../rules/turn.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
 import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
 import { AtAGlance } from './AtAGlance.tsx'
+import { ConditionPicker } from './ConditionPicker.tsx'
+import { clockWords, CONDITION_WORD } from '../../rules/conditionClocks.ts'
 import bonusStyles from './BonusReady.module.css'
 import { monsterBonusActions, monsterSkill, WHEN_WORDS } from '../../rules/monsterBonus.ts'
 import { freeRoll } from '../../rules/rolls.ts'
@@ -142,7 +138,12 @@ export function TurnOrder({
                   ) : row.status ? (
                     STATUS_WORDS[row.status]
                   ) : row.conditions.length > 0 ? (
-                    row.conditions.map((c) => findCondition(c)?.name ?? c).join(', ')
+                    row.conditions
+                      .map((c) => {
+                        const rounds = row.combatant.clocks.find((x) => x.condition === c)?.rounds
+                        return `${CONDITION_WORD[c] ?? findCondition(c)?.name ?? c}${rounds ? ` (${rounds})` : ''}`
+                      })
+                      .join(', ')
                   ) : row.health !== 'healthy' ? (
                     HEALTH_WORDS[row.health]
                   ) : (
@@ -205,6 +206,8 @@ type ActingNowProps = {
   numbered?: boolean
   rolling?: boolean
   className?: string
+  /** Casters concentrating now, so a condition can end with their spell (C3a). */
+  concentrating?: { characterId: string; name: string; spell: string }[]
 }
 
 /** The Acting now card (design 10): what the creature can do this turn, each attack a click away from its target. */
@@ -225,6 +228,7 @@ export function ActingNow({
   numbered = false,
   rolling,
   className,
+  concentrating = [],
 }: ActingNowProps) {
   if (!row) {
     return (
@@ -238,7 +242,6 @@ export function ActingNow({
   }
 
   const monster = row.secret?.monster ? monsters?.find((m) => m.index === row.secret?.monster) : undefined
-  const available = CONDITIONS.filter((c) => c.index !== 'exhaustion' && !row.conditions.includes(c.index))
   const attacks = monster?.actions.filter(isAttack) ?? []
   // What it can do with a bonus action, from its stat block (a goblin's Nimble Escape).
   const bonusActions = monster ? monsterBonusActions(monster) : []
@@ -269,6 +272,37 @@ export function ActingNow({
           attacksMade: row.combatant.turn.attacksMade,
         })
       : []
+
+  // Conditions, each with how long is left, and Add a condition with How long? (C3a).
+  const conditionRow = (
+    <div className={styles.conditionRow}>
+      {row.conditions.map((c) => {
+        const clock = row.combatant.clocks.find((x) => x.condition === c)
+        const casterName = concentrating.find((x) => x.characterId === clock?.caster?.characterId)?.name
+        return (
+          <span key={c} className={styles.condition}>
+            {CONDITION_WORD[c] ?? findCondition(c)?.name ?? c}
+            {clock && <span className={styles.conditionTime}> · {clockWords(clock, { casterName })}</span>}
+            <button
+              type="button"
+              className={styles.removeSmall}
+              aria-label={`Remove ${CONDITION_WORD[c] ?? findCondition(c)?.name ?? c}`}
+              onClick={() => void controls.setCondition(row.combatant, c, false, null).catch(() => undefined)}
+            >
+              ×
+            </button>
+          </span>
+        )
+      })}
+      <ConditionPicker
+        has={row.conditions}
+        concentrating={concentrating}
+        onApply={(condition, choice) =>
+          void controls.setCondition(row.combatant, condition, true, choice).catch(() => undefined)
+        }
+      />
+    </div>
+  )
 
   return (
     <section className={cx(styles.actingCard, className)} aria-label="Acting now">
@@ -352,6 +386,7 @@ export function ActingNow({
             onSave={onConcentrationSave && (() => row.character && onConcentrationSave(row.character))}
             rolling={rolling}
           />
+          {conditionRow}
           <AtAGlance character={row.character} spells={spells} />
           <SheetLink
             campaignId={campaignId}
@@ -547,40 +582,7 @@ export function ActingNow({
               </p>
             </>
           )}
-          <div className={styles.conditionRow}>
-            {row.conditions.map((c) => (
-              <span key={c} className={styles.condition}>
-                {findCondition(c)?.name ?? c}
-                <button
-                  type="button"
-                  className={styles.removeSmall}
-                  aria-label={`Remove ${findCondition(c)?.name ?? c}`}
-                  onClick={() =>
-                    controls.setConditions(
-                      row.combatant,
-                      row.conditions.filter((x) => x !== c),
-                    )
-                  }
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-            <select
-              aria-label="Add a condition"
-              value=""
-              onChange={(event) =>
-                event.target.value && controls.setConditions(row.combatant, [...row.conditions, event.target.value])
-              }
-            >
-              <option value="">Add a condition…</option>
-              {available.map((c) => (
-                <option key={c.index} value={c.index}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {conditionRow}
           <div className={styles.actingButtons}>
             <button
               type="button"
@@ -661,6 +663,7 @@ export function EncounterTab({
         row={focus}
         controls={controls}
         monsters={monsters}
+        concentrating={concentratingIn(rows)}
         onAttack={onAttack}
         onCharacterAttack={onCharacterAttack}
         onOpenSheet={onOpenSheet}
