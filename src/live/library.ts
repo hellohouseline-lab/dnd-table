@@ -214,28 +214,10 @@ export async function deleteAsset(asset: Asset): Promise<void> {
 }
 
 /**
- * Pictures that come with the table (drawn for it, free to use): battle maps at 70 pixels a square,
- * and a simple example for each other kind, to try the stage with before buying art.
+ * Pictures that come with the table, painted by Matt (Higgsfield, 27 October 2026): battle maps at
+ * 70 pixels a square, places, moments and people.
  */
 export const STARTER_ART = [
-  {
-    file: 'maps/tavern.svg',
-    category: 'maps',
-    name: 'Tavern',
-    hint: 'A bar, a fireplace, a back kitchen and a cellar trapdoor',
-  },
-  {
-    file: 'maps/forest-road.svg',
-    category: 'maps',
-    name: 'Forest road',
-    hint: 'A road through the trees, a stream with a bridge, a camp',
-  },
-  {
-    file: 'maps/old-crypt.svg',
-    category: 'maps',
-    name: 'Old crypt',
-    hint: 'Sarcophagi, an altar, a pit trap and a collapsed room',
-  },
   // Painted by Matt for Death Pit of Moloch (Higgsfield, 27 October 2026), at 70 pixels a square.
   {
     file: 'maps/meadheaven-tavern.webp',
@@ -278,24 +260,6 @@ export const STARTER_ART = [
     category: 'maps',
     name: 'Ritual hall',
     hint: '18 x 10 squares: a demon statue, two levers, an altar, six alcoves and a trapped exit',
-  },
-  {
-    file: 'art/market-city.svg',
-    category: 'places',
-    name: 'Market city',
-    hint: 'A city street on market day, a castle on the hill',
-  },
-  {
-    file: 'art/campfire-night.svg',
-    category: 'moments',
-    name: 'Campfire at night',
-    hint: 'The party round a fire under the moon',
-  },
-  {
-    file: 'art/innkeeper.svg',
-    category: 'people',
-    name: 'The innkeeper',
-    hint: 'A cheerful innkeeper raising a tankard',
   },
   // Painted for the table by Matt (Higgsfield, 27 October 2026).
   {
@@ -571,37 +535,18 @@ export function starterMapUrl(starter: { file: string }): string {
 }
 
 /**
- * Adds a starter picture to this table's library, like any upload: a drawing is turned into a
- * picture in the browser first. A map's squares are 70 pixels, the grid's default, so they line up.
+ * Adds a starter picture to this table's library, like any upload. A map's squares are 70 pixels,
+ * the grid's default, so they line up.
  */
 export async function addStarterMap(
   campaignId: string,
   starter: { file: string; category: ArtCategory; name: string },
 ): Promise<Asset> {
-  // A painted picture goes up as it is.
-  if (!starter.file.endsWith('.svg')) {
-    const response = await fetch(starterMapUrl(starter))
-    if (!response.ok) throw new TableError(`“${starter.name}” couldn't be loaded. Check your connection.`)
-    const blob = await response.blob()
-    const extension = starter.file.split('.').pop() ?? 'jpg'
-    return uploadArt(
-      campaignId,
-      new File([blob], `${starter.name}.${extension}`, { type: blob.type }),
-      starter.category,
-    )
-  }
-  const image = new Image()
-  image.src = starterMapUrl(starter)
-  await image.decode()
-  const canvas = document.createElement('canvas')
-  canvas.width = image.naturalWidth
-  canvas.height = image.naturalHeight
-  const context = canvas.getContext('2d')
-  if (!context) throw new TableError("Your browser couldn't prepare the map.")
-  context.drawImage(image, 0, 0)
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
-  if (!blob) throw new TableError("Your browser couldn't prepare the map.")
-  return uploadArt(campaignId, new File([blob], `${starter.name}.png`, { type: 'image/png' }), starter.category)
+  const response = await fetch(starterMapUrl(starter))
+  if (!response.ok) throw new TableError(`“${starter.name}” couldn't be loaded. Check your connection.`)
+  const blob = await response.blob()
+  const extension = starter.file.split('.').pop() ?? 'jpg'
+  return uploadArt(campaignId, new File([blob], `${starter.name}.${extension}`, { type: blob.type }), starter.category)
 }
 
 /**

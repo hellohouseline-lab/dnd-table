@@ -1282,13 +1282,13 @@ test('ready-made art: the DM adds a painted place from the pictures that come wi
   await expect(library.getByRole('button', { name: 'Add Crossroads' })).toBeHidden()
   // And one of the painted battle maps.
   await library.getByRole('tab', { name: 'Maps' }).click()
-  await library.getByRole('button', { name: 'Show all 10' }).click()
+  await library.getByRole('button', { name: 'Show all 7' }).click()
   await library.getByRole('button', { name: 'Add Ritual hall' }).click()
   await expect(library.getByRole('button', { name: 'Ritual hall', exact: true })).toBeVisible()
   // A character to put on stage, and a moment for the road.
   await library.getByRole('tab', { name: 'People' }).click()
   await expect(library.getByRole('button', { name: 'Add The paladin' })).toBeHidden()
-  await library.getByRole('button', { name: 'Show all 27' }).click()
+  await library.getByRole('button', { name: 'Show all 26' }).click()
   await library.getByRole('button', { name: 'Add The paladin' }).click()
   await expect(library.getByRole('button', { name: 'The paladin', exact: true })).toBeVisible()
   await library.getByRole('tab', { name: 'Moments' }).click()
