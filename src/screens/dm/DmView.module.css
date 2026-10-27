@@ -110,6 +110,32 @@
   gap: 8px;
 }
 
+.tabRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rulesButton {
+  flex: none;
+  margin-left: auto;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The Rules panel on Screen 1: over the right-hand column, without darkening the screen. */
+.rules {
+  position: absolute;
+  z-index: 30;
+  /* Below the tab row, so the Rules button stays in reach. */
+  top: 134px;
+  right: 16px;
+  bottom: 16px;
+  width: 460px;
+}
+
 .tab {
   height: 42px;
   padding: 0 18px;

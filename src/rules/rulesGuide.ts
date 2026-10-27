@@ -2,15 +2,16 @@
 // from SRD 5.1 (CC-BY-4.0), never from the books. Each entry names where the free rules' own words
 // are (a condition, or sections of src/rules/srd/rules.json), which the panel folds underneath.
 
-import { CONDITIONS, SKILLS } from './srd/index.ts'
+import { CONDITIONS, SKILLS, type SrdSpell } from './srd/index.ts'
 
-export type RuleSectionKey = 'conditions' | 'turn' | 'dice' | 'resting'
+export type RuleSectionKey = 'conditions' | 'turn' | 'dice' | 'resting' | 'spells'
 
 export const RULE_SECTIONS: { key: RuleSectionKey; name: string; hint: string }[] = [
   { key: 'conditions', name: 'Conditions', hint: 'What prone, poisoned and the rest do to you' },
   { key: 'turn', name: 'On your turn', hint: 'Moving, your action, bonus actions and reactions' },
   { key: 'dice', name: 'Rolling dice', hint: 'Checks, saves, attacks, advantage and skills' },
   { key: 'resting', name: 'Resting', hint: 'Short and long rests, hit dice and healing' },
+  { key: 'spells', name: 'Spells', hint: 'Your class\u2019s spells, and how spells work' },
 ]
 
 export type RuleEntry = {
@@ -27,6 +28,8 @@ export type RuleEntry = {
   /** The free rules' own words: a condition's index, or rules sections' indexes. */
   srdCondition?: string
   srdSections?: string[]
+  /** For a spell: the spell, whose own text is the rule. */
+  spell?: SrdSpell
 }
 
 const CONDITION_WORDS: Record<string, { plain: string; list?: string[]; also?: string[] }> = {
@@ -414,7 +417,87 @@ const RESTING: Omit<RuleEntry, 'section'>[] = [
   },
 ]
 
-/** Every entry in the panel, in order: conditions, your turn, dice, resting. */
+const SPELLCASTING: Omit<RuleEntry, 'section'>[] = [
+  {
+    id: 'spells:slots',
+    title: 'Spell slots',
+    plain:
+      "Casting a spell of level 1 or higher uses up a slot of that level or higher, and a higher slot can make it stronger. Cantrips cost nothing. Slots come back after a long rest (a warlock's after a short rest).",
+    also: ['slot', 'slots', 'upcast', 'higher level'],
+    srdSections: ['spell-slots'],
+  },
+  {
+    id: 'spells:known',
+    title: 'Known and prepared spells',
+    plain:
+      'Bards, sorcerers, rangers and warlocks know a set list of spells. Clerics, druids, paladins and wizards choose which to prepare after each long rest: clerics, druids and paladins from their whole class list, wizards from their spellbook.',
+    also: ['prepare', 'prepared', 'known', 'spellbook'],
+    srdSections: ['known-and-prepared-spells'],
+  },
+  {
+    id: 'spells:cantrips',
+    title: 'Cantrips',
+    plain: 'Simple spells you can cast as often as you like, with no slot. Many get stronger as you level up.',
+    also: ['cantrip'],
+    srdSections: ['cantrips'],
+  },
+  {
+    id: 'spells:concentration',
+    title: 'Concentration',
+    plain:
+      "Some spells last only while you concentrate on them, and you can only concentrate on one at a time: casting another ends the first. When you take damage, make a Constitution save (DC 10, or half the damage if that's more) or lose it. Being knocked out ends it too.",
+    also: ['concentrating', 'concentrate'],
+    srdSections: ['duration'],
+  },
+  {
+    id: 'spells:components',
+    title: 'Components',
+    plain:
+      'V means you have to speak, S that you need a free hand to gesture, and M that you need a material. A component pouch or a spellcasting focus covers materials, unless the spell says they have a cost.',
+    also: ['verbal', 'somatic', 'material', 'focus', 'component pouch'],
+    srdSections: ['components'],
+  },
+  {
+    id: 'spells:rituals',
+    title: 'Rituals',
+    plain:
+      'A spell marked ritual can be cast without using a slot if you take 10 minutes longer, as long as your class can cast rituals.',
+    also: ['ritual'],
+    srdSections: ['rituals'],
+  },
+  {
+    id: 'spells:attacks-saves',
+    title: 'Spell attacks and saves',
+    plain:
+      "Some spells make an attack roll (your spell attack bonus against the target's AC). Others make the target save against your spell save DC. The table works both out for you; they're on your Sheet.",
+    also: ['spell attack', 'spell save dc', 'save dc'],
+    srdSections: ['spell-attack-rolls', 'spell-saving-throws'],
+  },
+]
+
+/** A spell as a Rules entry: what kind of spell it is in a line; its own text is the rule. */
+export function spellEntry(spell: SrdSpell): RuleEntry {
+  const kind = `${spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}, ${spell.school.toLowerCase()}`
+  return {
+    id: `spell:${spell.index}`,
+    section: 'spells',
+    title: spell.name,
+    plain: [
+      kind,
+      spell.castingTime,
+      spell.range,
+      spell.components.replace(/\s*\(.*\)$/, ''),
+      spell.duration,
+      spell.concentration ? 'concentration' : '',
+      spell.ritual ? 'ritual' : '',
+    ]
+      .filter(Boolean)
+      .join(' · '),
+    spell,
+  }
+}
+
+/** Every entry in the panel, in order: conditions, your turn, dice, resting, how spells work. */
 export const RULE_ENTRIES: RuleEntry[] = [
   ...CONDITIONS.map((c): RuleEntry => ({
     id: `condition:${c.index}`,
@@ -428,6 +511,7 @@ export const RULE_ENTRIES: RuleEntry[] = [
   ...TURN.map((e): RuleEntry => ({ ...e, section: 'turn' })),
   ...DICE.map((e): RuleEntry => ({ ...e, section: 'dice' })),
   ...RESTING.map((e): RuleEntry => ({ ...e, section: 'resting' })),
+  ...SPELLCASTING.map((e): RuleEntry => ({ ...e, section: 'spells' })),
 ]
 
 /** The entry for a condition the character has ("prone"), if there is one. */
@@ -456,7 +540,8 @@ export function searchRules(
     const title = words(entry.title.replace(/^Action: /, ''))
     const also = (entry.also ?? []).map(words)
     const body = words([entry.plain, ...(entry.list ?? [])].join(' '))
-    const srd = words(srdText(entry))
+    // A spell's own text counts like the free rules' words.
+    const srd = words(entry.spell ? entry.spell.desc : srdText(entry))
     const everything = [title, ...also, body, srd].join(' ')
     if (!parts.every((p) => has(everything, p))) return []
     const score =

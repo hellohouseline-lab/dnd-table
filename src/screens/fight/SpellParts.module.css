@@ -107,3 +107,15 @@
   border-color: var(--gold);
   color: var(--gold-light);
 }
+
+/* "Concentrating", which opens what it means in the Rules panel. */
+.explain {
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}

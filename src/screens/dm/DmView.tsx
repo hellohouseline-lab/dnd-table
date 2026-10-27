@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Icon, type IconName } from '../../components/Icon.tsx'
 import { Notice } from '../../components/Notice.tsx'
+import { useRulesKey } from '../rules/useRulesKey.ts'
 import { Backdrop } from '../../components/Backdrop.tsx'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
@@ -87,6 +88,8 @@ import type { LogEvent } from '../../live/notebook.ts'
 import styles from './DmView.module.css'
 
 type DmTab = 'story' | 'party' | 'encounter' | 'npcs' | 'items' | 'log'
+
+const RulesPanel = lazy(() => import('../rules/RulesPanel.tsx'))
 
 const TABS: { label: string; tab?: DmTab; title?: string }[] = [
   { label: 'Story', tab: 'story' },
@@ -240,6 +243,9 @@ export function DmView({
   const [tab, setTab] = useState<DmTab>(startTab)
   // The Log tab shows every roll and note, or the notes alone, by session, to search.
   const [logView, setLogView] = useState<'all' | 'notes'>('all')
+  // The Rules panel (S1e), the same one players have; ? opens and closes it.
+  const [rulesOpen, setRulesOpen] = useState(false)
+  useRulesKey(useCallback(() => setRulesOpen((o) => !o), []))
   const [sheetFor, setSheetFor] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName>('sheet')
   const [mode, setMode] = useState<RollMode>('normal')
@@ -561,21 +567,32 @@ export function DmView({
             {allAnswered(request, asking.answers) ? ', all in' : ''} · <strong>Show results</strong>
           </button>
         )}
-        <div role="tablist" aria-label="DM panels" className={styles.tabs}>
-          {TABS.map(({ label, tab: target, title }) => (
-            <button
-              key={label}
-              type="button"
-              role="tab"
-              aria-selected={target === tab}
-              disabled={!target}
-              title={title}
-              className={cx(styles.tab, target === tab && styles.tabOn)}
-              onClick={() => target && setTab(target)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className={styles.tabRow}>
+          <div role="tablist" aria-label="DM panels" className={styles.tabs}>
+            {TABS.map(({ label, tab: target, title }) => (
+              <button
+                key={label}
+                type="button"
+                role="tab"
+                aria-selected={target === tab}
+                disabled={!target}
+                title={title}
+                className={cx(styles.tab, target === tab && styles.tabOn)}
+                onClick={() => target && setTab(target)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className={cx(styles.tab, styles.rulesButton, rulesOpen && styles.tabOn)}
+            aria-pressed={rulesOpen}
+            title="The rules in plain words (?)"
+            onClick={() => setRulesOpen((o) => !o)}
+          >
+            <Icon name="rules" size={16} /> Rules
+          </button>
         </div>
         <div className={styles.content} role="tabpanel">
           {tab === 'story' ? (
@@ -938,6 +955,12 @@ export function DmView({
         chips={chips}
         turn={fighting ? cameraTurn(fightRows(fighting, characters, 'dm'), me.user_id) : null}
       />
+
+      {rulesOpen && (
+        <Suspense fallback={null}>
+          <RulesPanel className={styles.rules} onClose={() => setRulesOpen(false)} />
+        </Suspense>
+      )}
     </main>
   )
 }

@@ -217,3 +217,65 @@
   font-size: 12px;
   color: var(--label);
 }
+
+.subhead {
+  margin: 14px 0 8px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+
+.subhead:first-child {
+  margin-top: 0;
+}
+
+.tick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.level {
+  min-width: 34px;
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: none;
+  border: 1px solid var(--chip-border);
+  color: var(--text-2);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.level:hover {
+  border-color: var(--gold-rule);
+}
+
+.spellMeta {
+  margin: 0;
+  font-size: 14px;
+  color: var(--label);
+}
+
+.spellText {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.spellText p {
+  margin: 0 0 6px;
+}

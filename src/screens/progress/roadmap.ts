@@ -67,13 +67,13 @@ export const ROADMAP: Milestone[] = [
   },
   {
     name: 'Rules for players',
-    detail: 'Conditions, your turn, dice and rests in plain words, beside the table (ready); spells and the DM’s copy next',
-    status: 'next',
+    detail: 'Conditions, your turn, dice, rests and spells in plain words, beside the table, for players and the DM',
+    status: 'ready',
   },
   {
     name: 'The rest of the combat rules',
     detail: 'Talk cards for a parley, and conditions that wear off by themselves',
-    status: 'later',
+    status: 'next',
   },
   { name: 'Stream overlay', detail: "The table on everyone's Twitch stream", status: 'later' },
   { name: 'Rehearsal', detail: 'A full dry run and final polish before the first stream', status: 'later' },

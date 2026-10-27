@@ -1,6 +1,7 @@
 import { cx } from '../../components/cx.ts'
 import { Icon } from '../../components/Icon.tsx'
 import type { Character } from '../../rules/character.ts'
+import { findCondition } from '../../rules/srd/index.ts'
 import { HEALTH_WORDS } from '../../rules/combat.ts'
 import type { RollMode } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
@@ -14,10 +15,12 @@ type RibbonProps = {
   rows: FightRow[]
   /** While picking a target: who can be picked, and what happens when one is. */
   picking?: { canPick: (row: FightRow) => boolean; onPick: (row: FightRow) => void } | null
+  /** Your own place in the turn order: your conditions show beside your name, and open the Rules panel. */
+  yours?: { combatantId: string; onCondition: (index: string) => void } | null
 }
 
 /** The initiative ribbon along the top in design 05: everyone in turn order, whoever's acting lit. */
-export function InitiativeRibbon({ rows, picking = null }: RibbonProps) {
+export function InitiativeRibbon({ rows, picking = null, yours = null }: RibbonProps) {
   return (
     <ol className={styles.ribbon} aria-label="Turn order">
       {rows.map((row) => {
@@ -46,6 +49,18 @@ export function InitiativeRibbon({ rows, picking = null }: RibbonProps) {
             ) : (
               <span className={className}>{label}</span>
             )}
+            {yours?.combatantId === row.combatant.id &&
+              (row.character?.conditions ?? row.combatant.conditions).map((index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={styles.pillCondition}
+                  title={`What ${(findCondition(index)?.name ?? index).toLowerCase()} does`}
+                  onClick={() => yours.onCondition(index)}
+                >
+                  {findCondition(index)?.name ?? index}
+                </button>
+              ))}
           </li>
         )
       })}

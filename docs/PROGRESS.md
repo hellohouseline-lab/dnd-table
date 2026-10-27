@@ -3,6 +3,12 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **S1e-2: spells in the Rules panel, and Rules for the DM (live). S1 (story mode) is complete.**
+  - **Spells**, the fifth section: **How spells work** (slots, known and prepared spells, cantrips, concentration, components, rituals, spell attacks and saves), then your class's spells with yours first ("Yours", or "In your book" for a wizard's unprepared ones), by level, each with how it's cast and its full text from the free rules. **Every class's spells** widens it; a fighter sees a note and the tick (decision 68). Search finds spells too ("cure wounds", "fire").
+  - **Links from a fight:** your own conditions show beside your name in the turn order, and **Concentrating** on your concentration chip is a link; both open the Rules panel at the right place (decision 67).
+  - **Keys:** **?** opens and closes Rules on the player's table and on Screen 1; **/** jumps to its search box.
+  - **The DM's Rules** (decision 69): a **Rules** button at the end of Screen 1's tabs opens the same panel on the right, below the tabs, with every spell.
+  - Preview: `#/dev/table/caster` (press ?), `#/dev/table/dying` (Unconscious in the turn order), `#/dev/dm/story` (press ?). Tests: 461 unit (1 new), 65 preview browser tests (2 new). No database changes.
 - **S1e-1: the Rules panel for players (live).** The plan is in `docs/S1E_PLAN.md`, approved with decisions 64 to 71 as recommended.
   - **Rules** on the player's table, in the switched-off Journal's place (decision 64), opens a panel beside your plate without darkening the table (decision 65). **Close**, **Esc** or the button again closes it.
   - Four sections: **Conditions** (all 15, yours first and marked "You"; exhaustion's six levels), **On your turn** (how a fight goes, your turn, reactions, moving, each action, opportunity attacks, two weapons, grabbing and shoving, shooting, cover, dropping to 0), **Rolling dice** (the d20 roll, checks, DCs, saves, attack rolls, advantage, contests, passive checks, working together, the 18 skills with everyday examples) and **Resting** (short and long rests, hit dice, resting at this table, healing and temporary hit points).
@@ -298,7 +304,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **S1e-2 next:** spells in the Rules panel (your class's list, yours first, by level), links from the turn order and Concentrating, the **?** key, and the same panel for the DM on Screen 1. Then the test one-shot.
+- **The test one-shot next (21 to 22 November):** Claude has written a one-shot to run it with, kept out of this public repo (see Waiting on Matt). After the one-shot: C3 lite and the stream overlay, each planned first.
 - **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 

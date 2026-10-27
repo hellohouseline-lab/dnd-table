@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { conditionEntry, RULE_ENTRIES, RULE_SECTIONS, searchRules } from './rulesGuide.ts'
-import { CONDITIONS, loadRuleSections } from './srd/index.ts'
+import { conditionEntry, RULE_ENTRIES, RULE_SECTIONS, searchRules, spellEntry } from './rulesGuide.ts'
+import { CONDITIONS, loadRuleSections, loadSpells } from './srd/index.ts'
 
 describe('the Rules panel', () => {
   it('explains every condition, in plain words with the free rules underneath', () => {
@@ -51,5 +51,20 @@ describe('the Rules panel', () => {
   it('also searches the free rules words when they are loaded', () => {
     const srd = (e: { id: string }) => (e.id === 'turn:cover' ? 'a wall or a tree trunk' : '')
     expect(searchRules(RULE_ENTRIES, 'tree trunk', srd).map((e) => e.id)).toEqual(['turn:cover'])
+  })
+
+  it('turns spells into entries that search finds by name and by what they do', async () => {
+    const spells = (await loadSpells()).map(spellEntry)
+    const fireBolt = spells.find((e) => e.id === 'spell:fire-bolt')
+    expect(fireBolt?.plain).toBe('Cantrip, evocation · 1 action · 120 feet · V, S · Instantaneous')
+    expect(spells.find((e) => e.id === 'spell:bless')?.plain).toContain('concentration')
+    const everything = [...RULE_ENTRIES, ...spells]
+    expect(searchRules(everything, 'cure wounds')[0]?.id).toBe('spell:cure-wounds')
+    expect(searchRules(everything, 'concentration')[0]?.id).toBe('spells:concentration')
+    expect(
+      searchRules(everything, 'fire')
+        .slice(0, 2)
+        .map((e) => e.id),
+    ).toEqual(['spell:fire-bolt', 'spell:fire-shield'])
   })
 })
