@@ -40,6 +40,8 @@ export function PasteDialog({
   const [text, setText] = useState('')
   const saved = presets?.presets.find((p) => p.body === text) ?? null
   const [busy, setBusy] = useState(false)
+  // Saving a preset adds nothing to the story, so it has its own word on its own button.
+  const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null)
   const [copied, setCopied] = useState(false)
   const plan = text.trim() ? parseCampaign(text) : null
@@ -66,7 +68,7 @@ export function PasteDialog({
   async function savePreset() {
     if (!plan || !presets) return
     const name = (plan.title || 'My campaign').slice(0, 120)
-    setBusy(true)
+    setSaving(true)
     setStatus(null)
     try {
       await presets.save(name, text)
@@ -77,7 +79,7 @@ export function PasteDialog({
     } catch (caught) {
       setStatus({ ok: false, text: caught instanceof Error ? caught.message : String(caught) })
     }
-    setBusy(false)
+    setSaving(false)
   }
 
   async function add() {
@@ -245,14 +247,14 @@ export function PasteDialog({
           <button
             type="button"
             className={dialog.secondary}
-            disabled={!plan || busy || saved !== null}
+            disabled={!plan || busy || saving || saved !== null}
             title="Keep this campaign to start any of your tables from. Only you can see it."
             onClick={() => void savePreset()}
           >
-            {saved ? 'Saved as a preset' : 'Save as a preset'}
+            {saving ? 'Saving…' : saved ? 'Saved as a preset' : 'Save as a preset'}
           </button>
         )}
-        <button type="button" className={dialog.primary} disabled={!plan || busy} onClick={() => void add()}>
+        <button type="button" className={dialog.primary} disabled={!plan || busy || saving} onClick={() => void add()}>
           {busy ? 'Adding…' : 'Add it to my story'}
         </button>
       </div>
