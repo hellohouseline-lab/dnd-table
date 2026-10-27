@@ -3,6 +3,12 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **S1e-1: the Rules panel for players (live).** The plan is in `docs/S1E_PLAN.md`, approved with decisions 64 to 71 as recommended.
+  - **Rules** on the player's table, in the switched-off Journal's place (decision 64), opens a panel beside your plate without darkening the table (decision 65). **Close**, **Esc** or the button again closes it.
+  - Four sections: **Conditions** (all 15, yours first and marked "You"; exhaustion's six levels), **On your turn** (how a fight goes, your turn, reactions, moving, each action, opportunity attacks, two weapons, grabbing and shoving, shooting, cover, dropping to 0), **Rolling dice** (the d20 roll, checks, DCs, saves, attack rolls, advantage, contests, passive checks, working together, the 18 skills with everyday examples) and **Resting** (short and long rests, hit dice, resting at this table, healing and temporary hit points).
+  - Each is two or three plain sentences written for this table, with **The rules' words** from SRD 5.1 folded underneath (decision 66). **Search** covers everything ("run" finds Dash, "death save" finds Dropping to 0).
+  - **Your conditions on the plate are links:** click "Prone" and the panel opens on Prone (decision 67). Exhaustion now shows there too, as "Exhaustion 2".
+  - Data: the free rules' rule sections are added to the importer (`src/rules/srd/rules.json`, 57 KB, loaded only when the panel opens). Words: `src/rules/rulesGuide.ts`. Panel: `src/screens/rules/RulesPanel.tsx`. Preview: `#/dev/table/rules`. Tests: 460 unit (6 new), 63 preview browser tests (2 new). No database changes.
 - **Search your session notes (live).** On Screen 1's Log tab, **Session notes** shows every quick note you've written, grouped into sessions (a new one starts after six hours with nothing written, so a late night stays together), newest first and dated, with the scene changes from Go here in between so you can see where the party was. Type in the search box and only the notes with every word you typed stay, highlighted, each with the scene it was written in. **Rolls and notes** is the old view. Tests: 455 unit (3 new), 61 preview browser tests (1 new).
 - **S1d: paste your notes, NPC notes, stash coins and fight difficulty (live).**
   - **Paste your notes** on the Story tab (in the outline, and on the start screen): paste a campaign and the right-hand side shows what it makes before you add it: chapters, scenes, people, items, rolls, choices, things to hand out, and each fight with **how hard it is for your party** (from your players' levels). **Worth knowing** lists anything it can't find (a monster not in the free rules, a picture or map not uploaded yet). **Add it to my story** writes it all in; people and items with the same name are reused, not doubled.
@@ -292,7 +298,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **S1e next:** Rules for players. The plan is in `docs/S1E_PLAN.md` (two small milestones, decisions 64 to 71), waiting for approval. Then the test one-shot.
+- **S1e-2 next:** spells in the Rules panel (your class's list, yours first, by level), links from the turn order and Concentrating, the **?** key, and the same panel for the DM on Screen 1. Then the test one-shot.
 - **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
@@ -301,7 +307,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Approve the S1e plan** (`docs/S1E_PLAN.md`), or change any of decisions 64 to 71.
+- **Try Rules** (refresh first): as a player press **Rules** under your abilities, search for "dash", and open **Rolling dice**. Ask the DM to make you prone (or poisoned), then click the condition on your plate.
 - **Try Paste your notes** (refresh first): on the Story tab press **Paste your notes**, then **Try the example** and look at the right-hand side; press **Add it to my story**. Then press **Copy the format for your AI**, paste it into Fable, add your notes at the end, and paste what Fable writes back in.
 - **Try NPC notes and stash coins:** on the NPCs tab add a note under **What's happened**; show someone from a scene and check "Met the party at …" appears. On Items and loot put 10 gp in the party stash, then take 5.
 - **Try NPCs** (refresh first): upload a portrait on Screen 2 under People, make the innkeeper on the NPCs tab with that portrait, add her to a scene, and press **Show**; check a player sees her. Try **Make someone up**. On Items and loot, **Take away** something from a player.
