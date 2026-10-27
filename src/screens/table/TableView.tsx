@@ -27,6 +27,7 @@ import type { HandOver, Offer, StashControls } from '../../live/giving.ts'
 import type { Shopping } from '../../live/shops.ts'
 import { ShopPanel } from './ShopPanel.tsx'
 import { ReadAloud } from '../../components/ReadAloud.tsx'
+import { NpcCard } from '../../components/NpcCard.tsx'
 import { coinsFor, coinWords } from '../../rules/money.ts'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
@@ -140,6 +141,8 @@ type TableViewProps = {
   canAddGear?: boolean
   /** A scene's read-aloud the DM has put on stage ('' for none). */
   readAloud?: string
+  /** The person the DM is showing, if any. */
+  npc?: { name: string; role: string; portrait: Asset | null } | null
 }
 
 /** Something just given to you: "You got a Longsword +1". */
@@ -269,6 +272,7 @@ export function TableView({
   shopping,
   canAddGear = true,
   readAloud = '',
+  npc = null,
 }: TableViewProps) {
   const [shopOpen, setShopOpen] = useState(false)
   const [inspected, setInspected] = useState<string | null>(null)
@@ -946,6 +950,7 @@ export function TableView({
         </div>
       )}
       {readAloud && !fight && <ReadAloud text={readAloud} className={styles.readAloud} />}
+      {npc && !fight && <NpcCard name={npc.name} role={npc.role} portrait={npc.portrait} className={styles.npc} />}
       <div className={styles.topChips}>
         {fight && (
           <TurnBanner round={fight.encounter.round} mine={myTurn} acting={acting && !myTurn ? acting.name : null} />

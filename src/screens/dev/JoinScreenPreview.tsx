@@ -454,6 +454,7 @@ export function TablePreview({
         offers={offers}
         onAnswerOffer={answerOffer}
         stash={stashControls}
+        npc={variant === 'story' ? { name: 'Brenna', role: 'Innkeeper', portrait: null } : null}
         readAloud={
           variant === 'story'
             ? 'Rain drums on the shutters. Inside the Rusty Flagon, smoke curls from a hearth big enough to roast an ox, and every head turns as you shake the water from your cloaks.'

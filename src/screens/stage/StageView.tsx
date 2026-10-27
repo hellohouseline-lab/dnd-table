@@ -4,6 +4,7 @@ import { cx } from '../../components/cx.ts'
 import { Notice } from '../../components/Notice.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { ReadAloud } from '../../components/ReadAloud.tsx'
+import { NpcCard } from '../../components/NpcCard.tsx'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
 import type { TableAudio } from '../../audio/useTableAudio.ts'
 import type { Campaign, Member } from '../../live/campaigns.ts'
@@ -219,6 +220,15 @@ export function StageView({
               />
             ) : (
               <div className={styles.screenPreview}>
+                {stage.npcName && (
+                  <NpcCard
+                    name={stage.npcName}
+                    role={stage.npcRole}
+                    portrait={art.find((a) => a.id === stage.npcImageId) ?? null}
+                    className={styles.npc}
+                    onHide={() => change({ npcName: '', npcRole: '', npcImageId: null })}
+                  />
+                )}
                 {stage.readAloud && (
                   <ReadAloud
                     text={stage.readAloud}

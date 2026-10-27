@@ -1015,3 +1015,42 @@ test('story mode: a scene plans a secret roll, a choice, a body to search and a 
   await form.getByRole('button', { name: 'Add the roll' }).click()
   await expect(road.getByRole('button', { name: 'Ask: Survival, DC 12, secret DC' })).toBeVisible()
 })
+
+test('NPCs: the DM edits a person, shows them, and makes someone up', async ({ page }) => {
+  await page.goto('#/dev/dm/npcs')
+  const people = page.getByRole('navigation', { name: 'Your people' })
+  await people.getByRole('button', { name: /Brenna/ }).click()
+  const brenna = page.getByRole('article', { name: 'Person: Brenna' })
+  await expect(brenna.getByRole('textbox', { name: /Their secrets/ })).toHaveValue('She owes the goblins money.')
+  await brenna.getByRole('radio', { name: 'Wary' }).click()
+  await expect(brenna.getByRole('radio', { name: 'Wary' })).toHaveAttribute('aria-checked', 'true')
+  await brenna.getByRole('button', { name: 'Show' }).click()
+  await expect(people).toContainText('On stage: Brenna')
+  await brenna.getByRole('button', { name: 'Hide' }).click()
+  await expect(people).not.toContainText('On stage:')
+
+  await people.getByRole('button', { name: 'Make someone up' }).click()
+  const madeUp = page.getByRole('article', { name: 'Someone made up' })
+  const name = (await madeUp.getByRole('heading').textContent()) ?? ''
+  await madeUp.getByRole('button', { name: 'Keep them' }).click()
+  await expect(people.getByRole('button', { name: new RegExp(name) })).toBeVisible()
+})
+
+test('NPCs: a scene shows who is there, and the player sees them on stage', async ({ page }) => {
+  await page.goto('#/dev/dm/story')
+  const here = page.getByRole('region', { name: 'People here' })
+  await here.getByRole('button', { name: 'Show Brenna' }).click()
+  await expect(here.getByRole('button', { name: 'On stage' })).toBeDisabled()
+  await page.goto('#/dev/table/story')
+  await expect(page.getByRole('region', { name: 'On stage: Brenna' })).toContainText('Innkeeper')
+})
+
+test('the DM takes a handaxe away from a player', async ({ page }) => {
+  await page.goto('#/dev/dm/items')
+  const thorin = page.getByRole('article', { name: "Thorin Ironfist's things" })
+  await thorin.getByRole('button', { name: 'Take Handaxe away from Thorin Ironfist' }).click()
+  await thorin.getByRole('spinbutton', { name: 'How many to take away' }).fill('1')
+  await thorin.getByRole('button', { name: 'Take it', exact: true }).click()
+  await expect(thorin).not.toContainText('2 × Handaxe')
+  await expect(thorin).toContainText('Handaxe')
+})

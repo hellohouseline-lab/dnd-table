@@ -1,6 +1,7 @@
 // Local development only: a story kept in the page for the DM screen preview.
 
 import { useMemo, useState } from 'react'
+import { BLANK_NPC, type Npc, type NpcControls } from '../../live/npcs.ts'
 import { sortStory, type Chapter, type Scene, type Story, type StoryControls } from '../../live/story.ts'
 
 const scene = (id: string, chapterId: string, position: number, fields: Partial<Scene>): Scene => ({
@@ -18,6 +19,7 @@ const scene = (id: string, chapterId: string, position: number, fields: Partial<
   choices: [],
   things: [],
   fight: null,
+  people: [],
   ...fields,
 })
 
@@ -45,6 +47,7 @@ function sampleStory(): Story {
         ],
         choices: [{ id: 'c1', text: 'they take the mill road', sceneId: 'sc2' }],
         things: [{ id: 't1', kind: 'box', container: 'body', richness: 'ordinary' }],
+        people: ['npc-brenna'],
       }),
       scene('sc2', 'ch1', 1, {
         title: 'The mill road',
@@ -105,5 +108,37 @@ export function usePreviewStory(): StoryControls {
         }),
     }),
     [story],
+  )
+}
+
+/** People in the preview: Brenna the innkeeper, and whoever you make. */
+export function usePreviewNpcs(): NpcControls {
+  const [npcs, setNpcs] = useState<Npc[]>([
+    {
+      ...BLANK_NPC,
+      id: 'npc-brenna',
+      name: 'Brenna',
+      role: 'Innkeeper',
+      place: 'The Rusty Flagon',
+      voice: 'Warm and loud, calls everyone “love”.',
+      wants: 'Her son home safe from the mine.',
+      knows: 'The merchant left for the old mill two nights ago.',
+      secrets: 'She owes the goblins money.',
+      attitude: 'warm',
+    },
+  ])
+  return useMemo<NpcControls>(
+    () => ({
+      npcs,
+      status: 'ready',
+      error: null,
+      save: async (npc) => {
+        const saved = npc.id ? npc : { ...npc, id: crypto.randomUUID() }
+        setNpcs((now) => [...now.filter((n) => n.id !== saved.id), saved].sort((a, b) => a.name.localeCompare(b.name)))
+        return saved
+      },
+      remove: async (id) => setNpcs((now) => now.filter((n) => n.id !== id)),
+    }),
+    [npcs],
   )
 }

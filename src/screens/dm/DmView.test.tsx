@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { NO_GIVING } from '../../live/giving.ts'
 import { NO_SHOPS } from '../../live/shops.ts'
 import { NO_STORY } from '../../live/story.ts'
+import { NO_NPCS } from '../../live/npcs.ts'
 import { emptyStage } from '../../live/stage.ts'
 import { describe, expect, it } from 'vitest'
 import type { RequestControls } from '../../live/useRollRequest.ts'
@@ -93,6 +94,7 @@ function render(startTab: 'party' | 'log') {
         stage={emptyStage(sampleCampaign.id)}
         onStage={noop}
         library={[]}
+        npcs={NO_NPCS}
         log={{ status: 'ready', rolls: [secretRoll] }}
         diceStyle={DEFAULT_DICE_STYLE}
         onDiceStyleChange={noop}
@@ -127,6 +129,7 @@ describe('the DM screen', () => {
           stage={emptyStage(sampleCampaign.id)}
           onStage={noop}
           library={[]}
+          npcs={NO_NPCS}
           log={{ status: 'ready', rolls: [] }}
           diceStyle={DEFAULT_DICE_STYLE}
           onDiceStyleChange={noop}

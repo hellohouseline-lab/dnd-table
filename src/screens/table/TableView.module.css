@@ -915,3 +915,11 @@
   transform: translateX(-50%);
   z-index: 20;
 }
+
+/* A shown NPC, at the right of the scene, beside the cameras. */
+.npc {
+  position: absolute;
+  right: 380px;
+  top: 80px;
+  z-index: 19;
+}

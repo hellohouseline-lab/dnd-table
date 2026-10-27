@@ -64,6 +64,8 @@ import type { AskInput } from '../../live/rollRequests.ts'
 import type { Container, Richness } from '../../rules/boxes.ts'
 import type { Fight } from '../../rules/scenes.ts'
 import { StoryTab } from './story/StoryTab.tsx'
+import { NpcsTab } from './npcs/NpcsTab.tsx'
+import type { NpcControls } from '../../live/npcs.ts'
 import type { Scene, StoryControls } from '../../live/story.ts'
 import type { Stage, StagePatch } from '../../live/stage.ts'
 import { serverNow } from '../../live/clock.ts'
@@ -79,25 +81,25 @@ import { useRollsForDm } from '../../live/useRollsForDm.ts'
 import { RollsForDm } from '../rolls/RollsForDm.tsx'
 import styles from './DmView.module.css'
 
-type DmTab = 'story' | 'party' | 'encounter' | 'items' | 'log'
+type DmTab = 'story' | 'party' | 'encounter' | 'npcs' | 'items' | 'log'
 
 const TABS: { label: string; tab?: DmTab; title?: string }[] = [
   { label: 'Story', tab: 'story' },
   { label: 'Party', tab: 'party' },
   { label: 'Encounter', tab: 'encounter' },
-  { label: 'NPCs', title: 'NPCs arrive in Phase 2' },
+  { label: 'NPCs', tab: 'npcs' },
   { label: 'Items and loot', tab: 'items' },
   { label: 'Log', tab: 'log' },
 ]
 
-type Verb = 'ask' | 'rest' | 'note' | 'fight' | 'next' | 'monster' | 'end' | 'give'
+type Verb = 'ask' | 'rest' | 'note' | 'fight' | 'next' | 'monster' | 'end' | 'give' | 'npc'
 
 type VerbButton = { label: string; icon: IconName; title: string; verb?: Verb; primary?: boolean }
 
 const VERBS: VerbButton[] = [
   { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', verb: 'ask' },
   { label: 'Start combat', icon: 'sword', title: 'Start a fight: who, which monsters, then initiative', verb: 'fight' },
-  { label: 'Show an NPC', icon: 'journal', title: 'Arrives in Phase 2' },
+  { label: 'Show an NPC', icon: 'journal', title: 'Your people: show one on stage', verb: 'npc' },
   { label: 'Give an item', icon: 'items', title: 'Give an item or coins to someone', verb: 'give' },
   { label: 'Rest', icon: 'moon', title: 'A short or long rest for the party', verb: 'rest' },
   { label: 'Add a note', icon: 'log', title: 'Write a quick note into the log', verb: 'note' },
@@ -158,6 +160,8 @@ type DmViewProps = {
   stage: Stage
   onStage: (patch: StagePatch) => void
   library: Asset[]
+  /** The DM's people. */
+  npcs: NpcControls
 }
 
 /**
@@ -193,7 +197,10 @@ export function DmView({
   stage,
   onStage,
   library,
+  npcs,
 }: DmViewProps) {
+  // The person to open on the NPCs tab (from a scene).
+  const [npcFocus, setNpcFocus] = useState<string | null>(null)
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
   const [selectedCombatant, setSelectedCombatant] = useState<string | null>(null)
   const monsters = useSrd(loadMonsters)
@@ -278,6 +285,12 @@ export function DmView({
     return thrown ? (thrown.damage?.total ?? thrown.total) : null
   }
 
+  /** Show an NPC: their portrait, name and role on stage for everyone, and a line in the log. */
+  function showNpc(person: { name: string; role: string; portraitId: string | null }) {
+    onStage({ npcName: person.name, npcRole: person.role, npcImageId: person.portraitId })
+    events.add('stage', `${person.name}${person.role ? `, ${person.role.toLowerCase()},` : ''} is here.`, true)
+  }
+
   /** Go here: the scene's picture, music, ambience and name on stage, Where we are, and the log. */
   function goHere(scene: Scene) {
     const patch: StagePatch = { sceneName: (scene.title || 'A scene').slice(0, 80), readAloud: '' }
@@ -360,6 +373,7 @@ export function DmView({
     if (verb === 'ask') setAskFor({ only: null })
     if (verb === 'rest') setResting(true)
     if (verb === 'give') setGiveTo({ only: null })
+    if (verb === 'npc') setTab('npcs')
     if (verb === 'note') noteInput.current?.focus()
     if (verb === 'fight') setFightDialog('start')
     if (verb === 'monster') setFightDialog('monster')
@@ -546,6 +560,8 @@ export function DmView({
               data={{
                 characters,
                 dmItems: giving.yours,
+                npcs: npcs.npcs,
+                shownNpc: stage.npcName,
                 shops: shops.shops,
                 monsters,
                 maps: library.filter((a) => a.kind === 'art' && a.category === 'maps'),
@@ -560,11 +576,28 @@ export function DmView({
                 onGiveItem: (id) => setGiveTo({ only: null, ticked: [`yours:${id}`] }),
                 onOpenBox: (container, richness) => setBoxOpen({ container, richness }),
                 onOpenShop: (id) => void shops.setOpen(id, true),
+                onShowNpc: (npc) => showNpc(npc),
+                onOpenNpc: (id) => {
+                  setNpcFocus(id)
+                  setTab('npcs')
+                },
                 onStartFight: (planned) => {
                   setFightPreset(planned)
                   setFightDialog('start')
                 },
               }}
+            />
+          ) : tab === 'npcs' ? (
+            <NpcsTab
+              key={npcFocus ?? 'all'}
+              npcs={npcs}
+              library={library}
+              shops={shops.shops}
+              shownName={stage.npcName}
+              onShow={showNpc}
+              onHide={() => onStage({ npcName: '', npcRole: '', npcImageId: null })}
+              onOpenShop={(id) => void shops.setOpen(id, true)}
+              startId={npcFocus}
             />
           ) : tab === 'encounter' ? (
             fighting ? (

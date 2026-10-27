@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Shop } from '../../../rules/shops.ts'
 import type { Asset } from '../../../live/library.ts'
 import type { Scene, ScenePatch } from '../../../live/story.ts'
+import type { Npc } from '../../../live/npcs.ts'
 import { ASKABLES } from '../../../rules/askable.ts'
 import { CONTAINERS, RICHNESS, type Container, type Richness } from '../../../rules/boxes.ts'
 import type { DmItem } from '../../../rules/catalogue.ts'
@@ -19,6 +20,8 @@ export type SceneActions = {
   onOpenBox: (container: Container, richness: Richness) => void
   onOpenShop: (shopId: string) => void
   onStartFight: (fight: Fight) => void
+  onShowNpc: (npc: Npc) => void
+  onOpenNpc: (npcId: string) => void
 }
 
 /** What a scene's parts can point at. */
@@ -29,6 +32,9 @@ export type SceneData = {
   shops: Shop[]
   monsters: SrdMonster[] | null
   maps: Asset[]
+  npcs: Npc[]
+  /** Whoever is on stage now ('' for nobody). */
+  shownNpc: string
 }
 
 type ScenePlansProps = {
@@ -485,5 +491,67 @@ function FightForm({
         Done
       </button>
     </div>
+  )
+}
+
+/** People here: who's in the scene, each with Show (on stage) and a link to their card. */
+export function ScenePeople({
+  scene,
+  onChange,
+  data,
+  actions,
+}: {
+  scene: Scene
+  onChange: (patch: ScenePatch) => void
+  data: SceneData
+  actions: SceneActions
+}) {
+  const here = scene.people.flatMap((id) => data.npcs.filter((n) => n.id === id))
+  const others = data.npcs.filter((n) => !scene.people.includes(n.id))
+  return (
+    <section className={styles.block} aria-label="People here">
+      <h3 className={styles.blockTitle}>People here</h3>
+      {here.length > 0 && (
+        <ul className={styles.plans}>
+          {here.map((npc) => (
+            <li key={npc.id}>
+              <button type="button" className={styles.planLink} onClick={() => actions.onOpenNpc(npc.id)}>
+                {npc.name}
+              </button>
+              {npc.role && <span className={styles.planNote}>{npc.role}</span>}
+              <button
+                type="button"
+                className={styles.planButton}
+                disabled={data.shownNpc === npc.name}
+                onClick={() => actions.onShowNpc(npc)}
+              >
+                {data.shownNpc === npc.name ? 'On stage' : `Show ${npc.name}`}
+              </button>
+              <Remove onClick={() => onChange({ people: scene.people.filter((p) => p !== npc.id) })} />
+            </li>
+          ))}
+        </ul>
+      )}
+      {others.length > 0 ? (
+        <label className={styles.field}>
+          <span>Add</span>
+          <select
+            value=""
+            aria-label="Add someone to this scene"
+            onChange={(e) => e.target.value && onChange({ people: [...scene.people, e.target.value] })}
+          >
+            <option value="">Someone who&rsquo;s here…</option>
+            {others.map((n) => (
+              <option key={n.id} value={n.id}>
+                {n.name}
+                {n.role ? `, ${n.role}` : ''}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        here.length === 0 && <p className={styles.note}>Make people on the NPCs tab, then add them here.</p>
+      )}
+    </section>
   )
 }

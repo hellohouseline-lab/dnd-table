@@ -35,6 +35,8 @@ export type Scene = {
   choices: Choice[]
   things: Thing[]
   fight: Fight | null
+  /** Who's here: the DM's people, by id. */
+  people: string[]
 }
 
 export type ScenePatch = Partial<Omit<Scene, 'id'>>
@@ -90,6 +92,7 @@ function rowToScene(row: Tables<'story_scenes'>): Scene {
     choices: parseChoices(row.choices),
     things: parseThings(row.things),
     fight: parseFight(row.fight),
+    people: Array.isArray(row.people) ? row.people.filter((p): p is string => typeof p === 'string') : [],
   }
 }
 
@@ -108,6 +111,7 @@ function patchToRow(patch: ScenePatch): TablesUpdate<'story_scenes'> {
   if (patch.choices !== undefined) row.choices = patch.choices as unknown as Json
   if (patch.things !== undefined) row.things = patch.things as unknown as Json
   if (patch.fight !== undefined) row.fight = patch.fight as unknown as Json
+  if (patch.people !== undefined) row.people = patch.people
   return row
 }
 

@@ -1,0 +1,319 @@
+/* The NPCs tab: people on the left, the person on the right. */
+.tab {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.listButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.people {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.person {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.person:hover {
+  border-color: var(--gold-rule);
+}
+
+.personOn {
+  border-color: var(--gold);
+}
+
+.face {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--gold-rule);
+  background: var(--card-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.face img,
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.who {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.role {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.onStage {
+  margin: 0;
+  font-size: 14px;
+  color: var(--gold-light);
+}
+
+.card {
+  padding: 16px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-rule);
+  background: var(--card-fill);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.portrait {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--gold-rule);
+  background: var(--chip-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.titles {
+  flex: 1 1 200px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.titleInput,
+.roleInput {
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--gold-light);
+}
+
+.titleInput {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.roleInput {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.titleInput:focus,
+.roleInput:focus {
+  outline: none;
+  border-bottom-color: var(--gold-rule);
+}
+
+.headButtons,
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.attitudes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.attitude {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.attitudeOn.friendly,
+.attitudeOn.warm {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.attitudeOn.neutral {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.attitudeOn.wary,
+.attitudeOn.hostile {
+  border-color: var(--fail);
+  color: var(--fail-light);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.blockTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.block textarea {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.pickers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.field select {
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  color: var(--gold-light);
+}
+
+.made {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.primary,
+.secondary {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.primary {
+  border: 0;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.secondary {
+  border: 1px solid var(--gold-rule);
+  background: none;
+  color: var(--gold-light);
+}
+
+.secondary:disabled {
+  opacity: 0.5;
+}
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.note {
+  margin: 0;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.problem {
+  margin: 0;
+  color: var(--fail-light);
+}
