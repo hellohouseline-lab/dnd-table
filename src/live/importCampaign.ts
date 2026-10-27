@@ -39,7 +39,12 @@ export async function importCampaign(campaignId: string, plan: CampaignPlan, ctx
   const peopleNames = new Set(plan.people.map((p) => p.name.toLowerCase()))
   const extraPeople = plan.chapters
     .flatMap((c) => c.scenes.flatMap((s) => s.people))
-    .filter((name) => !peopleNames.has(name.toLowerCase()) && !matchName(ctx.npcs, (n) => n.name, name))
+    .filter(
+      (name) =>
+        !peopleNames.has(name.toLowerCase()) &&
+        !matchName(plan.people, (p) => p.name, name) &&
+        !matchName(ctx.npcs, (n) => n.name, name),
+    )
   const npcIds = new Map<string, string>()
   let newPeople = 0
   for (const person of [...plan.people, ...[...new Set(extraPeople)].map((name) => ({ name }))]) {

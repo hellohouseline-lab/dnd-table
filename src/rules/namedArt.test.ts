@@ -88,3 +88,19 @@ describe('names an AI marked as suggestions', () => {
     expect(scene.picture).toBe('Sink cavern')
   })
 })
+
+describe("a scene's People line", () => {
+  it('keeps names and leaves out notes, "None named" and counted creatures', async () => {
+    const { peopleList } = await import('./campaignFile.ts')
+    expect(peopleList('Olly Coopersmith (heard, not seen)')).toEqual(['Olly Coopersmith'])
+    expect(peopleList('Roland Tress, Silky Pell (if Cheat exposed)')).toEqual(['Roland Tress', 'Silky Pell'])
+    expect(peopleList('None named; four cultists (free-rules cultist)')).toEqual([])
+    expect(peopleList('None named; three goblins (free-rules goblin)')).toEqual([])
+    expect(peopleList('Grudge Halloway, Silky Pell, Roland Tress (arrives at the end)')).toEqual([
+      'Grudge Halloway',
+      'Silky Pell',
+      'Roland Tress',
+    ])
+    expect(peopleList('One-Eye Jack and 2 guards')).toEqual(['One-Eye Jack'])
+  })
+})
