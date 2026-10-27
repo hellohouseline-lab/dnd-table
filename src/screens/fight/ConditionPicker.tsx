@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ABILITY_NAME, type Ability } from '../../rules/abilities.ts'
-import type { ClockChoice, HowLong } from '../../rules/conditionClocks.ts'
+import { CONDITION_WORD, type ClockChoice, type HowLong } from '../../rules/conditionClocks.ts'
 import { CONDITIONS } from '../../rules/srd/index.ts'
 import styles from './ConditionPicker.module.css'
 
@@ -64,14 +64,14 @@ export function ConditionPicker({ has, concentrating, onApply }: ConditionPicker
         <option value="">Add a condition…</option>
         {available.map((c) => (
           <option key={c.index} value={c.index}>
-            {c.name}
+            {CONDITION_WORD[c.index] ?? c.name}
           </option>
         ))}
       </select>
     )
   }
 
-  const name = CONDITIONS.find((c) => c.index === condition)?.name ?? condition
+  const name = CONDITION_WORD[condition] ?? CONDITIONS.find((c) => c.index === condition)?.name ?? condition
   return (
     <div className={styles.picker} role="group" aria-label={`How long is it ${name.toLowerCase()}?`}>
       <div className={styles.title}>{name}: how long?</div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import type { Character } from '../../rules/character.ts'
 import { longRest, shortRest, type RestPatch } from '../../rules/rest.ts'
+import { CONDITION_WORD } from '../../rules/conditionClocks.ts'
 import styles from './RestDialog.module.css'
 
 export type RestKind = 'short' | 'long'
@@ -11,7 +12,7 @@ type RestDialogProps = {
   /** Ticked to start with: the characters whose players are here tonight. */
   hereTonight: Character[]
   /** Applies a rest to one character and logs it. */
-  onRest: (character: Character, patch: RestPatch) => void
+  onRest: (character: Character, patch: RestPatch & Partial<Pick<Character, 'conditions'>>) => void
   onLog: (text: string) => void
   onClose: () => void
   className?: string
@@ -39,6 +40,9 @@ export function RestDialog({ characters, hereTonight, onRest, onLog, onClose, cl
     (hereTonight.length > 0 ? hereTonight : characters).map((c) => c.id),
   )
   const [done, setDone] = useState<string[] | null>(null)
+  // A long rest asks whether to clear conditions still on the party (decision 77).
+  const [clear, setClear] = useState(true)
+  const lingering = characters.filter((c) => picked.includes(c.id) && c.conditions.some((x) => x !== 'unconscious'))
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => event.key === 'Escape' && onClose()
@@ -50,7 +54,9 @@ export function RestDialog({ characters, hereTonight, onRest, onLog, onClose, cl
     const lines: string[] = []
     for (const character of characters.filter((c) => picked.includes(c.id))) {
       const { patch, changes } = kind === 'short' ? shortRest(character) : longRest(character)
-      if (Object.keys(patch).length > 0) onRest(character, patch)
+      const clearing = kind === 'long' && clear && lingering.includes(character)
+      if (clearing) changes.push('conditions cleared')
+      if (Object.keys(patch).length > 0 || clearing) onRest(character, clearing ? { ...patch, conditions: [] } : patch)
       lines.push(`${character.name}: ${changes.length > 0 ? changes.join(', ') : 'nothing to recover'}.`)
     }
     onLog(`${kind === 'short' ? 'Short' : 'Long'} rest. ${lines.join(' ')}`)
@@ -114,6 +120,15 @@ export function RestDialog({ characters, hereTonight, onRest, onLog, onClose, cl
             ))}
             {characters.length === 0 && <p className={styles.note}>Nobody has a character yet.</p>}
           </fieldset>
+          {kind === 'long' && lingering.length > 0 && (
+            <label className={styles.person}>
+              <input type="checkbox" checked={clear} onChange={(event) => setClear(event.target.checked)} />
+              Clear what&rsquo;s left:{' '}
+              {lingering
+                .map((c) => `${c.name} (${c.conditions.map((x) => CONDITION_WORD[x] ?? x).join(', ')})`)
+                .join(', ')}
+            </label>
+          )}
           <div className={styles.buttons}>
             <button type="button" className={styles.secondary} onClick={onClose}>
               Cancel

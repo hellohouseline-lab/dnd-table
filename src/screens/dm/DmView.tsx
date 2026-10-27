@@ -400,7 +400,7 @@ export function DmView({
     }
   }
 
-  function rest(character: Character, patch: RestPatch) {
+  function rest(character: Character, patch: RestPatch & Partial<Pick<Character, 'conditions'>>) {
     onUpdate(character.id, patch)
   }
 

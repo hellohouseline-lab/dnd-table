@@ -183,6 +183,18 @@ export const SPELL_CAUSES: Record<string, ConditionCause> = {
   sleep: cause({ conditions: ['unconscious'], rounds: 10 }),
 }
 
+/** The cause for a spell by its name as the feed has it ("Hold Person", "Blindness/Deafness"). */
+export function spellCauseByName(name: string): ConditionCause | null {
+  return (
+    SPELL_CAUSES[
+      name
+        .toLowerCase()
+        .replace(/[^a-z]+/g, '-')
+        .replace(/^-|-$/g, '')
+    ] ?? null
+  )
+}
+
 /** The cause for a spell, by its index, if it's one the table knows. */
 export function spellCause(spell: Pick<SrdSpell, 'index'> | string): ConditionCause | null {
   return SPELL_CAUSES[typeof spell === 'string' ? spell : spell.index] ?? null

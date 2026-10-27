@@ -14,6 +14,7 @@ import { DeathSaves } from './Reactions.tsx'
 import { ConcentrationChip, SlotPips, SpellList } from './SpellParts.tsx'
 import { AtAGlance } from './AtAGlance.tsx'
 import { ConditionPicker } from './ConditionPicker.tsx'
+import { offersFor } from './conditionOffers.ts'
 import { clockWords, CONDITION_WORD } from '../../rules/conditionClocks.ts'
 import bonusStyles from './BonusReady.module.css'
 import { monsterBonusActions, monsterSkill, WHEN_WORDS } from '../../rules/monsterBonus.ts'
@@ -656,7 +657,13 @@ export function EncounterTab({
           aiming={aiming}
           rolling={rolling}
         />
-        <CombatFeed events={controls.events} nameOf={nameOf} onUndo={controls.undo} limit={4} />
+        <CombatFeed
+          events={controls.events}
+          nameOf={nameOf}
+          onUndo={controls.undo}
+          offerFor={offersFor(fight, monsters, rows, controls.setCondition)}
+          limit={4}
+        />
       </div>
       <ActingNow
         campaignId={campaignId}
