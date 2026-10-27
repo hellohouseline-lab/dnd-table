@@ -141,3 +141,17 @@ describe('what causes a condition', () => {
     expect(fortitudeDc(8, 'slashing', true)).toBeNull()
   })
 })
+
+describe('what players read about a save each turn', () => {
+  it('never shows them the DC, secret or not', () => {
+    const clock = makeClock('paralyzed', {
+      howLong: { kind: 'rounds', rounds: 2 },
+      save: { ability: 'wisdom', dc: 13, secret: false },
+      caster: null,
+      escapeDc: null,
+    })
+    if (!clock) throw new Error('No clock')
+    expect(clockWords(clock, { forPlayers: true })).not.toMatch(/DC/)
+    expect(clockWords(clock)).toMatch(/Wisdom DC 13/)
+  })
+})

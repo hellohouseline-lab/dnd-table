@@ -991,7 +991,7 @@ test('story mode: players read the read-aloud on stage', async ({ page }) => {
 test('story mode: a scene plans a secret roll, a choice, a body to search and a fight', async ({ page }) => {
   await page.goto('#/dev/dm/story')
   const plans = page.getByRole('region', { name: 'In this scene' })
-  await plans.getByRole('button', { name: 'Ask: Perception, DC 13, secret DC, outcome kept' }).click()
+  await plans.getByRole('button', { name: 'Ask: Perception, DC 13, outcome kept' }).click()
   const ask = page.getByRole('dialog', { name: 'Ask for a roll' })
   await expect(ask.getByRole('button', { name: /Perception/ }).first()).toHaveAttribute('aria-pressed', 'true')
   await expect(ask.getByRole('spinbutton')).toHaveValue('13')
@@ -1017,7 +1017,7 @@ test('story mode: a scene plans a secret roll, a choice, a body to search and a 
   await form.getByRole('combobox').first().selectOption('skill:survival')
   await form.getByRole('spinbutton', { name: 'DC' }).fill('12')
   await form.getByRole('button', { name: 'Add the roll' }).click()
-  await expect(road.getByRole('button', { name: 'Ask: Survival, DC 12, secret DC' })).toBeVisible()
+  await expect(road.getByRole('button', { name: 'Ask: Survival, DC 12' })).toBeVisible()
 })
 
 test('NPCs: the DM edits a person, shows them, and makes someone up', async ({ page }) => {

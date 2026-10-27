@@ -8,7 +8,6 @@ describe('scene parts', () => {
         id: 'r1',
         key: 'skill:perception',
         dc: 13,
-        dcShown: false,
         outcomeShown: false,
         who: ['c1'],
         note: 'the figure',
@@ -18,9 +17,9 @@ describe('scene parts', () => {
       { key: 'save:dexterity', dc: 99 },
     ])
     expect(rolls).toHaveLength(2)
-    expect(rolls[1]).toMatchObject({ key: 'save:dexterity', dc: 40, dcShown: false, outcomeShown: true, who: [] })
-    expect(plannedRollWords(rolls[0], ['Wren'])).toBe('Perception, DC 13, secret DC, outcome kept, Wren')
-    expect(plannedRollWords({ ...rolls[1], dc: 12, dcShown: true })).toBe('Dexterity save, DC 12')
+    expect(rolls[1]).toMatchObject({ key: 'save:dexterity', dc: 40, outcomeShown: true, who: [] })
+    expect(plannedRollWords(rolls[0], ['Wren'])).toBe('Perception, DC 13, outcome kept, Wren')
+    expect(plannedRollWords({ ...rolls[1], dc: 12 })).toBe('Dexterity save, DC 12')
   })
 
   it('reads choices, things and a fight', () => {

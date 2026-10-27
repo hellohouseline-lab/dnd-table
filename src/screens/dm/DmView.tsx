@@ -245,7 +245,7 @@ export function DmView({
   const [askFor, setAskFor] = useState<{
     only: string | null
     key?: string
-    preset?: { dc: number; dcShown: boolean; outcomeShown: boolean; who: string[] }
+    preset?: { dc: number; outcomeShown: boolean; who: string[] }
   } | null>(null)
   const [hiddenFor, setHiddenFor] = useState<string | null>(null)
   const [tab, setTab] = useState<DmTab>(startTab)
@@ -617,7 +617,7 @@ export function DmView({
                   setAskFor({
                     only: null,
                     key: roll.key,
-                    preset: { dc: roll.dc, dcShown: roll.dcShown, outcomeShown: roll.outcomeShown, who: roll.who },
+                    preset: { dc: roll.dc, outcomeShown: roll.outcomeShown, who: roll.who },
                   }),
                 onGiveItem: (id) => setGiveTo({ only: null, ticked: [`yours:${id}`] }),
                 onOpenBox: (container, richness) => setBoxOpen({ container, richness }),

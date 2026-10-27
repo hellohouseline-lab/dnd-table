@@ -62,7 +62,8 @@ export function clockWords(
   if (clock.rounds !== null) bits.push(clock.rounds === 1 ? '1 round' : `${clock.rounds} rounds`)
   if (clock.save) {
     // The DM's own screen gets a secret DC's number from clock_secrets, or says it's secret.
-    const dc = forPlayers && clock.save.secret ? '' : clock.save.dc === null ? ', secret DC' : ` DC ${clock.save.dc}`
+    // Players are never told a DC (Matt, 27 October).
+    const dc = forPlayers ? '' : clock.save.dc === null ? ', secret DC' : ` DC ${clock.save.dc}`
     bits.push(`saves each turn (${ABILITY_NAME[clock.save.ability]}${dc})`)
   }
   if (clock.caster) bits.push(`while ${casterName ?? 'the caster'} concentrates`)

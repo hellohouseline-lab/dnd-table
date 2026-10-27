@@ -20,7 +20,7 @@ export type AskedRoll = {
   label: string
   plain: string
   characterIds: string[]
-  /** The DC, if the DM chose to tell players; null when it's secret. */
+  /** The DC as players see it: always null now, as players are never told the number (Matt, 27 October). */
   shownDc: number | null
   /** Whether players are told if they passed (decision 57); when not, only the DM knows. */
   outcomeShown: boolean
@@ -32,7 +32,6 @@ export type AskInput = {
   askable: Askable
   characterIds: string[]
   dc: number
-  dcShown: boolean
   /** Tell players whether they passed; on unless the DM unticks it. */
   outcomeShown?: boolean
 }
@@ -75,7 +74,8 @@ export async function askForRoll(campaignId: string, input: AskInput): Promise<A
       plain: askable.plain,
       character_ids: input.characterIds,
       dc: input.dc,
-      dc_shown: input.dcShown,
+      // Players are never told the number; the server checks it.
+      dc_shown: false,
       outcome_shown: input.outcomeShown ?? true,
     },
   })

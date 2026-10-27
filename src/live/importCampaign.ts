@@ -146,7 +146,6 @@ export async function importCampaign(campaignId: string, plan: CampaignPlan, ctx
                 id: short(),
                 key: r.key,
                 dc: r.dc,
-                dcShown: r.dcShown,
                 outcomeShown: r.outcomeShown,
                 who: r.who.flatMap((name) => {
                   const c = matchName(ctx.characters, (x) => x.name, name)

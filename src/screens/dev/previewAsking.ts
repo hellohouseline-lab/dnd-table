@@ -73,7 +73,7 @@ export function usePreviewAsking(
   }, [])
 
   const ask = useCallback(
-    async ({ askable, characterIds, dc: target, dcShown, outcomeShown }: Parameters<RequestControls['ask']>[0]) => {
+    async ({ askable, characterIds, dc: target, outcomeShown }: Parameters<RequestControls['ask']>[0]) => {
       const sent: AskedRoll = {
         ...previewRequest(characterIds),
         kind: askable.kind,
@@ -81,7 +81,7 @@ export function usePreviewAsking(
         skill: askable.skill,
         label: askable.label,
         plain: askable.plain,
-        shownDc: dcShown ? target : null,
+        shownDc: null,
         outcomeShown: outcomeShown ?? true,
       }
       setRequest(sent)

@@ -35,7 +35,7 @@ export function QuickChecks({ characterIds, onSend, error, className }: QuickChe
   async function send(askable: Askable) {
     if (nobody || sending) return
     setSending(askable.key)
-    await onSend({ askable, characterIds, dc, dcShown: true })
+    await onSend({ askable, characterIds, dc })
     setSending(null)
   }
 
