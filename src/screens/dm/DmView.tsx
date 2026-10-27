@@ -49,7 +49,7 @@ import { useSrd } from '../../live/useSrd.ts'
 import { monsterInitiative } from '../../rules/combat.ts'
 import { placeFighters } from '../../live/combat.ts'
 import { messageFor } from '../../live/errors.ts'
-import { STARTER_MAPS, type Asset, type PresetPortrait } from '../../live/library.ts'
+import { CAMPAIGN_ART, STARTER_MAPS, type Asset, type PresetPortrait } from '../../live/library.ts'
 import type { CampaignPresetControls } from '../../live/campaignPresets.ts'
 import { loadEquipment, loadMagicItems, loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
@@ -870,7 +870,7 @@ export function DmView({
             <PasteDialog
               monsters={monsters ?? []}
               // The maps that come with the table are brought in as a campaign names them.
-              assetNames={[...library.map((a) => a.name), ...STARTER_MAPS.map((m) => m.name)]}
+              assetNames={[...library.map((a) => a.name), ...[...STARTER_MAPS, ...CAMPAIGN_ART].map((m) => m.name)]}
               presets={presets}
               shopNames={shops.shops.map((s) => s.name)}
               partyLevels={characters.map((c) => c.level)}

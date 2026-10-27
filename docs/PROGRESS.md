@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Campaign pictures come in with the campaign (live).** Matt's 11 painted pictures for his Death Pit of Moloch campaign (`public/art/campaign`) aren't in the pictures that come with the table: a campaign that names one (a scene's "Picture:", a "Picture:" line in its Places list, or one in the campaign's opening lines for its key art) brings it into the library under Places or Moments as it's added, like the maps and portraits. A "Picture:" in the opening lines also becomes the picture on the campaign's notes, to show at the start. Matt's saved file now has Picture lines for the key art and two endings.
 - **Drop-in players and deleting a table (live).** Decided with Matt: drop-ins match the party's level; deleting asks once.
   - **Drop-ins:** anyone can still join at any time with the invite link or join code. A character made after the party has levelled up now starts at the party's level (the highest in the party, or the table's starting level if higher), taking each level with the gold Level up!. In a fight, the DM's turn order lists anyone **Not in this fight** with **Add to the fight**; they roll initiative and take turns from then on. Here tonight and Remove work as before for the nights they're away.
   - **Delete this table** at the bottom of Campaign details on the Join screen (DM only): one confirm, then the table and everything in it go for everyone (pictures, sounds and portraits are removed from storage too), and you're back at Your tables.
@@ -353,6 +354,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
   1. On Screen 1, open the **Story** tab and press **Paste your notes**.
   2. Open `private/campaigns/death-pit-of-moloch.md` (in the `dnd-table-starter-pack` folder), copy everything, and paste it into the box.
   3. Press **Save as a preset**. From now on, any table can pick it from **Your saved campaigns**, then **Add it to my story**.
+  - Before adding it to a table: make a shop called **The Bent Nail** (Items and loot) and upload any music, so they link up too. Pictures, maps and portraits come in by themselves.
 - **Try talk cards** (refresh first): as a player on your turn press **Persuade**, type a line and roll; as the DM press **It works**, then **They surrender**. Then press **Parley** on the Battle screen, and **Back to the fight**.
 - **Try conditions that wear off** (refresh first): in a fight, on the Acting now card **Add a condition**, pick Paralysed, **2 rounds**, a Wisdom save each turn, and **Put it on**; press **Next turn** and watch it count down. As a player, get knocked prone and press **Stand up**.
 - **The one-shot is ready to read:** "The Lantern of Hollowmere", for 3 or 4 players, level 1 rising to 2, 3 to 4 hours, free-rules monsters only. It's in `private/one-shot/` on Matt's computer and nowhere else (that folder is never committed, so players can't read the secrets):

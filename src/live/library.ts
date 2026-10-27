@@ -540,6 +540,27 @@ export const STARTER_ART = [
 ] as const satisfies readonly { file: string; category: ArtCategory; name: string; hint: string }[]
 
 export type StarterArt = (typeof STARTER_ART)[number]
+
+/**
+ * Pictures painted for one campaign (Matt's Death Pit of Moloch, Higgsfield, 27 October 2026). They
+ * aren't offered with the pictures that come with the table: a campaign that names one ("Picture:
+ * Sink cavern") brings it into the library as it's added.
+ */
+export const CAMPAIGN_ART = [
+  { file: 'art/campaign/key-art.jpg', category: 'moments', name: 'Death Pit of Moloch key art' },
+  { file: 'art/campaign/meadheaven-town.jpg', category: 'places', name: 'Meadheaven town' },
+  { file: 'art/campaign/tavern-interior.jpg', category: 'places', name: 'Tavern interior' },
+  { file: 'art/campaign/tavern-brawl.jpg', category: 'moments', name: 'Tavern brawl' },
+  { file: 'art/campaign/jail-cell.jpg', category: 'places', name: 'Jail cell' },
+  { file: 'art/campaign/sink-cavern.jpg', category: 'places', name: 'Sink cavern' },
+  { file: 'art/campaign/cultist-guard-room.jpg', category: 'places', name: 'Cultist guard room' },
+  { file: 'art/campaign/goblins-den.jpg', category: 'places', name: "Goblins' den" },
+  { file: 'art/campaign/ritual-hall.jpg', category: 'places', name: 'Ritual hall' },
+  { file: 'art/campaign/daylight-exit.jpg', category: 'moments', name: 'Daylight exit' },
+  { file: 'art/campaign/empty-cavern.jpg', category: 'moments', name: 'Empty cavern' },
+] as const satisfies readonly { file: string; category: ArtCategory; name: string }[]
+
+export type CampaignArt = (typeof CAMPAIGN_ART)[number]
 export type StarterMap = Extract<StarterArt, { category: 'maps' }>
 
 export const STARTER_MAPS = STARTER_ART.filter((s): s is StarterMap => s.category === 'maps')
@@ -635,19 +656,20 @@ export function addPresetPortrait(campaignId: string, preset: PresetPortrait): P
 }
 
 /**
- * The maps and ready-made portraits that come with the table which a campaign names (a scene's
- * fight map, "Map: Ritual hall" in its notes, a person's portrait) and this library doesn't have
- * yet, so adding the campaign can bring them in first.
+ * The maps, ready-made portraits and campaign pictures that come with the table which a campaign
+ * names (a scene's fight map or picture, "Map: Ritual hall" in its notes, a person's portrait) and
+ * this library doesn't have yet, so adding the campaign can bring them in first.
  */
 export function artForCampaign(
-  names: { maps: string[]; portraits: string[] },
+  names: { maps: string[]; portraits: string[]; pictures: string[] },
   library: Asset[],
-): { maps: StarterMap[]; portraits: PresetPortrait[] } {
+): { maps: StarterMap[]; portraits: PresetPortrait[]; pictures: CampaignArt[] } {
   const has = (category: ArtCategory, name: string) => library.some((a) => a.category === category && a.name === name)
   const pick = <T extends { name: string }>(things: readonly T[], wanted: string[]) =>
     things.filter((t) => wanted.some((w) => matchName([t], (x) => x.name, w)))
   return {
     maps: pick(STARTER_MAPS, names.maps).filter((m) => !has('maps', m.name)),
     portraits: pick(PRESET_PORTRAITS, names.portraits).filter((p) => !has('people', p.name)),
+    pictures: pick(CAMPAIGN_ART, names.pictures).filter((p) => !has(p.category, p.name)),
   }
 }

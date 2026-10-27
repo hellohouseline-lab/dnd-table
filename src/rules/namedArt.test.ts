@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { namedArt, parseCampaign } from './campaignFile.ts'
 
 const CAMPAIGN = `# Campaign: The Test Pit
+Pitch: A test.
+Picture: Death Pit of Moloch key art
 
 ## Cast
 
@@ -34,16 +36,26 @@ describe('the art a campaign names', () => {
       expect.arrayContaining(["Guard room and goblins' den", 'Meadheaven tavern', 'Town square']),
     )
     expect(art.maps).not.toContain('Sink cavern')
+    expect(art.pictures).toEqual(expect.arrayContaining(['Death Pit of Moloch key art', 'Sink cavern']))
+  })
+
+  it("puts the campaign's own picture on its notes, to show at the start", () => {
+    const plan = parseCampaign(CAMPAIGN)
+    expect(plan.chapters[0].scenes[0].picture).toBe('Death Pit of Moloch key art')
   })
 })
 
 describe('bringing in the art that comes with the table', () => {
   it('picks the starter maps and ready-made portraits a campaign names, unless the library has them', async () => {
     const { artForCampaign } = await import('../live/library.ts')
-    const art = artForCampaign({ maps: ['Meadheaven tavern', 'Nowhere'], portraits: ['Sheriff', 'Herb merchant'] }, [])
+    const art = artForCampaign(
+      { maps: ['Meadheaven tavern', 'Nowhere'], portraits: ['Sheriff', 'Herb merchant'], pictures: ['Sink cavern'] },
+      [],
+    )
+    expect(art.pictures.map((p) => p.file)).toEqual(['art/campaign/sink-cavern.jpg'])
     expect(art.maps.map((m) => m.name)).toEqual(['Meadheaven tavern'])
     expect(art.portraits.map((p) => p.key)).toEqual(['sheriff', 'herb-merchant'])
-    const has = artForCampaign({ maps: [], portraits: ['Herb merchant'] }, [
+    const has = artForCampaign({ maps: [], portraits: ['Herb merchant'], pictures: [] }, [
       { name: 'Herb merchant', category: 'people' } as never,
     ])
     expect(has.portraits).toEqual([])

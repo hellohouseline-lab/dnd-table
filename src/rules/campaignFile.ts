@@ -547,7 +547,12 @@ export function parseCampaign(text: string): CampaignPlan {
   if (kept.length > 0) {
     plan.chapters.unshift({
       title: 'Campaign notes',
-      scenes: kept.map((n) => ({ ...blankScene(n.title), reminders: n.lines.join('\n') })),
+      // A campaign's own "Picture:" line (its key art) is its notes' picture, to show at the start.
+      scenes: kept.map((n) => ({
+        ...blankScene(n.title),
+        reminders: n.lines.join('\n'),
+        picture: n.lines.map((l) => /^Picture:\s*(.+)$/i.exec(l)?.[1].trim() ?? '').find(Boolean) ?? '',
+      })),
     })
   }
   plan.chapters = plan.chapters.filter((c) => c.scenes.length > 0)
@@ -615,16 +620,21 @@ export function planWarnings(
 }
 
 /**
- * The maps and portraits a campaign names: each fight's map, any "Map: …" line in its notes (the
- * Places list), and each person's portrait. Used to bring in pictures that come with the table.
+ * The maps, pictures and portraits a campaign names: each fight's map and each scene's picture, any
+ * "Map: …" or "Picture: …" line in its notes (the Places list), and each person's portrait. Used to
+ * bring in pictures that come with the table.
  */
-export function namedArt(plan: CampaignPlan): { maps: string[]; portraits: string[] } {
+export function namedArt(plan: CampaignPlan): { maps: string[]; portraits: string[]; pictures: string[] } {
   const scenes = plan.chapters.flatMap((c) => c.scenes)
-  const listed = scenes.flatMap((s) =>
-    [...`${s.place}\n${s.reminders}`.matchAll(/(?:^|\n)\s*(?:-\s*)?Map:\s*([^,\n]+)/g)].map((m) => m[1].trim()),
-  )
+  const listed = (label: string) =>
+    scenes.flatMap((s) =>
+      [...`${s.place}\n${s.reminders}`.matchAll(new RegExp(`(?:^|\\n)\\s*(?:-\\s*)?${label}:\\s*([^,\\n]+)`, 'g'))].map(
+        (m) => m[1].trim(),
+      ),
+    )
   return {
-    maps: [...new Set([...scenes.map((s) => s.map), ...listed].filter(Boolean))],
+    maps: [...new Set([...scenes.map((s) => s.map), ...listed('Map')].filter(Boolean))],
     portraits: [...new Set(plan.people.map((p) => p.portrait).filter(Boolean))],
+    pictures: [...new Set([...scenes.map((s) => s.picture), ...listed('Picture')].filter(Boolean))],
   }
 }
