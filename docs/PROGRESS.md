@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Eight more ready-made portraits (live).** For NPCs: Tavern landlady, Card sharp, and Generic man 1 to 3 and Generic woman 1 to 3 (painted with Higgsfield in the same style). Matt's Death Pit file now gives Grudge the landlady and Silky the card sharp.
 - **People lines read properly.** A scene's People line keeps only names: notes in brackets ("Olly Coopersmith (heard, not seen)"), "None named" and counted creatures ("four cultists", which are the fight's) no longer become people, and a name in the campaign's Cast is never made twice.
 - **The first drawings are gone (live).** The Tavern, Forest road and Old crypt maps, Market city, Campfire at night and The innkeeper are no longer among the pictures that come with the table; Matt's painted ones replace them. Tables that already added them keep their copies.
 - **Campaign pictures come in with the campaign (live).** Matt's 11 painted pictures for his Death Pit of Moloch campaign (`public/art/campaign`) aren't in the pictures that come with the table: a campaign that names one (a scene's "Picture:", a "Picture:" line in its Places list, or one in the campaign's opening lines for its key art) brings it into the library under Places or Moments as it's added, like the maps and portraits. A "Picture:" in the opening lines also becomes the picture on the campaign's notes, to show at the start. Matt's saved file now has Picture lines for the key art and two endings.
