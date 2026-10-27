@@ -45,11 +45,26 @@ export const ROADMAP: Milestone[] = [
   },
   {
     name: 'Items and gold',
-    detail: 'Give items and gold, offers, boxes to open and the party stash',
+    detail: 'Give items and gold, take them back, offers, boxes to open, the party stash, and what things are worth',
     status: 'ready',
   },
-  { name: 'Shops', detail: 'Shopkeepers with stock and prices; buy and sell', status: 'ready' },
-  { name: 'Story mode', detail: 'Your campaign on the DM’s screen, scene by scene', status: 'next' },
+  { name: 'Shops', detail: 'Shopkeepers with stock and prices; buy, sell and haggle', status: 'ready' },
+  {
+    name: 'Story mode',
+    detail: 'Chapters and scenes with Go here, planned rolls and fights, secret outcomes, and NPCs to show',
+    status: 'ready',
+  },
+  {
+    name: 'Your campaign in one paste',
+    detail:
+      'Paste a campaign (yours, or written by an AI in the table’s format) and it becomes chapters, scenes and people',
+    status: 'ready',
+  },
+  {
+    name: 'Rules for players',
+    detail: 'Spells, conditions, turns and rests in plain words, beside the table',
+    status: 'next',
+  },
   {
     name: 'The rest of the combat rules',
     detail: 'Talk cards for a parley, and conditions that wear off by themselves',

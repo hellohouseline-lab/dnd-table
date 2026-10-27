@@ -21,6 +21,7 @@ import { useGivingControls } from '../../live/giving.ts'
 import { useShopControls } from '../../live/shops.ts'
 import { useStory } from '../../live/story.ts'
 import { useNpcs } from '../../live/npcs.ts'
+import { importCampaign } from '../../live/importCampaign.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight } from '../../live/useFight.ts'
 import { DmView } from './DmView.tsx'
@@ -106,6 +107,15 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       onStage={changeStage}
       library={library.assets}
       npcs={npcs}
+      importCampaign={async (plan, ctx) => {
+        const added = await importCampaign(campaignId, plan, ctx).catch((caught: unknown) => {
+          throw new Error(messageFor(caught))
+        })
+        story.reload()
+        npcs.reload()
+        giving.reloadYours()
+        return added
+      }}
       campaign={campaign.data}
       me={me}
       members={members.data}

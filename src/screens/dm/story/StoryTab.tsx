@@ -20,6 +20,8 @@ type StoryTabProps = {
   /** What a scene's planned parts point at, and what their buttons do. */
   data: Omit<SceneData, 'scenes'>
   actions: Omit<SceneActions, 'onOpenScene'>
+  /** Opens Paste your notes. */
+  onPaste: () => void
 }
 
 /**
@@ -36,6 +38,7 @@ export function StoryTab({
   library,
   data,
   actions,
+  onPaste,
 }: StoryTabProps) {
   const { chapters, scenes } = story.story
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -59,9 +62,14 @@ export function StoryTab({
           Split your adventure into chapters and scenes: what to read out, what the party might miss, and the picture
           and music for each. Then <strong>Go here</strong> puts a scene on in one click.
         </p>
-        <button type="button" className={styles.primary} onClick={() => void start()}>
-          Start your story
-        </button>
+        <div className={styles.startButtons}>
+          <button type="button" className={styles.primary} onClick={() => void start()}>
+            Start your story
+          </button>
+          <button type="button" className={styles.secondary} onClick={onPaste}>
+            Paste your notes
+          </button>
+        </div>
         {story.error && <p className={styles.problem}>{story.error}</p>}
       </div>
     )
@@ -123,6 +131,9 @@ export function StoryTab({
           onClick={() => void story.addChapter(`Chapter ${chapters.length + 1}`)}
         >
           New chapter
+        </button>
+        <button type="button" className={styles.secondary} onClick={onPaste}>
+          Paste your notes
         </button>
         {story.error && <p className={styles.problem}>{story.error}</p>}
       </nav>

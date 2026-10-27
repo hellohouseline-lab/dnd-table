@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { BLANK_NPC, type Npc, type NpcControls } from '../../live/npcs.ts'
+import type { CampaignPlan } from '../../rules/campaignFile.ts'
 import { sortStory, type Chapter, type Scene, type Story, type StoryControls } from '../../live/story.ts'
 
 const scene = (id: string, chapterId: string, position: number, fields: Partial<Scene>): Scene => ({
@@ -60,10 +61,10 @@ function sampleStory(): Story {
   }
 }
 
-/** The story in the preview: changes stay on the page. */
-export function usePreviewStory(): StoryControls {
+/** The story in the preview: changes stay on the page. Pasting adds chapters and scenes here too. */
+export function usePreviewStory(): StoryControls & { importPlan: (plan: CampaignPlan) => string } {
   const [story, setStory] = useState<Story>(sampleStory)
-  return useMemo<StoryControls>(
+  return useMemo(
     () => ({
       story,
       status: 'ready',
@@ -106,6 +107,41 @@ export function usePreviewStory(): StoryControls {
             ),
           })
         }),
+      reload: () => {},
+      importPlan: (plan: CampaignPlan) => {
+        const chapters: Chapter[] = plan.chapters.map((c, i) => ({
+          id: crypto.randomUUID(),
+          title: c.title,
+          position: story.chapters.length + i,
+        }))
+        const scenes: Scene[] = plan.chapters.flatMap((c, i) =>
+          c.scenes.map((sc, j) =>
+            scene(crypto.randomUUID(), chapters[i].id, j, {
+              title: sc.title,
+              place: sc.place,
+              readAloud: sc.readAloud,
+              reminders: sc.reminders,
+              rolls: sc.rolls.flatMap((r) =>
+                r.key
+                  ? [
+                      {
+                        id: crypto.randomUUID(),
+                        key: r.key,
+                        dc: r.dc,
+                        dcShown: r.dcShown,
+                        outcomeShown: r.outcomeShown,
+                        who: [],
+                        note: r.note,
+                      },
+                    ]
+                  : [],
+              ),
+            }),
+          ),
+        )
+        setStory((now) => sortStory({ chapters: [...now.chapters, ...chapters], scenes: [...now.scenes, ...scenes] }))
+        return `${chapters.length} chapters, ${scenes.length} scenes (people and items aren't kept in the preview)`
+      },
     }),
     [story],
   )
@@ -138,6 +174,7 @@ export function usePreviewNpcs(): NpcControls {
         return saved
       },
       remove: async (id) => setNpcs((now) => now.filter((n) => n.id !== id)),
+      reload: () => {},
     }),
     [npcs],
   )

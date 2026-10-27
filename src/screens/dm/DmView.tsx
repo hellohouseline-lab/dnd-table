@@ -65,6 +65,9 @@ import type { Container, Richness } from '../../rules/boxes.ts'
 import type { Fight } from '../../rules/scenes.ts'
 import { StoryTab } from './story/StoryTab.tsx'
 import { NpcsTab } from './npcs/NpcsTab.tsx'
+import { PasteDialog } from './story/PasteDialog.tsx'
+import type { CampaignPlan } from '../../rules/campaignFile.ts'
+import type { ImportContext } from '../../live/importCampaign.ts'
 import type { NpcControls } from '../../live/npcs.ts'
 import type { Scene, StoryControls } from '../../live/story.ts'
 import type { Stage, StagePatch } from '../../live/stage.ts'
@@ -162,6 +165,8 @@ type DmViewProps = {
   library: Asset[]
   /** The DM's people. */
   npcs: NpcControls
+  /** Paste your notes: writes a read campaign into this one, resolving with what was added. */
+  importCampaign: (plan: CampaignPlan, ctx: ImportContext) => Promise<string>
 }
 
 /**
@@ -198,7 +203,9 @@ export function DmView({
   onStage,
   library,
   npcs,
+  importCampaign,
 }: DmViewProps) {
+  const [pasting, setPasting] = useState(false)
   // The person to open on the NPCs tab (from a scene).
   const [npcFocus, setNpcFocus] = useState<string | null>(null)
   const [fightDialog, setFightDialog] = useState<'start' | 'monster' | null>(null)
@@ -285,10 +292,25 @@ export function DmView({
     return thrown ? (thrown.damage?.total ?? thrown.total) : null
   }
 
+  /** The note showing someone adds to their card: where the party met them. */
+  const currentScene = story.story.scenes.find((s) => s.id === notebook.notebook.currentSceneId)
+  const meetNote = currentScene ? `Met the party at ${currentScene.title || 'a scene'}.` : 'Met the party.'
+
   /** Show an NPC: their portrait, name and role on stage for everyone, and a line in the log. */
-  function showNpc(person: { name: string; role: string; portraitId: string | null }) {
+  function showNpc(person: { id?: string; name: string; role: string; portraitId: string | null }) {
     onStage({ npcName: person.name, npcRole: person.role, npcImageId: person.portraitId })
     events.add('stage', `${person.name}${person.role ? `, ${person.role.toLowerCase()},` : ''} is here.`, true)
+    // Shown from a scene, their card notes the meeting here (the NPCs tab notes it itself).
+    const npc = person.id ? npcs.npcs.find((n) => n.id === person.id) : undefined
+    if (npc && npc.history[0]?.text !== meetNote) {
+      void npcs.save({
+        ...npc,
+        history: [
+          { id: crypto.randomUUID().slice(0, 8), at: new Date().toISOString(), text: meetNote },
+          ...npc.history,
+        ],
+      })
+    }
   }
 
   /** Go here: the scene's picture, music, ambience and name on stage, Where we are, and the log. */
@@ -557,6 +579,7 @@ export function DmView({
               readAloudOnStage={stage.readAloud}
               onShowReadAloud={(readAloud) => onStage({ readAloud })}
               library={library}
+              onPaste={() => setPasting(true)}
               data={{
                 characters,
                 dmItems: giving.yours,
@@ -576,7 +599,7 @@ export function DmView({
                 onGiveItem: (id) => setGiveTo({ only: null, ticked: [`yours:${id}`] }),
                 onOpenBox: (container, richness) => setBoxOpen({ container, richness }),
                 onOpenShop: (id) => void shops.setOpen(id, true),
-                onShowNpc: (npc) => showNpc(npc),
+                onShowNpc: (npc) => showNpc({ ...npc, id: (npc as { id?: string }).id }),
                 onOpenNpc: (id) => {
                   setNpcFocus(id)
                   setTab('npcs')
@@ -598,6 +621,7 @@ export function DmView({
               onHide={() => onStage({ npcName: '', npcRole: '', npcImageId: null })}
               onOpenShop={(id) => void shops.setOpen(id, true)}
               startId={npcFocus}
+              meetNote={meetNote}
             />
           ) : tab === 'encounter' ? (
             fighting ? (
@@ -712,7 +736,9 @@ export function DmView({
             // Out of the way while a window (Give, a box, a roll) is open over the middle.
             className={styles.haggles}
             haggles={
-              askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit ? [] : shops.haggles
+              askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit || pasting
+                ? []
+                : shops.haggles
             }
             shops={shops}
             characters={characters}
@@ -724,7 +750,7 @@ export function DmView({
         </div>
       </section>
 
-      {(askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit) && (
+      {(askFor || showResults || resting || fightDialog || giveTo || boxOpen || shopEdit || pasting) && (
         <Backdrop
           className={styles.overlay}
           onClose={() => {
@@ -732,6 +758,7 @@ export function DmView({
             else if (giveTo) setGiveTo(null)
             else if (boxOpen) setBoxOpen(null)
             else if (shopEdit) setShopEdit(null)
+            else if (pasting) setPasting(false)
             else if (resting) setResting(false)
             else if (askFor) setAskFor(null)
             else if (request) setHiddenFor(request.id)
@@ -783,6 +810,25 @@ export function DmView({
                 onClose={() => setGiveTo(null)}
               />
             ) : null
+          ) : pasting ? (
+            <PasteDialog
+              monsters={monsters ?? []}
+              assetNames={library.map((a) => a.name)}
+              shopNames={shops.shops.map((s) => s.name)}
+              partyLevels={characters.map((c) => c.level)}
+              onImport={(plan) =>
+                importCampaign(plan, {
+                  monsters: monsters ?? [],
+                  library,
+                  shops: shops.shops,
+                  characters,
+                  npcs: npcs.npcs,
+                  items: giving.yours,
+                  story: story.story,
+                })
+              }
+              onClose={() => setPasting(false)}
+            />
           ) : shopEdit ? (
             equipment && magicItems ? (
               <ShopDialog
