@@ -304,7 +304,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **The test one-shot next (21 to 22 November):** Claude has written a one-shot to run it with, kept out of this public repo (see Waiting on Matt). After the one-shot: C3 lite and the stream overlay, each planned first.
+- **C3 lite next:** conditions that wear off, and talk cards. The plan is in `docs/C3_PLAN.md` (two milestones, decisions 72 to 83), waiting for approval. Then the test one-shot on 21 to 22 November (Claude has written one, kept out of this public repo; see Waiting on Matt), then the stream overlay, planned first.
 - **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
@@ -313,6 +313,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Approve the C3 lite plan** (`docs/C3_PLAN.md`), or change any of decisions 72 to 83.
 - **The one-shot is ready to read:** "The Lantern of Hollowmere", for 3 or 4 players, level 1 rising to 2, 3 to 4 hours, free-rules monsters only. It's in `private/one-shot/` on Matt's computer and nowhere else (that folder is never committed, so players can't read the secrets):
   1. Skim `The Lantern of Hollowmere - DM background.pdf`.
   2. Make the 21 pictures from `art-prompts.md` (JPEGs under 500 KB, named exactly as listed) and upload them on Screen 2 under Places, Moments, People and Maps.
