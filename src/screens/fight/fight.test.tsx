@@ -47,6 +47,12 @@ const controls: FightControls = {
   breakFree: async () => {
     throw new Error('No fight')
   },
+  talk: async () => {
+    throw new Error('No fight')
+  },
+  answerTalk: noop,
+  setStance: noop,
+  setParley: noop,
 }
 
 describe('the turn order', () => {

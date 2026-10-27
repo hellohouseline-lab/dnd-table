@@ -23,6 +23,7 @@ import { makeClock, tickEnd, tickStart, type ConditionClock } from '../../rules/
 import { USABLE } from '../../rules/items.ts'
 import { concentrationDc, slotsLeft, spellSaveDc } from '../../rules/spells.ts'
 import type { RollRequest } from '../../rules/dice.ts'
+import { canHear, isOut, type Stance } from '../../rules/talk.ts'
 import {
   attackHits,
   attacksLeft,
@@ -51,6 +52,7 @@ function characterCombatant(character: Character, encounterId: string, initiativ
     health: 'healthy',
     conditions: [],
     clocks: [],
+    stance: 'fighting',
     speed: character.speed,
     reachFt: /glaive|halberd|lance|pike|whip/i.test(JSON.stringify(character.attacks)) ? 10 : 5,
     turn: FRESH_TURN,
@@ -78,6 +80,7 @@ export function sampleFight(characters: Character[]): Fight {
       health: i === 1 ? 'bloodied' : 'healthy',
       conditions: [],
       clocks: [],
+      stance: 'fighting',
       speed: 30,
       reachFt: 5,
       turn: FRESH_TURN,
@@ -92,6 +95,7 @@ export function sampleFight(characters: Character[]): Fight {
       status: 'active',
       round: 1,
       currentId: combatants[0].id,
+      parley: false,
       startedAt: stamp(),
     },
     combatants,
@@ -148,6 +152,9 @@ type Undo = {
   actor: { id: string; turn: TurnRecord } | null
   /** A spell's caster: the slot and concentration as they were. */
   caster?: { characterId: string; before: CharacterState }
+  /** Talk (C3b): monsters' stances and the parley as they were. */
+  stances?: Record<string, Stance>
+  parley?: boolean
 }
 
 /** A spell's lasting area, or the DM's, for the preview's map. */
@@ -387,6 +394,11 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       const { spellcasting, concentration } = saved.caster.before
       onCharacter?.(saved.caster.characterId, { spellcasting, concentration })
     }
+    const { stances, parley } = saved
+    if (stances) {
+      set((f) => ({ ...f, combatants: f.combatants.map((c) => (stances[c.id] ? { ...c, stance: stances[c.id] } : c)) }))
+    }
+    if (parley !== undefined) set((f) => ({ ...f, encounter: { ...f.encounter, parley } }))
     latest.current.events = latest.current.events.map((e) => (e.id === newest.id ? { ...e, undone: true } : e))
     setEvents(latest.current.events)
   }
@@ -420,6 +432,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           status: 'active',
           round: 1,
           currentId: null,
+          parley: false,
           startedAt: stamp(),
         },
         combatants: party.map((c) => characterCombatant(c, encounterId, null)),
@@ -454,6 +467,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         health: 'healthy',
         conditions: [],
         clocks: [],
+        stance: 'fighting',
         speed: monster.speed,
         reachFt: threatReach(monster.actions),
         turn: FRESH_TURN,
@@ -484,17 +498,29 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       return null
     },
     next: () => {
+      if (latest.current.fight?.encounter.parley) return
       setPrompts([])
       tick(latest.current.fight?.encounter.currentId ?? null, 'end')
-      set((f) => {
-        const entries = f.combatants.map((c) => ({ ...c, out: c.kind === 'monster' && c.health === 'down' }))
-        const turn = nextTurn(entries, f.encounter.currentId, f.encounter.round)
-        return {
-          ...f,
-          encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round },
-          combatants: f.combatants.map((c) => (c.id === turn.currentId ? { ...c, turn: FRESH_TURN } : c)),
-        }
-      })
+      // As end_turn: a monster that's running leaves as its turn comes round, and the turn passes on.
+      for (let guard = 0; guard < 100; guard++) {
+        set((f) => {
+          const entries = f.combatants.map((c) => ({ ...c, out: isOut(c) }))
+          const turn = nextTurn(entries, f.encounter.currentId, f.encounter.round)
+          return { ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }
+        })
+        const f = latest.current.fight
+        const up = f?.combatants.find((c) => c.id === f.encounter.currentId)
+        if (!up || up.stance !== 'running') break
+        update(up, { stance: 'fled' })
+        post(
+          { kind: 'talk', actorId: up.id, targetId: up.id, rollId: null, shown: { stance: 'fled' } },
+          { target: null, actor: null, stances: { [up.id]: 'running' } },
+        )
+      }
+      set((f) => ({
+        ...f,
+        combatants: f.combatants.map((c) => (c.id === f.encounter.currentId ? { ...c, turn: FRESH_TURN } : c)),
+      }))
       tick(latest.current.fight?.encounter.currentId ?? null, 'start')
     },
     setMonsterHp: (secret, hp) =>
@@ -940,6 +966,73 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       if (free) for (const hold of holds) putCondition(combatant, hold.condition, false, null)
       conditionLine(combatant, { condition: 'grappled', brokeFree: free, total: roll.total })
       return { ...roll, passed: free, passedByDice: free }
+    },
+    talk: async (combatant, skill, targetIds, words, request) => {
+      const f = latest.current.fight
+      const me = f?.combatants.find((c) => c.id === combatant.id)
+      if (!f || !me) throw new Error('That fight is over.')
+      if (f.encounter.currentId !== me.id) throw new Error('It isn’t your turn.')
+      if (me.turn.actionUsed || me.turn.attacksMade > 0) throw new Error('You have used your action this turn.')
+      const targets = f.combatants.filter((c) => targetIds.includes(c.id) && canHear(c)).map((c) => c.id)
+      if (targets.length === 0) throw new Error('Pick who you’re talking to.')
+      const roll = localRoll(request, { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE })
+      setTurn(me.id, (turn) => ({ ...turn, actionUsed: true }))
+      post(
+        {
+          kind: 'talk',
+          actorId: me.id,
+          targetId: targets.length === 1 ? targets[0] : null,
+          rollId: null,
+          shown: { talk: skill, targets, words: words.trim().slice(0, 200) || null, total: roll.total },
+        },
+        { target: null, actor: { id: me.id, turn: me.turn } },
+      )
+      return roll
+    },
+    answerTalk: (event, answer, outcome) => {
+      const f = latest.current.fight
+      if (!f) return
+      const targets = f.combatants.filter((c) => event.shown.targets?.includes(c.id) && canHear(c))
+      const stances = Object.fromEntries(targets.map((c) => [c.id, c.stance]))
+      const result = answer === 'works' ? (outcome ?? 'words') : null
+      if (result === 'surrender' || result === 'run') {
+        const stance: Stance = result === 'surrender' ? 'surrendered' : 'running'
+        set((g) => ({
+          ...g,
+          combatants: g.combatants.map((c) =>
+            targets.some((t) => t.id === c.id) && (stance === 'surrendered' || c.stance === 'fighting')
+              ? { ...c, stance }
+              : c,
+          ),
+        }))
+      }
+      if (result === 'parley') set((g) => ({ ...g, encounter: { ...g.encounter, parley: true } }))
+      post(
+        {
+          kind: 'talk',
+          actorId: event.actorId,
+          targetId: null,
+          rollId: null,
+          shown: { answerTo: event.id, answer, outcome: result, targets: targets.map((c) => c.id) },
+        },
+        { target: null, actor: null, stances, parley: f.encounter.parley },
+      )
+    },
+    setStance: (combatant, stance) => {
+      update(combatant, { stance })
+      post(
+        { kind: 'talk', actorId: combatant.id, targetId: combatant.id, rollId: null, shown: { stance } },
+        { target: null, actor: null, stances: { [combatant.id]: combatant.stance } },
+      )
+    },
+    setParley: (on) => {
+      const f = latest.current.fight
+      if (!f || f.encounter.parley === on) return
+      set((g) => ({ ...g, encounter: { ...g.encounter, parley: on } }))
+      post(
+        { kind: 'talk', actorId: null, targetId: null, rollId: null, shown: { parley: on } },
+        { target: null, actor: null, parley: f.encounter.parley },
+      )
     },
     walk: (combatantId, feet) => setTurn(combatantId, (turn) => ({ ...turn, feetMoved: turn.feetMoved + feet })),
     provoke: (moverId, from, to, tokens) => {

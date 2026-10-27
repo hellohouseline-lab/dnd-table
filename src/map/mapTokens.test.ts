@@ -18,6 +18,7 @@ const goblin: Combatant = {
   health: 'healthy',
   conditions: [],
   clocks: [],
+  stance: 'fighting',
   speed: 30,
   reachFt: 5,
   turn: FRESH_TURN,
