@@ -431,3 +431,43 @@
   font-size: 15px;
   color: var(--text-2);
 }
+
+/* Talk (C3b) */
+
+.moveChosen {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(212, 175, 90, 0.12);
+}
+
+.talkForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.talkField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--label);
+}
+
+.talkField > span {
+  width: 52px;
+  flex-shrink: 0;
+}
+
+.talkField select,
+.talkField input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  font-size: 15px;
+}
+
+.pillStance {
+  font-size: 0.85em;
+  font-style: italic;
+}

@@ -72,10 +72,10 @@ export const ROADMAP: Milestone[] = [
   },
   {
     name: 'The rest of the combat rules',
-    detail: 'Conditions that wear off by themselves (ready); talk cards for a parley next',
-    status: 'next',
+    detail: 'Conditions that wear off by themselves, talk cards, surrender, running away and parley',
+    status: 'ready',
   },
-  { name: 'Stream overlay', detail: "The table on everyone's Twitch stream", status: 'later' },
+  { name: 'Stream overlay', detail: "The table on everyone's Twitch stream", status: 'next' },
   { name: 'Rehearsal', detail: 'A full dry run and final polish before the first stream', status: 'later' },
   {
     name: 'A whole campaign, built for you',

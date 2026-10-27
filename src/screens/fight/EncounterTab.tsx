@@ -8,6 +8,9 @@ import { abilityModifier, formatBonus } from '../../rules/maths/core.ts'
 import { findCondition, type SrdMonster, type SrdMonsterAction, type SrdSpell } from '../../rules/srd/index.ts'
 import { concentratingIn, fightRows, turnLimits, type FightRow } from './fightRows.ts'
 import { actionFree } from '../../rules/turn.ts'
+import { MoraleNudges, ParleyBanner, TalkCards } from './Talk.tsx'
+import { deafOnCard, moraleFor, waitingTalks } from './talkRows.ts'
+import { isOut, STANCE_WORDS } from '../../rules/talk.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
@@ -99,7 +102,7 @@ export function TurnOrder({
                   compact && styles.rowCompact,
                   row.status === 'acting' && styles.acting,
                   row.combatant.id === focusId && styles.focused,
-                  row.health === 'down' && styles.down,
+                  isOut(row.combatant) && styles.down,
                   pickable && styles.pickable,
                 )}
               >
@@ -138,6 +141,8 @@ export function TurnOrder({
                     </button>
                   ) : row.status ? (
                     STATUS_WORDS[row.status]
+                  ) : row.combatant.stance !== 'fighting' ? (
+                    STANCE_WORDS[row.combatant.stance]
                   ) : row.conditions.length > 0 ? (
                     row.conditions
                       .map((c) => {
@@ -585,6 +590,37 @@ export function ActingNow({
           )}
           {conditionRow}
           <div className={styles.actingButtons}>
+            {row.combatant.stance === 'fighting' ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.link}
+                  title="It gives up: out of the turn order, greyed on the map"
+                  onClick={() => controls.setStance(row.combatant, 'surrendered')}
+                >
+                  Surrenders
+                </button>
+                <button
+                  type="button"
+                  className={styles.link}
+                  title="It leaves the fight as its next turn comes round"
+                  onClick={() => controls.setStance(row.combatant, 'running')}
+                >
+                  Runs away
+                </button>
+              </>
+            ) : (
+              <>
+                <span className={styles.hint}>{STANCE_WORDS[row.combatant.stance]}</span>
+                <button
+                  type="button"
+                  className={styles.link}
+                  onClick={() => controls.setStance(row.combatant, 'fighting')}
+                >
+                  Fights on
+                </button>
+              </>
+            )}
             <button
               type="button"
               className={styles.link}
@@ -645,6 +681,13 @@ export function EncounterTab({
   return (
     <div className={styles.encounter}>
       <div className={styles.encounterLeft}>
+        {fight.encounter.parley && <ParleyBanner onBack={() => controls.setParley(false)} />}
+        <TalkCards
+          waiting={waitingTalks(controls.events)}
+          nameOf={nameOf}
+          deafOn={(event) => deafOnCard(event, rows, monsters)}
+          onAnswer={controls.answerTalk}
+        />
         <TurnOrder
           monsters={monsters}
           fight={fight}
@@ -656,6 +699,12 @@ export function EncounterTab({
           onRollInitiative={onRollInitiative}
           aiming={aiming}
           rolling={rolling}
+        />
+        <MoraleNudges
+          hints={moraleFor(rows, monsters)}
+          onStance={(ids, stance) =>
+            fight.combatants.filter((c) => ids.includes(c.id)).forEach((c) => controls.setStance(c, stance))
+          }
         />
         <CombatFeed
           events={controls.events}

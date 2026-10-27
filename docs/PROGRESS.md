@@ -3,6 +3,14 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C3b: talk cards and parley (live). C3 lite is complete.** The plan is in `docs/C3_PLAN.md` (decisions 80 to 82).
+  - **Talk** for players, on their turn: **Persuade**, **Intimidate** or **Deceive** spends their action. They pick who they're talking to (one creature, or everyone on their side), type a line if they like, and the table rolls the skill. The feed says "Elowen tries to persuade Goblin A and Goblin B: 'Drop your weapons…' (Persuasion 14)."
+  - **A talk card for the DM**, above the map on the Battle screen and above the feed on Screen 1's Encounter tab: their words, the total, and **It works**, **Partly**, **It doesn't**. It works then offers **They surrender** (out of the turn order, greyed on the map, "Surrendered" by their name), **They run** (they leave as their next turn comes round), **Parley**, or **Just the words**. Creatures that can't be talked round say so on the card ("Zombie A doesn't listen (Intelligence 3)"); any button still works.
+  - **Surrenders**, **Runs away** and **Fights on** on a monster's Acting now card, for when you decide it yourself.
+  - **Parley** (button on the Battle screen, key **P**, or It works on a card): the fight pauses, everyone sees "Parley: talking, not fighting", Next turn waits, and Ask for a roll works as usual. **Back to the fight** carries on from the same turn; **End the fight** if the talking settled it.
+  - **The morale nudge**, for the DM only, above the feed: "Goblin B is nearly dead: it might run or beg", or, when the leader (the one with the highest challenge rating) falls, the rest might. One click: **Surrenders**, **Runs**, or **Fights on** to hide it. Mindless creatures never get one.
+  - Undo takes back an answer (the card comes back), a stance and a parley.
+  - Server: `20261027300000_talk_parley.sql` (`combatants.stance`, `encounters.parley`, `talk`, `answer_talk`, `set_stance`, `set_parley`; surrendered and fled monsters leave the turn order; a parley stops Next turn). Rules: `src/rules/talk.ts`. Previews: `#/dev/battle/talk` (a card waiting, and a goblin nearly dead), `#/dev/table/fight` (Talk). Tests: 611 database (24 new), 488 unit (13 new), 69 preview browser tests (2 new).
 - **C3a: conditions that wear off (live).** The plan is in `docs/C3_PLAN.md`, approved with decisions 72 to 83 as recommended.
   - **How long?** Adding a condition on the Acting now card (Screen 1's Encounter tab and the Battle screen, for monsters and characters alike) asks: **Until I take it off** (as before), **Until the end of their next turn**, 1 to 5 rounds or **1 minute**; a **Save each turn** (the ability and DC, with **Keep the DC secret**); **Ends with** a caster's concentration; and a **Break free DC** for a grab or a web.
   - **Time left** on every chip ("Paralysed · 2 rounds · saves each turn (Wisdom DC 13)"), in the turn order ("Paralysed (2)"), and on a player's own conditions in their turn order. Players never see a secret DC: it's kept in a table only the DM can read.
@@ -315,7 +323,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C3b next:** talk cards (Persuade, Intimidate, Deceive in a fight, with It works / Partly / It doesn't), surrender and running away, Parley, and the morale nudge. Then the test one-shot on 21 to 22 November (Claude has written one, kept out of this public repo; see Waiting on Matt), then the stream overlay, planned first.
+- **Next:** the test one-shot on 21 to 22 November (Claude has written one, kept out of this public repo; see Waiting on Matt), then the stream overlay, planned first.
 - **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
@@ -324,6 +332,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try talk cards** (refresh first): as a player on your turn press **Persuade**, type a line and roll; as the DM press **It works**, then **They surrender**. Then press **Parley** on the Battle screen, and **Back to the fight**.
 - **Try conditions that wear off** (refresh first): in a fight, on the Acting now card **Add a condition**, pick Paralysed, **2 rounds**, a Wisdom save each turn, and **Put it on**; press **Next turn** and watch it count down. As a player, get knocked prone and press **Stand up**.
 - **The one-shot is ready to read:** "The Lantern of Hollowmere", for 3 or 4 players, level 1 rising to 2, 3 to 4 hours, free-rules monsters only. It's in `private/one-shot/` on Matt's computer and nowhere else (that folder is never committed, so players can't read the secrets):
   1. Skim `The Lantern of Hollowmere - DM background.pdf`.

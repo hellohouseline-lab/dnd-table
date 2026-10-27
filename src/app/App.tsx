@@ -211,6 +211,11 @@ const ROUTES: Route[] = [
         { pattern: '/dev/builder', title: `Builder preview · ${APP_NAME}`, render: () => <BuilderPreview /> },
         { pattern: '/dev/battle', title: `Battle preview · ${APP_NAME}`, render: () => <BattlePreview /> },
         {
+          pattern: '/dev/battle/talk',
+          title: `Battle preview · ${APP_NAME}`,
+          render: () => <BattlePreview key="talk" talk />,
+        },
+        {
           pattern: '/dev/call/:who/:run',
           title: `Call preview · ${APP_NAME}`,
           render: ({ who, run }: Record<string, string>) => <CallPreview key={`${who}:${run}`} who={who} run={run} />,

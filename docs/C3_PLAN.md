@@ -1,6 +1,6 @@
 # C3 lite plan: conditions that wear off, and talk cards
 
-Written 27 October 2026, after S1. **Waiting for Matt's approval** of decisions 72 to 83. It builds the "conditions counting down" and "Talk cards" parts of C3 lite in `COMBAT_PLAN.md` (sections 1 and 6). The spec also asks for this ("conditions show with durations that expire on their own"). Opportunity attacks and two-weapon fighting were built early, in C1b.
+Written 27 October 2026, after S1. Approved with decisions 72 to 83 as recommended; C3a and C3b are built. It builds the "conditions counting down" and "Talk cards" parts of C3 lite in `COMBAT_PLAN.md` (sections 1 and 6). The spec also asks for this ("conditions show with durations that expire on their own"). Opportunity attacks and two-weapon fighting were built early, in C1b.
 
 ## In plain words
 
@@ -166,4 +166,4 @@ Previews will be `#/dev/battle` (the DM) and `#/dev/table/fight` (a player), wit
 
 ## Waiting on Matt
 
-- **Approve the plan**, or change any of decisions 72 to 83.
+- Nothing: approved and built.

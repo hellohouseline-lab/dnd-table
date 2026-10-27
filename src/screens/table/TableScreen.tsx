@@ -141,6 +141,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
         conditionSave: fight.conditionSave,
         standUp: fight.standUp,
         breakFree: fight.breakFree,
+        talk: fight.talk,
         cast: fight.cast,
         concentrationSave: fight.concentrationSave,
         applyFeature: fight.applyFeature,

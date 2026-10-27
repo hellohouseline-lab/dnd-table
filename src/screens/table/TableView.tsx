@@ -74,6 +74,7 @@ import {
   InspectCard,
   TurnBanner,
   YourConditions,
+  YourTalk,
   YourTurn,
 } from '../fight/PlayerCombat.tsx'
 import { ConcentrationPrompt, DeathSaves, StrikePrompt } from '../fight/Reactions.tsx'
@@ -108,6 +109,8 @@ type ItemEntry = { item: InventoryItem; use: Usable }
 import { messageFor } from '../../live/errors.ts'
 import { DiceControls } from './DiceControls.tsx'
 import { Hand } from './Hand.tsx'
+import { ParleyBanner } from '../fight/Talk.tsx'
+import { canHear } from '../../rules/talk.ts'
 import styles from './TableView.module.css'
 
 type TableViewProps = {
@@ -235,6 +238,8 @@ export type PlayerCombatProps = {
   conditionSave: FightControls['conditionSave']
   standUp: FightControls['standUp']
   breakFree: FightControls['breakFree']
+  /** Talk instead of fighting (C3b): Persuade, Intimidate or Deceive with your action. */
+  talk: FightControls['talk']
   /** The battle map on stage, or null when the stage shows a picture. */
   map: Asset | null
   tokens: TokenControls
@@ -336,7 +341,8 @@ export function TableView({
   const fight = combat?.fight ?? null
   const rows = fight ? fightRows(fight, characters, 'player') : []
   const mine = fight?.combatants.find((c) => c.characterId === character.id) ?? null
-  const myTurn = Boolean(fight && mine && fight.encounter.currentId === mine.id)
+  // A parley pauses the fight: nobody acts until the DM goes back to it.
+  const myTurn = Boolean(fight && mine && fight.encounter.currentId === mine.id && !fight.encounter.parley)
   const acting = rows.find((r) => r.status === 'acting')
   const badges: Record<string, string> = {}
   for (const row of rows) {
@@ -977,6 +983,7 @@ export function TableView({
         {fight && (
           <TurnBanner round={fight.encounter.round} mine={myTurn} acting={acting && !myTurn ? acting.name : null} />
         )}
+        {fight?.encounter.parley && <ParleyBanner />}
         {fight && (
           <InitiativeRibbon
             rows={rows}
@@ -1292,6 +1299,19 @@ export function TableView({
                 .catch((caught: unknown) => setFightProblem(caught instanceof Error ? caught.message : String(caught)))
             }
             onBreakFree={() => void table.rollWith(() => combat.breakFree(mine))}
+          />
+        )}
+        {fight && mine && combat && (
+          <YourTalk
+            listeners={rows.filter((r) => canHear(r.combatant)).map((r) => ({ id: r.combatant.id, name: r.name }))}
+            myTurn={myTurn}
+            actionFree={!mine.turn.actionUsed && mine.turn.attacksMade === 0 && !dyingNow}
+            rolling={table.rolling}
+            onTalk={(skill, targetIds, words) =>
+              void table.rollWith(() =>
+                combat.talk(mine, skill, targetIds, words, skillCheck(character, skill, choices)),
+              )
+            }
           />
         )}
         {fight && mine && (

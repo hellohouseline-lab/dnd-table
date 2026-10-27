@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { cx } from '../../components/cx.ts'
 import { Icon } from '../../components/Icon.tsx'
 import type { Character } from '../../rules/character.ts'
@@ -10,6 +11,7 @@ import { formatBonus } from '../../rules/maths/core.ts'
 import { initiativeRoll } from '../../rules/rolls.ts'
 import { actionFree, attacksLeft, jumps, movementLeft, type BonusMove, type TurnRecord } from '../../rules/turn.ts'
 import type { TurnAction } from '../../live/combat.ts'
+import { isOut, STANCE_WORDS, TALK_SKILLS, type TalkSkill } from '../../rules/talk.ts'
 import type { FightRow } from './fightRows.ts'
 import styles from './PlayerCombat.module.css'
 
@@ -30,11 +32,14 @@ export function InitiativeRibbon({ rows, picking = null, yours = null }: RibbonP
           styles.pill,
           row.combatant.kind === 'monster' && styles.pillMonster,
           row.status === 'acting' && styles.pillActing,
-          row.health === 'down' && styles.pillDown,
+          isOut(row.combatant) && styles.pillDown,
         )
         const label = (
           <>
             <span className={styles.pillInit}>{row.combatant.initiative ?? '?'}</span> {row.name}
+            {row.combatant.stance !== 'fighting' && (
+              <span className={styles.pillStance}> · {STANCE_WORDS[row.combatant.stance]}</span>
+            )}
             {row.character?.concentration && (
               <span className={styles.pillConc} title={`Concentrating on ${row.character.concentration}`}>
                 C
@@ -387,6 +392,90 @@ export function YourConditions({
               Break free
             </button>
           )}
+        </div>
+      )}
+    </section>
+  )
+}
+
+type YourTalkProps = {
+  /** Who is still there to talk to: monsters that are up and haven't given up, by the names you know. */
+  listeners: { id: string; name: string }[]
+  myTurn: boolean
+  actionFree: boolean
+  rolling?: boolean
+  onTalk: (skill: TalkSkill, targetIds: string[], words: string) => void
+}
+
+const EVERYONE = 'everyone'
+
+/**
+ * Talk (C3b): Persuade, Intimidate or Deceive with your action. Pick who you're talking to, say it
+ * in a line if you like, and the table rolls the skill. The DM decides what comes of it.
+ */
+export function YourTalk({ listeners, myTurn, actionFree, rolling, onTalk }: YourTalkProps) {
+  const [skill, setSkill] = useState<TalkSkill | null>(null)
+  const [who, setWho] = useState('')
+  const [words, setWords] = useState('')
+  if (listeners.length === 0) return null
+  const chosen = TALK_SKILLS.find((t) => t.skill === skill)
+  const to = who || (listeners.length > 1 ? EVERYONE : listeners[0].id)
+
+  function talk() {
+    if (!skill) return
+    onTalk(skill, to === EVERYONE ? listeners.map((l) => l.id) : [to], words)
+    setSkill(null)
+    setWho('')
+    setWords('')
+  }
+
+  return (
+    <section className={styles.thisTurn} aria-label="Talk">
+      <div className={styles.thisTurnTitle}>Talk</div>
+      <div className={styles.moves} role="group" aria-label="Talk instead of fighting">
+        {TALK_SKILLS.map((t) => (
+          <button
+            key={t.skill}
+            type="button"
+            className={cx(styles.move, styles.moveSmall, skill === t.skill && styles.moveChosen)}
+            title={`${t.hint}. Uses your action.`}
+            aria-pressed={skill === t.skill}
+            disabled={!myTurn || !actionFree || rolling}
+            onClick={() => setSkill(skill === t.skill ? null : t.skill)}
+          >
+            {t.verb}
+          </button>
+        ))}
+      </div>
+      {chosen && myTurn && actionFree && (
+        <div className={styles.talkForm}>
+          <label className={styles.talkField}>
+            <span>Who to</span>
+            <select value={to} onChange={(event) => setWho(event.target.value)}>
+              {listeners.length > 1 && <option value={EVERYONE}>Everyone on their side</option>}
+              {listeners.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={styles.talkField}>
+            <span>Say</span>
+            <input
+              type="text"
+              maxLength={200}
+              placeholder="Optional: say it in a line"
+              value={words}
+              onChange={(event) => setWords(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') talk()
+              }}
+            />
+          </label>
+          <button type="button" className={styles.endTurn} disabled={rolling} onClick={talk}>
+            {chosen.verb}: roll {chosen.word}
+          </button>
         </div>
       )}
     </section>

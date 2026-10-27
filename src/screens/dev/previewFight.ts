@@ -112,6 +112,8 @@ type PreviewOptions = {
   prompts?: ReactionPrompt[]
   /** A spell left an area on the map. */
   onArea?: (area: PreviewArea) => void
+  /** What has already happened when the preview starts (a talk card waiting for the DM). */
+  events?: CombatEvent[]
 }
 
 type CharacterState = Pick<
@@ -169,10 +171,10 @@ export type PreviewFightControls = FightControls & {
 
 export function usePreviewFight(start: Fight | null = null, options: PreviewOptions = {}): PreviewFightControls {
   const [fight, setFight] = useState<Fight | null>(start)
-  const [events, setEvents] = useState<CombatEvent[]>([])
+  const [events, setEvents] = useState<CombatEvent[]>(options.events ?? [])
   const [prompts, setPrompts] = useState<ReactionPrompt[]>(options.prompts ?? [])
-  const latest = useRef({ fight: start, events: [] as CombatEvent[] })
-  const undos = useRef(new Map<string, Undo>())
+  const latest = useRef({ fight: start, events: options.events ?? [] })
+  const undos = useRef(new Map<string, Undo>((options.events ?? []).map((e) => [e.id, { target: null, actor: null }])))
   const { characters = [], onCharacter } = options
 
   const set = useCallback((change: (f: Fight) => Fight) => {
