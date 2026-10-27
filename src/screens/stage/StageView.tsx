@@ -24,6 +24,7 @@ import { CameraColumn } from '../table/TableView.tsx'
 import { ArtLibrary } from './ArtLibrary.tsx'
 import { MapStage } from './MapStage.tsx'
 import { AmbiencePanel, EffectsPanel, MusicPanel } from './SoundPanels.tsx'
+import { TonightsScenes } from './TonightsScenes.tsx'
 import styles from './StageView.module.css'
 
 const FREE_STORAGE_BYTES = 1024 * 1024 * 1024
@@ -62,6 +63,8 @@ type StageViewProps = {
   map: Omit<ComponentProps<typeof MapStage>, 'map' | 'characters' | 'userId' | 'playersMove' | 'onGrid'>
   /** In a fight: back to the Battle screen. */
   onBattle?: () => void
+  /** The story's scenes, each with Go here (left out in previews without a story). */
+  tonight?: ComponentProps<typeof TonightsScenes>
 }
 
 /** Screen 11, the stage: what everyone sees and hears, the art library, music, ambience and effects. */
@@ -78,6 +81,7 @@ export function StageView({
   now,
   map: mapProps,
   onBattle,
+  tonight,
 }: StageViewProps) {
   const { stage, change } = controls
   const [problem, setProblem] = useState<string | null>(null)
@@ -184,15 +188,7 @@ export function StageView({
             />
             <p className={styles.hint}>Shown in your header. Players don&rsquo;t see it.</p>
           </section>
-          <section className={cx(styles.panel, styles.later)} aria-labelledby="scenes-title">
-            <h2 id="scenes-title" className={styles.panelTitle}>
-              Tonight&rsquo;s scenes
-            </h2>
-            <p className={styles.hint}>
-              Scenes that bundle a picture, music and the people in them, ready to switch with one click, arrive in
-              Phase 2. For now, pick a picture and music here.
-            </p>
-          </section>
+          {tonight && <TonightsScenes {...tonight} />}
           <p className={cx(styles.hint, styles.storage)}>
             Sounds: MP3 or OGG up to 15 MB. Storage used: {sizeText(used)} of the 1 GB free (
             {Math.round((used / FREE_STORAGE_BYTES) * 100)}%).

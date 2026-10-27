@@ -66,7 +66,7 @@ import type { AskInput } from '../../live/rollRequests.ts'
 import type { Container, Richness } from '../../rules/boxes.ts'
 import type { Fight } from '../../rules/scenes.ts'
 import { StoryTab } from './story/StoryTab.tsx'
-import { fillFromScene } from '../../rules/sceneNotebook.ts'
+import { logForScene, notebookForScene, stageForScene } from './story/goHere.ts'
 import { NpcsTab } from './npcs/NpcsTab.tsx'
 import { PasteDialog } from './story/PasteDialog.tsx'
 import type { CampaignPlan } from '../../rules/campaignFile.ts'
@@ -334,45 +334,20 @@ export function DmView({
     }
   }
 
-  /** The notebook filled from a scene: where we are, a short checklist, and the key items. */
-  function fillNotebook(scene: Scene) {
-    const { chapters, scenes } = story.story
-    const chapterScenes = scenes.filter((s) => s.chapterId === scene.chapterId).sort((a, b) => a.position - b.position)
-    return fillFromScene(notebook.notebook, scene, {
-      chapterTitle: chapters.find((c) => c.id === scene.chapterId)?.title ?? '',
-      chapterReminders: chapterScenes[0] && chapterScenes[0].id !== scene.id ? chapterScenes[0].reminders : '',
-      sceneTitle: (id) => scenes.find((s) => s.id === id)?.title,
-      item: (id) => giving.yours.find((i) => i.id === id),
-      monsterName: (index) => monsters?.find((m) => m.index === index)?.name ?? index,
-      peopleNames: scene.people.flatMap((id) => npcs.npcs.find((n) => n.id === id)?.name ?? []),
-      keyItems: giving.yours.filter((i) => i.key).map((i) => i.name),
-      newId: entryId,
-    })
-  }
-
-  /** Go here: the scene's picture, music, ambience and name on stage, Where we are, and the log. */
+  /** Go here: the scene's picture, music, ambience and name on stage, the notebook, and the log. */
   function goHere(scene: Scene) {
-    const patch: StagePatch = { sceneName: (scene.title || 'A scene').slice(0, 80), readAloud: '' }
-    if (scene.imageId) {
-      patch.imageId = scene.imageId
-      if (!fighting) patch.mode = 'scene'
+    const ctx = {
+      story: story.story,
+      notebook: notebook.notebook,
+      yours: giving.yours,
+      npcs: npcs.npcs,
+      monsters,
+      stage,
+      fighting: Boolean(fighting),
     }
-    if (scene.musicId && (scene.musicId !== stage.musicId || !stage.musicPlaying)) {
-      Object.assign(patch, {
-        musicId: scene.musicId,
-        musicPlaying: true,
-        musicStartedAt: serverNow(),
-        musicPosition: 0,
-      })
-    }
-    if (Object.keys(scene.ambience).length > 0) patch.ambience = scene.ambience
-    onStage(patch)
-    notebook.change({ ...fillNotebook(scene), currentSceneId: scene.id })
-    events.add(
-      'stage',
-      `The party is at ${scene.title || 'a new scene'}${scene.place ? ` (${scene.place})` : ''}.`,
-      true,
-    )
+    onStage(stageForScene(scene, ctx, serverNow()))
+    notebook.change(notebookForScene(scene, ctx))
+    events.add('stage', logForScene(scene), true)
   }
 
   /** A key item was given: the notebook's Key items say who has it now. */
