@@ -155,6 +155,21 @@ const list = (v: string) =>
     .filter(Boolean)
 
 /**
+ * A scene's People line: names only. Notes in brackets go ("Olly Coopersmith (heard, not seen)" is
+ * Olly), and so do "None named" and counted creatures ("four cultists"), which are the fight's.
+ */
+export function peopleList(v: string): string[] {
+  return list(v.replace(/\([^)]*\)/g, ''))
+    .map((name) => name.replace(/\s+/g, ' ').replace(/[.:]$/, '').trim())
+    .filter(
+      (name) =>
+        name &&
+        !/^(none|nobody|no one|n\/a)\b/i.test(name) &&
+        !/^(\d+|a few|some|several|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s/i.test(name),
+    )
+}
+
+/**
  * "Perception DC 13, secret DC, outcome hidden: to spot the figure. Pass: they see her. Fail: ...",
  * or "Perception DC 13 - to spot the figure". Pass and Fail come back as their own words.
  */
@@ -480,7 +495,7 @@ export function parseCampaign(text: string): CampaignPlan {
         case 'people':
         case 'npcs':
         case 'who':
-          sc.people.push(...list(value))
+          sc.people.push(...peopleList(value))
           continue
         case 'roll':
         case 'rolls':
