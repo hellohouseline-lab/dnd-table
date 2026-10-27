@@ -1129,6 +1129,7 @@ test('rules: the sections explain turns, dice and rests', async ({ page }) => {
   await rules.getByRole('tab', { name: 'Resting' }).click()
   await rules.getByRole('button', { name: 'Short rest' }).click()
   await expect(rules).toContainText('spend hit dice')
+})
 
 test('the DM searches their quick notes, by session, on the Log tab', async ({ page }) => {
   await page.goto('#/dev/dm/party')
