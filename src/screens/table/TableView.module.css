@@ -571,6 +571,27 @@
   background: rgba(8, 6, 12, 0.6);
 }
 
+/* The Rules panel sits beside your plate, over the edge of the scene, without darkening it. */
+.rules {
+  position: absolute;
+  z-index: 7;
+  top: 16px;
+  bottom: 132px;
+  left: 352px;
+  width: 460px;
+}
+
+.conditionLink {
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--gold-light);
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
 .sheet {
   position: absolute;
   z-index: 9;

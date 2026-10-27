@@ -63,6 +63,7 @@ export function JoinScreenPreview({ as }: { as: string }) {
  * #/dev/table/dying: Thorin's turn at 0 hit points, with one death save failed.
  * #/dev/table/caster: Elowen's turn (played by Alex), with her spells in the hand.
  * #/dev/table/dual: Thorin's turn with a shortsword and a dagger, for two-weapon fighting.
+ * #/dev/table/rules: Thorin is prone and poisoned, for the Rules panel.
  */
 export function TablePreview({
   asked = false,
@@ -71,50 +72,52 @@ export function TablePreview({
 }: {
   asked?: boolean
   fighting?: boolean
-  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | 'story' | null
+  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | 'story' | 'rules' | null
 }) {
   const caster = variant === 'caster'
   const [characters, setCharacters] = useState<Character[]>(() =>
-    variant === 'dying'
-      ? sampleCharacters.map((c, i) =>
-          i === 0 ? { ...c, currentHp: 0, deathSaveFailures: 1, conditions: [...c.conditions, 'unconscious'] } : c,
-        )
-      : variant === 'dual'
+    variant === 'rules'
+      ? sampleCharacters.map((c, i) => (i === 0 ? { ...c, conditions: ['prone', 'poisoned'] } : c))
+      : variant === 'dying'
         ? sampleCharacters.map((c, i) =>
-            i === 0
-              ? {
-                  ...c,
-                  attacks: [
-                    { ...c.attacks[0], id: 'a1', name: 'Shortsword', weapon: 'shortsword' },
-                    { ...c.attacks[0], id: 'a2', name: 'Dagger', weapon: 'dagger' },
-                  ],
-                }
-              : c,
+            i === 0 ? { ...c, currentHp: 0, deathSaveFailures: 1, conditions: [...c.conditions, 'unconscious'] } : c,
           )
-        : variant === 'gift'
+        : variant === 'dual'
           ? sampleCharacters.map((c, i) =>
               i === 0
                 ? {
                     ...c,
-                    inventory: [
-                      ...c.inventory,
-                      {
-                        id: 'cloak',
-                        item: 'cloak-of-protection',
-                        name: 'Cloak of Protection',
-                        quantity: 1,
-                        weight: 0,
-                        worn: false,
-                        uses: null,
-                        magic: 'cloak-of-protection',
-                        attune: true,
-                        attuned: false,
-                      },
+                    attacks: [
+                      { ...c.attacks[0], id: 'a1', name: 'Shortsword', weapon: 'shortsword' },
+                      { ...c.attacks[0], id: 'a2', name: 'Dagger', weapon: 'dagger' },
                     ],
                   }
                 : c,
             )
-          : sampleCharacters,
+          : variant === 'gift'
+            ? sampleCharacters.map((c, i) =>
+                i === 0
+                  ? {
+                      ...c,
+                      inventory: [
+                        ...c.inventory,
+                        {
+                          id: 'cloak',
+                          item: 'cloak-of-protection',
+                          name: 'Cloak of Protection',
+                          quantity: 1,
+                          weight: 0,
+                          worn: false,
+                          uses: null,
+                          magic: 'cloak-of-protection',
+                          attune: true,
+                          attuned: false,
+                        },
+                      ],
+                    }
+                  : c,
+              )
+            : sampleCharacters,
   )
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(() => parseDiceStyle(sampleMembers[1].dice_style))
   const [start] = useState(() => {

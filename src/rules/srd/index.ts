@@ -7,6 +7,8 @@ import basics from './basics.json'
 
 export type SrdSkill = { index: string; name: string; ability: Ability }
 export type SrdCondition = { index: string; name: string; desc: string }
+/** A section of the free rules' own text (Dash, Short Rest, Advantage and Disadvantage), for the Rules panel. */
+export type SrdRuleSection = { index: string; name: string; desc: string }
 export type SrdWeapon = WeaponStats & {
   index: string
   category: 'Simple' | 'Martial'
@@ -247,6 +249,9 @@ export const loadMagicItems = once(
   async () => (await import('./magic-items.json')).default.items as unknown as SrdMagicItem[],
 )
 export const loadSpells = once(async () => (await import('./spells.json')).default.spells as unknown as SrdSpell[])
+export const loadRuleSections = once(
+  async () => (await import('./rules.json')).default.sections as unknown as SrdRuleSection[],
+)
 /** Monsters are only loaded on the DM's screens. */
 export const loadMonsters = once(
   async () => (await import('./monsters.json')).default.monsters as unknown as SrdMonster[],

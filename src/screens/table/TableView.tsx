@@ -192,6 +192,7 @@ function ArrivalCard({ arrival, onSeen, onOpen }: { arrival: Arrival; onSeen: ()
 }
 
 const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
+const RulesPanel = lazy(() => import('../rules/RulesPanel.tsx'))
 
 const NO_CAST = () => Promise.reject(new Error('There’s no fight going on.'))
 
@@ -234,11 +235,12 @@ export type PlayerCombatProps = {
   }
 }
 
-const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; title: string }[] = [
+const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; rules?: true; title: string }[] = [
   { label: 'Sheet', icon: 'sheet', tab: 'sheet', title: 'Character sheet' },
   { label: 'Items', icon: 'items', tab: 'inventory', title: 'What you carry and your coins' },
   { label: 'Powers', icon: 'powers', tab: 'powers', title: 'Features and spells' },
-  { label: 'Journal', icon: 'journal', title: 'Journal arrives in Phase 2' },
+  // Rules takes the switched-off Journal's place until Phase 2 (decision 64).
+  { label: 'Rules', icon: 'rules', rules: true, title: 'The rules in plain words' },
   { label: 'Lore', icon: 'lore', title: 'Handouts arrive in Phase 2' },
 ]
 
@@ -293,6 +295,10 @@ export function TableView({
   const [lastUse, setLastUse] = useState<LastUse | null>(null)
   const [fightProblem, setFightProblem] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName | null>(null)
+  // The Rules panel (S1e), with the entry to open; each open is a fresh panel, so focus counts up.
+  const [rules, setRules] = useState<{ focus?: string; n: number } | null>(null)
+  const openRules = (focus?: string) => setRules((r) => ({ focus, n: (r?.n ?? 0) + 1 }))
+  const closeRules = useCallback(() => setRules(null), [])
   const [mode, setMode] = useState<RollMode>('normal')
   const [secret, setSecret] = useState(false)
   // Your answer to the DM's request shows as the big result card once its dice land, until you close it.
@@ -582,7 +588,10 @@ export function TableView({
   }
   const sheet = deriveSheet(character)
   const update = (patch: TrackerPatch) => onUpdate(character.id, patch)
-  const conditions = character.conditions.map((c) => findCondition(c)?.name ?? c)
+  const conditionList = [
+    ...character.conditions.map((c) => ({ index: c, name: findCondition(c)?.name ?? c })),
+    ...(character.exhaustion > 0 ? [{ index: 'exhaustion', name: `Exhaustion ${character.exhaustion}` }] : []),
+  ]
   const choices = { mode, secret }
 
   // Spells from the hand: in a fight, a target or where it goes next (the server settles it);
@@ -1286,7 +1295,22 @@ export function TableView({
           </div>
           <div className={styles.status}>
             <span>
-              <span className={styles.muted}>Conditions:</span> {conditions.length ? conditions.join(', ') : 'none'}
+              <span className={styles.muted}>Conditions:</span>{' '}
+              {conditionList.length === 0
+                ? 'none'
+                : conditionList.map((c, i) => (
+                    <span key={c.index}>
+                      {i > 0 && ', '}
+                      <button
+                        type="button"
+                        className={styles.conditionLink}
+                        title={`What ${c.name.toLowerCase()} does`}
+                        onClick={() => openRules(`condition:${c.index}`)}
+                      >
+                        {c.name}
+                      </button>
+                    </span>
+                  ))}
             </span>
             <button
               type="button"
@@ -1302,14 +1326,20 @@ export function TableView({
         </section>
 
         <nav className={styles.panelButtons} aria-label="Panels">
-          {PANEL_BUTTONS.map(({ label, icon, tab, title }) => (
+          {PANEL_BUTTONS.map(({ label, icon, tab, rules: isRules, title }) => (
             <button
               key={label}
               type="button"
-              className={cx(styles.panelButton, tab && tab === sheetTab && styles.panelOpen)}
+              className={cx(styles.panelButton, ((tab && tab === sheetTab) || (rules && isRules)) && styles.panelOpen)}
               title={title}
-              disabled={!tab}
-              onClick={() => tab && setSheetTab(sheetTab === tab ? null : tab)}
+              aria-pressed={isRules ? !!rules : undefined}
+              disabled={!tab && !isRules}
+              onClick={() => {
+                if (isRules) {
+                  if (rules) closeRules()
+                  else openRules()
+                } else if (tab) setSheetTab(sheetTab === tab ? null : tab)
+              }}
             >
               <Icon name={icon} />
               {label}
@@ -1353,6 +1383,18 @@ export function TableView({
             canAddGear={canAddGear}
           />
         </>
+      )}
+
+      {rules && (
+        <Suspense fallback={null}>
+          <RulesPanel
+            key={rules.n}
+            className={styles.rules}
+            focus={rules.focus}
+            yours={conditionList.map((c) => c.index)}
+            onClose={closeRules}
+          />
+        </Suspense>
       )}
 
       {shopping && shopOpen && (

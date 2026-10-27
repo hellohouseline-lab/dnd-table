@@ -21,6 +21,64 @@ const SOURCE = {
   licence: 'Data: SRD 5.1 by Wizards of the Coast, CC-BY-4.0. 5e-database: MIT.',
 }
 
+/** The free rules' sections the Rules panel quotes, by 5e-database index. */
+const RULE_SECTIONS = [
+  // A fight and your turn
+  'the-order-of-combat',
+  'surprise',
+  'initiative',
+  'your-turn',
+  'reactions',
+  'breaking-up-your-move',
+  'difficult-terrain',
+  'being-prone',
+  'moving-around-other-creatures',
+  'interacting-with-objects-around-you',
+  'attack',
+  'cast-a-spell',
+  'dash',
+  'disengage',
+  'dodge',
+  'help',
+  'hide',
+  'ready',
+  'search',
+  'use-an-object',
+  'melee-attacks',
+  'ranged-attacks',
+  'cover',
+  'dropping-to-0-hit-points',
+  // Rolling dice
+  'ability-scores-and-modifiers',
+  'proficiency-bonus',
+  'ability-checks',
+  'typical-difficulty-classes',
+  'contests',
+  'skills',
+  'passive-checks',
+  'working-together',
+  'saving-throws',
+  'attack-rolls',
+  'advantage-and-disadvantage',
+  // Resting and hit points
+  'resting',
+  'short-rest',
+  'long-rest',
+  'hit-points',
+  'healing',
+  'temporary-hit-points',
+  // Spells (S1e-2)
+  'known-and-prepared-spells',
+  'spell-slots',
+  'cantrips',
+  'rituals',
+  'casting-time',
+  'components',
+  'duration',
+  'spell-attack-rolls',
+  'spell-saving-throws',
+]
+
 type Ref = { index: string; name: string }
 type Raw = Record<string, any>
 
@@ -516,6 +574,17 @@ async function main(): Promise<void> {
           desc: rest.join('\n\n'),
         }
       }),
+  })
+
+  // Rules text for the Rules panel (S1e): only the sections it explains, in the free rules' own
+  // words, each without its heading (the panel shows the name).
+  const rules = await load('Rules')
+  write('rules.json', {
+    sections: RULE_SECTIONS.map((index) => {
+      const r = rules.find((x) => x.index === index)
+      if (!r) throw new Error(`No rules section called ${index}`)
+      return { index, name: r.name, desc: text(r.desc).replace(/^#+ .*\n+/, '').trim() }
+    }),
   })
 }
 
