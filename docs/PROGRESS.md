@@ -3,12 +3,18 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Saved campaigns and the Death Pit of Moloch maps (live).**
+  - **7 painted battle maps** under Maps that come with the table (from Matt's `starter-maps.patch`): Meadheaven tavern, Sheriff's office and jail, Town square, Hillside sinkhole, Sink cavern, Guard room and goblins' den, Ritual hall. WebP, 70 pixels a square, so the grid fits.
+  - **Your saved campaigns** (decided with Matt): Paste your notes has **Save as a preset**, and a **Your saved campaigns** list to start any table from one. Saved campaigns live in the database where only the person who saved them can read them, because a bought adventure (Death Pit of Moloch is from DMs Guild) can't go in this public repository. Its text is kept on Matt's computer in `private/campaigns/death-pit-of-moloch.md`, never committed.
+  - **Adding a campaign brings in its art:** the built-in maps it names (a fight's map, or "Map: …" in its Places list) and the ready-made portraits its people use go into that table's library first, so scenes and NPCs find them.
+  - **Reading campaign files:** "Strength DC 12" and "Dexterity (thieves' tools) DC 11" are now ability checks, "Dexterity saving throw DC 11" a save, and "(suggested name)" is left off a person's name.
+  - Still not made from a campaign file: monsters that aren't in the free rules (Crassus goes into the scene's reminders), flags, handouts and *later* lines, as before.
+  - Server: `20261027320000_campaign_presets.sql`. Tests: 620 database (6 new), 492 unit (4 new), 72 preview browser tests (1 new).
 - **Ready-made pictures (live).** Matt's Higgsfield pictures are built into the table (decided with Matt: monster miniatures and NPC portraits, plus the 8 scenes):
   - **8 painted places** under "Pictures that come with the table" on Screen 2's art library: Crossroads, Ancient forest, Mountain pass, Harbour at dawn, Temple, General store and Dungeon corridor under Places, and Camp under the stars under Moments. One click adds one to your library.
   - **Monster miniatures:** a goblin, zombie, skeleton, giant rat, wolf, ghoul, ogre, cultist, cult fanatic, thug, bandit or guard added to a fight shows its painted portrait on the battle map and beside its name in the turn order, for everyone (monsters already in a fight keep their initials).
   - **NPC portraits:** the Portrait choice on an NPC's card has all 27 ready-made portraits ("Ready-made (added to your library)"); picking one puts it in your library under People. Also fixed: a portrait you pick now shows on the card straight away.
-  - The 7 battle maps from the same chat weren't here (`starter-maps.patch` isn't on this computer); see Waiting on Matt.
-  - Server: `20261027310000_combatant_art.sql` (`combatants.art`). Pictures: `public/art/scenes`, `public/art/tokens` (JPEGs under 500 KB). Credited on the credits page. Tests: 614 database (3 new), 71 preview browser tests (2 new).
+    - Server: `20261027310000_combatant_art.sql` (`combatants.art`). Pictures: `public/art/scenes`, `public/art/tokens` (JPEGs under 500 KB). Credited on the credits page. Tests: 614 database (3 new), 71 preview browser tests (2 new).
 - **C3b: talk cards and parley (live). C3 lite is complete.** The plan is in `docs/C3_PLAN.md` (decisions 80 to 82).
   - **Talk** for players, on their turn: **Persuade**, **Intimidate** or **Deceive** spends their action. They pick who they're talking to (one creature, or everyone on their side), type a line if they like, and the table rolls the skill. The feed says "Elowen tries to persuade Goblin A and Goblin B: 'Drop your weapons…' (Persuasion 14)."
   - **A talk card for the DM**, above the map on the Battle screen and above the feed on Screen 1's Encounter tab: their words, the total, and **It works**, **Partly**, **It doesn't**. It works then offers **They surrender** (out of the turn order, greyed on the map, "Surrendered" by their name), **They run** (they leave as their next turn comes round), **Parley**, or **Just the words**. Creatures that can't be talked round say so on the card ("Zombie A doesn't listen (Intelligence 3)"); any button still works.
@@ -338,7 +344,10 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **The 7 battle maps:** save `starter-maps.patch` from your Higgsfield chat into this folder (`dnd-table-starter-pack`) and tell Claude, who will add them.
+- **Save Death Pit of Moloch as a preset** (refresh first):
+  1. On Screen 1, open the **Story** tab and press **Paste your notes**.
+  2. Open `private/campaigns/death-pit-of-moloch.md` (in the `dnd-table-starter-pack` folder), copy everything, and paste it into the box.
+  3. Press **Save as a preset**. From now on, any table can pick it from **Your saved campaigns**, then **Add it to my story**.
 - **Try talk cards** (refresh first): as a player on your turn press **Persuade**, type a line and roll; as the DM press **It works**, then **They surrender**. Then press **Parley** on the Battle screen, and **Back to the fight**.
 - **Try conditions that wear off** (refresh first): in a fight, on the Acting now card **Add a condition**, pick Paralysed, **2 rounds**, a Wisdom save each turn, and **Put it on**; press **Next turn** and watch it count down. As a player, get knocked prone and press **Stand up**.
 - **The one-shot is ready to read:** "The Lantern of Hollowmere", for 3 or 4 players, level 1 rising to 2, 3 to 4 hours, free-rules monsters only. It's in `private/one-shot/` on Matt's computer and nowhere else (that folder is never committed, so players can't read the secrets):

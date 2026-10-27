@@ -1276,6 +1276,10 @@ test('ready-made art: the DM adds a painted place from the pictures that come wi
   await library.getByRole('button', { name: 'Add Crossroads' }).click()
   await expect(library.getByRole('button', { name: 'Crossroads', exact: true })).toBeVisible()
   await expect(library.getByRole('button', { name: 'Add Crossroads' })).toBeHidden()
+  // And one of the painted battle maps.
+  await library.getByRole('tab', { name: 'Maps' }).click()
+  await library.getByRole('button', { name: 'Add Ritual hall' }).click()
+  await expect(library.getByRole('button', { name: 'Ritual hall', exact: true })).toBeVisible()
 })
 
 test('ready-made art: an NPC gets a ready-made portrait, and a goblin shows its picture in the turn order', async ({
@@ -1294,4 +1298,25 @@ test('ready-made art: an NPC gets a ready-made portrait, and a goblin shows its 
   await page.goto('#/dev/battle')
   const goblin = page.getByRole('button', { name: 'Goblin A', exact: true })
   await expect(goblin.locator('img')).toHaveAttribute('src', /art\/tokens\/goblin\.jpg$/)
+})
+
+test('saved campaigns: the DM saves a campaign as a preset, then starts from it', async ({ page }) => {
+  await page.goto('#/dev/dm/story')
+  await page
+    .getByRole('navigation', { name: 'Chapters and scenes' })
+    .getByRole('button', { name: 'Paste your notes' })
+    .click()
+  const paste = page.getByRole('dialog', { name: 'Paste your notes' })
+  await expect(paste.getByLabel('Your saved campaigns')).toBeHidden()
+  await paste.getByRole('button', { name: 'Try the example' }).click()
+  await paste.getByRole('button', { name: 'Save as a preset' }).click()
+  await expect(paste.getByRole('status')).toContainText('Saved as a preset: The Drowned Bell')
+  await expect(paste.getByRole('button', { name: 'Saved as a preset' })).toBeDisabled()
+
+  await paste.getByRole('textbox', { name: 'Your campaign notes' }).fill('')
+  await paste.getByLabel('Your saved campaigns').selectOption({ label: 'The Drowned Bell' })
+  const preview = paste.getByRole('region', { name: 'What it makes' })
+  await expect(preview).toContainText('The Drowned Bell: 4 chapters, 6 scenes')
+  await paste.getByRole('button', { name: 'Add it to my story' }).click()
+  await expect(paste.getByRole('status')).toContainText('Added: 4 chapters, 6 scenes')
 })

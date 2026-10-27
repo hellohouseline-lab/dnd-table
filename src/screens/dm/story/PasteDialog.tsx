@@ -4,6 +4,7 @@ import { matchName, parseCampaign, planWarnings, planWords, type CampaignPlan } 
 import { AI_PROMPT_TO_COPY, CAMPAIGN_EXAMPLE } from '../../../rules/campaignTemplate.ts'
 import { DIFFICULTY_WORDS, encounterDifficulty } from '../../../rules/encounter.ts'
 import type { SrdMonster } from '../../../rules/srd/index.ts'
+import type { CampaignPresetControls } from '../../../live/campaignPresets.ts'
 import dialog from '../RestDialog.module.css'
 import own from '../GiveDialog.module.css'
 import styles from './PasteDialog.module.css'
@@ -18,6 +19,8 @@ type PasteDialogProps = {
   /** Adds the campaign to the story; resolves with what was added, or throws a problem. */
   onImport: (plan: CampaignPlan) => Promise<string>
   onClose: () => void
+  /** Your saved campaigns, to start from one or save this one. */
+  presets?: CampaignPresetControls
 }
 
 /**
@@ -25,8 +28,17 @@ type PasteDialogProps = {
  * Copy the format for your AI) or loose notes with headings, see what it makes before adding it,
  * then Add it to my story.
  */
-export function PasteDialog({ monsters, assetNames, shopNames, partyLevels, onImport, onClose }: PasteDialogProps) {
+export function PasteDialog({
+  monsters,
+  assetNames,
+  shopNames,
+  partyLevels,
+  onImport,
+  onClose,
+  presets,
+}: PasteDialogProps) {
   const [text, setText] = useState('')
+  const saved = presets?.presets.find((p) => p.body === text) ?? null
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null)
   const [copied, setCopied] = useState(false)
@@ -49,6 +61,23 @@ export function PasteDialog({ monsters, assetNames, shopNames, partyLevels, onIm
     const what = fight.map((f) => `${f.count} × ${f.name}`).join(', ')
     if (xps.length === 0 || partyLevels.length === 0) return what
     return `${what} (${DIFFICULTY_WORDS[encounterDifficulty(partyLevels, xps).difficulty]})`
+  }
+
+  async function savePreset() {
+    if (!plan || !presets) return
+    const name = (plan.title || 'My campaign').slice(0, 120)
+    setBusy(true)
+    setStatus(null)
+    try {
+      await presets.save(name, text)
+      setStatus({
+        ok: true,
+        text: `Saved as a preset: ${name}. Start any table from it here, under Your saved campaigns.`,
+      })
+    } catch (caught) {
+      setStatus({ ok: false, text: caught instanceof Error ? caught.message : String(caught) })
+    }
+    setBusy(false)
   }
 
   async function add() {
@@ -85,6 +114,40 @@ export function PasteDialog({ monsters, assetNames, shopNames, partyLevels, onIm
           Try the example
         </button>
       </div>
+      {presets && presets.presets.length > 0 && (
+        <label className={styles.saved}>
+          <span>Your saved campaigns</span>
+          <select
+            aria-label="Your saved campaigns"
+            value={saved?.id ?? ''}
+            onChange={(e) => {
+              const preset = presets.presets.find((p) => p.id === e.target.value)
+              if (!preset) return
+              setText(preset.body)
+              setStatus(null)
+            }}
+          >
+            <option value="">Start from a saved campaign…</option>
+            {presets.presets.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          {saved && (
+            <button
+              type="button"
+              className={dialog.secondary}
+              onClick={() => {
+                if (window.confirm(`Forget the saved campaign ${saved.name}? Tables already started from it keep it.`))
+                  void presets.remove(saved.id).then(() => setText(''))
+              }}
+            >
+              Forget it
+            </button>
+          )}
+        </label>
+      )}
       <p className={dialog.lead}>
         Paste your campaign: chapters as <strong># Chapter 1:</strong> headings, scenes as{' '}
         <strong>## Scene 1.1:</strong> headings, and lines such as <strong>Read aloud:</strong>, <strong>Rolls:</strong>
@@ -178,6 +241,17 @@ export function PasteDialog({ monsters, assetNames, shopNames, partyLevels, onIm
         <button type="button" className={dialog.secondary} onClick={onClose}>
           Done
         </button>
+        {presets && (
+          <button
+            type="button"
+            className={dialog.secondary}
+            disabled={!plan || busy || saved !== null}
+            title="Keep this campaign to start any of your tables from. Only you can see it."
+            onClick={() => void savePreset()}
+          >
+            {saved ? 'Saved as a preset' : 'Save as a preset'}
+          </button>
+        )}
         <button type="button" className={dialog.primary} disabled={!plan || busy} onClick={() => void add()}>
           {busy ? 'Adding…' : 'Add it to my story'}
         </button>

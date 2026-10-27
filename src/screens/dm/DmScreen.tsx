@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { addPresetPortrait } from '../../live/library.ts'
+import { addPresetPortrait, addStarterMap, artForCampaign } from '../../live/library.ts'
+import { useCampaignPresets } from '../../live/campaignPresets.ts'
+import { namedArt } from '../../rules/campaignFile.ts'
 import { listSessionNotes } from '../../live/notebook.ts'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
@@ -51,6 +53,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   const story = useStory(campaignId)
   const npcs = useNpcs(campaignId)
   const library = useLibrary(campaignId, user.id)
+  const presets = useCampaignPresets()
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
   const fight = useFight(campaignId, user.id)
   const [chosenStyle, setChosenStyle] = useState<DiceStyle | null>(null)
@@ -117,10 +120,22 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
         return added
       }}
       npcs={npcs}
+      presets={presets}
       importCampaign={async (plan, ctx) => {
-        const added = await importCampaign(campaignId, plan, ctx).catch((caught: unknown) => {
+        // The maps and ready-made portraits it names come into the library first, so they're found.
+        const art = artForCampaign(namedArt(plan), ctx.library)
+        const brought = await Promise.all([
+          ...art.maps.map((m) => addStarterMap(campaignId, m)),
+          ...art.portraits.map((p) => addPresetPortrait(campaignId, p)),
+        ]).catch((caught: unknown) => {
           throw new Error(messageFor(caught))
         })
+        brought.forEach(library.put)
+        const added = await importCampaign(campaignId, plan, { ...ctx, library: [...ctx.library, ...brought] }).catch(
+          (caught: unknown) => {
+            throw new Error(messageFor(caught))
+          },
+        )
         story.reload()
         npcs.reload()
         giving.reloadYours()

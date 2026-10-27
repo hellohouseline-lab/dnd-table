@@ -49,7 +49,8 @@ import { useSrd } from '../../live/useSrd.ts'
 import { monsterInitiative } from '../../rules/combat.ts'
 import { placeFighters } from '../../live/combat.ts'
 import { messageFor } from '../../live/errors.ts'
-import type { Asset, PresetPortrait } from '../../live/library.ts'
+import { STARTER_MAPS, type Asset, type PresetPortrait } from '../../live/library.ts'
+import type { CampaignPresetControls } from '../../live/campaignPresets.ts'
 import { loadEquipment, loadMagicItems, loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog, StartFightDialog, type FightSetting } from '../fight/FightDialogs.tsx'
@@ -170,6 +171,8 @@ type DmViewProps = {
   stage: Stage
   onStage: (patch: StagePatch) => void
   library: Asset[]
+  /** Your saved campaigns (Paste your notes): start a table from one, or save one. */
+  presets?: CampaignPresetControls
   /** Puts a ready-made portrait in the library under People (for an NPC). */
   onAddPortrait?: (preset: PresetPortrait) => Promise<Asset>
   /** The DM's people. */
@@ -213,6 +216,7 @@ export function DmView({
   onStage,
   library,
   onAddPortrait,
+  presets,
   npcs,
   importCampaign,
 }: DmViewProps) {
@@ -865,7 +869,9 @@ export function DmView({
           ) : pasting ? (
             <PasteDialog
               monsters={monsters ?? []}
-              assetNames={library.map((a) => a.name)}
+              // The maps that come with the table are brought in as a campaign names them.
+              assetNames={[...library.map((a) => a.name), ...STARTER_MAPS.map((m) => m.name)]}
+              presets={presets}
               shopNames={shops.shops.map((s) => s.name)}
               partyLevels={characters.map((c) => c.level)}
               onImport={(plan) =>
