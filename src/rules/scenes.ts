@@ -10,8 +10,8 @@ export type PlannedRoll = {
   id: string
   /** The check: 'skill:perception', 'save:dexterity', 'ability:strength'. */
   key: string
+  /** Players are never told it (Matt, 27 October); the server checks it. */
   dc: number
-  dcShown: boolean
   outcomeShown: boolean
   /** Character ids; empty for everyone. */
   who: string[]
@@ -42,7 +42,6 @@ export function parsePlannedRolls(value: unknown): PlannedRoll[] {
         id: str(r.id) || crypto.randomUUID(),
         key,
         dc,
-        dcShown: r.dcShown === true,
         outcomeShown: r.outcomeShown !== false,
         who: Array.isArray(r.who) ? r.who.filter((w): w is string => typeof w === 'string') : [],
         note: str(r.note).slice(0, 120),
@@ -83,13 +82,12 @@ export function parseFight(value: unknown): Fight | null {
   return { monsters, mapId: str(value.mapId) || null }
 }
 
-/** "Perception, DC 13, secret": the button for a planned roll. */
+/** "Perception, DC 13": the button for a planned roll. */
 export function plannedRollWords(roll: PlannedRoll, names: string[] = []): string {
   const name = findAskable(roll.key)?.name ?? roll.key
   return [
     name,
     `DC ${roll.dc}`,
-    ...(roll.dcShown ? [] : ['secret DC']),
     ...(roll.outcomeShown ? [] : ['outcome kept']),
     ...(names.length > 0 ? [names.join(' and ')] : []),
   ].join(', ')

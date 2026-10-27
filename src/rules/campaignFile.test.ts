@@ -24,7 +24,7 @@ describe('pasting a campaign', () => {
     const [inn, cliff] = plan.chapters[1].scenes
     expect(inn).toMatchObject({ number: '1.1', title: 'The Gull and Anchor', people: ['Old Tobin', 'Marra'] })
     expect(inn.reminders).toMatch(/^Goal: The party learns/)
-    expect(inn.rolls[0]).toMatchObject({ key: 'skill:perception', dc: 13, dcShown: false })
+    expect(inn.rolls[0]).toMatchObject({ key: 'skill:perception', dc: 13 })
     expect(inn.reminders).toContain('pass: they find the trail; fail: Tobin pockets them first')
     expect(inn.reminders).toContain('Side quest: Marra asks them')
     expect(inn.choices).toEqual([{ text: 'they follow the trail', to: 'Scene 1.2' }])
@@ -130,7 +130,6 @@ describe('pasting a campaign', () => {
     expect(parseRoll('Dexterity save DC 14, show the number, Wren and Thorin')).toMatchObject({
       key: 'save:dexterity',
       dc: 14,
-      dcShown: true,
       outcomeShown: true,
       who: ['Wren and Thorin'],
     })

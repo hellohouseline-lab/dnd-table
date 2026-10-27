@@ -12,9 +12,7 @@ const inn: SceneForNotebook = {
   title: 'The Gull and Anchor',
   place: 'The village inn',
   reminders: 'Goal: The party learns about the bell and suspects the chapel.\nEnds when: They climb to the chapel.',
-  rolls: [
-    { id: 'r', key: 'skill:perception', dc: 13, dcShown: false, outcomeShown: true, who: [], note: 'find the trail' },
-  ],
+  rolls: [{ id: 'r', key: 'skill:perception', dc: 13, outcomeShown: true, who: [], note: 'find the trail' }],
   choices: [{ id: 'c', text: 'Follow the pearls', sceneId: 'path' }],
   things: [{ id: 't', kind: 'item', dmItemId: 'key' }],
   fight: null,

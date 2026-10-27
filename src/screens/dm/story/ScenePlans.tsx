@@ -239,7 +239,6 @@ function ThingButton({ thing, data, actions }: { thing: Thing; data: SceneData; 
 function RollForm({ characters, onAdd }: { characters: Character[]; onAdd: (roll: PlannedRoll) => void }) {
   const [key, setKey] = useState('skill:perception')
   const [dc, setDc] = useState(13)
-  const [dcShown, setDcShown] = useState(false)
   const [outcomeShown, setOutcomeShown] = useState(true)
   const [who, setWho] = useState<string[]>([])
   const [note, setNote] = useState('')
@@ -249,7 +248,7 @@ function RollForm({ characters, onAdd }: { characters: Character[]; onAdd: (roll
       aria-label="Plan a roll"
       onSubmit={(e) => {
         e.preventDefault()
-        onAdd({ id: newId(), key, dc, dcShown, outcomeShown, who, note: note.trim() })
+        onAdd({ id: newId(), key, dc, outcomeShown, who, note: note.trim() })
       }}
     >
       <label className={styles.field}>
@@ -290,10 +289,6 @@ function RollForm({ characters, onAdd }: { characters: Character[]; onAdd: (roll
           </label>
         ))}
       </div>
-      <label>
-        <input type="checkbox" checked={dcShown} onChange={(e) => setDcShown(e.target.checked)} />
-        Tell players the number
-      </label>
       <label>
         <input type="checkbox" checked={outcomeShown} onChange={(e) => setOutcomeShown(e.target.checked)} />
         Tell players the outcome

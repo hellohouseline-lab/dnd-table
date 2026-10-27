@@ -15,7 +15,6 @@ export type ParsedRoll = {
   /** As written: "Perception DC 13, secret". */
   text: string
   dc: number
-  dcShown: boolean
   outcomeShown: boolean
   /** Character names; empty for everyone. */
   who: string[]
@@ -214,7 +213,6 @@ export function parseRoll(text: string): ParsedRoll & { pass: string; fail: stri
     key: askable?.key ?? null,
     text: main.trim(),
     dc: Math.min(40, Math.max(1, dc)),
-    dcShown: /show(n)? (the )?(dc|number)|tell (them )?the (dc|number)|dc shown|open dc/i.test(main),
     outcomeShown: !/outcome (hidden|kept|secret)|hide the outcome|keep the outcome|behind the screen/i.test(main),
     who,
     note: note.slice(0, 120),

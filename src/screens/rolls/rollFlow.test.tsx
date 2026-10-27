@@ -224,7 +224,7 @@ describe('the roll flow screens', () => {
     expect(html).toMatch(/Constitution save Resist poison or exhaustion/)
     expect(html).toMatch(/Everyone Thorin Ironfist Elowen/)
     expect(html).toMatch(/Medium 15 A real challenge/)
-    expect(html).toContain('Tell players the number')
+    expect(html).not.toContain('Tell players the number')
   })
 
   it('prompts the player with their bonus and a secret target', () => {
