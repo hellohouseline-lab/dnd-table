@@ -15,6 +15,7 @@ import { loadEquipment } from '../../rules/srd/index.ts'
 import { usePreviewNpcs, usePreviewStory } from './previewStory.ts'
 import { emptyStage, type Stage } from '../../live/stage.ts'
 import { presetPortraitUrl, type Asset } from '../../live/library.ts'
+import type { CampaignPreset, CampaignPresetControls } from '../../live/campaignPresets.ts'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { RollToast } from '../../dice/RollToasts.tsx'
@@ -146,6 +147,18 @@ export function DmPreview({ tab }: { tab: string }) {
   const [rolls, setRolls] = useState<Roll[]>(sampleRolls)
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(DEFAULT_DICE_STYLE)
   const [library, setLibrary] = useState<Asset[]>([])
+  // Saved campaigns, kept in the browser for the preview.
+  const [saved, setSaved] = useState<CampaignPreset[]>([])
+  const presets: CampaignPresetControls = {
+    presets: saved,
+    error: null,
+    save: async (name, body) =>
+      setSaved((now) => [
+        ...now.filter((p) => p.name !== name),
+        { id: crypto.randomUUID(), name, body, updatedAt: new Date().toISOString() },
+      ]),
+    remove: async (id) => setSaved((now) => now.filter((p) => p.id !== id)),
+  }
   // #/dev/dm/asked opens with a Constitution save out, which Thorin has rolled and Elowen hasn't.
   const [start] = useState(() => {
     if (tab !== 'asked') return { request: null, answers: [] }
@@ -229,6 +242,7 @@ export function DmPreview({ tab }: { tab: string }) {
         stage={stage}
         onStage={(patch) => setStage((now) => ({ ...now, ...patch }))}
         library={library}
+        presets={presets}
         onAddPortrait={async (preset) => {
           // The real thing uploads it; the preview keeps the picture in the browser.
           const url = URL.createObjectURL(await (await fetch(presetPortraitUrl(preset.key))).blob())

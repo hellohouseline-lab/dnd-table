@@ -7,6 +7,7 @@ import { fromDatabaseError, NOT_CONNECTED, TableError } from './errors.ts'
 import { forgetFile } from './files.ts'
 import { fitImage } from './images.ts'
 import { supabase } from './supabase.ts'
+import { matchName } from '../rules/campaignFile.ts'
 
 export type AssetKind = 'art' | 'music' | 'ambience' | 'effect'
 export type ArtCategory = 'places' | 'moments' | 'people' | 'maps'
@@ -235,6 +236,49 @@ export const STARTER_ART = [
     name: 'Old crypt',
     hint: 'Sarcophagi, an altar, a pit trap and a collapsed room',
   },
+  // Painted by Matt for Death Pit of Moloch (Higgsfield, 27 October 2026), at 70 pixels a square.
+  {
+    file: 'maps/meadheaven-tavern.webp',
+    category: 'maps',
+    name: 'Meadheaven tavern',
+    hint: "20 x 11 squares: a long bar, hearth, bard's corner, kitchen and stairs",
+  },
+  {
+    file: 'maps/sheriffs-office-jail.webp',
+    category: 'maps',
+    name: "Sheriff's office and jail",
+    hint: '18 x 10 squares: a front office, a locked gear chest and three cells',
+  },
+  {
+    file: 'maps/meadheaven-square.webp',
+    category: 'maps',
+    name: 'Town square',
+    hint: '32 x 18 squares: market stalls, a well, alleys and the road out of town',
+  },
+  {
+    file: 'maps/hillside-sinkhole.webp',
+    category: 'maps',
+    name: 'Hillside sinkhole',
+    hint: '20 x 11 squares: a hill road, an abandoned cart and a collapsing sinkhole',
+  },
+  {
+    file: 'maps/sink-cavern.webp',
+    category: 'maps',
+    name: 'Sink cavern',
+    hint: '14 x 8 squares: rubble under a sinkhole, an upturned wagon and a door',
+  },
+  {
+    file: 'maps/guard-room-goblin-den.webp',
+    category: 'maps',
+    name: "Guard room and goblins' den",
+    hint: '18 x 10 squares: a guard room with a chest, and a cave with a mud pit',
+  },
+  {
+    file: 'maps/ritual-hall.webp',
+    category: 'maps',
+    name: 'Ritual hall',
+    hint: '18 x 10 squares: a demon statue, two levers, an altar, six alcoves and a trapped exit',
+  },
   {
     file: 'art/market-city.svg',
     category: 'places',
@@ -327,7 +371,12 @@ export async function addStarterMap(
     const response = await fetch(starterMapUrl(starter))
     if (!response.ok) throw new TableError(`“${starter.name}” couldn't be loaded. Check your connection.`)
     const blob = await response.blob()
-    return uploadArt(campaignId, new File([blob], `${starter.name}.jpg`, { type: 'image/jpeg' }), starter.category)
+    const extension = starter.file.split('.').pop() ?? 'jpg'
+    return uploadArt(
+      campaignId,
+      new File([blob], `${starter.name}.${extension}`, { type: blob.type }),
+      starter.category,
+    )
   }
   const image = new Image()
   image.src = starterMapUrl(starter)
@@ -392,4 +441,22 @@ export function portraitForMonster(monsterIndex: string): PresetPortrait | undef
 /** A ready-made portrait put in this table's library under People (for an NPC), once. */
 export function addPresetPortrait(campaignId: string, preset: PresetPortrait): Promise<Asset> {
   return addStarterMap(campaignId, { file: `art/tokens/${preset.key}.jpg`, category: 'people', name: preset.name })
+}
+
+/**
+ * The maps and ready-made portraits that come with the table which a campaign names (a scene's
+ * fight map, "Map: Ritual hall" in its notes, a person's portrait) and this library doesn't have
+ * yet, so adding the campaign can bring them in first.
+ */
+export function artForCampaign(
+  names: { maps: string[]; portraits: string[] },
+  library: Asset[],
+): { maps: StarterMap[]; portraits: PresetPortrait[] } {
+  const has = (category: ArtCategory, name: string) => library.some((a) => a.category === category && a.name === name)
+  const pick = <T extends { name: string }>(things: readonly T[], wanted: string[]) =>
+    things.filter((t) => wanted.some((w) => matchName([t], (x) => x.name, w)))
+  return {
+    maps: pick(STARTER_MAPS, names.maps).filter((m) => !has('maps', m.name)),
+    portraits: pick(PRESET_PORTRAITS, names.portraits).filter((p) => !has('people', p.name)),
+  }
 }

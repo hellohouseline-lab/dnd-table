@@ -180,9 +180,14 @@ export function parseRoll(text: string): ParsedRoll & { pass: string; fail: stri
     .replace(/^to\s+/i, '')
     .replace(/\.$/, '')
   const lower = main.toLowerCase()
+  // "Dexterity saving throw" is a save; a bare "Strength DC 12" (or "Dexterity (thieves' tools)") a check.
+  const ability = /^(strength|dexterity|constitution|intelligence|wisdom|charisma)\b/.exec(lower)?.[1]
   const askable =
     [...ASKABLES].sort((a, b) => b.name.length - a.name.length).find((a) => lower.includes(a.name.toLowerCase())) ??
-    null
+    (ability
+      ? (ASKABLES.find((a) => a.key === (/saving throw/.test(lower) ? `save:${ability}` : `ability:${ability}`)) ??
+        null)
+      : null)
   const dc = Number(/dc\s*(\d+)/i.exec(main)?.[1] ?? 15)
   const parts = main.split(',').map((p) => p.trim())
   const who = parts
@@ -291,7 +296,7 @@ export function parseCampaign(text: string): CampaignPlan {
         continue
       }
       if (section === 'people' && level >= 3) {
-        person = blankPerson(title.replace(/^npc\s*:\s*/i, ''))
+        person = blankPerson(title.replace(/^npc\s*:\s*/i, '').replace(/\s*\(suggested[^)]*\)\s*$/i, ''))
         plan.people.push(person)
         continue
       }
@@ -607,4 +612,19 @@ export function planWarnings(
       if (!matchName(known.shops, (n) => n, shop)) out.add(`No shop called ${shop} (in ${s.title})`)
   }
   return [...out]
+}
+
+/**
+ * The maps and portraits a campaign names: each fight's map, any "Map: …" line in its notes (the
+ * Places list), and each person's portrait. Used to bring in pictures that come with the table.
+ */
+export function namedArt(plan: CampaignPlan): { maps: string[]; portraits: string[] } {
+  const scenes = plan.chapters.flatMap((c) => c.scenes)
+  const listed = scenes.flatMap((s) =>
+    [...`${s.place}\n${s.reminders}`.matchAll(/(?:^|\n)\s*(?:-\s*)?Map:\s*([^,\n]+)/g)].map((m) => m[1].trim()),
+  )
+  return {
+    maps: [...new Set([...scenes.map((s) => s.map), ...listed].filter(Boolean))],
+    portraits: [...new Set(plan.people.map((p) => p.portrait).filter(Boolean))],
+  }
 }
