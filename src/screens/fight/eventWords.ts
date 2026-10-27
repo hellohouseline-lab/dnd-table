@@ -4,6 +4,8 @@
 import type { CombatEvent } from '../../live/combat.ts'
 import { CONDITION_WORD } from '../../rules/conditionClocks.ts'
 import { ABILITY_NAME, type Ability } from '../../rules/abilities.ts'
+import { namesText } from '../../rules/askable.ts'
+import { talkSkill } from '../../rules/talk.ts'
 
 type Names = {
   /** The name to show for a combatant on this screen. */
@@ -85,6 +87,7 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
   }
 
   if (event.kind === 'condition') return conditionWords(event, actor, verb, you)
+  if (event.kind === 'talk') return talkWords(event, { nameOf, youId }, actor, verb, you)
 
   const targetIsYou = event.targetId !== null && event.targetId === youId
   const target = targetIsYou ? 'you' : nameOf(event.targetId)
@@ -192,4 +195,53 @@ function conditionWords(
     .filter(Boolean)
     .join(', ')
   return `${actor} ${failed}${is} now ${word}${how ? ` ${how}` : ''}.`
+}
+
+/** Talk (C3b): a player's words, the DM's answer, a monster giving up or running, a parley. */
+function talkWords(
+  event: CombatEvent,
+  { nameOf, youId }: Names,
+  actor: string,
+  verb: (they: string, yourself: string) => string,
+  you: boolean,
+): string {
+  const { shown } = event
+  const who = (ids: string[] | undefined) =>
+    namesText((ids ?? []).map((id) => (id === youId ? 'you' : nameOf(id)))) || 'no one'
+  if (typeof shown.parley === 'boolean') {
+    return shown.parley ? 'Parley: the fight stops so everyone can talk.' : 'Back to the fight.'
+  }
+  if (shown.stance) {
+    const them = nameOf(event.actorId)
+    switch (shown.stance) {
+      case 'surrendered':
+        return `${them} surrenders.`
+      case 'running':
+        return `${them} turns to run.`
+      case 'fled':
+        return `${them} runs away and is out of the fight.`
+      default:
+        return `${them} fights on.`
+    }
+  }
+  if (shown.answer) {
+    const whose = you ? 'Your words' : `${actor}'s words`
+    if (shown.answer === 'partly') return `${whose} partly work.`
+    if (shown.answer === 'fails') return `${whose} don't work.`
+    const them = who(shown.targets)
+    switch (shown.outcome) {
+      case 'surrender':
+        return `${whose} work: ${them} ${shown.targets?.length === 1 ? 'surrenders' : 'surrender'}.`
+      case 'run':
+        return `${whose} work: ${them} ${shown.targets?.length === 1 ? 'turns' : 'turn'} to run.`
+      case 'parley':
+        return `${whose} work: the fight stops so everyone can talk.`
+      default:
+        return `${whose} work.`
+    }
+  }
+  const skill = talkSkill(shown.talk)
+  const words = shown.words ? `: ‘${shown.words}’` : ''
+  const rolled = typeof shown.total === 'number' ? ` (${skill?.word ?? 'check'} ${shown.total})` : ''
+  return `${actor} ${verb('tries', 'try')} to ${(skill?.verb ?? 'talk to').toLowerCase()} ${who(shown.targets)}${words}${rolled}.`
 }

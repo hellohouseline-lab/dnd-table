@@ -5,6 +5,7 @@ import type { Combatant, CombatantSecret, Token } from '../live/combat.ts'
 import type { Character } from '../rules/character.ts'
 import { initials } from '../rules/combat.ts'
 import type { MapToken } from './BattleMap.tsx'
+import { isOut } from '../rules/talk.ts'
 
 type Viewer = {
   userId: string
@@ -59,7 +60,7 @@ export function mapTokens(tokens: Token[], people: People, viewer: Viewer): MapT
         hidden: token.hidden,
         acting: combatant.id === people.currentId,
         canMove: viewer.isDm,
-        down: combatant.health === 'down',
+        down: isOut(combatant),
       },
     ]
   })

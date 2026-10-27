@@ -1226,3 +1226,46 @@ test('conditions: a player stands up, breaks free and shakes off poison on their
   await expect(ribbon.getByRole('button', { name: /Poisoned/ })).toBeHidden()
   await expect(yours).toBeHidden()
 })
+
+test('talk: a player tries to persuade the goblins with their action, and it shows in the feed', async ({ page }) => {
+  await page.goto('#/dev/table/fight')
+  const talk = page.getByRole('region', { name: 'Talk' })
+  await talk.getByRole('button', { name: 'Persuade' }).click()
+  await expect(talk.getByLabel('Who to')).toHaveValue('everyone')
+  await talk.getByPlaceholder('Optional: say it in a line').fill('Lay down your arms and you can walk away.')
+  await talk.getByRole('button', { name: 'Persuade: roll Persuasion' }).click()
+  await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
+    'You try to persuade Goblin A and Unknown creature 2: ‘Lay down your arms and you can walk away.’ (Persuasion',
+  )
+  // It spent the action.
+  await expect(talk.getByRole('button', { name: 'Intimidate' })).toBeDisabled()
+})
+
+test('talk: the DM answers a talk card, the goblins surrender, then a parley pauses the fight', async ({ page }) => {
+  await page.goto('#/dev/battle/talk')
+  const cards = page.getByRole('list', { name: 'Talk cards' })
+  await expect(cards).toContainText('Thorin Ironfist tries to intimidate Goblin A and Goblin B. Intimidation 16')
+  // The quiet morale nudge for the goblin that's nearly dead.
+  await expect(page.getByRole('list', { name: 'Morale' })).toContainText(
+    'Goblin B is nearly dead: it might run or beg.',
+  )
+  await cards.getByRole('button', { name: 'It works' }).click()
+  await cards.getByRole('button', { name: 'They surrender' }).click()
+  await expect(cards).toBeHidden()
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText("Thorin Ironfist's words work: Goblin A and Goblin B surrender.")
+  await expect(page.getByRole('region', { name: 'Turn order' })).toContainText('Surrendered')
+  await expect(page.getByRole('list', { name: 'Morale' })).toBeHidden()
+
+  // Undo brings the card back.
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect(cards).toBeVisible()
+
+  // A parley: Next turn waits until Back to the fight.
+  await page.getByRole('button', { name: 'Parley', exact: true }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Parley: talking, not fighting' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Next turn' })).toBeDisabled()
+  await page.getByRole('button', { name: 'Back to the fight' }).click()
+  await expect(feed).toContainText('Back to the fight.')
+  await expect(page.getByRole('button', { name: 'Next turn' })).toBeEnabled()
+})

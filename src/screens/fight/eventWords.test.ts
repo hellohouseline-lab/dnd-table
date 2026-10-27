@@ -204,3 +204,39 @@ describe('conditions in the feed', () => {
     )
   })
 })
+
+describe('talk in the feed', () => {
+  const talk = (shown: CombatEvent['shown'], actorId: string | null = 'thorin') => ({
+    ...attack(shown, actorId ?? 'thorin', 'goblin'),
+    actorId,
+    kind: 'talk' as const,
+  })
+  it('says who tried to talk to whom, what they said and the total', () => {
+    expect(
+      eventWords(talk({ talk: 'persuasion', targets: ['goblin', 'unknown'], words: 'Drop them.', total: 14 }), {
+        nameOf,
+      }),
+    ).toBe('Thorin tries to persuade Goblin A and Unknown creature 2: ‘Drop them.’ (Persuasion 14).')
+    expect(eventWords(talk({ talk: 'intimidation', targets: ['goblin'], total: 9 }), { nameOf, youId: 'thorin' })).toBe(
+      'You try to intimidate Goblin A (Intimidation 9).',
+    )
+  })
+  it('says what came of it', () => {
+    expect(
+      eventWords(talk({ answer: 'works', outcome: 'surrender', targets: ['goblin', 'unknown'] }), { nameOf }),
+    ).toBe("Thorin's words work: Goblin A and Unknown creature 2 surrender.")
+    expect(eventWords(talk({ answer: 'works', outcome: 'run', targets: ['goblin'] }), { nameOf })).toBe(
+      "Thorin's words work: Goblin A turns to run.",
+    )
+    expect(eventWords(talk({ answer: 'partly' }), { nameOf, youId: 'thorin' })).toBe('Your words partly work.')
+    expect(eventWords(talk({ answer: 'fails' }), { nameOf })).toBe("Thorin's words don't work.")
+  })
+  it('says when a monster gives up or runs, and when a parley starts and ends', () => {
+    expect(eventWords(talk({ stance: 'fled' }, 'goblin'), { nameOf })).toBe(
+      'Goblin A runs away and is out of the fight.',
+    )
+    expect(eventWords(talk({ stance: 'surrendered' }, 'goblin'), { nameOf })).toBe('Goblin A surrenders.')
+    expect(eventWords(talk({ parley: true }, null), { nameOf })).toBe('Parley: the fight stops so everyone can talk.')
+    expect(eventWords(talk({ parley: false }, null), { nameOf })).toBe('Back to the fight.')
+  })
+})

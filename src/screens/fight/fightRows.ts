@@ -6,6 +6,7 @@ import type { Character } from '../../rules/character.ts'
 import { healthState, turnOrder, upNext, type HealthState } from '../../rules/combat.ts'
 import { attacksPerAction, monsterAttacksPerAction } from '../../rules/turn.ts'
 import type { SrdMonster } from '../../rules/srd/index.ts'
+import { isOut } from '../../rules/talk.ts'
 
 export type FightRow = {
   combatant: Combatant
@@ -27,7 +28,7 @@ type FightLike = {
 }
 
 export function fightRows(fight: FightLike, characters: Character[], viewer: 'dm' | 'player'): FightRow[] {
-  const entries = fight.combatants.map((c) => ({ ...c, out: c.kind === 'monster' && c.health === 'down' }))
+  const entries = fight.combatants.map((c) => ({ ...c, out: isOut(c) }))
   const order = turnOrder(entries)
   const { currentId, round } = fight.encounter
   const next = upNext(entries, currentId, round)

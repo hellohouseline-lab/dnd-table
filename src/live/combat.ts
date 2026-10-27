@@ -29,6 +29,7 @@ import { supabase } from './supabase.ts'
 import type { BonusAttackKind } from '../rules/bonusActions.ts'
 import { monsterTraitKeys, type ClockChoice, type ConditionClock } from '../rules/conditionClocks.ts'
 import type { Ability } from '../rules/abilities.ts'
+import type { Stance, TalkAnswer, TalkOutcome, TalkSkill } from '../rules/talk.ts'
 
 export type Encounter = {
   id: string
@@ -36,6 +37,8 @@ export type Encounter = {
   status: 'active' | 'ended'
   round: number
   currentId: string | null
+  /** A parley: the fight is paused to talk, and Next turn waits (C3b). */
+  parley: boolean
   startedAt: string
 }
 
@@ -54,6 +57,8 @@ export type Combatant = {
   conditions: string[]
   /** How long each of its conditions lasts (C3a); a condition with no clock stays until taken off. */
   clocks: ConditionClock[]
+  /** A monster's stance (C3b): fighting, surrendered, running away, or gone. */
+  stance: Stance
   /** Walking speed in feet: a monster's own; a character's sheet has the one that counts. */
   speed: number
   /** How far it threatens for opportunity attacks: 5 feet, or more with a reach weapon. */
@@ -70,7 +75,7 @@ export type CombatEvent = {
   round: number
   actorId: string | null
   targetId: string | null
-  kind: 'attack' | 'action' | 'death_save' | 'spell' | 'concentration' | 'condition'
+  kind: 'attack' | 'action' | 'death_save' | 'spell' | 'concentration' | 'condition' | 'talk'
   rollId: string | null
   shown: {
     label?: string
@@ -132,6 +137,18 @@ export type CombatEvent = {
     stood?: boolean
     feet?: number
     brokeFree?: boolean
+    /** Talk (C3b): the skill, who to, what they said (total as above). */
+    talk?: TalkSkill
+    targets?: string[]
+    words?: string | null
+    /** The DM's answer to a talk card, and what came of it. */
+    answerTo?: string
+    answer?: TalkAnswer
+    outcome?: TalkOutcome | null
+    /** A monster's stance set by hand, or running away as its turn came round. */
+    stance?: Stance
+    /** A parley called (true) or over (false). */
+    parley?: boolean
   }
   undone: boolean
   seq: number
@@ -180,6 +197,7 @@ function db() {
 }
 
 const HEALTH: HealthState[] = ['healthy', 'bloodied', 'near-death', 'down']
+const STANCES: Stance[] = ['fighting', 'surrendered', 'running', 'fled']
 
 export function rowToEncounter(row: Tables<'encounters'>): Encounter {
   return {
@@ -188,6 +206,7 @@ export function rowToEncounter(row: Tables<'encounters'>): Encounter {
     status: row.status === 'active' ? 'active' : 'ended',
     round: row.round,
     currentId: row.current_id,
+    parley: row.parley,
     startedAt: row.started_at,
   }
 }
@@ -206,6 +225,7 @@ export function rowToCombatant(row: Tables<'combatants'>): Combatant {
     health: HEALTH.find((h) => h === row.health) ?? 'healthy',
     conditions: row.conditions,
     clocks: Array.isArray(row.condition_clocks) ? (row.condition_clocks as unknown as ConditionClock[]) : [],
+    stance: STANCES.find((s) => s === row.stance) ?? 'fighting',
     speed: row.speed,
     reachFt: row.reach_ft,
     turn: {
@@ -235,7 +255,8 @@ export function rowToEvent(row: Tables<'combat_events'>): CombatEvent {
       row.kind === 'death_save' ||
       row.kind === 'spell' ||
       row.kind === 'concentration' ||
-      row.kind === 'condition'
+      row.kind === 'condition' ||
+      row.kind === 'talk'
         ? row.kind
         : 'action',
     rollId: row.roll_id,
@@ -796,4 +817,55 @@ export async function breakFree(combatantId: string): Promise<{ roll: Roll; free
   if (error) throw fromServerRule(error)
   const result = data as { roll: Tables<'rolls'>; free: boolean; event: Tables<'combat_events'> }
   return { roll: rowToRoll(result.roll), free: result.free, event: rowToEvent(result.event) }
+}
+
+// Talk and parley (C3b)
+
+/** Persuade, Intimidate or Deceive with your action: the server throws the check and posts the card. */
+export async function talk(
+  combatantId: string,
+  skill: TalkSkill,
+  targetIds: string[],
+  words: string,
+  request: RollRequest,
+): Promise<{ roll: Roll; event: CombatEvent }> {
+  const { data, error } = await db().rpc('talk', {
+    p_combatant_id: combatantId,
+    p_skill: skill,
+    p_target_ids: targetIds,
+    p_words: words,
+    p_roll: requestToJson(request),
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), event: rowToEvent(result.event) }
+}
+
+/** The DM's answer to a talk card: It works (and what comes of it), Partly or It doesn't. */
+export async function answerTalk(
+  eventId: string,
+  answer: TalkAnswer,
+  outcome: TalkOutcome | null,
+): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('answer_talk', {
+    p_event_id: eventId,
+    p_answer: answer,
+    p_outcome: outcome as string,
+  })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
+}
+
+/** The DM sets a monster's stance: it surrenders, runs, or fights on. */
+export async function setStance(combatantId: string, stance: Stance): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('set_stance', { p_combatant_id: combatantId, p_stance: stance })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
+}
+
+/** The DM calls a parley (the fight pauses) or goes back to the fight. */
+export async function setParley(encounterId: string, on: boolean): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('set_parley', { p_encounter_id: encounterId, p_on: on })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
 }

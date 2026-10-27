@@ -57,6 +57,10 @@ import {
   conditionSave as rollConditionSave,
   standUp as standUpNow,
   breakFree as breakFreeNow,
+  talk as talkNow,
+  answerTalk as answerTalkNow,
+  setStance as setStanceNow,
+  setParley as setParleyNow,
 } from './combat.ts'
 import { messageFor } from './errors.ts'
 import type { Roll } from './rolls.ts'
@@ -64,6 +68,7 @@ import type { FeatureCost } from '../rules/features.ts'
 import type { BonusAttackKind } from '../rules/bonusActions.ts'
 import type { Ability } from '../rules/abilities.ts'
 import type { ClockChoice } from '../rules/conditionClocks.ts'
+import { isOut, type Stance, type TalkAnswer, type TalkOutcome, type TalkSkill } from '../rules/talk.ts'
 
 type Fight = NonNullable<FightState>
 
@@ -153,6 +158,20 @@ export type FightControls = {
   standUp: (combatant: Combatant) => Promise<void>
   /** Breaks free of a grab or a web with your action. Throws in plain words if refused. */
   breakFree: (combatant: Combatant) => Promise<Roll>
+  /** Persuade, Intimidate or Deceive with your action (C3b). Throws in plain words if refused. */
+  talk: (
+    combatant: Combatant,
+    skill: TalkSkill,
+    targetIds: string[],
+    words: string,
+    request: RollRequest,
+  ) => Promise<Roll>
+  /** DM: answers a talk card. */
+  answerTalk: (event: CombatEvent, answer: TalkAnswer, outcome: TalkOutcome | null) => void
+  /** DM: a monster surrenders, runs, or fights on. */
+  setStance: (combatant: Combatant, stance: Stance) => void
+  /** DM: calls a parley (the fight pauses) or goes back to the fight. */
+  setParley: (on: boolean) => void
 }
 
 /** How long a burst of fight changes must be quiet before the whole fight is loaded again. */
@@ -353,9 +372,12 @@ export function useFight(campaignId: string, userId: string): FightControls {
   const next = useCallback(() => {
     const now = current.current
     if (!now) return
-    const entries = now.combatants.map((c) => ({ ...c, out: c.kind === 'monster' && c.health === 'down' }))
+    const entries = now.combatants.map((c) => ({ ...c, out: isOut(c) }))
     const turn = nextTurn(entries, now.encounter.currentId, now.encounter.round)
-    patchLocal((f) => ({ ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }))
+    // In a parley the server refuses, and says why.
+    if (!now.encounter.parley) {
+      patchLocal((f) => ({ ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }))
+    }
     void attempt(async () => {
       const encounter = await endTurn(now.encounter.id)
       patchLocal((f) => (f.encounter.id === encounter.id ? { ...f, encounter } : f))
@@ -586,6 +608,54 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reload],
   )
 
+  const talk = useCallback(
+    async (combatant: Combatant, skill: TalkSkill, targetIds: string[], words: string, request: RollRequest) => {
+      setError(null)
+      const { roll, event } = await talkNow(combatant.id, skill, targetIds, words, request)
+      setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+      reload()
+      return roll
+    },
+    [reload],
+  )
+
+  const answerTalk = useCallback(
+    (event: CombatEvent, answer: TalkAnswer, outcome: TalkOutcome | null) => {
+      void attempt(async () => {
+        const answered = await answerTalkNow(event.id, answer, outcome)
+        setEvents((list) => withRow(list, answered).sort((a, b) => a.seq - b.seq))
+        return true
+      }).then(() => reload())
+    },
+    [attempt, reload],
+  )
+
+  const setStance = useCallback(
+    (combatant: Combatant, stance: Stance) => {
+      patchLocal((f) => ({ ...f, combatants: f.combatants.map((c) => (c.id === combatant.id ? { ...c, stance } : c)) }))
+      void attempt(async () => {
+        const event = await setStanceNow(combatant.id, stance)
+        setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+        return true
+      }).then(() => reload())
+    },
+    [attempt, patchLocal, reload],
+  )
+
+  const setParley = useCallback(
+    (on: boolean) => {
+      const now = current.current
+      if (!now) return
+      patchLocal((f) => ({ ...f, encounter: { ...f.encounter, parley: on } }))
+      void attempt(async () => {
+        const event = await setParleyNow(now.encounter.id, on)
+        setEvents((list) => withRow(list, event).sort((a, b) => a.seq - b.seq))
+        return true
+      }).then(() => reload())
+    },
+    [attempt, patchLocal, reload],
+  )
+
   const undo = useCallback(() => {
     const newest = [...events].reverse().find((e) => !e.undone)
     if (!newest) return
@@ -614,6 +684,10 @@ export function useFight(campaignId: string, userId: string): FightControls {
     conditionSave,
     standUp,
     breakFree,
+    talk,
+    answerTalk,
+    setStance,
+    setParley,
     start,
     addMonsters: addMonstersTo,
     rollInitiative: rollFor,

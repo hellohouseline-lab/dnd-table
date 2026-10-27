@@ -30,6 +30,9 @@ import { AddMonsterDialog } from '../fight/FightDialogs.tsx'
 import { cameraTurn, concentratingIn, fightRows, type FightRow } from '../fight/fightRows.ts'
 import { offersFor } from '../fight/conditionOffers.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
+import { MoraleNudges, ParleyBanner, TalkCards } from '../fight/Talk.tsx'
+import { deafOnCard, moraleFor, waitingTalks } from '../fight/talkRows.ts'
+import type { Stance } from '../../rules/talk.ts'
 import { useAiming, type Aiming } from '../fight/useAiming.ts'
 import { useCasting } from '../fight/useCasting.ts'
 import { AreaDialog, type AreaDraft } from '../fight/AreaDialog.tsx'
@@ -207,7 +210,15 @@ export function BattleView({
     if (action) aimMonster(row, action)
   }
 
-  const { next, undo, reveal } = controls
+  const { next, undo, reveal, setParley } = controls
+  const parley = fight.encounter.parley
+  function endFight() {
+    if (window.confirm('End the fight? Every miniature leaves the map, and the map stays up as a picture.'))
+      controls.end()
+  }
+  function setStances(ids: string[], stance: Stance) {
+    for (const combatant of fight.combatants.filter((c) => ids.includes(c.id))) controls.setStance(combatant, stance)
+  }
   useEffect(() => {
     const press = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null
@@ -217,6 +228,7 @@ export function BattleView({
       else if (key === 'u') undo()
       else if (key === 'r' && acting?.unrevealed) reveal(acting.combatant)
       else if (key === 'a') setAskFor({ only: null })
+      else if (key === 'p') setParley(!parley)
       else if (/^[1-9]$/.test(key)) attackByNumber(focus, Number(key) - 1)
     }
     window.addEventListener('keydown', press)
@@ -285,7 +297,13 @@ export function BattleView({
         <h1 className={styles.title}>{campaignName}</h1>
         <span className={styles.battle}>
           Battle · Round {fight.encounter.round}
-          {acting ? ` · ${acting.name} is acting` : fight.encounter.currentId ? '' : ' · waiting for initiative'}
+          {parley
+            ? ' · Parley'
+            : acting
+              ? ` · ${acting.name} is acting`
+              : fight.encounter.currentId
+                ? ''
+                : ' · waiting for initiative'}
         </span>
         <span className={styles.spacer} />
         {request && !showResults && (
@@ -339,8 +357,16 @@ export function BattleView({
             rolling={table.rolling}
           />
           <div className={styles.foot}>
-            <button type="button" className={styles.next} onClick={next} title="N">
+            <button type="button" className={styles.next} onClick={next} title="N" disabled={parley}>
               Next turn
+            </button>
+            <button
+              type="button"
+              className={styles.footButton}
+              onClick={() => setParley(!parley)}
+              title="P: stop the fight to talk, then carry on from the same turn"
+            >
+              {parley ? 'End parley' : 'Parley'}
             </button>
             <button type="button" className={styles.footButton} onClick={() => setAdding(true)}>
               Add a monster
@@ -350,14 +376,7 @@ export function BattleView({
                 Add an area
               </button>
             )}
-            <button
-              type="button"
-              className={styles.footButton}
-              onClick={() => {
-                if (window.confirm('End the fight? Every miniature leaves the map, and the map stays up as a picture.'))
-                  controls.end()
-              }}
-            >
+            <button type="button" className={styles.footButton} onClick={endFight}>
               End fight
             </button>
           </div>
@@ -372,6 +391,13 @@ export function BattleView({
               if (prompt) controls.letGo(prompt)
             }}
             rolling={table.rolling}
+          />
+          {parley && <ParleyBanner onBack={() => setParley(false)} onEnd={endFight} />}
+          <TalkCards
+            waiting={waitingTalks(controls.events)}
+            nameOf={nameOf}
+            deafOn={(event) => deafOnCard(event, rows, monsters)}
+            onAnswer={controls.answerTalk}
           />
           {owing.map((character) => (
             <div key={character.id} className={styles.owing} role="status">
@@ -522,6 +548,7 @@ export function BattleView({
             </section>
           )}
           <div className={styles.strip}>
+            <MoraleNudges hints={moraleFor(rows, monsters)} onStance={setStances} />
             <CombatFeed
               className={styles.feed}
               events={controls.events}

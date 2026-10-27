@@ -114,6 +114,11 @@
   text-transform: uppercase;
 }
 
+.next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .footButton {
   flex: 1;
   height: 40px;
