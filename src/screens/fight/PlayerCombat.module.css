@@ -17,6 +17,19 @@
   white-space: nowrap;
 }
 
+/* Your own conditions beside your name, each opening the Rules panel. */
+.pillCondition {
+  margin-left: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(224, 123, 66, 0.18);
+  border: 1px solid rgba(224, 123, 66, 0.6);
+  color: var(--fail-light);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: help;
+}
+
 .pillInit {
   font-family: var(--font-heading);
   font-weight: 700;

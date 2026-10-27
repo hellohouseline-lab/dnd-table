@@ -1148,3 +1148,40 @@ test('the DM searches their quick notes, by session, on the Log tab', async ({ p
   await expect(notes.locator('mark')).toHaveText('pearl')
   await expect(notes).not.toContainText('innkeeper')
 })
+
+test('rules: a wizard finds her spells, and the DM opens Rules with the ? key', async ({ page }) => {
+  await page.goto('#/dev/table/caster')
+  await page.keyboard.press('?')
+  const rules = page.getByRole('region', { name: 'Rules' })
+  await rules.getByRole('tab', { name: 'Spells' }).click()
+  const spells = rules.getByRole('list', { name: 'Spells', exact: true })
+  await expect(spells.getByRole('listitem').first()).toContainText('Fire Bolt')
+  await expect(spells.getByRole('listitem').first()).toContainText('Yours')
+  await rules.getByRole('button', { name: '1', exact: true }).click()
+  await spells.getByRole('button', { name: /Magic Missile/ }).click()
+  await expect(spells).toContainText('three glowing darts')
+  await page.keyboard.press('/')
+  await page.keyboard.type('concentration')
+  await expect(rules.getByRole('list', { name: 'What we found' }).getByRole('listitem').first()).toContainText(
+    'Concentration',
+  )
+  await page.keyboard.press('Escape')
+  await expect(rules).toBeHidden()
+
+  await page.goto('#/dev/dm/story')
+  await page.keyboard.press('?')
+  const dmRules = page.getByRole('region', { name: 'Rules' })
+  await dmRules.getByRole('searchbox', { name: 'Search the rules' }).fill('fireball')
+  await dmRules.getByRole('button', { name: /^Fireball/ }).click()
+  await expect(dmRules).toContainText('A bright streak flashes from your pointing finger')
+  await page.getByRole('button', { name: 'Rules', pressed: true }).click()
+  await expect(dmRules).toBeHidden()
+})
+
+test('rules: in a fight, your own condition in the turn order opens what it does', async ({ page }) => {
+  await page.goto('#/dev/table/dying')
+  await page.getByRole('list', { name: 'Turn order' }).getByRole('button', { name: 'Unconscious' }).click()
+  const rules = page.getByRole('region', { name: 'Rules' })
+  await expect(rules.getByRole('button', { name: /Unconscious/ })).toHaveAttribute('aria-expanded', 'true')
+  await expect(rules).toContainText("You're out cold")
+})

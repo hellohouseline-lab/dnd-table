@@ -31,11 +31,14 @@ export function SlotPips({ spellcasting, className }: { spellcasting: Spellcasti
 /** "Concentrating: Bless" with a button to drop it, and the save owed after taking damage. */
 export function ConcentrationChip({
   character,
+  onExplain,
   onLostIt,
   onSave,
   rolling,
 }: {
   character: Character
+  /** Opens what concentration means, in the Rules panel. */
+  onExplain?: () => void
   onLostIt?: () => void
   onSave?: () => void
   rolling?: boolean
@@ -47,7 +50,14 @@ export function ConcentrationChip({
         C
       </span>
       <span className={styles.concentrationWords}>
-        Concentrating: <strong>{character.concentration}</strong>
+        {onExplain ? (
+          <button type="button" className={styles.explain} title="What concentration means" onClick={onExplain}>
+            Concentrating
+          </button>
+        ) : (
+          'Concentrating'
+        )}
+        : <strong>{character.concentration}</strong>
         {character.concentrationDc !== null && <> · save DC {character.concentrationDc} to keep it</>}
       </span>
       {onSave && character.concentrationDc !== null && (

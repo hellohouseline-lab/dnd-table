@@ -71,6 +71,7 @@ import { cameraTurn, fightRows, type CameraTurn, type FightRow } from '../fight/
 import { InitiativePrompt, InitiativeRibbon, InspectCard, TurnBanner, YourTurn } from '../fight/PlayerCombat.tsx'
 import { ConcentrationPrompt, DeathSaves, StrikePrompt } from '../fight/Reactions.tsx'
 import { ConcentrationChip } from '../fight/SpellParts.tsx'
+import { useRulesKey } from '../rules/useRulesKey.ts'
 import { AtAGlance } from '../fight/AtAGlance.tsx'
 import { SlotPicker } from '../fight/SlotPicker.tsx'
 import { useCasting, whyNot } from '../fight/useCasting.ts'
@@ -299,6 +300,7 @@ export function TableView({
   const [rules, setRules] = useState<{ focus?: string; n: number } | null>(null)
   const openRules = (focus?: string) => setRules((r) => ({ focus, n: (r?.n ?? 0) + 1 }))
   const closeRules = useCallback(() => setRules(null), [])
+  useRulesKey(useCallback(() => setRules((r) => (r ? null : { n: 1 })), []))
   const [mode, setMode] = useState<RollMode>('normal')
   const [secret, setSecret] = useState(false)
   // Your answer to the DM's request shows as the big result card once its dice land, until you close it.
@@ -967,6 +969,7 @@ export function TableView({
         {fight && (
           <InitiativeRibbon
             rows={rows}
+            yours={mine ? { combatantId: mine.id, onCondition: (index) => openRules(`condition:${index}`) } : null}
             picking={
               aimingSpell?.mode === 'target' && !aimingSpell.chosen
                 ? { canPick: () => true, onPick: aimingSpell.onPick }
@@ -1236,6 +1239,7 @@ export function TableView({
 
         <ConcentrationChip
           character={character}
+          onExplain={() => openRules('spells:concentration')}
           onLostIt={() => update({ concentration: null })}
           onSave={saveConcentration}
           rolling={table.rolling}
@@ -1392,6 +1396,7 @@ export function TableView({
             className={styles.rules}
             focus={rules.focus}
             yours={conditionList.map((c) => c.index)}
+            caster={{ className: character.className, spells: character.spellcasting.spells }}
             onClose={closeRules}
           />
         </Suspense>
