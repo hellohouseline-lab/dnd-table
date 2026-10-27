@@ -701,3 +701,14 @@ a.secondary {
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+/* A monster's ready-made portrait beside its name in the turn order. */
+.avatar {
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+

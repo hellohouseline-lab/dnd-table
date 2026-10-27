@@ -61,6 +61,7 @@ export function mapTokens(tokens: Token[], people: People, viewer: Viewer): MapT
         acting: combatant.id === people.currentId,
         canMove: viewer.isDm,
         down: isOut(combatant),
+        portrait: combatant.art ? `preset:${combatant.art}` : null,
       },
     ]
   })

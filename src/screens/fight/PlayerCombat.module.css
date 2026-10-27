@@ -471,3 +471,13 @@
   font-size: 0.85em;
   font-style: italic;
 }
+
+.pillAvatar {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+

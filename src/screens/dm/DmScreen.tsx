@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { addPresetPortrait } from '../../live/library.ts'
 import { listSessionNotes } from '../../live/notebook.ts'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
@@ -110,6 +111,11 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       stage={stage}
       onStage={changeStage}
       library={library.assets}
+      onAddPortrait={async (preset) => {
+        const added = await addPresetPortrait(campaignId, preset)
+        library.put(added)
+        return added
+      }}
       npcs={npcs}
       importCampaign={async (plan, ctx) => {
         const added = await importCampaign(campaignId, plan, ctx).catch((caught: unknown) => {

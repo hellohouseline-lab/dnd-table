@@ -25,6 +25,7 @@ import type { SrdMonster } from '../rules/srd/index.ts'
 import type { Tables } from './database.types.ts'
 import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './errors.ts'
 import { requestToJson, rowToRoll, type Roll } from './rolls.ts'
+import { portraitForMonster } from './library.ts'
 import { supabase } from './supabase.ts'
 import type { BonusAttackKind } from '../rules/bonusActions.ts'
 import { monsterTraitKeys, type ClockChoice, type ConditionClock } from '../rules/conditionClocks.ts'
@@ -59,6 +60,8 @@ export type Combatant = {
   clocks: ConditionClock[]
   /** A monster's stance (C3b): fighting, surrendered, running away, or gone. */
   stance: Stance
+  /** A monster's ready-made portrait (PRESET_PORTRAITS key), shown on its miniature; null for none. */
+  art: string | null
   /** Walking speed in feet: a monster's own; a character's sheet has the one that counts. */
   speed: number
   /** How far it threatens for opportunity attacks: 5 feet, or more with a reach weapon. */
@@ -226,6 +229,7 @@ export function rowToCombatant(row: Tables<'combatants'>): Combatant {
     conditions: row.conditions,
     clocks: Array.isArray(row.condition_clocks) ? (row.condition_clocks as unknown as ConditionClock[]) : [],
     stance: STANCES.find((s) => s === row.stance) ?? 'fighting',
+    art: row.art,
     speed: row.speed,
     reachFt: row.reach_ft,
     turn: {
@@ -382,6 +386,7 @@ export async function addMonsters(
         tiebreak: monster.scores.dexterity,
         speed: Math.max(0, Math.min(200, monster.speed)),
         reach_ft: threatReach(monster.actions),
+        art: portraitForMonster(monster.index)?.key ?? null,
       })),
     )
     .select('*')

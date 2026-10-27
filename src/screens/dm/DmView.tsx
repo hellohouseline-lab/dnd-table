@@ -49,7 +49,7 @@ import { useSrd } from '../../live/useSrd.ts'
 import { monsterInitiative } from '../../rules/combat.ts'
 import { placeFighters } from '../../live/combat.ts'
 import { messageFor } from '../../live/errors.ts'
-import type { Asset } from '../../live/library.ts'
+import type { Asset, PresetPortrait } from '../../live/library.ts'
 import { loadEquipment, loadMagicItems, loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { EncounterTab } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog, StartFightDialog, type FightSetting } from '../fight/FightDialogs.tsx'
@@ -170,6 +170,8 @@ type DmViewProps = {
   stage: Stage
   onStage: (patch: StagePatch) => void
   library: Asset[]
+  /** Puts a ready-made portrait in the library under People (for an NPC). */
+  onAddPortrait?: (preset: PresetPortrait) => Promise<Asset>
   /** The DM's people. */
   npcs: NpcControls
   /** Paste your notes: writes a read campaign into this one, resolving with what was added. */
@@ -210,6 +212,7 @@ export function DmView({
   stage,
   onStage,
   library,
+  onAddPortrait,
   npcs,
   importCampaign,
 }: DmViewProps) {
@@ -646,6 +649,7 @@ export function DmView({
               onOpenShop={(id) => void shops.setOpen(id, true)}
               startId={npcFocus}
               meetNote={meetNote}
+              onAddPortrait={onAddPortrait}
             />
           ) : tab === 'encounter' ? (
             fighting ? (

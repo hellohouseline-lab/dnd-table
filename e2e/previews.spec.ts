@@ -1269,3 +1269,29 @@ test('talk: the DM answers a talk card, the goblins surrender, then a parley pau
   await expect(feed).toContainText('Back to the fight.')
   await expect(page.getByRole('button', { name: 'Next turn' })).toBeEnabled()
 })
+
+test('ready-made art: the DM adds a painted place from the pictures that come with the table', async ({ page }) => {
+  await page.goto('#/dev/stage')
+  const library = page.getByRole('region', { name: 'Art library' })
+  await library.getByRole('button', { name: 'Add Crossroads' }).click()
+  await expect(library.getByRole('button', { name: 'Crossroads', exact: true })).toBeVisible()
+  await expect(library.getByRole('button', { name: 'Add Crossroads' })).toBeHidden()
+})
+
+test('ready-made art: an NPC gets a ready-made portrait, and a goblin shows its picture in the turn order', async ({
+  page,
+}) => {
+  await page.goto('#/dev/dm/npcs')
+  await page
+    .getByRole('navigation', { name: 'Your people' })
+    .getByRole('button', { name: /Brenna/ })
+    .click()
+  const brenna = page.getByRole('article', { name: 'Person: Brenna' })
+  await brenna.getByLabel('Portrait').selectOption({ label: 'Town sheriff' })
+  await expect(brenna.getByRole('img', { name: 'Town sheriff' })).toBeVisible()
+  await expect(brenna.getByLabel('Portrait')).toHaveValue(/./)
+
+  await page.goto('#/dev/battle')
+  const goblin = page.getByRole('button', { name: 'Goblin A', exact: true })
+  await expect(goblin.locator('img')).toHaveAttribute('src', /art\/tokens\/goblin\.jpg$/)
+})

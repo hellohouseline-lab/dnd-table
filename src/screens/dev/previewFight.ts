@@ -24,6 +24,7 @@ import { USABLE } from '../../rules/items.ts'
 import { concentrationDc, slotsLeft, spellSaveDc } from '../../rules/spells.ts'
 import type { RollRequest } from '../../rules/dice.ts'
 import { canHear, isOut, type Stance } from '../../rules/talk.ts'
+import { portraitForMonster } from '../../live/library.ts'
 import {
   attackHits,
   attacksLeft,
@@ -53,6 +54,7 @@ function characterCombatant(character: Character, encounterId: string, initiativ
     conditions: [],
     clocks: [],
     stance: 'fighting',
+    art: null,
     speed: character.speed,
     reachFt: /glaive|halberd|lance|pike|whip/i.test(JSON.stringify(character.attacks)) ? 10 : 5,
     turn: FRESH_TURN,
@@ -81,6 +83,7 @@ export function sampleFight(characters: Character[]): Fight {
       conditions: [],
       clocks: [],
       stance: 'fighting',
+      art: 'goblin',
       speed: 30,
       reachFt: 5,
       turn: FRESH_TURN,
@@ -470,6 +473,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         conditions: [],
         clocks: [],
         stance: 'fighting',
+        art: portraitForMonster(monster.index)?.key ?? null,
         speed: monster.speed,
         reachFt: threatReach(monster.actions),
         turn: FRESH_TURN,

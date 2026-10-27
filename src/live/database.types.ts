@@ -627,6 +627,7 @@ export type Database = {
       combatants: {
         Row: {
           action_used: boolean
+          art: string | null
           attacks_made: number
           bonus_used: boolean
           campaign_id: string
@@ -653,6 +654,7 @@ export type Database = {
         }
         Insert: {
           action_used?: boolean
+          art?: string | null
           attacks_made?: number
           bonus_used?: boolean
           campaign_id: string
@@ -679,6 +681,7 @@ export type Database = {
         }
         Update: {
           action_used?: boolean
+          art?: string | null
           attacks_made?: number
           bonus_used?: boolean
           campaign_id?: string

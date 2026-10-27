@@ -14,6 +14,7 @@ import { addWallets, coinsFor, coinWords, pay, splitCoins } from '../../rules/mo
 import { loadEquipment } from '../../rules/srd/index.ts'
 import { usePreviewNpcs, usePreviewStory } from './previewStory.ts'
 import { emptyStage, type Stage } from '../../live/stage.ts'
+import { presetPortraitUrl, type Asset } from '../../live/library.ts'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
 import { RollToast } from '../../dice/RollToasts.tsx'
@@ -144,6 +145,7 @@ export function DmPreview({ tab }: { tab: string }) {
   const [characters, setCharacters] = useState<Character[]>(sampleCharacters)
   const [rolls, setRolls] = useState<Roll[]>(sampleRolls)
   const [diceStyle, setDiceStyle] = useState<DiceStyle>(DEFAULT_DICE_STYLE)
+  const [library, setLibrary] = useState<Asset[]>([])
   // #/dev/dm/asked opens with a Constitution save out, which Thorin has rolled and Elowen hasn't.
   const [start] = useState(() => {
     if (tab !== 'asked') return { request: null, answers: [] }
@@ -226,7 +228,29 @@ export function DmPreview({ tab }: { tab: string }) {
         story={story}
         stage={stage}
         onStage={(patch) => setStage((now) => ({ ...now, ...patch }))}
-        library={[]}
+        library={library}
+        onAddPortrait={async (preset) => {
+          // The real thing uploads it; the preview keeps the picture in the browser.
+          const url = URL.createObjectURL(await (await fetch(presetPortraitUrl(preset.key))).blob())
+          const asset: Asset = {
+            id: crypto.randomUUID(),
+            campaignId: 'preview',
+            kind: 'art',
+            category: 'people',
+            mood: null,
+            name: preset.name,
+            path: url,
+            thumbPath: url,
+            sizeBytes: 0,
+            streamSafe: true,
+            credit: '',
+            hotkey: null,
+            createdAt: new Date().toISOString(),
+            grid: { size: 70, offsetX: 0, offsetY: 0 },
+          }
+          setLibrary((now) => [...now, asset])
+          return asset
+        }}
         npcs={npcs}
         importCampaign={async (plan) => story.importPlan(plan)}
       />

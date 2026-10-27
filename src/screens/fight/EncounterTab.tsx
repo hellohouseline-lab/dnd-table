@@ -11,6 +11,7 @@ import { actionFree } from '../../rules/turn.ts'
 import { MoraleNudges, ParleyBanner, TalkCards } from './Talk.tsx'
 import { deafOnCard, moraleFor, waitingTalks } from './talkRows.ts'
 import { isOut, STANCE_WORDS } from '../../rules/talk.ts'
+import { presetPortraitUrl } from '../../live/library.ts'
 import styles from './Fight.module.css'
 import { CombatFeed, TurnPips } from './TurnParts.tsx'
 import { DeathSaves } from './Reactions.tsx'
@@ -113,6 +114,9 @@ export function TurnOrder({
                   onClick={() => (pickable ? aiming.onPick(row) : onSelect(row.combatant.id))}
                   title={pickable ? `Attack ${row.name}` : undefined}
                 >
+                  {row.combatant.art && (
+                    <img className={styles.avatar} src={presetPortraitUrl(row.combatant.art)} alt="" />
+                  )}
                   <span className={row.combatant.kind === 'monster' ? styles.monsterText : undefined}>{row.name}</span>
                   {row.character?.concentration && (
                     <span className={styles.concentrating} title={`Concentrating on ${row.character.concentration}`}>
