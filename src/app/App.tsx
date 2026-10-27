@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { CallProvider } from '../call/CallProvider.tsx'
 import { LoadingScreen } from '../components/LoadingScreen.tsx'
+import { PhoneNotice } from '../components/PhoneNotice.tsx'
 import { CampaignScreen } from '../screens/campaign/CampaignScreen.tsx'
 import { NewCampaignScreen } from '../screens/campaign/NewCampaignScreen.tsx'
 import { CreditsScreen } from '../screens/credits/CreditsScreen.tsx'
@@ -37,6 +38,8 @@ type Route = {
   title: string
   /** Screens that need someone signed in show the sign-in screen first, then come back here. */
   signedIn?: boolean
+  /** Made for a computer screen: on a phone, a notice says so first. */
+  wide?: boolean
   render: (params: Record<string, string>) => ReactNode
 }
 
@@ -59,36 +62,42 @@ const ROUTES: Route[] = [
   },
   {
     pattern: '/c/:campaignId/dm',
+    wide: true,
     title: `DM screen · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <DmScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/stage',
+    wide: true,
     title: `The Stage · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <StageScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/play',
+    wide: true,
     title: APP_NAME,
     signedIn: true,
     render: ({ campaignId }) => <TableScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/build',
+    wide: true,
     title: `Make your character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <BuilderScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/level-up',
+    wide: true,
     title: `Level up · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <LevelUpScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/character/new',
+    wide: true,
     title: `Make your character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <BuilderScreen key={campaignId} campaignId={campaignId} />,
@@ -96,12 +105,14 @@ const ROUTES: Route[] = [
   {
     // The plain form, for anyone who'd rather type their sheet in.
     pattern: '/c/:campaignId/character/new/form',
+    wide: true,
     title: `Your character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId }) => <CharacterEditorScreen key={campaignId} campaignId={campaignId} />,
   },
   {
     pattern: '/c/:campaignId/character/:characterId/edit',
+    wide: true,
     title: `Change your character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId, characterId }) => (
@@ -111,6 +122,7 @@ const ROUTES: Route[] = [
   {
     // Type anything in by hand.
     pattern: '/c/:campaignId/character/:characterId/form',
+    wide: true,
     title: `Edit character · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId, characterId }) => (
@@ -119,6 +131,7 @@ const ROUTES: Route[] = [
   },
   {
     pattern: '/c/:campaignId/sheet/:characterId',
+    wide: true,
     title: `Character sheet · ${APP_NAME}`,
     signedIn: true,
     render: ({ campaignId, characterId }) => (
@@ -140,7 +153,7 @@ const ROUTES: Route[] = [
           title: `Join preview · ${APP_NAME}`,
           render: ({ as }: Record<string, string>) => <JoinScreenPreview as={as} />,
         },
-        { pattern: '/dev/table', title: `Table preview · ${APP_NAME}`, render: () => <TablePreview /> },
+        { pattern: '/dev/table', wide: true, title: `Table preview · ${APP_NAME}`, render: () => <TablePreview /> },
         {
           pattern: '/dev/table/fight',
           title: `Table preview · ${APP_NAME}`,
@@ -227,6 +240,7 @@ const ROUTES: Route[] = [
         },
         {
           pattern: '/dev/dm/:tab',
+          wide: true,
           title: `DM screen preview · ${APP_NAME}`,
           render: ({ tab }: Record<string, string>) => <DmPreview tab={tab} />,
         },
@@ -266,6 +280,14 @@ function Screens() {
   if (found.route.signedIn && auth.status === 'unavailable') return <NotConnectedScreen />
   if (found.route.signedIn && auth.status === 'signedOut') {
     return <SignInScreen key={path} next={path} loginError={auth.loginError} />
+  }
+  if (found.route.wide) {
+    return (
+      <>
+        {found.route.render(found.params)}
+        <PhoneNotice />
+      </>
+    )
   }
   return found.route.render(found.params)
 }

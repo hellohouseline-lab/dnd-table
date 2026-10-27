@@ -1352,3 +1352,22 @@ test("tonight's scenes: the DM moves the story on from the stage with Go here", 
   await expect(page.getByRole('textbox', { name: 'Scene now' })).toHaveValue('The mill road')
   await expect(tonight.getByRole('listitem').filter({ hasText: 'The mill road' })).toContainText('Now')
 })
+
+test('on a phone, the table says it works best on a computer; signing in is left alone', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 })
+  await page.goto('#/')
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
+  await expect(page.getByRole('dialog', { name: 'Best on a computer' })).toHaveCount(0)
+
+  await page.goto('#/dev/table')
+  const notice = page.getByRole('dialog', { name: 'Best on a computer' })
+  await expect(notice).toContainText('open this page on a laptop or computer')
+  await notice.screenshot({ path: process.env.PHONE_SHOT ?? 'test-results/phone-notice.png' })
+  await notice.getByRole('button', { name: 'Carry on anyway' }).click()
+  await expect(notice).toHaveCount(0)
+
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.evaluate(() => sessionStorage.clear())
+  await page.reload()
+  await expect(page.getByRole('dialog', { name: 'Best on a computer' })).toHaveCount(0)
+})
