@@ -43,6 +43,14 @@ describe('pasting a campaign', () => {
     expect(plan.chapters[3].scenes.map((s) => s.title)).toEqual(['Silence the bell', "The keeper's bargain"])
   })
 
+  it('keeps an If line as a reminder, unless it leads to a scene', () => {
+    const scene = parseCampaign(
+      '## Scene 1.1: Gate\nIf: they have the key: the gate opens without a roll\nIf: they climb -> Scene 1.2\n## Scene 1.2: Wall',
+    ).chapters[0].scenes[0]
+    expect(scene.reminders).toBe('If: they have the key: the gate opens without a roll')
+    expect(scene.choices).toEqual([{ text: 'they climb', to: 'Scene 1.2' }])
+  })
+
   it('keeps docs/CAMPAIGN_TEMPLATE.md and what the app copies the same', () => {
     expect(doc).toContain(`\`\`\`markdown\n${CAMPAIGN_TEMPLATE}\`\`\``)
     expect(doc).toContain(`\`\`\`markdown\n${CAMPAIGN_EXAMPLE}\`\`\``)

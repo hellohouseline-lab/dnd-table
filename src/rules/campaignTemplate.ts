@@ -26,7 +26,6 @@ Secrets: <what they hide>
 Attitude: <friendly, warm, neutral, wary or hostile>
 Quest: <what they need help with, and the scene it happens in>
 Fights as: <a monster from the free rules, such as "bandit captain", or a name from Monsters below>
-Bond: *later* <how the relationship grows, in up to 5 steps, one line each>
 Portrait: <file name in your library>
 
 ## Monsters
@@ -87,7 +86,7 @@ Level up: <who gains a level here, if anyone>
 Side quest: <an optional thread they can pick up here>
 If someone falls: <how a character who dies here could be brought back, and what it costs>
 Sets: <flag>
-With: *later* <name>: <how the scene changes if this person is with them>
+If: *later* <flag or earlier choice>: <how the scene changes, in a line or two>
 
 # Endings
 ## Ending: <name>
@@ -95,7 +94,6 @@ When: <what the players do to reach it>
 What happens: <for the DM, a few lines>
 Read aloud:
 > <the closing words>
-With: *later* <name>: <their last line, or the token they give>
 `
 
 export const CAMPAIGN_EXAMPLE = `# Campaign: The Drowned Bell

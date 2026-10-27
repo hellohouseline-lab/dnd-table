@@ -2,20 +2,21 @@
 
 The shape a campaign takes so it can go straight into the table's story mode. Write your ideas however they come (a "big splurge"), then ask an AI to fit them into this template using the prompt at the end. Paste the result into **Paste your notes** on the Story tab (S1d), then add pictures, music and maps from your library.
 
-Written 27 October 2026 after studying a published one-shot (a romance mystery for one player and a GM) for how a short adventure is put together. Nothing from that book is copied here; the example is made up.
+Made for a normal party of 3 or 4 players and a DM. Written 27 October 2026, after studying how a published one-shot is put together (a two-person adventure, so its companion and romance parts were left out). Nothing from that book is copied here; the example is made up.
 
-## How a good one-shot is built
+## How a good adventure is built
 
-What the published adventure does well, and what this template asks for:
+What makes a one-shot or a chapter run smoothly at the table, and what this template asks for:
 
-- **One hook, one clock.** A single strange event starts it (a letter in your own handwriting) and a deadline drives it (midnight). Every scene moves towards that deadline.
-- **Three acts with a job each.** Act 1 sets the scene and lets the player pick who comes with them. Act 2 is the journey and the clues. Act 3 is the reveal and a hard choice.
-- **A cast with handles.** Each person has a look, a voice and body language to act out, what they want, a small quest, and something they know. The DM can play any of them from a few lines.
-- **Choices that change scenes, not the whole book.** Whoever the player brings along changes how each later scene plays (who finds which clue, which roll is easier, what they say), but the scenes themselves stay the same. That's what keeps it writable.
+- **One hook, one clock.** A strange event pulls the party in, and a deadline or pressure (the spring tide, a rival getting there first) keeps them moving. Every scene moves towards it.
+- **Acts with a job each.** Setting up and getting the party together, the journey and the clues, then the reveal and a hard choice or a big fight.
+- **People with handles.** Each person has a look, a voice and a manner the DM can act out, what they want, what they know and what they hide. The DM can play anyone from a few lines.
+- **Something for everyone.** Each scene gives more than one kind of player something to do: someone to talk to, something to find, something to fight or sneak past.
+- **Choices that change scenes, not the whole book.** What the party did earlier (whether they have the key, who they angered) changes how a later scene plays, written as a line or two, so the adventure stays writable.
 - **Rolls with a purpose.** Every check has a DC, says what it's for, and says what happens on a fail (usually: it still happens, but it costs something).
 - **Clues pointing at the truth.** Each place hides something that hints at the secret, and the reveal makes them all click.
-- **Several endings from one choice.** The final scene offers four or five ways out, each with its own closing words, and a different line for each companion.
-- **Extras that set the mood.** A handout, maps for the two big places, music, tokens for every person, and small "moment" cards that give a bonus when something meaningful happens.
+- **Several endings.** The last scene allows a few outcomes depending on what the party chose, each with its own closing words.
+- **Extras that set the mood.** Handouts, a map for each place where a fight might happen, music for each act, and a portrait for every important person.
 
 ## The template
 
@@ -46,7 +47,6 @@ Secrets: <what they hide>
 Attitude: <friendly, warm, neutral, wary or hostile>
 Quest: <what they need help with, and the scene it happens in>
 Fights as: <a monster from the free rules, such as "bandit captain", or a name from Monsters below>
-Bond: *later* <how the relationship grows, in up to 5 steps, one line each>
 Portrait: <file name in your library>
 
 ## Monsters
@@ -107,7 +107,7 @@ Level up: <who gains a level here, if anyone>
 Side quest: <an optional thread they can pick up here>
 If someone falls: <how a character who dies here could be brought back, and what it costs>
 Sets: <flag>
-With: *later* <name>: <how the scene changes if this person is with them>
+If: *later* <flag or earlier choice>: <how the scene changes, in a line or two>
 
 # Endings
 ## Ending: <name>
@@ -115,7 +115,6 @@ When: <what the players do to reach it>
 What happens: <for the DM, a few lines>
 Read aloud:
 > <the closing words>
-With: *later* <name>: <their last line, or the token they give>
 ```
 
 ### Rules of thumb
@@ -142,19 +141,17 @@ With: *later* <name>: <their last line, or the token they give>
 | Choices ("Scene 1.2" or "Ending: <name>") | Choices that jump to a scene (S1b) | Paste your notes |
 | Things: items, boxes, shops | Things here (S1b), your items, shops | Paste your notes (make shops first; it links them by name) |
 | Fight with free-rules monsters and a map | A fight ready to start (S1b), with how hard it is for your party | Paste your notes |
-| Balance, Checkpoint, Level up, Side quest, If someone falls, Sets, With | The scene's reminders, with their label | Paste your notes |
-| Cast: role, where, look, voice, wants, knows, secrets, attitude, quest, fights as, portrait | NPCs tab (S1c) | Paste your notes (look, fights as and bond go into the voice notes, quest into wants) |
+| Balance, Checkpoint, Level up, Side quest, If someone falls, Sets, If | The scene's reminders, with their label | Paste your notes |
+| Cast: role, where, look, voice, wants, knows, secrets, attitude, quest, fights as, portrait | NPCs tab (S1c) | Paste your notes (look and fights as go into the voice notes, quest into wants) |
 | People in a scene | People in scenes (S1c) | Paste your notes |
 | What happened with someone | Their "What's happened" notes (S1d) | Added when you show them from a scene, or typed in |
 | Items: what it is, does, found, matters for | Your items; "Matters for" makes it a key item | Paste your notes |
 | Monsters, Flags, Places, Handouts | A "Campaign notes" scene each | Kept as words for the DM |
 | Monsters not in the free rules | *Not yet*: only free-rules monsters | Kept as words in the scene's reminders; use the closest free-rules monster for now |
-| Bond (a relationship that grows) | *Not yet* | Kept in the NPC's notes for now |
-| With (a scene changing by companion or flag) | *Not yet* | Kept in Reminders for now |
+| If (a scene changing by an earlier choice or flag) | *Not yet* | Kept in Reminders for now |
 | Flags | *Not yet* | Kept in Campaign notes and the notebook |
 | Handouts | *Not yet* (planned for later) | Show it as a picture on stage |
 | Endings | Scenes in an "Endings" chapter | Each ending as a scene |
-| Moment cards (a bonus when something meaningful happens) | Close: Inspiration, and effects | Given by hand |
 
 ## The prompt for the AI
 

@@ -10,7 +10,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
   - **Fight difficulty:** the 2014 rules' XP thresholds and the multiplier for several monsters (`src/rules/encounter.ts`, tested), shown on a scene's fight button ("Start the fight: 3 × Goblin (easy for this party)") and in the paste preview.
   - **NPC notes** (Matt's ask): **What's happened** on each person's card, with **Add a note about them**. Showing someone from a scene adds "Met the party at <scene>" by itself.
   - **Coins in the party stash** (Matt's ask): the stash on Items and loot has the same Add, Take and 1 to 100 gp buttons as each character's purse; taking more than it holds says so.
-  - Server: `20261027280000_npc_notes_stash_coins.sql` (`npcs.history`, `stash_coins`). Previews: `#/dev/dm/story` (Paste your notes), `#/dev/dm/npcs`, `#/dev/dm/items`. Tests: 558 database (3 new), 451 unit (10 new), 60 preview browser tests (3 new).
+  - Server: `20261027280000_npc_notes_stash_coins.sql` (`npcs.history`, `stash_coins`). Previews: `#/dev/dm/story` (Paste your notes), `#/dev/dm/npcs`, `#/dev/dm/items`. Tests: 558 database (3 new), 452 unit (11 new), 60 preview browser tests (3 new).
 - **S1c: the NPCs tab, and taking things away (live).**
   - **The NPCs tab** on Screen 1 (and the **Show an NPC** button, which opens it): your people, each with a portrait from your library, a role, where they're found, how they talk, what they want, what they know, their secrets, and how they feel about the party (friendly, warm, neutral, wary or hostile, one click). A shopkeeper links to their shop, with **Open** it from their card.
   - **Show** puts their portrait and a name card on stage for everyone (players' screens and Screen 2), and notes it in the log; **Hide** takes it down. Players can load only that one portrait, and never see the rest of the card (decision 59).
@@ -292,7 +292,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Next
 - **S1e next:** Rules for players (spells, conditions, turns and rests in plain words, beside the table). Then the test one-shot.
-- **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, bonds, scenes that change by companion, flags, handouts) wait for Matt to choose which to build.
+- **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets

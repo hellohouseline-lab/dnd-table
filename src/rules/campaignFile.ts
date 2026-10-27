@@ -476,9 +476,13 @@ export function parseCampaign(text: string): CampaignPlan {
           continue
         case 'choice':
         case 'choices':
-        case 'if':
           if (value) addChoice(value)
           open = addChoice
+          continue
+        case 'if':
+          // "If: they ring the bell -> Scene 2.1" is a choice; "If: has the key: the door opens" is a reminder.
+          if (/->|\u2192|=>|:\s*(scene\s*[\d.]+|ending\s*:)/i.test(value)) addChoice(value)
+          else remind(`If: ${value}`)
           continue
         case 'things':
           if (value) addThing(value)
