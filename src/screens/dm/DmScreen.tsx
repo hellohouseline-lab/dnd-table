@@ -127,6 +127,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
         const brought = await Promise.all([
           ...art.maps.map((m) => addStarterMap(campaignId, m)),
           ...art.portraits.map((p) => addPresetPortrait(campaignId, p)),
+          ...art.pictures.map((p) => addStarterMap(campaignId, p)),
         ]).catch((caught: unknown) => {
           throw new Error(messageFor(caught))
         })
