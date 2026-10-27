@@ -1,0 +1,98 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search {
+  flex: 1;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-rule);
+  background: var(--card-fill);
+  color: var(--text);
+  font-size: 17px;
+}
+
+.count {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.empty {
+  margin: 8px 0;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.session {
+  border-radius: 8px;
+  border: 1px solid var(--chip-border);
+  background: var(--panel-fill);
+  padding: 8px 14px;
+}
+
+.session summary {
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.number {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.date {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.entries {
+  list-style: none;
+  margin: 8px 0 4px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+}
+
+/* Where the party went: quieter, so the notes stand out. */
+.scene .text {
+  font-style: italic;
+  color: var(--label);
+}
+
+.text mark {
+  background: rgba(212, 175, 90, 0.3);
+  color: var(--gold-light);
+  border-radius: 2px;
+  padding: 0 1px;
+}

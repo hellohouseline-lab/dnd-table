@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { listSessionNotes } from '../../live/notebook.ts'
 import { useSignedInUser } from '../../app/authContext.ts'
 import { navigate } from '../../app/router.ts'
 import { LoadingScreen } from '../../components/LoadingScreen.tsx'
@@ -32,6 +33,8 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   const campaign = useLoad(() => getCampaign(campaignId), [campaignId])
   const members = useLoad(() => listMembers(campaignId), [campaignId])
   const party = useParty(campaignId, user.id)
+  // Every note ever written, fetched once when the DM opens Session notes.
+  const loadSessionNotes = useCallback(() => listSessionNotes(campaignId), [campaignId])
   const online = useOnlineIds(campaignId, user.id)
   const log = useRollLog(campaignId, user.id)
   const asking = useRollRequest(campaignId, user.id, true)
@@ -100,6 +103,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
 
   return (
     <DmView
+      loadSessionNotes={loadSessionNotes}
       giving={giving}
       shops={shops}
       story={story}
