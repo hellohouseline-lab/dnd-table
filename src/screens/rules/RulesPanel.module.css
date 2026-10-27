@@ -1,0 +1,219 @@
+/* The Rules panel (S1e): beside the table, not over it. */
+
+.panel {
+  box-sizing: border-box;
+  background: rgba(16, 12, 20, 0.95);
+  border: 1px solid var(--gold-rule);
+  box-shadow:
+    inset 0 0 0 4px rgba(16, 12, 20, 0.95),
+    inset 0 0 0 5px rgba(212, 175, 90, 0.3),
+    0 12px 36px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  color: var(--text);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+}
+
+.lead {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.close {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 6px;
+  background: none;
+  border: 1px solid var(--chip-border);
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.close:hover {
+  border-color: var(--gold-rule);
+}
+
+.search {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 6px;
+  background: var(--chip-fill);
+  border: 1px solid var(--chip-border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--chip-border);
+}
+
+.tab {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 6px;
+  background: none;
+  border: 1px solid var(--chip-border);
+  color: var(--text-2);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tab:hover {
+  border-color: var(--gold-rule);
+}
+
+.selected {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+  font-weight: 700;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-rule) transparent;
+}
+
+.entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entry {
+  border: 1px solid var(--chip-border);
+  border-radius: 8px;
+  background: var(--card-fill);
+}
+
+.entryOpen {
+  border-color: var(--gold-rule);
+}
+
+.entryHead {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text);
+  text-align: left;
+}
+
+.entryTitle {
+  flex: 1;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.yours {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--fail);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.where {
+  font-size: 13px;
+  color: var(--label);
+}
+
+.entryBody {
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plain {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.srd {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+
+.srd summary {
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.srd p {
+  margin: 6px 0 0;
+}
+
+.srdHeading {
+  margin: 10px 0 0;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.nothing {
+  margin: 4px 0 10px;
+  color: var(--text-3);
+}
+
+.credit {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--label);
+}

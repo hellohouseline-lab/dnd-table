@@ -1095,6 +1095,42 @@ test('the DM puts coins in the party stash', async ({ page }) => {
   await expect(stash.getByLabel(/^Coins:/)).toHaveAttribute('aria-label', 'Coins: 10 gp')
 })
 
+test('rules: a player looks up prone from the Rules button, and from their own conditions', async ({ page }) => {
+  await page.goto('#/dev/table/rules')
+  await page.getByRole('navigation', { name: 'Panels' }).getByRole('button', { name: 'Rules' }).click()
+  const rules = page.getByRole('region', { name: 'Rules' })
+  await expect(rules.getByRole('tab', { name: 'Conditions' })).toHaveAttribute('aria-selected', 'true')
+  // Your own conditions come first, marked.
+  await expect(rules.getByRole('listitem').first()).toContainText('You')
+  await rules.getByRole('searchbox', { name: 'Search the rules' }).fill('dash')
+  await expect(rules.getByRole('button', { name: /Action: Dash/ })).toBeVisible()
+  await expect(rules).toContainText('extra movement equal to your speed')
+  await rules.getByRole('button', { name: 'Close' }).click()
+  await expect(rules).toBeHidden()
+
+  await page.getByRole('region', { name: 'Abilities and conditions' }).getByRole('button', { name: 'Prone' }).click()
+  await expect(rules.getByRole('button', { name: /Prone/ })).toHaveAttribute('aria-expanded', 'true')
+  await expect(rules).toContainText("You're lying on the ground")
+  await rules.getByText('The rules’ words').first().click()
+  await expect(rules).toContainText("A prone creature's only movement option is to crawl")
+  await page.keyboard.press('Escape')
+  await expect(rules).toBeHidden()
+})
+
+test('rules: the sections explain turns, dice and rests', async ({ page }) => {
+  await page.goto('#/dev/table/rules')
+  await page.getByRole('navigation', { name: 'Panels' }).getByRole('button', { name: 'Rules' }).click()
+  const rules = page.getByRole('region', { name: 'Rules' })
+  await rules.getByRole('tab', { name: 'Rolling dice' }).click()
+  await rules.getByRole('button', { name: 'Advantage and disadvantage' }).click()
+  await expect(rules).toContainText('roll two d20s and use the higher')
+  await rules.getByRole('button', { name: 'The 18 skills' }).click()
+  await expect(rules).toContainText('Athletics (Strength): climbing, jumping, swimming')
+  await rules.getByRole('tab', { name: 'Resting' }).click()
+  await rules.getByRole('button', { name: 'Short rest' }).click()
+  await expect(rules).toContainText('spend hit dice')
+})
+
 test('the DM searches their quick notes, by session, on the Log tab', async ({ page }) => {
   await page.goto('#/dev/dm/party')
   const notebook = page.getByRole('region', { name: 'Your notebook' })

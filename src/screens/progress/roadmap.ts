@@ -67,7 +67,7 @@ export const ROADMAP: Milestone[] = [
   },
   {
     name: 'Rules for players',
-    detail: 'Spells, conditions, turns and rests in plain words, beside the table',
+    detail: 'Conditions, your turn, dice and rests in plain words, beside the table (ready); spells and the DM’s copy next',
     status: 'next',
   },
   {
