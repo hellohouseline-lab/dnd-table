@@ -313,6 +313,12 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **The one-shot is ready to read:** "The Lantern of Hollowmere", for 3 or 4 players, level 1 rising to 2, 3 to 4 hours, free-rules monsters only. It's in `private/one-shot/` on Matt's computer and nowhere else (that folder is never committed, so players can't read the secrets):
+  1. Skim `The Lantern of Hollowmere - DM background.pdf`.
+  2. Make the 21 pictures from `art-prompts.md` (JPEGs under 500 KB, named exactly as listed) and upload them on Screen 2 under Places, Moments, People and Maps.
+  3. On Items and loot, **Make a shop**: a General store named **Hesk's Sundries**.
+  4. On the Story tab, **Paste your notes** with all of `campaign.md`, then **Add it to my story**.
+- **Try the Rules panel** (refresh first): as a player press **?**, open **Spells**, and search for "fire"; on Screen 1 press **Rules** by the tabs.
 - **Try Rules** (refresh first): as a player press **Rules** under your abilities, search for "dash", and open **Rolling dice**. Ask the DM to make you prone (or poisoned), then click the condition on your plate.
 - **Try Paste your notes** (refresh first): on the Story tab press **Paste your notes**, then **Try the example** and look at the right-hand side; press **Add it to my story**. Then press **Copy the format for your AI**, paste it into Fable, add your notes at the end, and paste what Fable writes back in.
 - **Try NPC notes and stash coins:** on the NPCs tab add a note under **What's happened**; show someone from a scene and check "Met the party at …" appears. On Items and loot put 10 gp in the party stash, then take 5.
