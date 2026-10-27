@@ -1,10 +1,59 @@
 import { describe, expect, it } from 'vitest'
 import { matchName, parseCampaign, parseFight, parseRoll, planWarnings, planWords } from './campaignFile.ts'
-import { CAMPAIGN_FORMAT } from './campaignTemplate.ts'
+import doc from '../../docs/CAMPAIGN_TEMPLATE.md?raw'
+import { SHORT_LAYOUT } from './campaignFile.fixture.ts'
+import { AI_PROMPT, AI_PROMPT_TO_COPY, CAMPAIGN_EXAMPLE, CAMPAIGN_TEMPLATE } from './campaignTemplate.ts'
 
 describe('pasting a campaign', () => {
-  it('reads the worked example into chapters, scenes, people and items', () => {
-    const plan = parseCampaign(CAMPAIGN_FORMAT)
+  it('reads the campaign template example: notes, chapters, scenes numbered, endings and the cast', () => {
+    const plan = parseCampaign(CAMPAIGN_EXAMPLE)
+    expect(plan.title).toBe('The Drowned Bell')
+    expect(planWords(plan)).toBe('4 chapters, 6 scenes, 2 people and 1 item')
+    expect(plan.chapters.map((c) => c.title)).toEqual([
+      'Campaign notes',
+      'Chapter 1: The Village',
+      'Chapter 2: The Chapel',
+      'Endings',
+    ])
+    expect(plan.chapters[0].scenes[0].reminders).toContain('Truth: The old bell-keeper rings a sunken bell')
+    expect(plan.people[0]).toMatchObject({ name: 'Old Tobin', attitude: 'friendly', place: 'The chapel on the cliff' })
+    expect(plan.people[0].voice).toContain('Look: Stooped')
+    expect(plan.people[1].wants).toContain('Quest: Find her brother')
+    expect(plan.items[0]).toMatchObject({ name: "Hag's pearl", key: true })
+
+    const [inn, cliff] = plan.chapters[1].scenes
+    expect(inn).toMatchObject({ number: '1.1', title: 'The Gull and Anchor', people: ['Old Tobin', 'Marra'] })
+    expect(inn.reminders).toMatch(/^Goal: The party learns/)
+    expect(inn.rolls[0]).toMatchObject({ key: 'skill:perception', dc: 13, dcShown: false })
+    expect(inn.reminders).toContain('pass: they find the trail; fail: Tobin pockets them first')
+    expect(inn.reminders).toContain('Side quest: Marra asks them')
+    expect(inn.choices).toEqual([{ text: 'they follow the trail', to: 'Scene 1.2' }])
+    expect(cliff.fight).toEqual([
+      { name: 'Sahuagin', count: 2 },
+      { name: 'Merfolk', count: 2 },
+    ])
+    expect(cliff.map).toBe('Cliff path')
+    expect(cliff.reminders).toContain('Checkpoint: The log says')
+
+    const chapel = plan.chapters[2].scenes[0]
+    expect(chapel.gives).toEqual(["Hag's pearl"])
+    expect(chapel.reminders).toContain('Level up: Everyone reaches level 3')
+    expect(chapel.reminders).toContain('If someone falls:')
+    expect(chapel.choices.map((c) => c.to)).toEqual(['Ending: Silence the bell', "Ending: The keeper's bargain"])
+    expect(plan.chapters[3].scenes.map((s) => s.title)).toEqual(['Silence the bell', "The keeper's bargain"])
+  })
+
+  it('keeps docs/CAMPAIGN_TEMPLATE.md and what the app copies the same', () => {
+    expect(doc).toContain(`\`\`\`markdown\n${CAMPAIGN_TEMPLATE}\`\`\``)
+    expect(doc).toContain(`\`\`\`markdown\n${CAMPAIGN_EXAMPLE}\`\`\``)
+    expect(doc).toContain(`\`\`\`text\n${AI_PROMPT}\`\`\``)
+    expect(AI_PROMPT_TO_COPY).toContain('## Scene 1.1: <title>')
+    expect(AI_PROMPT_TO_COPY).toContain('# Campaign: The Drowned Bell')
+    expect(parseCampaign(CAMPAIGN_TEMPLATE).chapters.length).toBeGreaterThan(0)
+  })
+
+  it('reads the shorter layout into chapters, scenes, people and items', () => {
+    const plan = parseCampaign(SHORT_LAYOUT)
     expect(plan.title).toBe('The Ember Road')
     expect(planWords(plan)).toBe('2 chapters, 3 scenes, 2 people and 2 items')
     expect(plan.people[0]).toMatchObject({
@@ -91,7 +140,7 @@ describe('pasting a campaign', () => {
     const monsters = ['Goblin', 'Wolf', 'Bugbear']
     expect(matchName(monsters, (m) => m, 'goblins')).toBe('Goblin')
     expect(matchName(monsters, (m) => m, 'Wolves')).toBeUndefined()
-    const plan = parseCampaign(CAMPAIGN_FORMAT)
+    const plan = parseCampaign(SHORT_LAYOUT)
     const warnings = planWarnings(plan, { monsters: ['Goblin'], assets: ['Tavern'], shops: [] })
     expect(warnings).toContain("Hobgoblin isn't a monster in the free rules (in The Old Mill)")
     expect(warnings).toContain('Nothing called Forest road in your library yet (in The Mill Road)')

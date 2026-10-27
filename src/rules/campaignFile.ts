@@ -1,7 +1,8 @@
 // Paste your notes (S1d): a campaign written as plain text or Markdown, split into chapters,
-// scenes, people and items. The layout is in docs/CAMPAIGN_FORMAT.md (and Copy the format in the
-// app), so an AI can write it: "## Chapter" headings, "### Scene" headings, and "Field: value"
-// lines. Anything it doesn't recognise goes into the scene's reminders, so nothing is lost.
+// scenes, people and items. It reads the campaign template (docs/CAMPAIGN_TEMPLATE.md: "# Chapter",
+// "## Scene 1.1", "## Cast" with "### NPC:", labels one per line), an older shorter layout
+// (People, Items, "### scene" headings), and loose notes with headings. Anything it can't place goes into
+// reminders (or a "Campaign notes" chapter, for the campaign's own notes), so nothing is lost.
 
 import { ASKABLES } from './askable.ts'
 import type { Container, Richness } from './boxes.ts'
@@ -22,6 +23,8 @@ export type ParsedRoll = {
 }
 
 export type ParsedScene = {
+  /** "1.2" from "Scene 1.2: The Mill", for choices that say "Scene 1.2". */
+  number: string
   title: string
   place: string
   readAloud: string
@@ -52,6 +55,8 @@ export type ParsedPerson = {
   knows: string
   secrets: string
   attitude: Attitude
+  /** A picture's name in the library. */
+  portrait: string
 }
 
 export type ParsedItem = { name: string; description: string; key: boolean; type: TypeTag; rarity: Rarity | null }
@@ -63,7 +68,8 @@ export type CampaignPlan = {
   items: ParsedItem[]
 }
 
-const blankScene = (title: string): ParsedScene => ({
+const blankScene = (title: string, number = ''): ParsedScene => ({
+  number,
   title,
   place: '',
   readAloud: '',
@@ -89,6 +95,7 @@ const blankPerson = (name: string): ParsedPerson => ({
   knows: '',
   secrets: '',
   attitude: 'neutral',
+  portrait: '',
 })
 
 const ATTITUDE_WORDS: Record<string, Attitude> = {
@@ -147,13 +154,31 @@ const list = (v: string) =>
     .map((x) => x.trim())
     .filter(Boolean)
 
-/** "Perception DC 13, secret, outcome hidden, Wren — to spot the figure". */
-export function parseRoll(text: string): ParsedRoll {
-  const [main, ...rest] = text.split(/\s+[—–-]{1,2}\s+|\s*:\s+to\s+/)
-  const note = rest
-    .join(' ')
+/**
+ * "Perception DC 13, secret DC, outcome hidden: to spot the figure. Pass: they see her. Fail: ...",
+ * or "Perception DC 13 - to spot the figure". Pass and Fail come back as their own words.
+ */
+export function parseRoll(text: string): ParsedRoll & { pass: string; fail: string } {
+  const pass = /\bPass:\s*(.*?)(?=\s*\bFail:|$)/i.exec(text)?.[1].trim().replace(/\.$/, '') ?? ''
+  const fail = /\bFail:\s*(.*)$/i.exec(text)?.[1].trim().replace(/\.$/, '') ?? ''
+  const body = text
+    .replace(/\s*\bPass:.*$/i, '')
+    .replace(/\s*\bFail:.*$/i, '')
+    .trim()
+  const dash = body.split(/\s+[\u2014\u2013-]{1,2}\s+/)
+  let main = dash[0]
+  let note = dash.slice(1).join(' ')
+  if (dash.length === 1) {
+    const colon = /^(.*?\bDC\s*\d+[^:]*?):\s*(.*)$/i.exec(body)
+    if (colon) {
+      main = colon[1]
+      note = colon[2]
+    }
+  }
+  note = note
     .trim()
     .replace(/^to\s+/i, '')
+    .replace(/\.$/, '')
   const lower = main.toLowerCase()
   const askable =
     [...ASKABLES].sort((a, b) => b.name.length - a.name.length).find((a) => lower.includes(a.name.toLowerCase())) ??
@@ -162,7 +187,9 @@ export function parseRoll(text: string): ParsedRoll {
   const parts = main.split(',').map((p) => p.trim())
   const who = parts
     .slice(1)
-    .filter((p) => !/dc|secret|hidden|kept|shown|told|everyone|all|show the number|tell/i.test(p) && p.length > 0)
+    .filter(
+      (p) => !/dc|secret|hidden|kept|shown|told|everyone|all|show the number|tell|outcome/i.test(p) && p.length > 0,
+    )
   return {
     key: askable?.key ?? null,
     text: main.trim(),
@@ -171,6 +198,8 @@ export function parseRoll(text: string): ParsedRoll {
     outcomeShown: !/outcome (hidden|kept|secret)|hide the outcome|keep the outcome|behind the screen/i.test(main),
     who,
     note: note.slice(0, 120),
+    pass,
+    fail,
   }
 }
 
@@ -192,9 +221,10 @@ function parseBox(text: string): { container: Container; richness: Richness } {
   }
 }
 
-type Section = 'none' | 'chapter' | 'people' | 'items'
+type Section = 'none' | 'chapter' | 'people' | 'items' | 'notes'
 
 const FIELD = /^\s*(?:[-*]\s+)?\*{0,2}([A-Za-z][A-Za-z ']{1,30}?)\*{0,2}\s*:\s*(.*)$/
+const BULLET = /^\s*[-*]\s+/
 
 /** Splits pasted notes into chapters, scenes, people and items. */
 export function parseCampaign(text: string): CampaignPlan {
@@ -204,19 +234,29 @@ export function parseCampaign(text: string): CampaignPlan {
   let scene: ParsedScene | null = null
   let person: ParsedPerson | null = null
   let item: ParsedItem | null = null
-  // The multi-line field being filled: read-aloud, reminders, or a person's or item's text.
-  let open: { set: (line: string) => void } | null = null
+  // A chapter's own lines (Goal, Ends when) wait for its first scene.
+  let chapterNotes: string[] = []
+  // The campaign's own notes (pitch, truth, monsters, flags, places), each a scene in Campaign notes.
+  const notes: { title: string; lines: string[] }[] = []
+  let note: { title: string; lines: string[] } | null = null
+  // The field being filled over several lines: read-aloud, reminders, a list of rolls, and so on.
+  let open: ((line: string) => void) | null = null
 
-  const ensureChapter = () => {
+  const noteSection = (title: string) => {
+    note = { title, lines: [] }
+    notes.push(note)
+    return note
+  }
+  const startScene = (title: string, number = '') => {
     if (!chapter) {
       chapter = { title: 'Chapter 1', scenes: [] }
       plan.chapters.push(chapter)
     }
-    return chapter
-  }
-  const remind = (line: string) => {
-    if (!scene) return
-    scene.reminders = scene.reminders ? `${scene.reminders}\n${line}` : line
+    const made = blankScene(title, number)
+    if (chapterNotes.length > 0) made.reminders = chapterNotes.join('\n')
+    chapterNotes = []
+    chapter.scenes.push(made)
+    return made
   }
 
   for (const raw of text.replace(/\r/g, '').split('\n')) {
@@ -226,8 +266,15 @@ export function parseCampaign(text: string): CampaignPlan {
       open = null
       const level = heading[1].length
       const title = heading[2].trim().replace(/\*+/g, '')
-      if (level === 1 && !/^chapter|^part|^act/i.test(title)) {
+      const sceneHeading = /^scene\s*([\d.]*)\s*[:.]?\s*(.*)$/i.exec(title)
+      const ending = /^ending\s*:\s*(.*)$/i.exec(title)
+      if (
+        /^campaign\s*:/i.test(title) ||
+        (level === 1 && !/^(chapter|part|act|endings?)\b/i.test(title) && !plan.title)
+      ) {
         plan.title = title.replace(/^campaign\s*:\s*/i, '')
+        section = 'notes'
+        noteSection('The campaign')
         continue
       }
       if (/^(people|npcs|characters|cast)\b/i.test(title)) {
@@ -238,26 +285,45 @@ export function parseCampaign(text: string): CampaignPlan {
         section = 'items'
         continue
       }
+      if (/^(monsters|flags|places|handouts|notes)\b/i.test(title) && !sceneHeading) {
+        section = 'notes'
+        noteSection(title)
+        continue
+      }
       if (section === 'people' && level >= 3) {
-        person = blankPerson(title)
+        person = blankPerson(title.replace(/^npc\s*:\s*/i, ''))
         plan.people.push(person)
         continue
       }
       if (section === 'items' && level >= 3) {
-        item = { name: title, description: '', key: false, type: 'other', rarity: null }
+        item = { name: title.replace(/^item\s*:\s*/i, ''), description: '', key: false, type: 'other', rarity: null }
         plan.items.push(item)
         continue
       }
-      if (level <= 2 || /^chapter|^part|^act/i.test(title)) {
+      if (section === 'notes' && level >= 3 && note) {
+        ;(note as { lines: string[] }).lines.push(`${title.replace(/^monster\s*:\s*/i, '')}:`)
+        continue
+      }
+      if (sceneHeading && sceneHeading[2]) {
+        section = 'chapter'
+        scene = startScene(sceneHeading[2].trim(), sceneHeading[1].replace(/\.$/, ''))
+        continue
+      }
+      if (ending) {
+        section = 'chapter'
+        scene = startScene(ending[1].trim())
+        continue
+      }
+      if (level <= 2 || /^(chapter|part|act|endings?)\b/i.test(title)) {
         section = 'chapter'
         chapter = { title, scenes: [] }
         plan.chapters.push(chapter)
         scene = null
+        chapterNotes = []
         continue
       }
       section = 'chapter'
-      scene = blankScene(title.replace(/^scene\s*(\d+)?\s*[:.]\s*/i, ''))
-      ensureChapter().scenes.push(scene)
+      scene = startScene(title)
       continue
     }
 
@@ -265,69 +331,117 @@ export function parseCampaign(text: string): CampaignPlan {
     const name = field?.[1].trim().toLowerCase() ?? ''
     const value = field?.[2].trim() ?? ''
 
+    if (section === 'notes' || (section === 'none' && line.trim())) {
+      const n = note ?? noteSection('The campaign')
+      if (line.trim()) n.lines.push(line.trim())
+      continue
+    }
+
     if (section === 'people' && person) {
       const p: ParsedPerson = person
-      if (
-        field &&
-        [
-          'role',
-          'place',
-          'where',
-          'found',
-          'voice',
-          'talks',
-          'wants',
-          'knows',
-          'secrets',
-          'secret',
-          'attitude',
-          'feels',
-        ].includes(name)
-      ) {
+      const add = (key: 'voice' | 'wants' | 'knows' | 'secrets', words: string) =>
+        (p[key] = p[key] ? `${p[key]}\n${words}` : words)
+      if (field && !BULLET.test(line)) {
+        open = null
         if (name === 'role') p.role = value
         else if (['place', 'where', 'found'].includes(name)) p.place = value
         else if (['attitude', 'feels'].includes(name))
           p.attitude = ATTITUDE_WORDS[value.toLowerCase().split(/\W/)[0]] ?? 'neutral'
-        else {
+        else if (name === 'portrait') p.portrait = value
+        else if (['voice', 'talks', 'wants', 'knows', 'secrets', 'secret'].includes(name)) {
           const key = (name === 'talks' ? 'voice' : name === 'secret' ? 'secrets' : name) as
             'voice' | 'wants' | 'knows' | 'secrets'
-          p[key] = value
-          open = { set: (more) => (p[key] = p[key] ? `${p[key]}\n${more}` : more) }
+          add(key, value)
+          open = (more) => add(key, more)
+        } else if (name === 'look') add('voice', `Look: ${value}`)
+        else if (name === 'quest') add('wants', `Quest: ${value}`)
+        else {
+          // Fights as, Bond and the rest: kept with how to play them.
+          add('voice', `${field[1].trim()}: ${value}`)
+          const label = field[1].trim()
+          open = (more) => add('voice', `${label}: ${more}`)
         }
       } else if (line.trim()) {
-        if (open) open.set(line.trim().replace(/^[-*]\s+/, ''))
-        else p.knows = p.knows ? `${p.knows}\n${line.trim()}` : line.trim()
+        const words = line.trim().replace(BULLET, '')
+        if (open) open(words)
+        else add('knows', words)
       }
       continue
     }
 
     if (section === 'items' && item) {
       const it: ParsedItem = item
-      if (field && ['key', 'key item', 'type', 'rarity', 'what it is', 'description', 'about'].includes(name)) {
+      const add = (words: string) => (it.description = it.description ? `${it.description}\n${words}` : words)
+      if (field && !BULLET.test(line)) {
+        open = null
         if (name === 'key' || name === 'key item') it.key = yes(value)
         else if (name === 'type') it.type = TYPE_WORDS.find(([pattern]) => pattern.test(value))?.[1] ?? 'other'
         else if (name === 'rarity') it.rarity = RARITY_WORDS[value.toLowerCase()] ?? null
-        else {
-          it.description = value
-          open = { set: (more) => (it.description = it.description ? `${it.description}\n${more}` : more) }
+        else if (['what it is', 'description', 'about'].includes(name)) {
+          add(value)
+          open = add
+        } else {
+          // Does, Found, Matters for, Handout: part of what it is. Something that matters is a key item.
+          if (name === 'matters for') it.key = true
+          add(`${field[1].trim()}: ${value}`)
+          open = add
         }
       } else if (line.trim()) {
-        if (open) open.set(line.trim())
-        else it.description = it.description ? `${it.description}\n${line.trim()}` : line.trim()
+        const words = line.trim().replace(BULLET, '')
+        if (open) open(words)
+        else add(words)
       }
       if (it.type === 'other') it.type = TYPE_WORDS.find(([pattern]) => pattern.test(it.name))?.[1] ?? 'other'
       continue
     }
 
     if (!scene) {
-      // Text before the first scene of a chapter: keep it as the first scene's notes.
-      if (line.trim() && chapter) {
-        scene = blankScene(chapter.title)
-        chapter.scenes.push(scene)
-      } else continue
+      // A chapter's own lines before its first scene (Goal, Ends when): kept for that scene.
+      if (line.trim() && chapter) chapterNotes.push(line.trim().replace(BULLET, ''))
+      continue
     }
     const sc: ParsedScene = scene
-    if (field) {
+    const remind = (words: string) => (sc.reminders = sc.reminders ? `${sc.reminders}\n${words}` : words)
+    const addRoll = (words: string) => {
+      const roll = parseRoll(words)
+      sc.rolls.push(roll)
+      if (roll.pass || roll.fail) {
+        remind(
+          `${roll.text}: ${[roll.pass && `pass: ${roll.pass}`, roll.fail && `fail: ${roll.fail}`].filter(Boolean).join('; ')}`,
+        )
+      }
+    }
+    const addChoice = (words: string) => {
+      const arrow = words.split(/\s*(?:->|\u2192|=>|: go to|then go to)\s*/i)
+      const [choice, to] =
+        arrow.length > 1
+          ? arrow
+          : (/^(.*?):\s*((?:scene\s*[\d.]+|ending\s*:).*)$/i.exec(words)?.slice(1) ?? [words, ''])
+      sc.choices.push({ text: choice.replace(/^if\s+/i, '').trim(), to: (to ?? '').trim() })
+    }
+    const addThing = (words: string) => {
+      const thing = FIELD.exec(words)
+      const kind = thing?.[1].trim().toLowerCase() ?? ''
+      const what = thing?.[2].trim() ?? words
+      if (['item', 'give', 'key item'].includes(kind)) {
+        const [itemName, ...how] = what.split(',')
+        sc.gives.push(itemName.trim())
+        if (how.join(',').trim()) remind(`${itemName.trim()}: ${how.join(',').trim()}`)
+      } else if (['box', 'loot', 'search'].includes(kind)) sc.boxes.push(parseBox(what))
+      else if (kind === 'shop') sc.shops.push(what)
+      else remind(words)
+    }
+    const addFight = (words: string) => {
+      const [monsters, ...rest] = words.split(';')
+      sc.fight.push(...parseFight(monsters))
+      for (const part of rest) {
+        const map = /^\s*map\s*:\s*(.*)$/i.exec(part)
+        if (map) sc.map = map[1].trim()
+        else if (part.trim()) remind(`Fight: ${part.trim()}`)
+      }
+    }
+
+    if (field && !BULLET.test(line)) {
       open = null
       switch (name) {
         case 'place':
@@ -339,13 +453,13 @@ export function parseCampaign(text: string): CampaignPlan {
         case 'read-aloud':
         case 'boxed text':
           sc.readAloud = value.replace(/^>\s?/, '')
-          open = { set: (more) => (sc.readAloud = sc.readAloud ? `${sc.readAloud}\n${more}` : more) }
+          open = (more) => (sc.readAloud = sc.readAloud ? `${sc.readAloud}\n${more}` : more)
           continue
         case 'reminders':
         case 'notes':
         case 'dm notes':
           if (value) remind(value)
-          open = { set: remind }
+          open = remind
           continue
         case 'people':
         case 'npcs':
@@ -353,16 +467,23 @@ export function parseCampaign(text: string): CampaignPlan {
           sc.people.push(...list(value))
           continue
         case 'roll':
+        case 'rolls':
         case 'check':
+        case 'checks':
         case 'save':
-          sc.rolls.push(parseRoll(name === 'save' && !/save/i.test(value) ? `${value} save` : value))
+          if (value) addRoll(name === 'save' && !/save/i.test(value) ? `${value} save` : value)
+          open = addRoll
           continue
         case 'choice':
-        case 'if': {
-          const [choice, to] = value.split(/\s*(?:->|→|=>|: go to|then go to)\s*/i)
-          sc.choices.push({ text: choice.replace(/^if\s+/i, ''), to: (to ?? '').trim() })
+        case 'choices':
+        case 'if':
+          if (value) addChoice(value)
+          open = addChoice
           continue
-        }
+        case 'things':
+          if (value) addThing(value)
+          open = addThing
+          continue
         case 'give':
         case 'gives':
         case 'key item':
@@ -380,7 +501,7 @@ export function parseCampaign(text: string): CampaignPlan {
         case 'fight':
         case 'monsters':
         case 'encounter':
-          sc.fight.push(...parseFight(value))
+          addFight(value)
           continue
         case 'map':
           sc.map = value
@@ -392,11 +513,13 @@ export function parseCampaign(text: string): CampaignPlan {
         case 'music':
           sc.music = value
           continue
-        default:
-          // Checkpoints, level ups, side quests, XP and anything else: a reminder, with its label.
-          remind(`${field[1].trim()}: ${value}`)
-          open = { set: remind }
+        default: {
+          // Checkpoints, level ups, side quests, Sets, With, When and anything else: a reminder, with its label.
+          const label = field[1].trim()
+          remind(`${label}: ${value}`)
+          open = (more) => remind(`${label}: ${more}`)
           continue
+        }
       }
     }
     const quoted = /^\s*>\s?(.*)$/.exec(line)
@@ -405,14 +528,30 @@ export function parseCampaign(text: string): CampaignPlan {
       continue
     }
     if (!line.trim()) continue
-    if (open) open.set(line.trim().replace(/^[-*]\s+/, ''))
-    else remind(line.trim())
+    const words = line.trim().replace(BULLET, '')
+    if (open) open(words)
+    else remind(words)
   }
 
-  // Tidy: no empty chapters at the end, read-aloud paragraphs kept.
-  plan.chapters = plan.chapters.filter((c) => c.scenes.length > 0 || c.title)
-  for (const c of plan.chapters) for (const s of c.scenes) s.readAloud = s.readAloud.trim()
+  // The campaign's own notes come first, as a chapter to read before playing.
+  const kept = notes.filter((n) => n.lines.length > 0)
+  if (kept.length > 0) {
+    plan.chapters.unshift({
+      title: 'Campaign notes',
+      scenes: kept.map((n) => ({ ...blankScene(n.title), reminders: n.lines.join('\n') })),
+    })
+  }
+  plan.chapters = plan.chapters.filter((c) => c.scenes.length > 0)
+  for (const c of plan.chapters) for (const sc of c.scenes) sc.readAloud = sc.readAloud.trim()
   return plan
+}
+
+/** The scene a choice leads to: "Scene 1.2" by its number, or by title. */
+export function choiceTarget<T extends { number?: string; title: string }>(scenes: T[], to: string): T | undefined {
+  const number = /^scene\s*([\d.]+)/i.exec(to.trim())?.[1].replace(/\.$/, '')
+  if (number) return scenes.find((s) => s.number === number)
+  const title = to.trim().replace(/^ending\s*:\s*/i, '')
+  return title ? matchName(scenes, (s) => s.title, title) : undefined
 }
 
 /** How much a plan holds, in words: "2 chapters, 7 scenes, 4 people and 3 items". */
@@ -446,7 +585,6 @@ export function planWarnings(
   known: { monsters: string[]; assets: string[]; shops: string[] },
 ): string[] {
   const scenes = plan.chapters.flatMap((c) => c.scenes)
-  const titles = scenes.map((s) => s.title)
   const out = new Set<string>()
   for (const s of scenes) {
     for (const f of s.fight) {
@@ -455,7 +593,7 @@ export function planWarnings(
     }
     for (const r of s.rolls) if (!r.key) out.add(`“${r.text}” isn't a check the table knows (in ${s.title})`)
     for (const c of s.choices) {
-      if (c.to && !matchName(titles, (t) => t, c.to)) out.add(`No scene called ${c.to} (a choice in ${s.title})`)
+      if (c.to && !choiceTarget(scenes, c.to)) out.add(`No scene called ${c.to} (a choice in ${s.title})`)
     }
     for (const name of [s.picture, s.music, s.map].filter(Boolean)) {
       if (!matchName(known.assets, (a) => a, name))

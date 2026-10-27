@@ -3,7 +3,7 @@
 // (people and items you made, the library's pictures, music and maps, shops, and the free rules'
 // monsters), so pasting twice doesn't make two Brennas.
 
-import { matchName, type CampaignPlan } from '../rules/campaignFile.ts'
+import { choiceTarget, matchName, type CampaignPlan } from '../rules/campaignFile.ts'
 import type { DmItem } from '../rules/catalogue.ts'
 import type { Character } from '../rules/character.ts'
 import type { Fight, PlannedRoll, Thing } from '../rules/scenes.ts'
@@ -61,6 +61,13 @@ export async function importCampaign(campaignId: string, plan: CampaignPlan, ctx
         knows: (p.knows ?? '').slice(0, 2000),
         secrets: (p.secrets ?? '').slice(0, 2000),
         attitude: p.attitude ?? 'neutral',
+        portrait_id: p.portrait
+          ? (matchName(
+              ctx.library.filter((a) => a.kind === 'art' && a.category !== 'maps'),
+              (a) => a.name,
+              p.portrait,
+            )?.id ?? null)
+          : null,
       })
       .select('id')
       .single()
@@ -112,8 +119,12 @@ export async function importCampaign(campaignId: string, plan: CampaignPlan, ctx
         )?.id ?? null)
       : null
   let chapterAt = ctx.story.chapters.reduce((top, c) => Math.max(top, c.position), -1) + 1
-  const made: { id: string; title: string; choices: CampaignPlan['chapters'][number]['scenes'][number]['choices'] }[] =
-    []
+  const made: {
+    id: string
+    number: string
+    title: string
+    choices: CampaignPlan['chapters'][number]['scenes'][number]['choices']
+  }[] = []
   for (const chapter of plan.chapters) {
     const { data: row, error } = await db()
       .from('story_chapters')
@@ -190,19 +201,18 @@ export async function importCampaign(campaignId: string, plan: CampaignPlan, ctx
         .select('id')
         .single()
       if (sceneError) throw fromDatabaseError(sceneError)
-      made.push({ id: sceneRow.id, title: scene.title, choices: scene.choices })
+      made.push({ id: sceneRow.id, number: scene.number, title: scene.title, choices: scene.choices })
     }
   }
 
   // Choices last, once every scene they lead to exists.
-  const allScenes = [...ctx.story.scenes.map((s) => ({ id: s.id, title: s.title })), ...made]
+  const before = ctx.story.scenes.map((s) => ({ id: s.id, number: '', title: s.title }))
   for (const scene of made) {
     if (scene.choices.length === 0) continue
     const choices = scene.choices.map((c) => ({
       id: short(),
       text: c.text,
-      sceneId:
-        (c.to && matchName(made, (s) => s.title, c.to)?.id) || matchName(allScenes, (s) => s.title, c.to)?.id || null,
+      sceneId: (choiceTarget(made, c.to) ?? choiceTarget(before, c.to))?.id ?? null,
     }))
     const { error } = await db()
       .from('story_scenes')

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { cx } from '../../../components/cx.ts'
 import { matchName, parseCampaign, planWarnings, planWords, type CampaignPlan } from '../../../rules/campaignFile.ts'
-import { AI_PROMPT_WITH_EXAMPLE, CAMPAIGN_FORMAT } from '../../../rules/campaignTemplate.ts'
+import { AI_PROMPT_TO_COPY, CAMPAIGN_EXAMPLE } from '../../../rules/campaignTemplate.ts'
 import { DIFFICULTY_WORDS, encounterDifficulty } from '../../../rules/encounter.ts'
 import type { SrdMonster } from '../../../rules/srd/index.ts'
 import dialog from '../RestDialog.module.css'
@@ -76,27 +76,28 @@ export function PasteDialog({ monsters, assetNames, shopNames, partyLevels, onIm
           type="button"
           className={dialog.secondary}
           onClick={() => {
-            void navigator.clipboard?.writeText(AI_PROMPT_WITH_EXAMPLE).then(() => setCopied(true))
+            void navigator.clipboard?.writeText(AI_PROMPT_TO_COPY).then(() => setCopied(true))
           }}
         >
           {copied ? 'Copied: paste it to your AI' : 'Copy the format for your AI'}
         </button>
-        <button type="button" className={dialog.secondary} onClick={() => setText(CAMPAIGN_FORMAT)}>
+        <button type="button" className={dialog.secondary} onClick={() => setText(CAMPAIGN_EXAMPLE)}>
           Try the example
         </button>
       </div>
       <p className={dialog.lead}>
-        Paste your campaign: chapters as <strong>##</strong> headings, scenes as <strong>###</strong> headings, and
-        lines such as <strong>Read aloud:</strong>, <strong>Roll:</strong>, <strong>Fight:</strong> and{' '}
-        <strong>People:</strong>. Copy the format for your AI gives Fable (or any AI) the whole layout to fill in. It
-        all stays private to you.
+        Paste your campaign: chapters as <strong># Chapter 1:</strong> headings, scenes as{' '}
+        <strong>## Scene 1.1:</strong> headings, and lines such as <strong>Read aloud:</strong>, <strong>Rolls:</strong>
+        , <strong>Fight:</strong> and <strong>People:</strong>. Copy the format for your AI gives Fable (or any AI) the
+        whole template and an example to fill in from your notes. Loose notes with headings work too. It all stays
+        private to you.
       </p>
 
       <div className={styles.layout}>
         <textarea
           className={styles.paste}
           value={text}
-          placeholder="## Chapter 1: Trouble in Millbrook&#10;&#10;### The Rusty Flagon&#10;Read aloud:&#10;> Rain drums on the shutters…"
+          placeholder="# Chapter 1: The Village&#10;&#10;## Scene 1.1: The Gull and Anchor&#10;Read aloud:&#10;> Rain drums on the shutters…"
           aria-label="Your campaign notes"
           onChange={(e) => {
             setText(e.target.value)

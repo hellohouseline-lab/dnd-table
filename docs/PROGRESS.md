@@ -3,6 +3,14 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **S1d: paste your notes, NPC notes, stash coins and fight difficulty (live).**
+  - **Paste your notes** on the Story tab (in the outline, and on the start screen): paste a campaign and the right-hand side shows what it makes before you add it: chapters, scenes, people, items, rolls, choices, things to hand out, and each fight with **how hard it is for your party** (from your players' levels). **Worth knowing** lists anything it can't find (a monster not in the free rules, a picture or map not uploaded yet). **Add it to my story** writes it all in; people and items with the same name are reused, not doubled.
+  - **The campaign template** (`docs/CAMPAIGN_TEMPLATE.md`, shared with the template session): `# Chapter 1:`, `## Scene 1.1:`, a Cast of NPCs, Items, Rolls with Pass and Fail, Choices ("Scene 1.2" or "Ending: <name>"), Things, Fight, and Endings. Campaign notes (pitch, truth, hook, clock, monsters, flags, places) become a "Campaign notes" chapter; Balance, Checkpoint, Level up, Side quest and If someone falls become labelled reminders; Endings become scenes in an "Endings" chapter. The older shorter layout and loose notes with headings also work.
+  - **Copy the format for your AI** copies the prompt, the template and a short made-up example (The Drowned Bell) in one go, for Fable or any AI; **Try the example** fills the box with it. How to use it: `docs/CAMPAIGN_FORMAT.md`.
+  - **Fight difficulty:** the 2014 rules' XP thresholds and the multiplier for several monsters (`src/rules/encounter.ts`, tested), shown on a scene's fight button ("Start the fight: 3 × Goblin (easy for this party)") and in the paste preview.
+  - **NPC notes** (Matt's ask): **What's happened** on each person's card, with **Add a note about them**. Showing someone from a scene adds "Met the party at <scene>" by itself.
+  - **Coins in the party stash** (Matt's ask): the stash on Items and loot has the same Add, Take and 1 to 100 gp buttons as each character's purse; taking more than it holds says so.
+  - Server: `20261027280000_npc_notes_stash_coins.sql` (`npcs.history`, `stash_coins`). Previews: `#/dev/dm/story` (Paste your notes), `#/dev/dm/npcs`, `#/dev/dm/items`. Tests: 558 database (3 new), 451 unit (10 new), 60 preview browser tests (3 new).
 - **S1c: the NPCs tab, and taking things away (live).**
   - **The NPCs tab** on Screen 1 (and the **Show an NPC** button, which opens it): your people, each with a portrait from your library, a role, where they're found, how they talk, what they want, what they know, their secrets, and how they feel about the party (friendly, warm, neutral, wary or hostile, one click). A shopkeeper links to their shop, with **Open** it from their card.
   - **Show** puts their portrait and a name card on stage for everyone (players' screens and Screen 2), and notes it in the log; **Hide** takes it down. Players can load only that one portrait, and never see the rest of the card (decision 59).
@@ -283,7 +291,8 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **S1d next:** paste your notes (your campaign split into chapters and scenes). Then S1e (Rules for players). Send your starter campaign so the splitting suits it. Send your starter campaign when you're ready.
+- **S1e next:** Rules for players (spells, conditions, turns and rests in plain words, beside the table). Then the test one-shot.
+- **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, bonds, scenes that change by companion, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -291,10 +300,11 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try Paste your notes** (refresh first): on the Story tab press **Paste your notes**, then **Try the example** and look at the right-hand side; press **Add it to my story**. Then press **Copy the format for your AI**, paste it into Fable, add your notes at the end, and paste what Fable writes back in.
+- **Try NPC notes and stash coins:** on the NPCs tab add a note under **What's happened**; show someone from a scene and check "Met the party at …" appears. On Items and loot put 10 gp in the party stash, then take 5.
 - **Try NPCs** (refresh first): upload a portrait on Screen 2 under People, make the innkeeper on the NPCs tab with that portrait, add her to a scene, and press **Show**; check a player sees her. Try **Make someone up**. On Items and loot, **Take away** something from a player.
 - **Try a planned scene** (refresh first): in a scene press **Plan a roll** (a secret Perception, outcome unticked), **Plan a fight** (some goblins), and **Something to hand out** (a body to search); then press each button. Ask a player for the secret roll and check they only see their total.
 - **Try story mode** (refresh first): Screen 1 now opens on **Story**. Press **Start your story**, write a scene's read-aloud and reminders, pick a picture and music (upload them on Screen 2 first), and press **Go here**; then **Show the read-aloud** and check a player sees it.
-- **Send your starter campaign** for the paste import (S1d), and say whether it's your own writing or from a published book.
 - **Try haggling** (refresh first): open a shop; as a player tap **Gear**, press **Haggle** on some rope and offer less; on Screen 1 press **Ask for Persuasion**, then **Counter**; as the player **Take it**.
 - **Try a shop** (refresh first): on Items and loot press **Make a shop**, pick a general store, make it **Pricey**, then **Open** it; as a player buy some rope and sell something back; then **Undo** the sale on Screen 1.
 - **Try opening a box** (refresh first): on Items and loot press **Open a box**, pick a valuable chest, open it, roll one find again, add one of your key items, and **Put it on the table**; then as a player open **Items**, take something from the party stash and split the coins.

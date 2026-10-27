@@ -1064,13 +1064,13 @@ test('paste your notes: the example becomes chapters and scenes, with how hard e
   const paste = page.getByRole('dialog', { name: 'Paste your notes' })
   await paste.getByRole('button', { name: 'Try the example' }).click()
   const preview = paste.getByRole('region', { name: 'What it makes' })
-  await expect(preview).toContainText('The Ember Road: 2 chapters, 3 scenes, 2 people and 2 items')
-  await expect(preview).toContainText('fight: 3 × Goblin (')
-  await expect(preview).toContainText('Nothing called Tavern in your library yet')
+  await expect(preview).toContainText('The Drowned Bell: 4 chapters, 6 scenes, 2 people and 1 item')
+  await expect(preview).toContainText('fight: 2 × Sahuagin, 2 × Merfolk (')
+  await expect(preview).toContainText('Nothing called Cliff path in your library yet')
   await paste.getByRole('button', { name: 'Add it to my story' }).click()
-  await expect(paste.getByRole('status')).toContainText('Added: 2 chapters, 3 scenes')
+  await expect(paste.getByRole('status')).toContainText('Added: 4 chapters, 6 scenes')
   await paste.getByRole('button', { name: 'Done' }).click()
-  await expect(page.getByRole('navigation', { name: 'Chapters and scenes' })).toContainText('The Old Mill')
+  await expect(page.getByRole('navigation', { name: 'Chapters and scenes' })).toContainText('The Bell Chapel')
 })
 
 test('notes on an NPC, and one when they are shown', async ({ page }) => {

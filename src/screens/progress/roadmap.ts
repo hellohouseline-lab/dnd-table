@@ -57,7 +57,12 @@ export const ROADMAP: Milestone[] = [
   {
     name: 'Your campaign in one paste',
     detail:
-      'Paste a campaign (yours, or written by an AI in the table’s format) and it becomes chapters, scenes and people',
+      'Paste a campaign (yours, or written by an AI from the campaign template) and it becomes chapters, scenes, people, items and ready fights, with how hard each fight is',
+    status: 'ready',
+  },
+  {
+    name: 'NPC notes and the party stash',
+    detail: 'What has happened with each person, noted when you show them; add or take coins in the party stash',
     status: 'ready',
   },
   {
@@ -72,6 +77,12 @@ export const ROADMAP: Milestone[] = [
   },
   { name: 'Stream overlay', detail: "The table on everyone's Twitch stream", status: 'later' },
   { name: 'Rehearsal', detail: 'A full dry run and final polish before the first stream', status: 'later' },
+  {
+    name: 'A whole campaign, built for you',
+    detail:
+      'Give the table one campaign file and it makes the shops, stocks them and sets everything up (a later phase)',
+    status: 'later',
+  },
 ]
 
 export const STATUS_LABEL: Record<MilestoneStatus, string> = {
