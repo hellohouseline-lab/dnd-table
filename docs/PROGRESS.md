@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **The first drawings are gone (live).** The Tavern, Forest road and Old crypt maps, Market city, Campfire at night and The innkeeper are no longer among the pictures that come with the table; Matt's painted ones replace them. Tables that already added them keep their copies.
 - **Campaign pictures come in with the campaign (live).** Matt's 11 painted pictures for his Death Pit of Moloch campaign (`public/art/campaign`) aren't in the pictures that come with the table: a campaign that names one (a scene's "Picture:", a "Picture:" line in its Places list, or one in the campaign's opening lines for its key art) brings it into the library under Places or Moments as it's added, like the maps and portraits. A "Picture:" in the opening lines also becomes the picture on the campaign's notes, to show at the start. Matt's saved file now has Picture lines for the key art and two endings.
 - **Drop-in players and deleting a table (live).** Decided with Matt: drop-ins match the party's level; deleting asks once.
   - **Drop-ins:** anyone can still join at any time with the invite link or join code. A character made after the party has levelled up now starts at the party's level (the highest in the party, or the table's starting level if higher), taking each level with the gold Level up!. In a fight, the DM's turn order lists anyone **Not in this fight** with **Add to the fight**; they roll initiative and take turns from then on. Here tonight and Remove work as before for the nights they're away.
