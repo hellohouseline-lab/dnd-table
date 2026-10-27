@@ -291,7 +291,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **S1e next:** Rules for players (spells, conditions, turns and rests in plain words, beside the table). Then the test one-shot.
+- **S1e next:** Rules for players. The plan is in `docs/S1E_PLAN.md` (two small milestones, decisions 64 to 71), waiting for approval. Then the test one-shot.
 - **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
@@ -300,6 +300,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Approve the S1e plan** (`docs/S1E_PLAN.md`), or change any of decisions 64 to 71.
 - **Try Paste your notes** (refresh first): on the Story tab press **Paste your notes**, then **Try the example** and look at the right-hand side; press **Add it to my story**. Then press **Copy the format for your AI**, paste it into Fable, add your notes at the end, and paste what Fable writes back in.
 - **Try NPC notes and stash coins:** on the NPCs tab add a note under **What's happened**; show someone from a scene and check "Met the party at …" appears. On Items and loot put 10 gp in the party stash, then take 5.
 - **Try NPCs** (refresh first): upload a portrait on Screen 2 under People, make the innkeeper on the NPCs tab with that portrait, add her to a scene, and press **Show**; check a player sees her. Try **Make someone up**. On Items and loot, **Take away** something from a player.
