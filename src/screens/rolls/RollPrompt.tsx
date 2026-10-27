@@ -78,19 +78,22 @@ export function RollPrompt({ request, character, mode, onModeChange, onRoll, rol
 type RollResultProps = {
   roll: Roll
   shownDc: number | null
+  /** The DM keeps the outcome to themselves (decision 57): just the total. */
+  outcomeHidden?: boolean
   onClose: () => void
   className?: string
 }
 
 /** Screen 04: pass or fail, in a rune ring, with a fuss for a natural 20 or 1. */
-export function RollResult({ roll, shownDc, onClose, className }: RollResultProps) {
+export function RollResult({ roll, shownDc, outcomeHidden = false, onClose, className }: RollResultProps) {
   const moment = naturalMoment(roll)
   const passed = roll.passed === true
-  // A requested roll waits for the DM's ruling before it passes or fails.
-  const waiting = roll.passed === null && roll.requestId !== null
-  const tone = moment === 'nat20' ? 'gold' : waiting ? 'wait' : passed ? 'pass' : 'fail'
+  // A requested roll waits for the DM's ruling before it passes or fails, unless the DM keeps it.
+  const waiting = roll.passed === null && roll.requestId !== null && !outcomeHidden
+  const tone = moment === 'nat20' ? 'gold' : waiting || outcomeHidden ? 'wait' : passed ? 'pass' : 'fail'
   const kept = roll.dice.find((die) => !die.dropped)?.value ?? roll.total
-  const title = naturalTitle(roll) ?? (waiting ? 'Waiting for the DM' : passed ? 'Passed' : 'Failed')
+  const title =
+    naturalTitle(roll) ?? (outcomeHidden ? 'Rolled' : waiting ? 'Waiting for the DM' : passed ? 'Passed' : 'Failed')
 
   return (
     <div className={cx(styles.resultWrap, className)}>
@@ -121,13 +124,17 @@ export function RollResult({ roll, shownDc, onClose, className }: RollResultProp
           {shownDc && <span className={styles.vs}> vs DC {shownDc}</span>}
         </div>
         <div className={styles.label}>{title}</div>
-        {moment && !waiting && (
+        {moment && !waiting && !outcomeHidden && (
           <div className={cx(styles.verdict, passed ? styles.verdictPass : styles.verdictFail)}>
             {passed ? 'Passed' : 'Failed'}
           </div>
         )}
         <p className={styles.sub}>
-          {waiting ? `You rolled ${roll.total}. The DM is deciding whether it passes.` : resultSentence(roll)}
+          {outcomeHidden
+            ? `You rolled ${roll.total}. The DM knows how it went, and will tell you what happens.`
+            : waiting
+              ? `You rolled ${roll.total}. The DM is deciding whether it passes.`
+              : resultSentence(roll)}
         </p>
         <p className={styles.small}>Everyone at the table sees your result. The DM decides what happens next.</p>
         <button type="button" className={styles.back} onClick={onClose}>

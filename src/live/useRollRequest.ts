@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useRequestChanges, useRollChanges, useRollInserts } from './campaignChannel.ts'
+import {
+  useRequestChanges,
+  useRollChanges,
+  useRollInserts,
+  useTableChanges,
+  type RowChange,
+} from './campaignChannel.ts'
 import { messageFor } from './errors.ts'
 import {
   acceptDice,
@@ -8,7 +14,9 @@ import {
   getOpenRequest,
   getSecretDc,
   listAnswers,
+  listVerdicts,
   overrideRoll,
+  type HiddenVerdict,
   type AskedRoll,
   type AskInput,
 } from './rollRequests.ts'
@@ -49,7 +57,20 @@ export function useRollRequest(campaignId: string, userId: string, isDm: boolean
   const [error, setError] = useState<string | null>(null)
   const current = useRef<string | null>(null)
   const requestId = request?.id ?? null
-  const answers = answerState.requestId === requestId ? answerState.list : []
+  // When players aren't told the outcome, the DM's rulings live apart from the rolls.
+  const [verdicts, setVerdicts] = useState<{ requestId: string | null; byRoll: Record<string, HiddenVerdict> }>({
+    requestId: null,
+    byRoll: {},
+  })
+  const hidden = isDm && request !== null && !request.outcomeShown
+  const answerList = answerState.requestId === requestId ? answerState.list : []
+  const answers =
+    hidden && verdicts.requestId === requestId
+      ? answerList.map((a) => {
+          const v = verdicts.byRoll[a.id]
+          return v ? { ...a, passed: v.passed, passedByDice: v.passedByDice } : a
+        })
+      : answerList
   const secretDc = secret && secret.requestId === requestId ? secret.dc : null
 
   useEffect(() => {
@@ -91,6 +112,30 @@ export function useRollRequest(campaignId: string, userId: string, isDm: boolean
     }
   }, [requestId, isDm])
 
+  const loadVerdicts = useCallback((id: string) => {
+    listVerdicts(id).then(
+      (list) =>
+        current.current === id &&
+        setVerdicts({ requestId: id, byRoll: Object.fromEntries(list.map((v) => [v.rollId, v])) }),
+      (caught: unknown) => setError(messageFor(caught)),
+    )
+  }, [])
+  useEffect(() => {
+    if (hidden && requestId) loadVerdicts(requestId)
+  }, [hidden, requestId, loadVerdicts])
+  const onVerdict = useCallback((change: RowChange<'roll_verdicts'>) => {
+    if (change.type !== 'upsert' || change.row.request_id !== current.current) return
+    const v = change.row
+    setVerdicts((now) => ({
+      requestId: v.request_id,
+      byRoll: {
+        ...(now.requestId === v.request_id ? now.byRoll : {}),
+        [v.roll_id]: { rollId: v.roll_id, passed: v.passed, passedByDice: v.passed_by_dice },
+      },
+    }))
+  }, [])
+  useTableChanges(campaignId, userId, 'roll_verdicts', onVerdict)
+
   const onRequest = useCallback((changed: AskedRoll) => {
     if (changed.status === 'open') setRequest(changed)
     else setRequest((now) => (now?.id === changed.id ? null : now))
@@ -125,23 +170,37 @@ export function useRollRequest(campaignId: string, userId: string, isDm: boolean
   const override = useCallback(
     (roll: Roll, passed: boolean) => {
       setError(null)
+      if (hidden && requestId) {
+        setVerdicts((now) => ({
+          requestId,
+          byRoll: {
+            ...(now.requestId === requestId ? now.byRoll : {}),
+            [roll.id]: { rollId: roll.id, passed, passedByDice: roll.passedByDice },
+          },
+        }))
+        overrideRoll(roll.id, passed).then(
+          () => loadVerdicts(requestId),
+          (caught: unknown) => setError(messageFor(caught)),
+        )
+        return
+      }
       putAnswer({ ...roll, passed })
       overrideRoll(roll.id, passed).then(putAnswer, (caught: unknown) => {
         putAnswer(roll)
         setError(messageFor(caught))
       })
     },
-    [putAnswer],
+    [putAnswer, hidden, requestId, loadVerdicts],
   )
 
   const accept = useCallback(() => {
     if (!requestId) return
     setError(null)
     acceptDice(requestId).then(
-      (ruled) => ruled.forEach(putAnswer),
+      (ruled) => (hidden ? loadVerdicts(requestId) : ruled.forEach(putAnswer)),
       (caught: unknown) => setError(messageFor(caught)),
     )
-  }, [requestId, putAnswer])
+  }, [requestId, putAnswer, hidden, loadVerdicts])
 
   const close = useCallback(() => {
     if (!requestId) return

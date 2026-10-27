@@ -16,6 +16,10 @@ type AskRollDialogProps = {
   only?: string | null
   /** Start with this roll picked ("skill:persuasion", for a haggle). */
   startKey?: string | null
+  /** A scene's planned roll: everything filled in to start with. */
+  preset?: { dc: number; dcShown: boolean; outcomeShown: boolean; who: string[] } | null
+  /** The DM throws it for them, secretly: only the DM sees (decision 58). */
+  onBehindScreen?: (input: AskInput) => void
   onSend: (input: AskInput) => Promise<boolean>
   onCancel: () => void
   error?: string | null
@@ -34,15 +38,18 @@ export function AskRollDialog({
   hereTonight,
   only,
   startKey = null,
+  preset = null,
+  onBehindScreen,
   onSend,
   onCancel,
   error,
   className,
 }: AskRollDialogProps) {
   const [key, setKey] = useState<string | null>(startKey)
-  const [picked, setPicked] = useState<string[]>(only ? [only] : [])
-  const [dc, setDc] = useState(15)
-  const [dcShown, setDcShown] = useState(false)
+  const [picked, setPicked] = useState<string[]>(only ? [only] : (preset?.who ?? []))
+  const [dc, setDc] = useState(preset?.dc ?? 15)
+  const [dcShown, setDcShown] = useState(preset?.dcShown ?? false)
+  const [outcomeShown, setOutcomeShown] = useState(preset?.outcomeShown ?? true)
   const [sending, setSending] = useState(false)
   const askable = key ? findAskable(key) : undefined
   const everyone = picked.length === 0
@@ -66,7 +73,7 @@ export function AskRollDialog({
   async function send() {
     if (!askable || asked.length === 0) return
     setSending(true)
-    const sent = await onSend({ askable, characterIds: asked.map((c) => c.id), dc, dcShown })
+    const sent = await onSend({ askable, characterIds: asked.map((c) => c.id), dc, dcShown, outcomeShown })
     setSending(false)
     if (sent) onCancel()
   }
@@ -200,6 +207,10 @@ export function AskRollDialog({
             <input type="checkbox" checked={dcShown} onChange={(event) => setDcShown(event.target.checked)} />
             Tell players the number
           </label>
+          <label className={styles.tell} title="Untick it and players see only their total; only you see who passed">
+            <input type="checkbox" checked={outcomeShown} onChange={(event) => setOutcomeShown(event.target.checked)} />
+            Tell players the outcome
+          </label>
         </div>
       </section>
 
@@ -210,7 +221,9 @@ export function AskRollDialog({
           {sentence ? (
             <>
               <strong>{sentence.who}</strong> {sentence.verb} <strong>{sentence.check}</strong>.{' '}
-              <strong>{sentence.target}</strong> passes{dcShown ? ', and they’ll see the number.' : '.'}
+              <strong>{sentence.target}</strong> passes
+              {dcShown ? ', and they’ll see the number' : ''}
+              {outcomeShown ? '.' : '. Only you will know who passed.'}
             </>
           ) : (
             'Pick what they’re trying to do.'
@@ -219,6 +232,21 @@ export function AskRollDialog({
         <button type="button" className={styles.cancel} onClick={onCancel}>
           Cancel
         </button>
+        {onBehindScreen && (
+          <button
+            type="button"
+            className={styles.cancel}
+            disabled={!askable || asked.length === 0}
+            title="You throw it for them, in secret: they never see it"
+            onClick={() => {
+              if (!askable) return
+              onBehindScreen({ askable, characterIds: asked.map((c) => c.id), dc, dcShown, outcomeShown })
+              onCancel()
+            }}
+          >
+            Roll behind the screen
+          </button>
+        )}
         <button
           type="button"
           className={buttonClassName('ink', { className: styles.send })}

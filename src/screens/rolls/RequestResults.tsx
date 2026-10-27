@@ -103,6 +103,7 @@ export function RequestResults({
           </h2>
           <p className={styles.sub}>
             Needed {dc ?? '?'} or more · number {request.shownDc ? 'shown to players' : 'kept secret'} ·{' '}
+            {request.outcomeShown ? '' : 'outcome kept from players · '}
             {everyone ? 'everyone has rolled' : `${answers.length} of ${asked.length} rolled`}
           </p>
         </div>

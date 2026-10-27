@@ -24,6 +24,8 @@ type GiveThingsProps = {
   who: string | null
   onWho: (id: string) => void
   catalogue: Entry[]
+  /** Card keys ticked to start with. */
+  startTicked?: string[]
   equipment: SrdEquipment
   magicItems: SrdMagicItem[]
   giving: GivingControls
@@ -51,6 +53,7 @@ export function GiveThings({
   who,
   onWho,
   catalogue,
+  startTicked = [],
   equipment,
   magicItems,
   giving,
@@ -59,7 +62,9 @@ export function GiveThings({
   onClose,
 }: GiveThingsProps) {
   const [filter, setFilter] = useState<CatalogueFilter>({ sources: [], rarities: [], types: [], search: '' })
-  const [ticked, setTicked] = useState<Ticked[]>([])
+  const [ticked, setTicked] = useState<Ticked[]>(() =>
+    catalogue.filter((e) => startTicked.includes(e.key)).map((entry) => ({ entry, quantity: 1, base: '' })),
+  )
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState<StatusLine | null>(null)
   const character = characters.find((c) => c.id === who) ?? null

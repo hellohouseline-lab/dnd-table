@@ -26,6 +26,8 @@ type StartFightProps = {
   maps: Asset[]
   /** The map on stage now, picked to begin with. */
   mapOnStage: string | null
+  /** A scene's planned fight: its monsters and map to start with. */
+  preset?: { foes: MonsterPick[]; mapId: string | null } | null
   onStart: (characters: Character[], monsters: MonsterPick[], setting: FightSetting) => Promise<void>
   onClose: () => void
 }
@@ -40,14 +42,15 @@ export function StartFightDialog({
   monsters,
   maps,
   mapOnStage,
+  preset = null,
   onStart,
   onClose,
 }: StartFightProps) {
   const [picked, setPicked] = useState<string[]>(() =>
     (hereTonight.length > 0 ? hereTonight : characters).map((c) => c.id),
   )
-  const [foes, setFoes] = useState<MonsterPick[]>([])
-  const [mapId, setMapId] = useState<string | null>(() => mapOnStage ?? maps[0]?.id ?? null)
+  const [foes, setFoes] = useState<MonsterPick[]>(preset?.foes ?? [])
+  const [mapId, setMapId] = useState<string | null>(() => preset?.mapId ?? mapOnStage ?? maps[0]?.id ?? null)
   const [known, setKnown] = useState(true)
   const [starting, setStarting] = useState(false)
   useEscape(onClose)

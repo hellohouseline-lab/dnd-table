@@ -29,6 +29,7 @@ export function previewRequest(characterIds: string[]): AskedRoll {
     plain: askable?.plain ?? '',
     characterIds,
     shownDc: null,
+    outcomeShown: true,
     status: 'open',
     createdAt: new Date().toISOString(),
   }
@@ -72,7 +73,7 @@ export function usePreviewAsking(
   }, [])
 
   const ask = useCallback(
-    async ({ askable, characterIds, dc: target, dcShown }: Parameters<RequestControls['ask']>[0]) => {
+    async ({ askable, characterIds, dc: target, dcShown, outcomeShown }: Parameters<RequestControls['ask']>[0]) => {
       const sent: AskedRoll = {
         ...previewRequest(characterIds),
         kind: askable.kind,
@@ -81,6 +82,7 @@ export function usePreviewAsking(
         label: askable.label,
         plain: askable.plain,
         shownDc: dcShown ? target : null,
+        outcomeShown: outcomeShown ?? true,
       }
       setRequest(sent)
       setAnswers([])

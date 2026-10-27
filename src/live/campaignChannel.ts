@@ -44,6 +44,7 @@ export type WatchedTable =
   | 'shops'
   | 'sales'
   | 'haggles'
+  | 'roll_verdicts'
   | 'assets'
   | 'encounters'
   | 'combatants'
@@ -63,6 +64,7 @@ const WATCHED: WatchedTable[] = [
   'shops',
   'sales',
   'haggles',
+  'roll_verdicts',
   'assets',
   'encounters',
   'combatants',

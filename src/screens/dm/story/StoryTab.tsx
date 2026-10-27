@@ -3,6 +3,7 @@ import { cx } from '../../../components/cx.ts'
 import { StoredImage } from '../../../components/StoredImage.tsx'
 import type { Asset } from '../../../live/library.ts'
 import type { Scene, StoryControls } from '../../../live/story.ts'
+import { ScenePlans, type SceneActions, type SceneData } from './ScenePlans.tsx'
 import styles from './StoryTab.module.css'
 
 type StoryTabProps = {
@@ -16,6 +17,9 @@ type StoryTabProps = {
   onShowReadAloud: (text: string) => void
   /** Pictures, music and ambience from the library, to pick for a scene. */
   library: Asset[]
+  /** What a scene's planned parts point at, and what their buttons do. */
+  data: Omit<SceneData, 'scenes'>
+  actions: Omit<SceneActions, 'onOpenScene'>
 }
 
 /**
@@ -30,6 +34,8 @@ export function StoryTab({
   readAloudOnStage,
   onShowReadAloud,
   library,
+  data,
+  actions,
 }: StoryTabProps) {
   const { chapters, scenes } = story.story
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -131,6 +137,8 @@ export function StoryTab({
           readAloudShown={readAloudOnStage !== '' && readAloudOnStage === selected.readAloud}
           onGoHere={() => onGoHere(selected)}
           onShowReadAloud={onShowReadAloud}
+          data={{ ...data, scenes }}
+          actions={{ ...actions, onOpenScene: setSelectedId }}
         />
       ) : (
         <p className={styles.empty}>No scenes in this chapter yet. Press New scene.</p>
@@ -147,6 +155,8 @@ function ScenePanel({
   readAloudShown,
   onGoHere,
   onShowReadAloud,
+  data,
+  actions,
 }: {
   scene: Scene
   here: boolean
@@ -155,6 +165,8 @@ function ScenePanel({
   readAloudShown: boolean
   onGoHere: () => void
   onShowReadAloud: (text: string) => void
+  data: SceneData
+  actions: SceneActions
 }) {
   const change = (patch: Parameters<StoryControls['changeScene']>[1]) => story.changeScene(scene.id, patch)
   const art = library.filter((a) => a.kind === 'art' && a.category !== 'maps')
@@ -220,6 +232,8 @@ function ScenePanel({
           onChange={(e) => change({ reminders: e.target.value })}
         />
       </section>
+
+      <ScenePlans scene={scene} onChange={change} data={data} actions={actions} />
 
       <section className={styles.block} aria-label="Picture and sound">
         <h3 className={styles.blockTitle}>Picture and sound</h3>

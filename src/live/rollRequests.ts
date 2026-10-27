@@ -22,11 +22,23 @@ export type AskedRoll = {
   characterIds: string[]
   /** The DC, if the DM chose to tell players; null when it's secret. */
   shownDc: number | null
+  /** Whether players are told if they passed (decision 57); when not, only the DM knows. */
+  outcomeShown: boolean
   status: 'open' | 'closed'
   createdAt: string
 }
 
-export type AskInput = { askable: Askable; characterIds: string[]; dc: number; dcShown: boolean }
+export type AskInput = {
+  askable: Askable
+  characterIds: string[]
+  dc: number
+  dcShown: boolean
+  /** Tell players whether they passed; on unless the DM unticks it. */
+  outcomeShown?: boolean
+}
+
+/** The DM's hidden ruling on an answer, when players aren't told the outcome. */
+export type HiddenVerdict = { rollId: string; passed: boolean; passedByDice: boolean | null }
 
 function db() {
   if (!supabase) throw new TableError(NOT_CONNECTED)
@@ -44,6 +56,7 @@ export function rowToAsked(row: RollRequestRow): AskedRoll {
     plain: row.plain,
     characterIds: row.character_ids,
     shownDc: row.shown_dc,
+    outcomeShown: row.outcome_shown,
     status: row.status === 'open' ? 'open' : 'closed',
     createdAt: row.created_at,
   }
@@ -63,6 +76,7 @@ export async function askForRoll(campaignId: string, input: AskInput): Promise<A
       character_ids: input.characterIds,
       dc: input.dc,
       dc_shown: input.dcShown,
+      outcome_shown: input.outcomeShown ?? true,
     },
   })
   if (error) throw requestError(error)
@@ -86,6 +100,13 @@ export async function listAnswers(requestId: string): Promise<Roll[]> {
   const { data, error } = await db().from('rolls').select('*').eq('request_id', requestId).order('created_at')
   if (error) throw fromDatabaseError(error)
   return data.map(rowToRoll)
+}
+
+/** The DM's hidden rulings for a request whose outcome players aren't told. */
+export async function listVerdicts(requestId: string): Promise<HiddenVerdict[]> {
+  const { data, error } = await db().from('roll_verdicts').select('*').eq('request_id', requestId)
+  if (error) throw fromDatabaseError(error)
+  return data.map((v) => ({ rollId: v.roll_id, passed: v.passed, passedByDice: v.passed_by_dice }))
 }
 
 /** The DC, for the DM. Players get null: the database never lets them read it. */
