@@ -2108,6 +2108,7 @@ export type Database = {
         Returns: string
       }
       death_save: { Args: { p_combatant_id: string }; Returns: Json }
+      delete_campaign: { Args: { p_campaign_id: string }; Returns: undefined }
       end_fight: {
         Args: { p_encounter_id: string }
         Returns: {
@@ -2382,6 +2383,10 @@ export type Database = {
       join_campaign: {
         Args: { p_code: string; p_display_name: string }
         Returns: string
+      }
+      join_fight: {
+        Args: { p_character_ids: string[]; p_encounter_id: string }
+        Returns: number
       }
       make_offer: {
         Args: {

@@ -874,3 +874,10 @@ export async function setParley(encounterId: string, on: boolean): Promise<Comba
   if (error) throw fromServerRule(error)
   return rowToEvent(data)
 }
+
+/** DM: adds characters to a fight that's already going (someone who joined late). They roll initiative. */
+export async function joinFight(encounterId: string, characterIds: string[]): Promise<number> {
+  const { data, error } = await db().rpc('join_fight', { p_encounter_id: encounterId, p_character_ids: characterIds })
+  if (error) throw fromServerRule(error)
+  return data
+}

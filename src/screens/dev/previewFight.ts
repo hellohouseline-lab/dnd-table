@@ -447,6 +447,16 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       setFight(started)
       return started
     },
+    addCharacters: (party) =>
+      set((f) => ({
+        ...f,
+        combatants: [
+          ...f.combatants,
+          ...party
+            .filter((c) => !f.combatants.some((x) => x.characterId === c.id))
+            .map((c) => characterCombatant(c, f.encounter.id, null)),
+        ],
+      })),
     addMonsters: async (monster, count, known = false) => {
       const now = latest.current.fight
       if (!now) return null

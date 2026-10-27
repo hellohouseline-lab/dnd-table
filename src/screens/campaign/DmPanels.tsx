@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { href } from '../../app/router.ts'
+import { href, navigate } from '../../app/router.ts'
 import { ButtonLink } from '../../components/Button.tsx'
 import { buttonClassName } from '../../components/buttonClassName.ts'
 import { cx } from '../../components/cx.ts'
@@ -10,6 +10,7 @@ import {
   removeMember,
   renewJoinCode,
   setHereTonight,
+  deleteCampaign,
   updateCampaign,
   type Campaign,
   type Member,
@@ -210,7 +211,26 @@ export function DmDetailsPanel({ campaign, onSaved }: { campaign: Campaign; onSa
   // Gold for every new character's purse, on top of their background's.
   const [gold, setGold] = useState(campaign.starting_gold)
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
+
+  async function remove() {
+    if (
+      !window.confirm(
+        `Delete ${campaign.name} for everyone? Its characters, story, pictures, sounds and rolls all go, and it can't be undone.`,
+      )
+    )
+      return
+    setDeleting(true)
+    setMessage(null)
+    try {
+      await deleteCampaign(campaign.id)
+      navigate('/', { replace: true })
+    } catch (caught) {
+      setMessage({ tone: 'error', text: messageFor(caught) })
+      setDeleting(false)
+    }
+  }
   const changed =
     form.name !== campaign.name ||
     form.party_size !== campaign.party_size ||
@@ -256,7 +276,9 @@ export function DmDetailsPanel({ campaign, onSaved }: { campaign: Campaign; onSa
           />
         </label>
         <p className={styles.goldNote}>
-          A character made below the starting level levels up to it straight away, one level at a time.
+          A character made below the starting level, or below the party&rsquo;s level if they&rsquo;ve gone further,
+          levels up to it straight away, one level at a time. Someone dropping in for a night joins with the invite
+          link, makes a character, and you can add them to a fight that&rsquo;s already going.
         </p>
         <div>
           <button type="submit" className={buttonClassName('primary', { size: 'small' })} disabled={saving || !changed}>
@@ -265,6 +287,19 @@ export function DmDetailsPanel({ campaign, onSaved }: { campaign: Campaign; onSa
         </div>
         {message && <Notice tone={message.tone}>{message.text}</Notice>}
       </form>
+      <div className={styles.danger}>
+        <button
+          type="button"
+          className={buttonClassName('outline', { size: 'small' })}
+          disabled={deleting}
+          onClick={() => void remove()}
+        >
+          {deleting ? 'Deleting…' : 'Delete this table'}
+        </button>
+        <span className={styles.goldNote}>
+          For everyone: characters, story, pictures, sounds and rolls. It can&rsquo;t be undone.
+        </span>
+      </div>
     </Panel>
   )
 }

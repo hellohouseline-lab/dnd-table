@@ -58,6 +58,7 @@ import {
   standUp as standUpNow,
   breakFree as breakFreeNow,
   talk as talkNow,
+  joinFight,
   answerTalk as answerTalkNow,
   setStance as setStanceNow,
   setParley as setParleyNow,
@@ -84,6 +85,8 @@ export type FightControls = {
     count: number,
     known?: boolean,
   ) => Promise<{ combatants: Combatant[]; rolls: Roll[] } | null>
+  /** DM: adds characters to a fight that's already going; they roll initiative like everyone else. */
+  addCharacters: (characters: Character[]) => void
   /** Rolls initiative for a combatant (players their own; the DM anyone). */
   rollInitiative: (combatant: Combatant, request: RollRequest) => Promise<Roll | null>
   next: () => void
@@ -352,6 +355,20 @@ export function useFight(campaignId: string, userId: string): FightControls {
       return added
     },
     [attempt, patchLocal],
+  )
+
+  const addCharacters = useCallback(
+    (characters: Character[]) => {
+      const now = current.current
+      if (!now || characters.length === 0) return
+      void attempt(() =>
+        joinFight(
+          now.encounter.id,
+          characters.map((c) => c.id),
+        ),
+      ).then(() => reload())
+    },
+    [attempt, reload],
   )
 
   const rollFor = useCallback(
@@ -690,6 +707,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
     setParley,
     start,
     addMonsters: addMonstersTo,
+    addCharacters,
     rollInitiative: rollFor,
     next,
     setMonsterHp: setHp,
