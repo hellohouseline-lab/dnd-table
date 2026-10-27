@@ -6,7 +6,8 @@ import type { Json, Tables } from './database.types.ts'
 import { fromDatabaseError, NOT_CONNECTED, TableError } from './errors.ts'
 import { supabase } from './supabase.ts'
 
-export type NextStep = { id: string; text: string; done: boolean }
+/** A step; one Go here wrote carries its scene's id, so the next scene can replace it. */
+export type NextStep = { id: string; text: string; done: boolean; scene?: string }
 export type KeyItem = { id: string; name: string; holder: string }
 export type Notebook = {
   whereWeAre: string
@@ -67,7 +68,12 @@ export function rowToNotebook(row: Tables<'dm_notebooks'>): Notebook {
     whereWeAre: row.where_we_are,
     nextSteps: list(row.next_steps, (item) =>
       typeof item.text === 'string'
-        ? { id: String(item.id ?? crypto.randomUUID()), text: item.text, done: item.done === true }
+        ? {
+            id: String(item.id ?? crypto.randomUUID()),
+            text: item.text,
+            done: item.done === true,
+            ...(typeof item.scene === 'string' ? { scene: item.scene } : {}),
+          }
         : null,
     ),
     keyItems: list(row.key_items, (item) =>
