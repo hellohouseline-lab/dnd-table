@@ -3,6 +3,15 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **S1b: what happens in a scene (live).**
+  - **In this scene**, on every scene in the Story tab, holds what you planned, each as one button:
+    - **Planned rolls:** "Ask: Perception, DC 13, secret DC, outcome kept" opens Ask for a roll already filled in (the check, who, the DC, whether they see the number and the outcome). **Plan a roll** adds one: the check, DC, who, the two ticks, and what it's for.
+    - **Choices:** "If they take the mill road: The Old Mill" jumps to that scene. **Add a choice** picks the scene.
+    - **Something to hand out:** one of your own items (**Give** opens with it ticked), a box (**Open a valuable chest** or **Search an ordinary body** opens the box window set up), or a shop (**Open Harl's Forge**).
+    - **A fight:** "Start the fight: 3 × Goblin" opens Start combat with the monsters and map already in. **Plan a fight** picks them from the free rules' monsters.
+  - **Tell players the outcome** (decision 57): a new tick in Ask for a roll, on by default. Untick it and players see "You rolled 16. The DM knows how it went", never Passed or Failed; your ruling is kept in a table only you can read, so it never reaches their browsers. Your results card says "outcome kept from players".
+  - **Roll behind the screen** (decision 58): a button in Ask for a roll. You throw the check for each of them with their bonus, in secret; only you see the dice.
+  - Server: `20261027250000_hidden_outcomes.sql` (`roll_verdicts`, the outcome tick in `ask_for_roll`, `override_roll` and `accept_dice`) and `20261027260000_scene_parts.sql`. Preview: `#/dev/dm/story`. Tests: 545 database (8 new), 440 unit (3 new), 54 preview browser tests (1 new).
 - **S1a: story mode, chapters and scenes (live).** The plan is in `docs/S1_PLAN.md`, approved with decisions 55 to 63 as recommended.
   - **The Story tab** is first on Screen 1 and where it opens (decision 55). Chapters and their scenes on the left, **Where we are** marked; **Start your story** makes the first chapter and scene.
   - **A scene** has a title and place, **Read aloud** on parchment, **Reminders** only you see, and a picture, music and ambience from your library (or "keep what's on").
@@ -267,7 +276,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **S1b next:** what happens in a scene: planned rolls as buttons, Tell players the outcome, Roll behind the screen, choices, things here and a fight ready to start. Then S1c (NPCs), S1d (paste your notes) and S1e (Rules for players). Send your starter campaign when you're ready.
+- **S1c next:** the NPCs tab (people with portraits, Show an NPC, Make someone up, people in scenes). Then S1d (paste your notes) and S1e (Rules for players). Send your starter campaign when you're ready.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
 ## Targets
@@ -275,6 +284,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Try a planned scene** (refresh first): in a scene press **Plan a roll** (a secret Perception, outcome unticked), **Plan a fight** (some goblins), and **Something to hand out** (a body to search); then press each button. Ask a player for the secret roll and check they only see their total.
 - **Try story mode** (refresh first): Screen 1 now opens on **Story**. Press **Start your story**, write a scene's read-aloud and reminders, pick a picture and music (upload them on Screen 2 first), and press **Go here**; then **Show the read-aloud** and check a player sees it.
 - **Send your starter campaign** for the paste import (S1d), and say whether it's your own writing or from a published book.
 - **Try haggling** (refresh first): open a shop; as a player tap **Gear**, press **Haggle** on some rope and offer less; on Screen 1 press **Ask for Persuasion**, then **Counter**; as the player **Take it**.

@@ -2,7 +2,17 @@
 // DM can read or write them (supabase/migrations/20261027240000_story.sql).
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { Tables, TablesUpdate } from './database.types.ts'
+import {
+  parseChoices,
+  parseFight,
+  parsePlannedRolls,
+  parseThings,
+  type Choice,
+  type Fight,
+  type PlannedRoll,
+  type Thing,
+} from '../rules/scenes.ts'
+import type { Json, Tables, TablesUpdate } from './database.types.ts'
 import { fromDatabaseError, messageFor, NOT_CONNECTED, TableError } from './errors.ts'
 import { supabase } from './supabase.ts'
 
@@ -20,6 +30,11 @@ export type Scene = {
   /** Ambience loops and their levels, 0 to 1. */
   ambience: Record<string, number>
   position: number
+  /** What's planned: rolls, choices that lead on, things to hand out, and a fight. */
+  rolls: PlannedRoll[]
+  choices: Choice[]
+  things: Thing[]
+  fight: Fight | null
 }
 
 export type ScenePatch = Partial<Omit<Scene, 'id'>>
@@ -71,6 +86,10 @@ function rowToScene(row: Tables<'story_scenes'>): Scene {
     musicId: row.music_id,
     ambience,
     position: row.position,
+    rolls: parsePlannedRolls(row.rolls),
+    choices: parseChoices(row.choices),
+    things: parseThings(row.things),
+    fight: parseFight(row.fight),
   }
 }
 
@@ -85,6 +104,10 @@ function patchToRow(patch: ScenePatch): TablesUpdate<'story_scenes'> {
   if (patch.musicId !== undefined) row.music_id = patch.musicId
   if (patch.ambience !== undefined) row.ambience = patch.ambience
   if (patch.position !== undefined) row.position = patch.position
+  if (patch.rolls !== undefined) row.rolls = patch.rolls as unknown as Json
+  if (patch.choices !== undefined) row.choices = patch.choices as unknown as Json
+  if (patch.things !== undefined) row.things = patch.things as unknown as Json
+  if (patch.fight !== undefined) row.fight = patch.fight as unknown as Json
   return row
 }
 

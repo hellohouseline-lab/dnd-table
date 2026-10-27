@@ -15,6 +15,8 @@ type GiveDialogProps = {
   characters: Character[]
   /** Who to start with (from a Party card), or null. */
   only: string | null
+  /** Cards ticked to start with ('yours:<id>' for a scene's item). */
+  ticked?: string[]
   equipment: SrdEquipment
   magicItems: SrdMagicItem[]
   giving: GivingControls
@@ -29,7 +31,16 @@ type Side = 'things' | 'coins' | 'make'
  * Give (the verb button, or Give on a Party card): things to browse and tick, coins to give, share
  * or take, and your own items to make.
  */
-export function GiveDialog({ characters, only, equipment, magicItems, giving, onKeyItem, onClose }: GiveDialogProps) {
+export function GiveDialog({
+  characters,
+  only,
+  ticked = [],
+  equipment,
+  magicItems,
+  giving,
+  onKeyItem,
+  onClose,
+}: GiveDialogProps) {
   const [side, setSide] = useState<Side>('things')
   const [who, setWho] = useState<string | null>(only ?? characters[0]?.id ?? null)
   const catalogue = useMemo(
@@ -76,6 +87,7 @@ export function GiveDialog({ characters, only, equipment, magicItems, giving, on
           who={who}
           onWho={setWho}
           catalogue={catalogue}
+          startTicked={ticked}
           equipment={equipment}
           magicItems={magicItems}
           giving={giving}

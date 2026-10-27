@@ -14,6 +14,10 @@ const scene = (id: string, chapterId: string, position: number, fields: Partial<
   musicId: null,
   ambience: {},
   position,
+  rolls: [],
+  choices: [],
+  things: [],
+  fight: null,
   ...fields,
 })
 
@@ -28,12 +32,26 @@ function sampleStory(): Story {
           'Rain drums on the shutters. Inside the Rusty Flagon, smoke curls from a hearth big enough to roast an ox, and every head turns as you shake the water from your cloaks.',
         reminders:
           'Brenna the innkeeper knows the merchant left for the old mill. A hooded figure in the corner is watching.',
+        rolls: [
+          {
+            id: 'r1',
+            key: 'skill:perception',
+            dc: 13,
+            dcShown: false,
+            outcomeShown: false,
+            who: [],
+            note: 'to spot the hooded figure',
+          },
+        ],
+        choices: [{ id: 'c1', text: 'they take the mill road', sceneId: 'sc2' }],
+        things: [{ id: 't1', kind: 'box', container: 'body', richness: 'ordinary' }],
       }),
       scene('sc2', 'ch1', 1, {
         title: 'The mill road',
         place: 'North of Millbrook',
         readAloud: 'The road narrows between black pines. Somewhere ahead, a wheel creaks in the wind.',
         reminders: 'Goblin tracks in the mud (Survival 12). The bridge is rotten.',
+        fight: { monsters: [{ index: 'goblin', count: 3 }], mapId: null },
       }),
     ],
   }

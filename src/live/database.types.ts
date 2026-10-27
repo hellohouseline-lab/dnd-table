@@ -1115,6 +1115,7 @@ export type Database = {
           id: string
           kind: string
           label: string
+          outcome_shown: boolean
           plain: string
           shown_dc: number | null
           skill: string | null
@@ -1129,6 +1130,7 @@ export type Database = {
           id?: string
           kind: string
           label: string
+          outcome_shown?: boolean
           plain?: string
           shown_dc?: number | null
           skill?: string | null
@@ -1143,6 +1145,7 @@ export type Database = {
           id?: string
           kind?: string
           label?: string
+          outcome_shown?: boolean
           plain?: string
           shown_dc?: number | null
           skill?: string | null
@@ -1154,6 +1157,52 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roll_verdicts: {
+        Row: {
+          campaign_id: string
+          passed: boolean
+          passed_by_dice: boolean | null
+          request_id: string
+          roll_id: string
+        }
+        Insert: {
+          campaign_id: string
+          passed: boolean
+          passed_by_dice?: boolean | null
+          request_id: string
+          roll_id: string
+        }
+        Update: {
+          campaign_id?: string
+          passed?: boolean
+          passed_by_dice?: boolean | null
+          request_id?: string
+          roll_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roll_verdicts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roll_verdicts_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "roll_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roll_verdicts_roll_id_fkey"
+            columns: ["roll_id"]
+            isOneToOne: true
+            referencedRelation: "rolls"
             referencedColumns: ["id"]
           },
         ]
@@ -1531,7 +1580,9 @@ export type Database = {
           ambience: Json
           campaign_id: string
           chapter_id: string
+          choices: Json
           created_at: string
+          fight: Json | null
           id: string
           image_id: string | null
           music_id: string | null
@@ -1539,6 +1590,8 @@ export type Database = {
           position: number
           read_aloud: string
           reminders: string
+          rolls: Json
+          things: Json
           title: string
           updated_at: string
         }
@@ -1546,7 +1599,9 @@ export type Database = {
           ambience?: Json
           campaign_id: string
           chapter_id: string
+          choices?: Json
           created_at?: string
+          fight?: Json | null
           id?: string
           image_id?: string | null
           music_id?: string | null
@@ -1554,6 +1609,8 @@ export type Database = {
           position?: number
           read_aloud?: string
           reminders?: string
+          rolls?: Json
+          things?: Json
           title?: string
           updated_at?: string
         }
@@ -1561,7 +1618,9 @@ export type Database = {
           ambience?: Json
           campaign_id?: string
           chapter_id?: string
+          choices?: Json
           created_at?: string
+          fight?: Json | null
           id?: string
           image_id?: string | null
           music_id?: string | null
@@ -1569,6 +1628,8 @@ export type Database = {
           position?: number
           read_aloud?: string
           reminders?: string
+          rolls?: Json
+          things?: Json
           title?: string
           updated_at?: string
         }
@@ -1761,6 +1822,7 @@ export type Database = {
           id: string
           kind: string
           label: string
+          outcome_shown: boolean
           plain: string
           shown_dc: number | null
           skill: string | null

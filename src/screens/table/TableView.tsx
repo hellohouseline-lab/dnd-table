@@ -1403,7 +1403,12 @@ export function TableView({
       )}
       {request && myAnswer && showResult && (
         <div className={styles.asked}>
-          <RollResult roll={myAnswer} shownDc={request.shownDc} onClose={() => setClosedResult(myAnswer.id)} />
+          <RollResult
+            roll={myAnswer}
+            shownDc={request.shownDc}
+            outcomeHidden={!request.outcomeShown}
+            onClose={() => setClosedResult(myAnswer.id)}
+          />
         </div>
       )}
 

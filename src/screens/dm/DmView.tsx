@@ -60,6 +60,9 @@ import { PartyCards, type HitPointChange } from './PartyCards.tsx'
 import { RestDialog } from './RestDialog.tsx'
 import { GiveDialog } from './GiveDialog.tsx'
 import { BoxDialog } from './give/BoxDialog.tsx'
+import type { AskInput } from '../../live/rollRequests.ts'
+import type { Container, Richness } from '../../rules/boxes.ts'
+import type { Fight } from '../../rules/scenes.ts'
 import { StoryTab } from './story/StoryTab.tsx'
 import type { Scene, StoryControls } from '../../live/story.ts'
 import type { Stage, StagePatch } from '../../live/stage.ts'
@@ -198,8 +201,10 @@ export function DmView({
   const fighting = fight.fight
   const [resting, setResting] = useState(false)
   // The Give card, optionally for one character.
-  const [giveTo, setGiveTo] = useState<{ only: string | null } | null>(null)
-  const [boxOpen, setBoxOpen] = useState(false)
+  const [giveTo, setGiveTo] = useState<{ only: string | null; ticked?: string[] } | null>(null)
+  const [boxOpen, setBoxOpen] = useState<{ container: Container; richness: Richness } | null>(null)
+  // A scene's planned fight, to fill in Start combat.
+  const [fightPreset, setFightPreset] = useState<Fight | null>(null)
   // The shop editor: a shop to change, or null for a new one.
   const [shopEdit, setShopEdit] = useState<{ shop: Shop | null } | null>(null)
   const equipment = useSrd(loadEquipment)
@@ -207,7 +212,11 @@ export function DmView({
   const noteInput = useRef<HTMLInputElement>(null)
   const sessionTime = useSessionClock(campaign.id)
   // The Ask for a roll card, optionally for one character; and a request the DM has tucked away.
-  const [askFor, setAskFor] = useState<{ only: string | null; key?: string } | null>(null)
+  const [askFor, setAskFor] = useState<{
+    only: string | null
+    key?: string
+    preset?: { dc: number; dcShown: boolean; outcomeShown: boolean; who: string[] }
+  } | null>(null)
   const [hiddenFor, setHiddenFor] = useState<string | null>(null)
   const [tab, setTab] = useState<DmTab>(startTab)
   const [sheetFor, setSheetFor] = useState<string | null>(null)
@@ -242,6 +251,21 @@ export function DmView({
     members.some((m) => m.user_id === c.ownerId && m.role === 'player' && m.here_tonight),
   )
   const chips = requestChips({ request, answers: asking.answers, members, characters, viewerId: me.user_id })
+
+  /** Roll behind the screen: the DM throws a check for each of them, secretly, with their bonus. */
+  async function rollBehindScreen(input: AskInput) {
+    const { askable } = input
+    for (const character of characters.filter((c) => input.characterIds.includes(c.id))) {
+      const roll = answerRoll(character, {
+        id: '',
+        kind: askable.kind,
+        ability: askable.ability,
+        skill: askable.skill,
+        label: `${askable.label} behind the screen (DC ${input.dc})`,
+      })
+      await table.roll({ ...roll, requestId: null, secret: true })
+    }
+  }
 
   async function rollFor(character: Character) {
     if (!request) return
@@ -379,6 +403,7 @@ export function DmView({
       `A fight began: ${[...party.map((c) => c.name), ...foes.map((f) => `${f.count} × ${f.monster.name}`)].join(', ')}.`,
     )
     setFightDialog(null)
+    setFightPreset(null)
     setTab('encounter')
   }
 
@@ -518,6 +543,28 @@ export function DmView({
               readAloudOnStage={stage.readAloud}
               onShowReadAloud={(readAloud) => onStage({ readAloud })}
               library={library}
+              data={{
+                characters,
+                dmItems: giving.yours,
+                shops: shops.shops,
+                monsters,
+                maps: library.filter((a) => a.kind === 'art' && a.category === 'maps'),
+              }}
+              actions={{
+                onAsk: (roll) =>
+                  setAskFor({
+                    only: null,
+                    key: roll.key,
+                    preset: { dc: roll.dc, dcShown: roll.dcShown, outcomeShown: roll.outcomeShown, who: roll.who },
+                  }),
+                onGiveItem: (id) => setGiveTo({ only: null, ticked: [`yours:${id}`] }),
+                onOpenBox: (container, richness) => setBoxOpen({ container, richness }),
+                onOpenShop: (id) => void shops.setOpen(id, true),
+                onStartFight: (planned) => {
+                  setFightPreset(planned)
+                  setFightDialog('start')
+                },
+              }}
             />
           ) : tab === 'encounter' ? (
             fighting ? (
@@ -551,7 +598,7 @@ export function DmView({
               characters={characters}
               giving={giving}
               onGive={(character) => setGiveTo({ only: character?.id ?? null })}
-              onOpenBox={() => setBoxOpen(true)}
+              onOpenBox={() => setBoxOpen({ container: 'chest', richness: 'ordinary' })}
               shops={shops}
               onShop={(shop) => setShopEdit({ shop })}
               equipment={equipment}
@@ -650,7 +697,7 @@ export function DmView({
           onClose={() => {
             if (fightDialog) setFightDialog(null)
             else if (giveTo) setGiveTo(null)
-            else if (boxOpen) setBoxOpen(false)
+            else if (boxOpen) setBoxOpen(null)
             else if (shopEdit) setShopEdit(null)
             else if (resting) setResting(false)
             else if (askFor) setAskFor(null)
@@ -664,8 +711,22 @@ export function DmView({
               monsters={monsters}
               maps={maps}
               mapOnStage={mapOnStage}
+              preset={
+                fightPreset
+                  ? {
+                      foes: fightPreset.monsters.flatMap((m) => {
+                        const monster = monsters?.find((x) => x.index === m.index)
+                        return monster ? [{ monster, count: m.count }] : []
+                      }),
+                      mapId: fightPreset.mapId,
+                    }
+                  : null
+              }
               onStart={startFight}
-              onClose={() => setFightDialog(null)}
+              onClose={() => {
+                setFightDialog(null)
+                setFightPreset(null)
+              }}
             />
           ) : fightDialog === 'monster' ? (
             <AddMonsterDialog
@@ -681,6 +742,7 @@ export function DmView({
               <GiveDialog
                 characters={characters}
                 only={giveTo.only}
+                ticked={giveTo.ticked ?? []}
                 equipment={equipment}
                 magicItems={magicItems}
                 giving={giving}
@@ -709,7 +771,8 @@ export function DmView({
                 settings={notebook.notebook.boxSettings}
                 onSettings={(boxSettings) => notebook.change({ ...notebook.notebook, boxSettings })}
                 onKeyItem={keyItemGiven}
-                onClose={() => setBoxOpen(false)}
+                start={boxOpen}
+                onClose={() => setBoxOpen(null)}
               />
             ) : null
           ) : resting ? (
@@ -726,6 +789,8 @@ export function DmView({
               hereTonight={hereTonight}
               only={askFor.only}
               startKey={askFor.key ?? null}
+              preset={askFor.preset ?? null}
+              onBehindScreen={(input) => void rollBehindScreen(input)}
               onSend={asking.ask}
               onCancel={() => setAskFor(null)}
               error={asking.error}

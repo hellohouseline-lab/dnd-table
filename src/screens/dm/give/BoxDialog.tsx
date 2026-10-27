@@ -14,6 +14,7 @@ import {
   type BoxAsk,
   type BoxContents,
   type BoxSettings,
+  type Container,
   type Richness,
 } from '../../../rules/boxes.ts'
 import { weaponProficient } from '../../../rules/build/gear.ts'
@@ -37,6 +38,8 @@ type BoxDialogProps = {
   settings: BoxSettings
   onSettings: (settings: BoxSettings) => void
   onKeyItem: (name: string, holder: string) => void
+  /** What kind of box to start with (a scene's planned box). */
+  start?: { container: Container; richness: Richness } | null
   onClose: () => void
 }
 
@@ -61,11 +64,12 @@ export function BoxDialog({
   settings,
   onSettings,
   onKeyItem,
+  start = null,
   onClose,
 }: BoxDialogProps) {
   const [ask, setAsk] = useState<BoxAsk>(() => ({
-    container: 'chest',
-    richness: 'ordinary',
+    container: start?.container ?? 'chest',
+    richness: start?.richness ?? 'ordinary',
     level: partyLevel(characters.map((c) => c.level)),
     search: 'none',
   }))

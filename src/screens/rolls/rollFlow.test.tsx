@@ -26,6 +26,7 @@ const conSave: AskedRoll = {
   plain: 'Steel yourself against poison, sickness or exhaustion.',
   characterIds: [sampleFighter.id, sampleWizard.id],
   shownDc: null,
+  outcomeShown: true,
   status: 'open',
   createdAt: '2026-10-26T20:00:00Z',
 }
@@ -242,6 +243,14 @@ describe('the roll flow screens', () => {
     const html = text(renderToStaticMarkup(<RollResult roll={roll} shownDc={15} onClose={noop} />))
     expect(html).toMatch(/20 − 6 = 14 vs DC 15 Natural 20 Failed/)
     expect(html).toMatch(/total still decides: 14 falls short/)
+  })
+
+  it('shows only the total when the DM keeps the outcome', () => {
+    const roll = { ...answer('fighter', 'p1', 12, 4), passed: null, passedByDice: null, requestId: conSave.id }
+    const html = text(renderToStaticMarkup(<RollResult roll={roll} shownDc={null} outcomeHidden onClose={noop} />))
+    expect(html).toContain('Rolled')
+    expect(html).toContain('You rolled 16. The DM knows how it went, and will tell you what happens.')
+    expect(html).not.toMatch(/Passed|Failed|Waiting for the DM/)
   })
 
   it('lists everyone’s results for the DM, with a way to change each', () => {
