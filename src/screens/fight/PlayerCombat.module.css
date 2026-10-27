@@ -418,3 +418,16 @@
   font-size: 9px;
   vertical-align: 2px;
 }
+
+/* A save owed at the end of your turn, to shake off a condition (C3a). */
+.owed {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.owedWords {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-2);
+}

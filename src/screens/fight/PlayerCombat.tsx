@@ -2,6 +2,8 @@ import { cx } from '../../components/cx.ts'
 import { Icon } from '../../components/Icon.tsx'
 import type { Character } from '../../rules/character.ts'
 import { findCondition } from '../../rules/srd/index.ts'
+import { canBreakFree, clockWords, CONDITION_WORD, type ConditionClock } from '../../rules/conditionClocks.ts'
+import { ABILITY_NAME } from '../../rules/abilities.ts'
 import { HEALTH_WORDS } from '../../rules/combat.ts'
 import type { RollMode } from '../../rules/dice.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
@@ -58,7 +60,11 @@ export function InitiativeRibbon({ rows, picking = null, yours = null }: RibbonP
                   title={`What ${(findCondition(index)?.name ?? index).toLowerCase()} does`}
                   onClick={() => yours.onCondition(index)}
                 >
-                  {findCondition(index)?.name ?? index}
+                  {CONDITION_WORD[index] ?? findCondition(index)?.name ?? index}
+                  {(() => {
+                    const rounds = row.combatant.clocks.find((c) => c.condition === index)?.rounds
+                    return rounds ? ` · ${rounds}` : ''
+                  })()}
                 </button>
               ))}
           </li>
@@ -303,5 +309,86 @@ export function InspectCard({ row, onClose }: { row: FightRow | null; onClose: (
         <p className={styles.inspectNote}>Only what the party knows. The DM chooses what&rsquo;s revealed.</p>
       )}
     </div>
+  )
+}
+
+type YourConditionsProps = {
+  /** Your conditions, and how long each lasts. */
+  conditions: string[]
+  clocks: ConditionClock[]
+  myTurn: boolean
+  /** Feet of movement left this turn, and your speed. */
+  feetLeft: number
+  speed: number
+  actionFree: boolean
+  rolling: boolean
+  onSave: (condition: string) => void
+  onStandUp: () => void
+  onBreakFree: () => void
+}
+
+/**
+ * What you can do about your conditions (C3a): roll the save you owe at the end of your turn, stand
+ * up from prone (half your speed), and break free of a grab or a web (your action).
+ */
+export function YourConditions({
+  conditions,
+  clocks,
+  myTurn,
+  feetLeft,
+  speed,
+  actionFree,
+  rolling,
+  onSave,
+  onStandUp,
+  onBreakFree,
+}: YourConditionsProps) {
+  const owed = clocks.filter((c) => c.owed && c.save && conditions.includes(c.condition))
+  const prone = conditions.includes('prone')
+  const held = clocks.some((c) => conditions.includes(c.condition) && canBreakFree(c))
+  const half = Math.ceil(speed / 2)
+  if (owed.length === 0 && !(myTurn && (prone || held))) return null
+  return (
+    <section className={styles.thisTurn} aria-label="Your conditions">
+      <div className={styles.thisTurnTitle}>Your conditions</div>
+      {owed.map((clock) => (
+        <div key={clock.condition} className={styles.owed}>
+          <p className={styles.owedWords}>
+            You&rsquo;re {(CONDITION_WORD[clock.condition] ?? clock.condition).toLowerCase()} (
+            {clockWords(clock, { forPlayers: true })}).
+          </p>
+          <button type="button" className={styles.endTurn} disabled={rolling} onClick={() => onSave(clock.condition)}>
+            Roll a {clock.save ? ABILITY_NAME[clock.save.ability] : ''} save to shake off{' '}
+            {CONDITION_WORD[clock.condition] ?? clock.condition}
+          </button>
+        </div>
+      ))}
+      {myTurn && (prone || held) && (
+        <div className={styles.moves} role="group" aria-label="Get free">
+          {prone && (
+            <button
+              type="button"
+              className={styles.move}
+              disabled={feetLeft < half}
+              title={feetLeft < half ? 'Standing up takes half your speed' : `Uses ${half} feet of your movement`}
+              onClick={onStandUp}
+            >
+              Stand up ({half} ft)
+            </button>
+          )}
+          {held && (
+            <button
+              type="button"
+              className={styles.move}
+              disabled={!actionFree || rolling}
+              title="Your action: Athletics or Acrobatics, whichever is better"
+              onClick={onBreakFree}
+            >
+              Break free
+            </button>
+          )}
+        </div>
+      )}
+    </section>
   )
 }

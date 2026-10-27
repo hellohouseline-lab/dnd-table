@@ -18,7 +18,8 @@ import { adjustDamage, NO_DEFENCES } from '../../rules/damage.ts'
 import { deathSave, hitWhileDown, opportunityThreats } from '../../rules/dying.ts'
 import type { NewArea } from '../../live/areas.ts'
 import type { Ability } from '../../rules/abilities.ts'
-import { freeRoll, savingThrow } from '../../rules/rolls.ts'
+import { freeRoll, savingThrow, skillCheck } from '../../rules/rolls.ts'
+import { makeClock, tickEnd, tickStart, type ConditionClock } from '../../rules/conditionClocks.ts'
 import { USABLE } from '../../rules/items.ts'
 import { concentrationDc, slotsLeft, spellSaveDc } from '../../rules/spells.ts'
 import type { RollRequest } from '../../rules/dice.ts'
@@ -49,6 +50,7 @@ function characterCombatant(character: Character, encounterId: string, initiativ
     tiebreak: character.scores.dexterity,
     health: 'healthy',
     conditions: [],
+    clocks: [],
     speed: character.speed,
     reachFt: /glaive|halberd|lance|pike|whip/i.test(JSON.stringify(character.attacks)) ? 10 : 5,
     turn: FRESH_TURN,
@@ -75,6 +77,7 @@ export function sampleFight(characters: Character[]): Fight {
       tiebreak: 14,
       health: i === 1 ? 'bloodied' : 'healthy',
       conditions: [],
+      clocks: [],
       speed: 30,
       reachFt: 5,
       turn: FRESH_TURN,
@@ -197,6 +200,58 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
 
   const speedOf = (combatant: Combatant) =>
     characters.find((c) => c.id === combatant.characterId)?.speed ?? combatant.speed
+
+  // Conditions that wear off (C3a), as the server's put_condition and tick_conditions.
+  const conditionsOf = (combatant: Combatant) =>
+    characters.find((c) => c.id === combatant.characterId)?.conditions ?? combatant.conditions
+  function putCondition(combatant: Combatant, condition: string, on: boolean, clock: ConditionClock | null) {
+    const now = latest.current.fight?.combatants.find((c) => c.id === combatant.id) ?? combatant
+    const clocks = [...now.clocks.filter((c) => c.condition !== condition), ...(on && clock ? [clock] : [])]
+    const before = conditionsOf(now)
+    const conditions = on
+      ? before.includes(condition)
+        ? before
+        : [...before, condition]
+      : before.filter((c) => c !== condition)
+    const character = characters.find((c) => c.id === now.characterId)
+    if (character) {
+      onCharacter?.(character.id, { conditions })
+      update(now, { clocks })
+    } else update(now, { clocks, conditions })
+  }
+  function conditionLine(combatant: Combatant, shown: CombatEvent['shown']) {
+    const character = characters.find((c) => c.id === combatant.characterId)
+    post(
+      { kind: 'condition', actorId: combatant.id, targetId: combatant.id, rollId: null, shown },
+      { target: character ? { characterId: character.id, before: stateOf(character) } : null, actor: null },
+    )
+  }
+  // As a turn starts or ends: rounds come off, "until the end of its next turn" ends, saves each turn
+  // are rolled for monsters and owed by players.
+  function tick(combatantId: string | null, when: 'start' | 'end') {
+    const me = latest.current.fight?.combatants.find((c) => c.id === combatantId)
+    if (!me || me.clocks.length === 0) return
+    const result = when === 'start' ? tickStart(me.clocks) : tickEnd(me.clocks)
+    // The preview's monsters have no save bonuses: a plain d20.
+    const kept = result.kept.flatMap((clock) => {
+      if (!result.saves.includes(clock) || !clock.save) return [clock]
+      if (me.kind === 'character') return [{ ...clock, owed: true }]
+      const total = secureDraw(20)
+      if (total >= (clock.save.dc ?? 10)) {
+        result.ended.push(clock)
+        conditionLine(me, { condition: clock.condition, ended: 'saved' })
+        return []
+      }
+      conditionLine(me, { condition: clock.condition, still: true })
+      return [clock]
+    })
+    update(me, { clocks: kept })
+    for (const clock of result.ended) {
+      putCondition({ ...me, clocks: kept }, clock.condition, false, null)
+      if (!clock.save || when === 'start' || clock.endOfNextTurn)
+        conditionLine(me, { condition: clock.condition, ended: 'time' })
+    }
+  }
 
   // An attack, as private.settle_attack: on your turn from your action, or as a reaction.
   // Damage after the target's defences, as private.apply_damage: temporary hit points first, a death
@@ -336,8 +391,23 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
     setEvents(latest.current.events)
   }
 
+  // A caster's concentration ending ends the monsters' conditions tied to it (the server's trigger).
+  const concentrating = (clock: ConditionClock) =>
+    !clock.caster || characters.find((c) => c.id === clock.caster?.characterId)?.concentration === clock.caster.spell
+  const held = (c: Combatant) => {
+    const lost = c.kind === 'monster' ? c.clocks.filter((clock) => !concentrating(clock)).map((x) => x.condition) : []
+    return lost.length === 0
+      ? c
+      : {
+          ...c,
+          conditions: c.conditions.filter((x) => !lost.includes(x)),
+          clocks: c.clocks.filter((x) => !lost.includes(x.condition)),
+        }
+  }
+  const shownFight = fight && { ...fight, combatants: fight.combatants.map(held) }
+
   return {
-    fight,
+    fight: shownFight,
     status: 'ready',
     error: null,
     events,
@@ -383,6 +453,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         tiebreak: monster.scores.dexterity,
         health: 'healthy',
         conditions: [],
+        clocks: [],
         speed: monster.speed,
         reachFt: threatReach(monster.actions),
         turn: FRESH_TURN,
@@ -414,6 +485,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
     },
     next: () => {
       setPrompts([])
+      tick(latest.current.fight?.encounter.currentId ?? null, 'end')
       set((f) => {
         const entries = f.combatants.map((c) => ({ ...c, out: c.kind === 'monster' && c.health === 'down' }))
         const turn = nextTurn(entries, f.encounter.currentId, f.encounter.round)
@@ -423,6 +495,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           combatants: f.combatants.map((c) => (c.id === turn.currentId ? { ...c, turn: FRESH_TURN } : c)),
         }
       })
+      tick(latest.current.fight?.encounter.currentId ?? null, 'start')
     },
     setMonsterHp: (secret, hp) =>
       set((f) => {
@@ -445,7 +518,8 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           ),
         }
       }),
-    setConditions: (combatant, conditions) => update(combatant, { conditions }),
+    setConditions: (combatant, conditions) =>
+      update(combatant, { conditions, clocks: combatant.clocks.filter((c) => conditions.includes(c.condition)) }),
     remove: (combatant) => set((f) => ({ ...f, combatants: f.combatants.filter((c) => c.id !== combatant.id) })),
     end: () => {
       latest.current.fight = null
@@ -800,6 +874,72 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         )
       }
       return { ...roll, passed: kept, passedByDice: kept }
+    },
+    setCondition: async (combatant, condition, on, choice, resist = null) => {
+      const character = characters.find((c) => c.id === combatant.characterId)
+      let roll: Roll | null = null
+      let resisted = false
+      if (on && resist) {
+        const request = character ? savingThrow(character, resist.ability) : freeRoll([{ sides: 20, count: 1 }])
+        roll = localRoll(
+          { ...request, kind: 'save', label: `${resist.ability} save` },
+          { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+        )
+        resisted = roll.total >= resist.dc
+      }
+      const clock = on && choice ? makeClock(condition, choice) : null
+      if (!resisted) putCondition(combatant, condition, on, clock)
+      conditionLine(combatant, {
+        condition,
+        on,
+        ...(resist ? { resisted, saveAbility: resist.ability } : {}),
+        ...(clock?.rounds ? { rounds: clock.rounds } : {}),
+        ...(clock?.endOfNextTurn ? { endOfNextTurn: true } : {}),
+        ...(clock?.save ? { saveEachTurn: clock.save.ability } : {}),
+        ...(clock?.caster ? { spell: clock.caster.spell } : {}),
+      })
+      return { resisted, roll }
+    },
+    conditionSave: async (combatant, condition) => {
+      const character = characters.find((c) => c.id === combatant.characterId)
+      const clock = combatant.clocks.find((c) => c.condition === condition && c.owed && c.save)
+      if (!character || !clock?.save) throw new Error('There’s no save to make.')
+      const roll = localRoll(
+        { ...savingThrow(character, clock.save.ability), label: `Save to shake off ${condition}` },
+        { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+      )
+      const saved = roll.total >= (clock.save.dc ?? 10)
+      if (saved) putCondition(combatant, condition, false, null)
+      else update(combatant, { clocks: combatant.clocks.map((c) => (c === clock ? { ...c, owed: false } : c)) })
+      conditionLine(combatant, { condition, saved, saveAbility: clock.save.ability, total: roll.total })
+      return { ...roll, passed: saved, passedByDice: saved }
+    },
+    standUp: async (combatant) => {
+      if (!conditionsOf(combatant).includes('prone')) throw new Error('You aren’t lying down.')
+      const half = Math.ceil(speedOf(combatant) / 2)
+      setTurn(combatant.id, (turn) => ({ ...turn, feetMoved: turn.feetMoved + half }))
+      putCondition(combatant, 'prone', false, null)
+      conditionLine(combatant, { condition: 'prone', stood: true, feet: half })
+    },
+    breakFree: async (combatant) => {
+      const character = characters.find((c) => c.id === combatant.characterId)
+      const holds = combatant.clocks.filter(
+        (c) => ['grappled', 'restrained'].includes(c.condition) && c.escapeDc !== null,
+      )
+      if (!character || holds.length === 0) throw new Error('There’s nothing to break free from.')
+      const dc = Math.max(...holds.map((c) => c.escapeDc ?? 0))
+      const best = [skillCheck(character, 'athletics'), skillCheck(character, 'acrobatics')].sort(
+        (a, b) => b.modifier - a.modifier,
+      )[0]
+      const roll = localRoll(
+        { ...best, label: 'Break free (Athletics or Acrobatics)' },
+        { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+      )
+      const free = roll.total >= dc
+      setTurn(combatant.id, (turn) => ({ ...turn, actionUsed: true }))
+      if (free) for (const hold of holds) putCondition(combatant, hold.condition, false, null)
+      conditionLine(combatant, { condition: 'grappled', brokeFree: free, total: roll.total })
+      return { ...roll, passed: free, passedByDice: free }
     },
     walk: (combatantId, feet) => setTurn(combatantId, (turn) => ({ ...turn, feetMoved: turn.feetMoved + feet })),
     provoke: (moverId, from, to, tokens) => {

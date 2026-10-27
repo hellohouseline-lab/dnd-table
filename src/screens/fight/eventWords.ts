@@ -2,6 +2,8 @@
 // from each screen (real names for the DM, what players know for players), and "you" for yourself.
 
 import type { CombatEvent } from '../../live/combat.ts'
+import { CONDITION_WORD } from '../../rules/conditionClocks.ts'
+import { ABILITY_NAME, type Ability } from '../../rules/abilities.ts'
 
 type Names = {
   /** The name to show for a combatant on this screen. */
@@ -82,6 +84,8 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
       : `${actor} ${verb('loses', 'lose')} concentration, and ${spell} ends${rolled}.`
   }
 
+  if (event.kind === 'condition') return conditionWords(event, actor, verb, you)
+
   const targetIsYou = event.targetId !== null && event.targetId === youId
   const target = targetIsYou ? 'you' : nameOf(event.targetId)
 
@@ -133,10 +137,59 @@ export function eventWords(event: CombatEvent, { nameOf, youId = null }: Names):
         ? ' (vulnerable, so doubled)'
         : ''
   const critical = event.shown.critical ? ' A critical hit!' : ''
-  const down = event.shown.down ? ` ${targetIsYou ? 'You go' : `${target} goes`} down.` : ''
+  const down = event.shown.down
+    ? ` ${targetIsYou ? 'You go' : `${target} goes`} down.`
+    : event.shown.fortitude
+      ? ` ${target} refuses to fall!`
+      : ''
   if (event.shown.adjust === 'immune') {
     const immune = targetIsYou ? 'You are' : `${target} is`
     return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${rolled}, but ${immune} immune to${type || ' it'}.${critical}`
   }
   return `${actor} ${verb('hits', 'hit')} ${target}${weapon}${amount}${adjusted}${rolled}.${critical}${down}`
+}
+
+/** A condition put on, taken off, worn off, saved against, stood up from or broken free of (C3a). */
+function conditionWords(
+  event: CombatEvent,
+  actor: string,
+  verb: (they: string, yourself: string) => string,
+  you: boolean,
+): string {
+  const shown = event.shown
+  const word = (CONDITION_WORD[shown.condition ?? ''] ?? shown.condition ?? 'a condition').toLowerCase()
+  const save = (ability?: string | null) => (ability ? `${ABILITY_NAME[ability as Ability] ?? ability} save` : 'save')
+  const rolled = typeof shown.total === 'number' ? ` (rolled ${shown.total})` : ''
+  const is = verb('is', 'are')
+
+  if (shown.stood) return `${actor} ${verb('stands', 'stand')} up (${shown.feet ?? 0} feet of movement).`
+  if (shown.brokeFree !== undefined) {
+    return shown.brokeFree
+      ? `${actor} ${verb('breaks', 'break')} free${rolled}.`
+      : `${actor} ${verb('struggles', 'struggle')} but can't break free${rolled}.`
+  }
+  if (shown.saved !== undefined) {
+    return shown.saved
+      ? `${actor} ${verb('shakes', 'shake')} off being ${word}${rolled}.`
+      : `${actor} ${is} still ${word}${rolled}.`
+  }
+  if (shown.still) return `${actor} ${is} still ${word}.`
+  if (shown.ended === 'saved') return `${actor} ${verb('shakes', 'shake')} off being ${word}.`
+  if (shown.ended === 'concentration')
+    return `${actor} ${is} no longer ${word}: ${shown.spell ?? 'the spell'} has ended.`
+  if (shown.ended === 'time') return `${actor} ${is} no longer ${word}.`
+  if (shown.on === false) return `${actor} ${is} no longer ${word}.`
+  if (shown.resisted)
+    return `${actor} ${verb('makes', 'make')} the ${save(shown.saveAbility)} and ${is} not ${word}${rolled}.`
+
+  const failed = shown.resisted === false ? `${verb('fails', 'fail')} the ${save(shown.saveAbility)}${rolled} and ` : ''
+  const how = [
+    shown.endOfNextTurn ? `until the end of ${you ? 'your' : 'their'} next turn` : '',
+    shown.rounds ? `for ${shown.rounds === 1 ? '1 round' : `${shown.rounds} rounds`}` : '',
+    shown.saveEachTurn ? `with a ${save(shown.saveEachTurn)} each turn` : '',
+    shown.spell ? `while ${shown.spell} lasts` : '',
+  ]
+    .filter(Boolean)
+    .join(', ')
+  return `${actor} ${failed}${is} now ${word}${how ? ` ${how}` : ''}.`
 }

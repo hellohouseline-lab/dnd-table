@@ -27,7 +27,8 @@ import { RequestResults } from '../rolls/RequestResults.tsx'
 import { loadMonsters, loadSpells } from '../../rules/srd/index.ts'
 import { ActingNow, TurnOrder } from '../fight/EncounterTab.tsx'
 import { AddMonsterDialog } from '../fight/FightDialogs.tsx'
-import { cameraTurn, fightRows, type FightRow } from '../fight/fightRows.ts'
+import { cameraTurn, concentratingIn, fightRows, type FightRow } from '../fight/fightRows.ts'
+import { offersFor } from '../fight/conditionOffers.ts'
 import { CombatFeed } from '../fight/TurnParts.tsx'
 import { useAiming, type Aiming } from '../fight/useAiming.ts'
 import { useCasting } from '../fight/useCasting.ts'
@@ -323,6 +324,7 @@ export function BattleView({
             campaignId={campaignId}
             className={styles.acting}
             row={focus}
+            concentrating={concentratingIn(rows)}
             controls={controls}
             monsters={monsters}
             onAttack={aimMonster}
@@ -524,6 +526,7 @@ export function BattleView({
               className={styles.feed}
               events={controls.events}
               nameOf={nameOf}
+              offerFor={offersFor(fight, monsters, rows, controls.setCondition)}
               onUndo={controls.undo}
               limit={5}
             />

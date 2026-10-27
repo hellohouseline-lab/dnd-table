@@ -27,6 +27,8 @@ import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './
 import { requestToJson, rowToRoll, type Roll } from './rolls.ts'
 import { supabase } from './supabase.ts'
 import type { BonusAttackKind } from '../rules/bonusActions.ts'
+import { monsterTraitKeys, type ClockChoice, type ConditionClock } from '../rules/conditionClocks.ts'
+import type { Ability } from '../rules/abilities.ts'
 
 export type Encounter = {
   id: string
@@ -50,6 +52,8 @@ export type Combatant = {
   tiebreak: number
   health: HealthState
   conditions: string[]
+  /** How long each of its conditions lasts (C3a); a condition with no clock stays until taken off. */
+  clocks: ConditionClock[]
   /** Walking speed in feet: a monster's own; a character's sheet has the one that counts. */
   speed: number
   /** How far it threatens for opportunity attacks: 5 feet, or more with a reach weapon. */
@@ -66,7 +70,7 @@ export type CombatEvent = {
   round: number
   actorId: string | null
   targetId: string | null
-  kind: 'attack' | 'action' | 'death_save' | 'spell' | 'concentration'
+  kind: 'attack' | 'action' | 'death_save' | 'spell' | 'concentration' | 'condition'
   rollId: string | null
   shown: {
     label?: string
@@ -109,6 +113,25 @@ export type CombatEvent = {
     item?: string
     stabilised?: boolean
     scattered?: boolean
+    /** A zombie that refused to fall (Undead Fortitude). */
+    fortitude?: boolean
+    /** For a condition (C3a): which, put on or taken off, and what came of it. */
+    condition?: string
+    on?: boolean
+    /** Resisted with a save first (a wolf's bite), or not. */
+    resisted?: boolean
+    rounds?: number
+    endOfNextTurn?: boolean
+    saveEachTurn?: string
+    /** How it ended: its time ran out, a save each turn, or the caster's concentration. */
+    ended?: 'time' | 'saved' | 'concentration'
+    /** A monster's save each turn failed. */
+    still?: boolean
+    /** A player's save each turn: passed or not. */
+    saved?: boolean
+    stood?: boolean
+    feet?: number
+    brokeFree?: boolean
   }
   undone: boolean
   seq: number
@@ -182,6 +205,7 @@ export function rowToCombatant(row: Tables<'combatants'>): Combatant {
     tiebreak: row.tiebreak,
     health: HEALTH.find((h) => h === row.health) ?? 'healthy',
     conditions: row.conditions,
+    clocks: Array.isArray(row.condition_clocks) ? (row.condition_clocks as unknown as ConditionClock[]) : [],
     speed: row.speed,
     reachFt: row.reach_ft,
     turn: {
@@ -207,7 +231,11 @@ export function rowToEvent(row: Tables<'combat_events'>): CombatEvent {
     actorId: row.actor_id,
     targetId: row.target_id,
     kind:
-      row.kind === 'attack' || row.kind === 'death_save' || row.kind === 'spell' || row.kind === 'concentration'
+      row.kind === 'attack' ||
+      row.kind === 'death_save' ||
+      row.kind === 'spell' ||
+      row.kind === 'concentration' ||
+      row.kind === 'condition'
         ? row.kind
         : 'action',
     rollId: row.roll_id,
@@ -353,6 +381,7 @@ export async function addMonsters(
     immunities: monster.immunities ?? [],
     condition_immunities: monster.conditionImmunities ?? [],
     saves: monsterSaves(monster),
+    traits: monsterTraitKeys(monster),
   }))
   const secrets = await db().from('combatant_secrets').insert(secretRows).select('*')
   if (secrets.error) throw fromDatabaseError(secrets.error)
@@ -700,4 +729,71 @@ export async function setTokenHidden(id: string, hidden: boolean): Promise<void>
 export async function removeToken(id: string): Promise<void> {
   const { error } = await db().from('tokens').delete().eq('id', id)
   if (error) throw fromDatabaseError(error)
+}
+
+// ---------------------------------------------------------------------------------------------
+// Conditions that wear off (C3a)
+
+/** The clock as the server takes it: rounds, the end of the next turn, a save, a caster, an escape DC. */
+export function clockToJson(choice: ClockChoice): Json {
+  return {
+    rounds: choice.howLong.kind === 'rounds' ? choice.howLong.rounds : null,
+    endOfNextTurn: choice.howLong.kind === 'end-of-turn',
+    save: choice.save ?? null,
+    caster: choice.caster ?? null,
+    escapeDc: choice.escapeDc ?? null,
+  }
+}
+
+/**
+ * The DM puts a condition on (with how long it lasts, or null for "until I take it off") or takes it
+ * off. With `resist`, the creature first makes that save, rolled by the server.
+ */
+export async function setCondition(
+  combatantId: string,
+  condition: string,
+  on: boolean,
+  choice: ClockChoice | null,
+  resist: { ability: Ability; dc: number } | null = null,
+): Promise<{ event: CombatEvent; resisted: boolean; roll: Roll | null }> {
+  const { data, error } = await db().rpc('set_condition', {
+    p_combatant_id: combatantId,
+    p_condition: condition,
+    p_on: on,
+    p_clock: (choice ? clockToJson(choice) : null) as Json,
+    p_resist: resist as Json,
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { event: Tables<'combat_events'>; resisted: boolean; roll: Tables<'rolls'> | null }
+  return {
+    event: rowToEvent(result.event),
+    resisted: result.resisted,
+    roll: result.roll ? rowToRoll(result.roll) : null,
+  }
+}
+
+/** A player's save each turn to shake off a condition, rolled by the server. */
+export async function conditionSave(
+  combatantId: string,
+  condition: string,
+): Promise<{ roll: Roll; saved: boolean; event: CombatEvent }> {
+  const { data, error } = await db().rpc('condition_save', { p_combatant_id: combatantId, p_condition: condition })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; saved: boolean; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), saved: result.saved, event: rowToEvent(result.event) }
+}
+
+/** Standing up from prone, for half your speed. */
+export async function standUp(combatantId: string): Promise<CombatEvent> {
+  const { data, error } = await db().rpc('stand_up', { p_combatant_id: combatantId })
+  if (error) throw fromServerRule(error)
+  return rowToEvent(data)
+}
+
+/** Breaking free of a grab or a web: the action, and Athletics or Acrobatics against the escape DC. */
+export async function breakFree(combatantId: string): Promise<{ roll: Roll; free: boolean; event: CombatEvent }> {
+  const { data, error } = await db().rpc('break_free', { p_combatant_id: combatantId })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'>; free: boolean; event: Tables<'combat_events'> }
+  return { roll: rowToRoll(result.roll), free: result.free, event: rowToEvent(result.event) }
 }

@@ -608,6 +608,11 @@ button.action:disabled {
   font-size: 14px;
 }
 
+.conditionTime {
+  color: var(--text-3);
+  font-size: 13px;
+}
+
 .condition {
   display: inline-flex;
   align-items: center;

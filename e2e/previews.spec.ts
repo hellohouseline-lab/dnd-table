@@ -1185,3 +1185,44 @@ test('rules: in a fight, your own condition in the turn order opens what it does
   await expect(rules.getByRole('button', { name: /Unconscious/ })).toHaveAttribute('aria-expanded', 'true')
   await expect(rules).toContainText("You're out cold")
 })
+
+test('conditions: the DM paralyses a goblin for 2 rounds with a save each turn, and it counts down', async ({
+  page,
+}) => {
+  await page.goto('#/dev/battle')
+  await page.getByRole('button', { name: 'Goblin A', exact: true }).click()
+  const acting = page.getByRole('region', { name: 'Acting now' })
+  await expect(acting).toContainText('Goblin A')
+  await acting.getByLabel('Add a condition').selectOption('paralyzed')
+  const picker = acting.getByRole('group', { name: 'How long is it paralysed?' })
+  await picker.getByLabel('How long').selectOption({ label: '2 rounds' })
+  await picker.getByLabel('Save each turn').selectOption('wisdom')
+  await picker.getByLabel('Save DC').fill('30')
+  await picker.getByRole('button', { name: 'Put it on' }).click()
+  await expect(acting).toContainText('Paralysed · 2 rounds · saves each turn (Wisdom DC 30)')
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText('Goblin A is now paralysed for 2 rounds, with a Wisdom save each turn.')
+
+  // Turns go round: a round comes off as the goblin's turn starts, and it fails its save as it ends.
+  for (let i = 0; i < 5 && !(await feed.textContent())?.includes('still paralysed'); i++) {
+    await page.getByRole('button', { name: 'Next turn' }).click()
+  }
+  await expect(feed).toContainText('Goblin A is still paralysed.')
+  await page.getByRole('button', { name: 'Goblin A', exact: true }).click()
+  await expect(acting).toContainText('Paralysed · 1 round · saves each turn (Wisdom DC 30)')
+})
+
+test('conditions: a player stands up, breaks free and shakes off poison on their turn', async ({ page }) => {
+  await page.goto('#/dev/table/held')
+  const yours = page.getByRole('region', { name: 'Your conditions' })
+  await expect(yours).toContainText('You’re poisoned (9 rounds · saves each turn (Constitution))')
+  const ribbon = page.getByRole('list', { name: 'Turn order' })
+  await expect(ribbon.getByRole('button', { name: 'Prone' })).toBeVisible()
+  await yours.getByRole('button', { name: 'Stand up (13 ft)' }).click()
+  await expect(ribbon.getByRole('button', { name: 'Prone' })).toBeHidden()
+  await yours.getByRole('button', { name: 'Break free' }).click()
+  await expect(ribbon.getByRole('button', { name: 'Grappled' })).toBeHidden()
+  await yours.getByRole('button', { name: 'Roll a Constitution save to shake off Poisoned' }).click()
+  await expect(ribbon.getByRole('button', { name: /Poisoned/ })).toBeHidden()
+  await expect(yours).toBeHidden()
+})

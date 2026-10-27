@@ -41,6 +41,14 @@ const noFight: FightControls = {
   offhandAttack: () => Promise.reject(new Error('No fight')),
   applyItem: () => Promise.reject(new Error('No fight')),
   takeBack: () => Promise.reject(new Error('No fight')),
+  setCondition: async () => ({ resisted: false, roll: null }),
+  conditionSave: async () => {
+    throw new Error('No fight')
+  },
+  standUp: async () => {},
+  breakFree: async () => {
+    throw new Error('No fight')
+  },
 }
 const nobodyAsked: RequestControls = {
   request: null,

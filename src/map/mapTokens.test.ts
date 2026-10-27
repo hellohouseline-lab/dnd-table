@@ -17,6 +17,7 @@ const goblin: Combatant = {
   tiebreak: 14,
   health: 'healthy',
   conditions: [],
+  clocks: [],
   speed: 30,
   reachFt: 5,
   turn: FRESH_TURN,

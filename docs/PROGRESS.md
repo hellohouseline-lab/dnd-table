@@ -3,6 +3,17 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **C3a: conditions that wear off (live).** The plan is in `docs/C3_PLAN.md`, approved with decisions 72 to 83 as recommended.
+  - **How long?** Adding a condition on the Acting now card (Screen 1's Encounter tab and the Battle screen, for monsters and characters alike) asks: **Until I take it off** (as before), **Until the end of their next turn**, 1 to 5 rounds or **1 minute**; a **Save each turn** (the ability and DC, with **Keep the DC secret**); **Ends with** a caster's concentration; and a **Break free DC** for a grab or a web.
+  - **Time left** on every chip ("Paralysed · 2 rounds · saves each turn (Wisdom DC 13)"), in the turn order ("Paralysed (2)"), and on a player's own conditions in their turn order. Players never see a secret DC: it's kept in a table only the DM can read.
+  - **Counting down** by itself: rounds come off as the creature's turn starts; "until the end of their next turn" ends as it ends; a monster's save each turn is rolled by the server at the end of its turn (the dice only in your roll log; the feed says "Goblin A is still paralysed" or "shakes off being paralysed").
+  - **Players** get a card at the end of their turn: **Roll a Wisdom save to shake off Paralysed**. On their turn, **Stand up** (half their speed) and **Break free** (their action, Athletics or Acrobatics, whichever is better).
+  - **Concentration:** when the caster's concentration ends (a failed save, a timer, Lost it, or dropping to 0), the conditions tied to their spell end too, with a line in the feed.
+  - **One click from spells and attacks:** after a failed save against Hold Person, Command, Entangle, Hideous Laughter, Charm Person, Fear, Blindness/Deafness, Color Spray, Web or Sleep, or a monster attack that causes a condition (read from the free rules: a wolf's bite, a giant frog's grab, a ghoul's claws, a giant spider's web and the like), the feed line offers **Apply Paralysed** (or **Apply Prone (save first)**, which rolls the save for you) with everything filled in. Never applied by itself.
+  - **Undead Fortitude** happens by itself: a zombie dropped to 0 by anything but radiant damage or a critical hit makes its save (in your roll log) and may stay up with 1 hit point ("Zombie A refuses to fall!").
+  - **When the fight ends,** a minute passes: anything timed to a minute or less, or with a save each turn, comes off. **A long rest** asks whether to clear any conditions left.
+  - Undo puts a condition and its clock back.
+  - Server: `20261027290000_condition_clocks.sql` (`condition_clocks`, `clock_secrets`, `set_condition`, `condition_save`, `stand_up`, `break_free`, the countdown in the turn functions, Undead Fortitude in the damage step). Rules: `src/rules/conditionClocks.ts`. Previews: `#/dev/battle` (Add a condition), `#/dev/table/held` (a player prone, grabbed and poisoned). Tests: 587 database (29 new), 475 unit (14 new), 67 preview browser tests (2 new).
 - **S1e-2: spells in the Rules panel, and Rules for the DM (live). S1 (story mode) is complete.**
   - **Spells**, the fifth section: **How spells work** (slots, known and prepared spells, cantrips, concentration, components, rituals, spell attacks and saves), then your class's spells with yours first ("Yours", or "In your book" for a wizard's unprepared ones), by level, each with how it's cast and its full text from the free rules. **Every class's spells** widens it; a fighter sees a note and the tick (decision 68). Search finds spells too ("cure wounds", "fire").
   - **Links from a fight:** your own conditions show beside your name in the turn order, and **Concentrating** on your concentration chip is a link; both open the Rules panel at the right place (decision 67).
@@ -304,7 +315,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - **Milestone 1, login and campaign (25 October).** Sign in with an email link (`#/`), which returns to the screen you were heading for. "Your tables" lists your campaigns and has a join-code box. "Start a campaign" (`#/new`) makes you the DM. Invite links (`#/join/<code>`) show which table a code opens and ask for your name at the table. The Join screen (`#/c/<id>`, design 01) shows the DM the join code, invite link with copy, "Make a new code", the party with Here tonight and Remove, and campaign details; players see the two character cards from the design, switched off until milestone 2. Both see "At the table now" with live presence and empty seats, and the camera box held for milestone 7. Database: `campaigns` and `campaign_members` with row-level security, join and create functions that refuse anonymous guests, and private live channels per campaign; 38 database tests and 40 unit tests pass.
 
 ## Next
-- **C3 lite next:** conditions that wear off, and talk cards. The plan is in `docs/C3_PLAN.md` (two milestones, decisions 72 to 83), waiting for approval. Then the test one-shot on 21 to 22 November (Claude has written one, kept out of this public repo; see Waiting on Matt), then the stream overlay, planned first.
+- **C3b next:** talk cards (Persuade, Intimidate, Deceive in a fight, with It works / Partly / It doesn't), surrender and running away, Parley, and the morale nudge. Then the test one-shot on 21 to 22 November (Claude has written one, kept out of this public repo; see Waiting on Matt), then the stream overlay, planned first.
 - **Later phase:** a whole campaign built from one file, shops made and stocked for you. The gaps in the template (monsters not in the free rules, scenes that change by an earlier choice, flags, handouts) wait for Matt to choose which to build.
 - **C2, the character builder** (`docs/COMBAT_PLAN.md` section 4, with the additions in `docs/TABLE_TOOLS_PLAN.md`): step by step, with random balanced scores, point buy, starting gear, spells, backstory details (age, looks, alignment, goals), and a wallet. Then **I1** (items, money, loot and shops) and **S1** (story mode with the campaign importer, and rules lookups), then the test one-shot on 21 to 22 November, C3 lite and the stream overlay.
 
@@ -313,7 +324,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Approve the C3 lite plan** (`docs/C3_PLAN.md`), or change any of decisions 72 to 83.
+- **Try conditions that wear off** (refresh first): in a fight, on the Acting now card **Add a condition**, pick Paralysed, **2 rounds**, a Wisdom save each turn, and **Put it on**; press **Next turn** and watch it count down. As a player, get knocked prone and press **Stand up**.
 - **The one-shot is ready to read:** "The Lantern of Hollowmere", for 3 or 4 players, level 1 rising to 2, 3 to 4 hours, free-rules monsters only. It's in `private/one-shot/` on Matt's computer and nowhere else (that folder is never committed, so players can't read the secrets):
   1. Skim `The Lantern of Hollowmere - DM background.pdf`.
   2. Make the 21 pictures from `art-prompts.md` (JPEGs under 500 KB, named exactly as listed) and upload them on Screen 2 under Places, Moments, People and Maps.

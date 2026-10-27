@@ -80,3 +80,10 @@ export function turnLimits(row: FightRow, monsters: SrdMonster[] | null = null):
   const monster = row.secret?.monster ? monsters?.find((m) => m.index === row.secret?.monster) : undefined
   return { perAction: monster ? monsterAttacksPerAction(monster.actions) : 1, speed: row.combatant.speed }
 }
+
+/** Who is concentrating now, so a condition can end with their spell (C3a). */
+export function concentratingIn(rows: FightRow[]): { characterId: string; name: string; spell: string }[] {
+  return rows.flatMap((r) =>
+    r.character?.concentration ? [{ characterId: r.character.id, name: r.name, spell: r.character.concentration }] : [],
+  )
+}
