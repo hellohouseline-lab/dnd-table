@@ -231,6 +231,17 @@ type Section = 'none' | 'chapter' | 'people' | 'items' | 'notes'
 const FIELD = /^\s*(?:[-*]\s+)?\*{0,2}([A-Za-z][A-Za-z ']{1,30}?)\*{0,2}\s*:\s*(.*)$/
 const BULLET = /^\s*[-*]\s+/
 
+/**
+ * A picture, map or piece of music by name, without an AI's "(suggested)" note, so "(suggested) low
+ * cave drone" finds the track called "Low cave drone".
+ */
+function named(value: string): string {
+  return value
+    .replace(/\(suggested[^)]*\)/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 /** Splits pasted notes into chapters, scenes, people and items. */
 export function parseCampaign(text: string): CampaignPlan {
   const plan: CampaignPlan = { title: '', chapters: [], people: [], items: [] }
@@ -513,14 +524,14 @@ export function parseCampaign(text: string): CampaignPlan {
           addFight(value)
           continue
         case 'map':
-          sc.map = value
+          sc.map = named(value)
           continue
         case 'picture':
         case 'image':
-          sc.picture = value
+          sc.picture = named(value)
           continue
         case 'music':
-          sc.music = value
+          sc.music = named(value)
           continue
         default: {
           // Checkpoints, level ups, side quests, Sets, With, When and anything else: a reminder, with its label.

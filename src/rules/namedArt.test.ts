@@ -77,3 +77,14 @@ describe('reading rolls and people the way an AI writes them', () => {
     expect(plan.people[0].name).toBe('Grudge Halloway')
   })
 })
+
+describe('names an AI marked as suggestions', () => {
+  it('finds the music, picture or map without "(suggested)"', () => {
+    const plan = parseCampaign(
+      '# Chapter 1: Pit\n\n## Scene 1.1: Cold Open\nPicture: (suggested) Sink cavern\nMusic: (suggested) low cave drone\n',
+    )
+    const scene = plan.chapters[0].scenes[0]
+    expect(scene.music).toBe('low cave drone')
+    expect(scene.picture).toBe('Sink cavern')
+  })
+})
