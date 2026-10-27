@@ -11,6 +11,7 @@ import { formatBonus } from '../../rules/maths/core.ts'
 import { initiativeRoll } from '../../rules/rolls.ts'
 import { actionFree, attacksLeft, jumps, movementLeft, type BonusMove, type TurnRecord } from '../../rules/turn.ts'
 import type { TurnAction } from '../../live/combat.ts'
+import { presetPortraitUrl } from '../../live/library.ts'
 import { isOut, STANCE_WORDS, TALK_SKILLS, type TalkSkill } from '../../rules/talk.ts'
 import type { FightRow } from './fightRows.ts'
 import styles from './PlayerCombat.module.css'
@@ -36,7 +37,11 @@ export function InitiativeRibbon({ rows, picking = null, yours = null }: RibbonP
         )
         const label = (
           <>
-            <span className={styles.pillInit}>{row.combatant.initiative ?? '?'}</span> {row.name}
+            <span className={styles.pillInit}>{row.combatant.initiative ?? '?'}</span>{' '}
+            {row.combatant.art && (
+              <img className={styles.pillAvatar} src={presetPortraitUrl(row.combatant.art)} alt="" />
+            )}
+            {row.name}
             {row.combatant.stance !== 'fighting' && (
               <span className={styles.pillStance}> · {STANCE_WORDS[row.combatant.stance]}</span>
             )}

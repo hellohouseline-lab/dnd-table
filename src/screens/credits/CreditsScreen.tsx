@@ -50,10 +50,17 @@ export function CreditsScreen() {
         </p>
       </Panel>
 
+      <Panel title="Pictures">
+        <p>
+          The painted places and the ready-made portraits that come with the table were made by Matt, this table&rsquo;s
+          DM, with <a href="https://higgsfield.ai">Higgsfield</a>, for this table.
+        </p>
+      </Panel>
+
       <Panel title="Voice and cameras">
         <p>
-          Everyone&rsquo;s voice and camera travel through <a href="https://vdo.ninja">VDO.Ninja</a> by Steve Seguin,
-          a free and open-source service shown inside the table. None of its code is part of this site.
+          Everyone&rsquo;s voice and camera travel through <a href="https://vdo.ninja">VDO.Ninja</a> by Steve Seguin, a
+          free and open-source service shown inside the table. None of its code is part of this site.
         </p>
       </Panel>
 

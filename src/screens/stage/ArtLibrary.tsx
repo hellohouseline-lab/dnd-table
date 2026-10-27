@@ -78,7 +78,7 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStar
       {starters.length > 0 && onAddStarter && (
         <div className={styles.starters} aria-label="Pictures that come with the table">
           <span className={styles.startersTitle}>
-            {category === 'maps' ? 'Maps that come with the table:' : 'An example to try the stage with:'}
+            {category === 'maps' ? 'Maps that come with the table:' : 'Pictures that come with the table:'}
           </span>
           {starters.map((starter) => (
             <button

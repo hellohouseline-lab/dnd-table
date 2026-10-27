@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { cx } from '../../../components/cx.ts'
 import { StoredImage } from '../../../components/StoredImage.tsx'
-import type { Asset } from '../../../live/library.ts'
+import { PRESET_PORTRAITS, type Asset, type PresetPortrait } from '../../../live/library.ts'
 import { BLANK_NPC, type Npc, type NpcControls, type NpcNote } from '../../../live/npcs.ts'
 import { ATTITUDES, capital, madeUpNotes, makeSomeoneUp, type MadeUp } from '../../../rules/npcs.ts'
 import type { Shop } from '../../../rules/shops.ts'
@@ -21,6 +21,8 @@ type NpcsTabProps = {
   startId?: string | null
   /** The note showing someone adds to their card ("Met the party at The Rusty Flagon."). */
   meetNote: string
+  /** Puts a ready-made portrait in the library under People, to use as someone's portrait. */
+  onAddPortrait?: (preset: PresetPortrait) => Promise<Asset>
 }
 
 /**
@@ -38,6 +40,7 @@ export function NpcsTab({
   onOpenShop,
   startId = null,
   meetNote,
+  onAddPortrait,
 }: NpcsTabProps) {
   const [selectedId, setSelectedId] = useState<string | null>(startId)
   const [madeUp, setMadeUp] = useState<MadeUp | null>(null)
@@ -152,6 +155,7 @@ export function NpcsTab({
           shops={shops}
           shown={shownName === selected.name}
           onSave={(npc) => void npcs.save(npc)}
+          onAddPortrait={onAddPortrait}
           meetNote={meetNote}
           onShow={() => onShow({ name: selected.name, role: selected.role, portraitId: selected.portraitId })}
           onHide={onHide}
@@ -181,9 +185,11 @@ function PersonEditor({
   onOpenShop,
   onRemove,
   meetNote,
+  onAddPortrait,
 }: {
   npc: Npc
   meetNote: string
+  onAddPortrait?: (preset: PresetPortrait) => Promise<Asset>
   art: Asset[]
   shops: Shop[]
   shown: boolean
@@ -194,10 +200,18 @@ function PersonEditor({
   onRemove: () => void
 }) {
   const [draft, setDraft] = useState(npc)
+  const [adding, setAdding] = useState<string | null>(null)
+  // Ready-made portraits not yet in the library (one already added is picked from the library).
+  const ready = PRESET_PORTRAITS.filter((p) => !art.some((a) => a.category === 'people' && a.name === p.name))
   const changed = JSON.stringify(draft) !== JSON.stringify(npc)
   const set = (patch: Partial<Npc>) => setDraft((now) => ({ ...now, ...patch }))
   const portrait = art.find((a) => a.id === draft.portraitId) ?? null
   const shop = shops.find((s) => s.id === draft.shopId) ?? null
+  function choosePortrait(portraitId: string | null) {
+    const next = { ...draft, portraitId }
+    setDraft(next)
+    onSave(next)
+  }
   // Saves when you leave a box, so typing never fights the save.
   const saveSoon = () => changed && onSave(draft)
 
@@ -328,15 +342,38 @@ function PersonEditor({
         <label className={styles.field}>
           <span>Portrait</span>
           <select
-            value={draft.portraitId ?? ''}
-            onChange={(e) => onSave({ ...draft, portraitId: e.target.value || null })}
+            value={adding ? `preset:${adding}` : (draft.portraitId ?? '')}
+            disabled={adding !== null}
+            onChange={(e) => {
+              const preset = PRESET_PORTRAITS.find((p) => `preset:${p.key}` === e.target.value)
+              if (!preset) return choosePortrait(e.target.value || null)
+              if (!onAddPortrait) return
+              setAdding(preset.key)
+              void onAddPortrait(preset)
+                .then((asset) => choosePortrait(asset.id))
+                .catch(() => undefined)
+                .finally(() => setAdding(null))
+            }}
           >
             <option value="">None</option>
-            {art.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
+            {art.length > 0 && (
+              <optgroup label="Your pictures">
+                {art.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {onAddPortrait && ready.length > 0 && (
+              <optgroup label="Ready-made (added to your library)">
+                {ready.map((p) => (
+                  <option key={p.key} value={`preset:${p.key}`}>
+                    {p.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
         </label>
         <label className={styles.field}>
@@ -356,7 +393,11 @@ function PersonEditor({
           </button>
         )}
       </div>
-      {art.length === 0 && <p className={styles.note}>Upload portraits on Screen 2 (the Stage), under People.</p>}
+      {art.length === 0 && (
+        <p className={styles.note}>
+          Pick a ready-made portrait, or upload your own on Screen 2 (the Stage), under People.
+        </p>
+      )}
 
       <footer className={styles.foot}>
         <button type="button" className={styles.link} onClick={onRemove}>

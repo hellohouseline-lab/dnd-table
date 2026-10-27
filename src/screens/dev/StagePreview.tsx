@@ -71,7 +71,7 @@ export function StagePreview() {
     // The real thing turns the drawing into a picture first; the preview shows the drawing itself.
     addStarter: async (starter) => {
       const drawing = await (await fetch(starterMapUrl(starter))).blob()
-      const file = new File([drawing], `${starter.name}.svg`, { type: 'image/svg+xml' })
+      const file = new File([drawing], starter.file.split('/').pop() ?? starter.name, { type: drawing.type })
       return { ...previewAsset(file, { kind: 'art', category: starter.category }), name: starter.name }
     },
   }

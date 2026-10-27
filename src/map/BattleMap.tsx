@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Circle, Group, Image as KonvaImage, Layer, Line, Rect, Stage, Text } from 'react-konva'
 import { directionTowards, snapOrigin, squaresIn, type AreaShape, type AreaTemplate } from '../rules/areas.ts'
 import { portraitUrl } from '../live/characters.ts'
+import { presetPortraitUrl } from '../live/library.ts'
 import { fileUrl } from '../live/files.ts'
 import type { Asset } from '../live/library.ts'
 import type { Pointer } from '../live/useFight.ts'
@@ -27,7 +28,8 @@ export type MapToken = {
   canMove: boolean
   /** At 0 hit points: drawn faded. */
   down?: boolean
-  /** A character's uploaded portrait, shown in the token instead of initials. */
+  /** A character's uploaded portrait (a storage path), or a monster's ready-made one ('preset:goblin'),
+   * shown in the token instead of initials. */
   portrait?: string | null
 }
 
@@ -108,7 +110,11 @@ function usePortraits(paths: string[]): ReadonlyMap<string, HTMLImageElement> {
   useEffect(() => {
     let live = true
     for (const path of wanted ? wanted.split('|') : []) {
-      void portraitUrl(path).then((url) => {
+      // A ready-made portrait comes from the site itself; an uploaded one needs a signed address.
+      const address = path.startsWith('preset:')
+        ? Promise.resolve(presetPortraitUrl(path.slice('preset:'.length)))
+        : portraitUrl(path)
+      void address.then((url) => {
         if (!url || !live) return
         const image = new window.Image()
         image.onload = () => live && setLoaded((now) => new Map(now).set(path, image))

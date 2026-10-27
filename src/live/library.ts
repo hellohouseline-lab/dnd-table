@@ -253,6 +253,55 @@ export const STARTER_ART = [
     name: 'The innkeeper',
     hint: 'A cheerful innkeeper raising a tankard',
   },
+  // Painted for the table by Matt (Higgsfield, 27 October 2026).
+  {
+    file: 'art/scenes/crossroads.jpg',
+    category: 'places',
+    name: 'Crossroads',
+    hint: 'A signpost on a country road, a castle on the hill',
+  },
+  {
+    file: 'art/scenes/ancient-forest.jpg',
+    category: 'places',
+    name: 'Ancient forest',
+    hint: 'Giant mossy trees, glowing mushrooms, a ruined arch',
+  },
+  {
+    file: 'art/scenes/mountain-pass.jpg',
+    category: 'places',
+    name: 'Mountain pass',
+    hint: 'A snowy trail at dusk, a lonely waystation',
+  },
+  {
+    file: 'art/scenes/harbour-dawn.jpg',
+    category: 'places',
+    name: 'Harbour at dawn',
+    hint: 'Docks, tall ships and a lighthouse',
+  },
+  {
+    file: 'art/scenes/temple.jpg',
+    category: 'places',
+    name: 'Temple',
+    hint: 'Candlelight, stained glass and a golden sun',
+  },
+  {
+    file: 'art/scenes/general-store.jpg',
+    category: 'places',
+    name: 'General store',
+    hint: 'Potions, ropes, lanterns and maps for sale',
+  },
+  {
+    file: 'art/scenes/dungeon-corridor.jpg',
+    category: 'places',
+    name: 'Dungeon corridor',
+    hint: 'Torchlit stone, cobwebs, a heavy door',
+  },
+  {
+    file: 'art/scenes/campfire-stars.jpg',
+    category: 'moments',
+    name: 'Camp under the stars',
+    hint: 'Tents round a fire, the Milky Way above',
+  },
 ] as const satisfies readonly { file: string; category: ArtCategory; name: string; hint: string }[]
 
 export type StarterArt = (typeof STARTER_ART)[number]
@@ -261,15 +310,25 @@ export type StarterMap = Extract<StarterArt, { category: 'maps' }>
 export const STARTER_MAPS = STARTER_ART.filter((s): s is StarterMap => s.category === 'maps')
 
 /** Where a starter picture's drawing is served from. */
-export function starterMapUrl(starter: StarterArt): string {
+export function starterMapUrl(starter: { file: string }): string {
   return `${import.meta.env.BASE_URL}${starter.file}`
 }
 
 /**
- * Adds a starter picture to this table's library, like any upload: the drawing is turned into a
+ * Adds a starter picture to this table's library, like any upload: a drawing is turned into a
  * picture in the browser first. A map's squares are 70 pixels, the grid's default, so they line up.
  */
-export async function addStarterMap(campaignId: string, starter: StarterArt): Promise<Asset> {
+export async function addStarterMap(
+  campaignId: string,
+  starter: { file: string; category: ArtCategory; name: string },
+): Promise<Asset> {
+  // A painted picture goes up as it is.
+  if (!starter.file.endsWith('.svg')) {
+    const response = await fetch(starterMapUrl(starter))
+    if (!response.ok) throw new TableError(`“${starter.name}” couldn't be loaded. Check your connection.`)
+    const blob = await response.blob()
+    return uploadArt(campaignId, new File([blob], `${starter.name}.jpg`, { type: 'image/jpeg' }), starter.category)
+  }
   const image = new Image()
   image.src = starterMapUrl(starter)
   await image.decode()
@@ -282,4 +341,55 @@ export async function addStarterMap(campaignId: string, starter: StarterArt): Pr
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
   if (!blob) throw new TableError("Your browser couldn't prepare the map.")
   return uploadArt(campaignId, new File([blob], `${starter.name}.png`, { type: 'image/png' }), starter.category)
+}
+
+/**
+ * Ready-made portraits that come with the table (painted by Matt, Higgsfield, 27 October 2026), served
+ * from this site: square, the face in the middle, so they fill a round miniature. A monster from the
+ * free rules in `monsters` shows its portrait on its miniature; any of them can be an NPC's portrait.
+ */
+export const PRESET_PORTRAITS = [
+  { key: 'goblin', name: 'Goblin', monsters: ['goblin'] },
+  { key: 'zombie', name: 'Zombie', monsters: ['zombie'] },
+  { key: 'skeleton', name: 'Skeleton', monsters: ['skeleton'] },
+  { key: 'giant-rat', name: 'Giant rat', monsters: ['giant-rat'] },
+  { key: 'wolf', name: 'Wolf', monsters: ['wolf'] },
+  { key: 'ghoul', name: 'Ghoul', monsters: ['ghoul'] },
+  { key: 'ogre', name: 'Ogre', monsters: ['ogre'] },
+  { key: 'cultist', name: 'Cultist', monsters: ['cultist'] },
+  { key: 'cult-leader', name: 'Cult leader', monsters: ['cult-fanatic'] },
+  { key: 'thug', name: 'Thug', monsters: ['thug'] },
+  { key: 'bandit', name: 'Bandit', monsters: ['bandit'] },
+  { key: 'town-guard', name: 'Town guard', monsters: ['guard'] },
+  { key: 'sheriff', name: 'Town sheriff', monsters: [] },
+  { key: 'herb-merchant', name: 'Herb merchant', monsters: [] },
+  { key: 'halfling-merchant', name: 'Travelling merchant', monsters: [] },
+  { key: 'halfling-innkeeper', name: 'Halfling innkeeper', monsters: [] },
+  { key: 'dwarf-blacksmith', name: 'Dwarf blacksmith', monsters: [] },
+  { key: 'old-priest', name: 'Old priest', monsters: [] },
+  { key: 'dragonborn-captain', name: 'Guard captain', monsters: [] },
+  { key: 'orc-bounty-hunter', name: 'Orc bounty hunter', monsters: [] },
+  { key: 'tiefling-bard', name: 'Tiefling bard', monsters: [] },
+  { key: 'elf-ranger', name: 'Elf ranger', monsters: [] },
+  { key: 'monk', name: 'Monk', monsters: [] },
+  { key: 'gnome-wizard', name: 'Gnome wizard', monsters: [] },
+  { key: 'gnome-squire', name: 'Gnome squire', monsters: [] },
+  { key: 'half-orc-fighter', name: 'Half-orc fighter', monsters: [] },
+  { key: 'aasimar-paladin', name: 'Aasimar paladin', monsters: [] },
+] as const satisfies readonly { key: string; name: string; monsters: readonly string[] }[]
+
+export type PresetPortrait = (typeof PRESET_PORTRAITS)[number]
+
+export function presetPortraitUrl(key: string): string {
+  return `${import.meta.env.BASE_URL}art/tokens/${key}.jpg`
+}
+
+/** The ready-made portrait for a monster from the free rules, if there is one. */
+export function portraitForMonster(monsterIndex: string): PresetPortrait | undefined {
+  return PRESET_PORTRAITS.find((p) => (p.monsters as readonly string[]).includes(monsterIndex))
+}
+
+/** A ready-made portrait put in this table's library under People (for an NPC), once. */
+export function addPresetPortrait(campaignId: string, preset: PresetPortrait): Promise<Asset> {
+  return addStarterMap(campaignId, { file: `art/tokens/${preset.key}.jpg`, category: 'people', name: preset.name })
 }
