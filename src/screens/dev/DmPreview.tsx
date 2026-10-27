@@ -12,7 +12,7 @@ import { mergeItems } from '../../rules/magic.ts'
 import { syncAttacks } from '../../rules/manage.ts'
 import { addWallets, coinsFor, coinWords, pay, splitCoins } from '../../rules/money.ts'
 import { loadEquipment } from '../../rules/srd/index.ts'
-import { usePreviewStory } from './previewStory.ts'
+import { usePreviewNpcs, usePreviewStory } from './previewStory.ts'
 import { emptyStage, type Stage } from '../../live/stage.ts'
 import { AuthContext, type AuthState } from '../../app/authContext.ts'
 import { localRoll } from '../../dice/localRoll.ts'
@@ -160,6 +160,7 @@ export function DmPreview({ tab }: { tab: string }) {
   const giving = usePreviewGiving(characters, setCharacters)
   const shops = usePreviewShops(tab === 'haggle')
   const story = usePreviewStory()
+  const npcs = usePreviewNpcs()
   const [stage, setStage] = useState<Stage>(() => ({
     ...emptyStage(sampleCampaign.id),
     sceneName: 'Arrive at the tavern',
@@ -216,7 +217,9 @@ export function DmPreview({ tab }: { tab: string }) {
                 ? 'items'
                 : tab === 'story'
                   ? 'story'
-                  : 'party'
+                  : tab === 'npcs'
+                    ? 'npcs'
+                    : 'party'
         }
         giving={giving}
         shops={shops}
@@ -224,6 +227,7 @@ export function DmPreview({ tab }: { tab: string }) {
         stage={stage}
         onStage={(patch) => setStage((now) => ({ ...now, ...patch }))}
         library={[]}
+        npcs={npcs}
       />
     </AuthContext.Provider>
   )
@@ -296,6 +300,15 @@ function usePreviewGiving(
     },
     removeFromStash: async (itemId) => {
       setStash((s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) }))
+      return null
+    },
+    takeItem: async (id, itemId, quantity) => {
+      change(id, (c) => ({
+        ...c,
+        inventory: c.inventory.flatMap((i) =>
+          i.id !== itemId ? [i] : i.quantity > quantity ? [{ ...i, quantity: i.quantity - quantity }] : [],
+        ),
+      }))
       return null
     },
     clearStash: async () => {

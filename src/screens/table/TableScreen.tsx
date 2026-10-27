@@ -35,6 +35,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
   const { stage } = useStage(campaignId, user.id)
   const library = useLibrary(campaignId, user.id)
   const stageImage = useStageImage(stage.imageId, library.assets)
+  const npcImage = useStageImage(stage.npcImageId, library.assets)
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
   const fight = useFight(campaignId, user.id)
   const mapId = stage.mode === 'map' ? stage.mapId : null
@@ -113,6 +114,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
       asking={asking}
       stageImage={stageImage}
       readAloud={stage.readAloud}
+      npc={stage.npcName ? { name: stage.npcName, role: stage.npcRole, portrait: npcImage } : null}
       campaignName={campaign.status === 'ready' ? campaign.data?.name : undefined}
       audio={audio}
       handOver={handOver(character.id)}

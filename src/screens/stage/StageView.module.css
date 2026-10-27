@@ -732,3 +732,13 @@ button.padButton:active {
   z-index: 2;
   font-size: 16px;
 }
+
+/* A shown NPC over the picture, smaller here than on players' screens. */
+.npc {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 3;
+  transform: scale(0.7);
+  transform-origin: top left;
+}

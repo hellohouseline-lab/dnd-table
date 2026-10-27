@@ -211,6 +211,7 @@ function CharacterThings({
   const [pending, setPending] = useState(0)
   const [problem, setProblem] = useState<string | null>(null)
   const [offering, setOffering] = useState<string | null>(null)
+  const [takingAway, setTakingAway] = useState<string | null>(null)
   const timer = useRef<number | null>(null)
   const latest = useRef({ pending: 0, taking: false })
 
@@ -309,6 +310,16 @@ function CharacterThings({
                       Take it back
                     </button>
                   </span>
+                ) : takingAway === item.id ? (
+                  <TakeAwayForm
+                    item={item}
+                    onTake={async (quantity) => {
+                      const result = await giving.takeItem(character.id, item.id, quantity)
+                      setProblem(result)
+                      if (!result) setTakingAway(null)
+                    }}
+                    onCancel={() => setTakingAway(null)}
+                  />
                 ) : offering === item.id ? (
                   <OfferForm
                     item={item}
@@ -321,14 +332,24 @@ function CharacterThings({
                     onCancel={() => setOffering(null)}
                   />
                 ) : (
-                  <button
-                    type="button"
-                    className={styles.offer}
-                    aria-label={`Offer to buy ${item.name}`}
-                    onClick={() => setOffering(item.id)}
-                  >
-                    Offer
-                  </button>
+                  <span className={styles.itemButtons}>
+                    <button
+                      type="button"
+                      className={styles.offer}
+                      aria-label={`Offer to buy ${item.name}`}
+                      onClick={() => setOffering(item.id)}
+                    >
+                      Offer
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.offer}
+                      aria-label={`Take ${item.name} away from ${character.name}`}
+                      onClick={() => setTakingAway(item.id)}
+                    >
+                      Take away
+                    </button>
+                  </span>
                 )}
               </li>
             )
@@ -343,6 +364,46 @@ function CharacterThings({
         </p>
       ))}
     </article>
+  )
+}
+
+/** How many to take away (a stack), and Take or Cancel. */
+function TakeAwayForm({
+  item,
+  onTake,
+  onCancel,
+}: {
+  item: InventoryItem
+  onTake: (quantity: number) => Promise<void>
+  onCancel: () => void
+}) {
+  const [quantity, setQuantity] = useState(item.quantity)
+  return (
+    <form
+      className={styles.offerForm}
+      aria-label={`Take ${item.name} away`}
+      onSubmit={(e) => {
+        e.preventDefault()
+        void onTake(quantity)
+      }}
+    >
+      {item.quantity > 1 && (
+        <input
+          type="number"
+          min={1}
+          max={item.quantity}
+          value={quantity}
+          aria-label="How many to take away"
+          onChange={(e) => setQuantity(Math.max(1, Math.min(item.quantity, Math.floor(Number(e.target.value) || 1))))}
+        />
+      )}
+      <button type="submit" className={styles.offer}>
+        {item.worn ? 'Take it off them' : 'Take it'}
+      </button>
+      <button type="button" className={styles.link} onClick={onCancel}>
+        Cancel
+      </button>
+    </form>
   )
 }
 

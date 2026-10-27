@@ -24,6 +24,10 @@ export type Stage = {
   playersMoveTokens: boolean
   /** A scene's read-aloud, on stage for everyone when the DM shows it ('' when not). */
   readAloud: string
+  /** The person the DM is showing (Show an NPC): their name, role and portrait; '' when nobody. */
+  npcName: string
+  npcRole: string
+  npcImageId: string | null
 }
 
 export type StagePatch = Partial<Omit<Stage, 'campaignId'>>
@@ -45,6 +49,9 @@ export function emptyStage(campaignId: string): Stage {
     mode: 'scene',
     playersMoveTokens: true,
     readAloud: '',
+    npcName: '',
+    npcRole: '',
+    npcImageId: null,
   }
 }
 
@@ -75,6 +82,9 @@ export function rowToStage(row: StageRow): Stage {
     mode: row.mode === 'map' ? 'map' : 'scene',
     playersMoveTokens: row.players_move_tokens,
     readAloud: row.read_aloud,
+    npcName: row.npc_name,
+    npcRole: row.npc_role,
+    npcImageId: row.npc_image_id,
   }
 }
 
@@ -94,6 +104,9 @@ function patchToRow(patch: StagePatch): TablesUpdate<'stage'> {
   if (patch.mode !== undefined) row.mode = patch.mode
   if (patch.playersMoveTokens !== undefined) row.players_move_tokens = patch.playersMoveTokens
   if (patch.readAloud !== undefined) row.read_aloud = patch.readAloud.slice(0, 8000)
+  if (patch.npcName !== undefined) row.npc_name = patch.npcName.slice(0, 80)
+  if (patch.npcRole !== undefined) row.npc_role = patch.npcRole.slice(0, 80)
+  if (patch.npcImageId !== undefined) row.npc_image_id = patch.npcImageId
   return row
 }
 

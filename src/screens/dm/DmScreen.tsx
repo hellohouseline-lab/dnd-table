@@ -20,6 +20,7 @@ import { useLibrary, useLogEvents, useStage } from '../../live/useStage.ts'
 import { useGivingControls } from '../../live/giving.ts'
 import { useShopControls } from '../../live/shops.ts'
 import { useStory } from '../../live/story.ts'
+import { useNpcs } from '../../live/npcs.ts'
 import { useTableAudio } from '../../audio/useTableAudio.ts'
 import { useFight } from '../../live/useFight.ts'
 import { DmView } from './DmView.tsx'
@@ -43,6 +44,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
   )
   const { stage, change: changeStage } = useStage(campaignId, user.id)
   const story = useStory(campaignId)
+  const npcs = useNpcs(campaignId)
   const library = useLibrary(campaignId, user.id)
   const audio = useTableAudio(campaignId, user.id, stage, library.assets)
   const fight = useFight(campaignId, user.id)
@@ -103,6 +105,7 @@ export function DmScreen({ campaignId }: { campaignId: string }) {
       stage={stage}
       onStage={changeStage}
       library={library.assets}
+      npcs={npcs}
       campaign={campaign.data}
       me={me}
       members={members.data}

@@ -39,6 +39,9 @@ describe('the stage', () => {
       mode: 'scene',
       players_move_tokens: true,
       read_aloud: '',
+      npc_name: '',
+      npc_role: '',
+      npc_image_id: null,
       updated_at: '2026-10-26T20:00:00Z',
     })
     expect(stage).toMatchObject({

@@ -3,7 +3,7 @@ import { cx } from '../../../components/cx.ts'
 import { StoredImage } from '../../../components/StoredImage.tsx'
 import type { Asset } from '../../../live/library.ts'
 import type { Scene, StoryControls } from '../../../live/story.ts'
-import { ScenePlans, type SceneActions, type SceneData } from './ScenePlans.tsx'
+import { ScenePeople, ScenePlans, type SceneActions, type SceneData } from './ScenePlans.tsx'
 import styles from './StoryTab.module.css'
 
 type StoryTabProps = {
@@ -232,6 +232,8 @@ function ScenePanel({
           onChange={(e) => change({ reminders: e.target.value })}
         />
       </section>
+
+      <ScenePeople scene={scene} onChange={change} data={data} actions={actions} />
 
       <ScenePlans scene={scene} onChange={change} data={data} actions={actions} />
 

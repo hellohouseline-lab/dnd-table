@@ -927,6 +927,76 @@ export type Database = {
           },
         ]
       }
+      npcs: {
+        Row: {
+          attitude: string
+          campaign_id: string
+          created_at: string
+          id: string
+          knows: string
+          name: string
+          place: string
+          portrait_id: string | null
+          role: string
+          secrets: string
+          shop_id: string | null
+          voice: string
+          wants: string
+        }
+        Insert: {
+          attitude?: string
+          campaign_id: string
+          created_at?: string
+          id?: string
+          knows?: string
+          name: string
+          place?: string
+          portrait_id?: string | null
+          role?: string
+          secrets?: string
+          shop_id?: string | null
+          voice?: string
+          wants?: string
+        }
+        Update: {
+          attitude?: string
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          knows?: string
+          name?: string
+          place?: string
+          portrait_id?: string | null
+          role?: string
+          secrets?: string
+          shop_id?: string | null
+          voice?: string
+          wants?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "npcs_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "npcs_portrait_id_fkey"
+            columns: ["portrait_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "npcs_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           answered_at: string | null
@@ -1475,6 +1545,9 @@ export type Database = {
           music_position: number
           music_started_at: string | null
           music_volume: number
+          npc_image_id: string | null
+          npc_name: string
+          npc_role: string
           players_move_tokens: boolean
           read_aloud: string
           scene_name: string
@@ -1491,6 +1564,9 @@ export type Database = {
           music_position?: number
           music_started_at?: string | null
           music_volume?: number
+          npc_image_id?: string | null
+          npc_name?: string
+          npc_role?: string
           players_move_tokens?: boolean
           read_aloud?: string
           scene_name?: string
@@ -1507,6 +1583,9 @@ export type Database = {
           music_position?: number
           music_started_at?: string | null
           music_volume?: number
+          npc_image_id?: string | null
+          npc_name?: string
+          npc_role?: string
           players_move_tokens?: boolean
           read_aloud?: string
           scene_name?: string
@@ -1537,6 +1616,13 @@ export type Database = {
           {
             foreignKeyName: "stage_music_id_fkey"
             columns: ["music_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stage_npc_image_id_fkey"
+            columns: ["npc_image_id"]
             isOneToOne: false
             referencedRelation: "assets"
             referencedColumns: ["id"]
@@ -1586,6 +1672,7 @@ export type Database = {
           id: string
           image_id: string | null
           music_id: string | null
+          people: Json
           place: string
           position: number
           read_aloud: string
@@ -1605,6 +1692,7 @@ export type Database = {
           id?: string
           image_id?: string | null
           music_id?: string | null
+          people?: Json
           place?: string
           position?: number
           read_aloud?: string
@@ -1624,6 +1712,7 @@ export type Database = {
           id?: string
           image_id?: string | null
           music_id?: string | null
+          people?: Json
           place?: string
           position?: number
           read_aloud?: string
@@ -2610,6 +2699,69 @@ export type Database = {
           p_proficient: boolean
           p_quantity: number
         }
+        Returns: {
+          armour_class: number
+          attacks: Json
+          background: string
+          campaign_id: string
+          charisma: number
+          class: string
+          concentration: string | null
+          concentration_dc: number | null
+          concentration_queue: number[]
+          conditions: string[]
+          constitution: number
+          created_at: string
+          current_hp: number
+          dead: boolean
+          death_save_failures: number
+          death_save_successes: number
+          dexterity: number
+          effects: Json
+          exhaustion: number
+          features: Json
+          hit_dice_used: number
+          hit_die: number
+          id: string
+          immunities: string[]
+          inspiration: boolean
+          intelligence: number
+          inventory: Json
+          languages: string
+          level: number
+          level_up_to: number | null
+          max_hp: number
+          name: string
+          other_proficiencies: string
+          owner_id: string
+          portrait_path: string | null
+          race: string
+          resistances: string[]
+          save_proficiencies: string[]
+          skill_expertise: string[]
+          skill_proficiencies: string[]
+          speed: number
+          spellcasting: Json
+          stable: boolean
+          story: Json
+          strength: number
+          subclass: string
+          subrace: string
+          temp_hp: number
+          updated_at: string
+          vulnerabilities: string[]
+          wallet: Json
+          wisdom: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "characters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      take_items: {
+        Args: { p_character_id: string; p_item_id: string; p_quantity: number }
         Returns: {
           armour_class: number
           attacks: Json
