@@ -62,7 +62,7 @@ function talkFight() {
  * #/dev/battle: Thorin's turn against two goblins. #/dev/battle/talk: the same, with Thorin's
  * Intimidation waiting on a talk card, and Goblin B nearly dead (the morale nudge).
  */
-export function BattlePreview({ talk = false }: { talk?: boolean }) {
+export function BattlePreview({ talk = false, late = false }: { talk?: boolean; late?: boolean }) {
   // Thorin has a portrait, to see it in his token.
   const [characters, setCharacters] = useState<Character[]>(() =>
     sampleCharacters.map((c, i) => (i === 0 ? { ...c, portraitPath: previewPortrait() } : c)),
@@ -77,7 +77,10 @@ export function BattlePreview({ talk = false }: { talk?: boolean }) {
     if (patch.concentration === null) areas.endConcentration(id)
   }
   const [{ fight: fightStart, events }] = useState(() =>
-    talk ? talkFight() : { fight: sampleFight(sampleCharacters), events: [] },
+    talk
+      ? talkFight()
+      : // #/dev/battle/late: Elowen arrived after the fight started.
+        { fight: sampleFight(late ? sampleCharacters.slice(0, 1) : sampleCharacters), events: [] },
   )
   const fight = usePreviewFight(fightStart, { characters, onCharacter: update, onArea: areas.fromSpell, events })
   // Made-up players answer a roll the DM asks for a moment after it's sent.

@@ -211,6 +211,11 @@ const ROUTES: Route[] = [
         { pattern: '/dev/builder', title: `Builder preview · ${APP_NAME}`, render: () => <BuilderPreview /> },
         { pattern: '/dev/battle', title: `Battle preview · ${APP_NAME}`, render: () => <BattlePreview /> },
         {
+          pattern: '/dev/battle/late',
+          title: `Battle preview · ${APP_NAME}`,
+          render: () => <BattlePreview key="late" late />,
+        },
+        {
           pattern: '/dev/battle/talk',
           title: `Battle preview · ${APP_NAME}`,
           render: () => <BattlePreview key="talk" talk />,

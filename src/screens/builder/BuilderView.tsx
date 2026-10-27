@@ -226,7 +226,7 @@ export function BuilderView({
                 <h2 className={styles.stepTitle}>Your level</h2>
                 <p className={styles.stepLead}>
                   {startingLevel > 1
-                    ? `Your DM starts this table at level ${startingLevel}. You build your character at level 1 here; once you save, a gold Level up! takes you to level ${startingLevel}, one level at a time, picking what's new at each.`
+                    ? `This table is at level ${startingLevel}, so your character joins at level ${startingLevel}. You build them at level 1 here; once you save, a gold Level up! takes you to level ${startingLevel}, one level at a time, picking what's new at each.`
                     : 'You start at level 1. When your DM lets you level up after an adventure, a gold Level up! appears on your table screen and you pick what’s new, one card at a time: more hit points, new features and new spells.'}
                 </p>
               </div>

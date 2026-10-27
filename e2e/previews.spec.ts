@@ -1330,3 +1330,12 @@ test('saved campaigns: the DM saves a campaign as a preset, then starts from it'
   await paste.getByRole('button', { name: 'Add it to my story' }).click()
   await expect(paste.getByRole('status')).toContainText('Added: 4 chapters, 6 scenes')
 })
+
+test('drop-ins: someone who arrives late is added to a fight already going', async ({ page }) => {
+  await page.goto('#/dev/battle/late')
+  const order = page.getByRole('region', { name: 'Turn order' })
+  await expect(order).toContainText('Not in this fight: Elowen')
+  await order.getByRole('button', { name: 'Add to the fight' }).click()
+  await expect(order).not.toContainText('Not in this fight')
+  await expect(order.getByRole('button', { name: 'Elowen', exact: true })).toBeVisible()
+})

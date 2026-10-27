@@ -2,7 +2,7 @@
 // what each person may see and do; these functions just ask and turn failures into plain words.
 
 import type { Tables } from './database.types.ts'
-import { fromDatabaseError, NOT_CONNECTED, TableError } from './errors.ts'
+import { fromDatabaseError, fromServerRule, NOT_CONNECTED, TableError } from './errors.ts'
 import { supabase } from './supabase.ts'
 
 export type Campaign = Tables<'campaigns'>
@@ -143,4 +143,30 @@ export async function setHereTonight(campaignId: string, userId: string, hereTon
 export async function removeMember(campaignId: string, userId: string): Promise<void> {
   const { error } = await db().from('campaign_members').delete().eq('campaign_id', campaignId).eq('user_id', userId)
   if (error) throw fromDatabaseError(error)
+}
+
+/**
+ * DM only: deletes the table and everything in it, for everyone. Its pictures, sounds and portraits
+ * are removed from storage first; then the server deletes the rest.
+ */
+export async function deleteCampaign(campaignId: string): Promise<void> {
+  const [assets, characters] = await Promise.all([
+    db().from('assets').select('kind, path, thumb_path').eq('campaign_id', campaignId),
+    db().from('characters').select('portrait_path').eq('campaign_id', campaignId),
+  ])
+  if (assets.error) throw fromDatabaseError(assets.error)
+  if (characters.error) throw fromDatabaseError(characters.error)
+  const files: Record<'art' | 'audio' | 'portraits', string[]> = { art: [], audio: [], portraits: [] }
+  for (const a of assets.data)
+    files[a.kind === 'art' ? 'art' : 'audio'].push(a.path, ...(a.thumb_path ? [a.thumb_path] : []))
+  for (const c of characters.data) if (c.portrait_path) files.portraits.push(c.portrait_path)
+  for (const [bucket, paths] of Object.entries(files)) {
+    // A few at a time; a file that's already gone doesn't matter.
+    for (let i = 0; i < paths.length; i += 100)
+      await db()
+        .storage.from(bucket)
+        .remove(paths.slice(i, i + 100))
+  }
+  const { error } = await db().rpc('delete_campaign', { p_campaign_id: campaignId })
+  if (error) throw fromServerRule(error)
 }

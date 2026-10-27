@@ -326,6 +326,7 @@ export function BattleView({
         <div className={styles.left}>
           <TurnOrder
             monsters={monsters}
+            party={characters}
             className={styles.order}
             fight={fight}
             rows={rows}

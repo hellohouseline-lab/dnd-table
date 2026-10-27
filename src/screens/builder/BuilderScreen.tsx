@@ -68,7 +68,8 @@ export function BuilderScreen({ campaignId }: { campaignId: string }) {
       spells={spells}
       onRoll={() => rollScores(campaignId)}
       campaignName={campaign?.name}
-      startingLevel={campaign?.starting_level ?? 1}
+      // Someone joining later starts at the party's level (the server allows the same).
+      startingLevel={Math.max(campaign?.starting_level ?? 1, ...characters.map((c) => c.level))}
       startingGold={campaign?.starting_gold ?? 0}
       exitHref={href(`/c/${campaignId}/${me?.role === 'dm' ? 'dm' : 'play'}`)}
       formHref={me?.role === 'player' && !hasCharacter ? href(`/c/${campaignId}/character/new/form`) : null}

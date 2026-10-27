@@ -51,6 +51,8 @@ type TurnOrderProps = {
   /** The SRD monsters, so a monster's pips count its Multiattack. */
   monsters?: SrdMonster[] | null
   className?: string
+  /** The party, so anyone not in the fight yet (someone who joined late) can be added. */
+  party?: Character[]
 }
 
 /** The turn order (design 10): initiative, names, hit points, what's left of the acting turn. */
@@ -67,8 +69,10 @@ export function TurnOrder({
   compact = false,
   monsters = null,
   className,
+  party = [],
 }: TurnOrderProps) {
   const waiting = rows.filter((r) => r.combatant.initiative === null)
+  const outside = party.filter((c) => !fight.combatants.some((x) => x.characterId === c.id))
 
   function changeHp(row: FightRow, by: number) {
     if (row.character) onCharacterHp(row.character, by)
@@ -185,6 +189,25 @@ export function TurnOrder({
           )
         })}
       </ol>
+      {outside.length > 0 && (
+        <p className={styles.hint}>
+          Not in this fight:{' '}
+          {outside.map((c, n) => (
+            <span key={c.id}>
+              {n > 0 && ', '}
+              {c.name}{' '}
+              <button
+                type="button"
+                className={styles.link}
+                title={`${c.name} joins the fight and rolls initiative`}
+                onClick={() => controls.addCharacters([c])}
+              >
+                Add to the fight
+              </button>
+            </span>
+          ))}
+        </p>
+      )}
     </section>
   )
 }
@@ -694,6 +717,7 @@ export function EncounterTab({
         />
         <TurnOrder
           monsters={monsters}
+          party={characters}
           fight={fight}
           rows={rows}
           controls={controls}

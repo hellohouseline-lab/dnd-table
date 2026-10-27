@@ -20,6 +20,7 @@ const noFight: FightControls = {
   error: null,
   start: async () => null,
   addMonsters: async () => null,
+  addCharacters: noop,
   rollInitiative: async () => null,
   next: noop,
   setMonsterHp: noop,

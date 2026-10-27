@@ -105,6 +105,8 @@ describe('The DM panels', () => {
   it('fill the details form with the campaign as it is', () => {
     const html = renderToStaticMarkup(<DmDetailsPanel campaign={campaign} onSaved={noop} />)
     expect(html).toContain('value="The Sunless Citadel"')
+    expect(text(html)).toContain('Delete this table')
+    expect(text(html)).toContain("It can’t be undone")
   })
 })
 
