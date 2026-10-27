@@ -648,6 +648,7 @@ export type Database = {
           revealed: boolean
           shown_name: string
           speed: number
+          stance: string
           tiebreak: number
         }
         Insert: {
@@ -673,6 +674,7 @@ export type Database = {
           revealed?: boolean
           shown_name: string
           speed?: number
+          stance?: string
           tiebreak?: number
         }
         Update: {
@@ -698,6 +700,7 @@ export type Database = {
           revealed?: boolean
           shown_name?: string
           speed?: number
+          stance?: string
           tiebreak?: number
         }
         Relationships: [
@@ -816,6 +819,7 @@ export type Database = {
           current_id: string | null
           ended_at: string | null
           id: string
+          parley: boolean
           round: number
           started_at: string
           status: string
@@ -825,6 +829,7 @@ export type Database = {
           current_id?: string | null
           ended_at?: string | null
           id?: string
+          parley?: boolean
           round?: number
           started_at?: string
           status?: string
@@ -834,6 +839,7 @@ export type Database = {
           current_id?: string | null
           ended_at?: string | null
           id?: string
+          parley?: boolean
           round?: number
           started_at?: string
           status?: string
@@ -1945,6 +1951,29 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      answer_talk: {
+        Args: { p_answer: string; p_event_id: string; p_outcome: string }
+        Returns: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combat_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       ask_for_roll: {
         Args: { p_campaign_id: string; p_request: Json }
         Returns: {
@@ -2056,6 +2085,7 @@ export type Database = {
           current_id: string | null
           ended_at: string | null
           id: string
+          parley: boolean
           round: number
           started_at: string
           status: string
@@ -2074,6 +2104,7 @@ export type Database = {
           current_id: string | null
           ended_at: string | null
           id: string
+          parley: boolean
           round: number
           started_at: string
           status: string
@@ -2611,6 +2642,29 @@ export type Database = {
         }
         Returns: Json
       }
+      set_parley: {
+        Args: { p_encounter_id: string; p_on: boolean }
+        Returns: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combat_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_shop_open: {
         Args: { p_open: boolean; p_shop_id: string }
         Returns: {
@@ -2629,6 +2683,29 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "shops"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_stance: {
+        Args: { p_combatant_id: string; p_stance: string }
+        Returns: {
+          actor_id: string | null
+          campaign_id: string
+          created_at: string
+          encounter_id: string
+          id: string
+          kind: string
+          roll_id: string | null
+          round: number
+          seq: number
+          shown: Json
+          target_id: string | null
+          undone: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combat_events"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2676,6 +2753,7 @@ export type Database = {
           current_id: string | null
           ended_at: string | null
           id: string
+          parley: boolean
           round: number
           started_at: string
           status: string
@@ -2920,6 +2998,16 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      talk: {
+        Args: {
+          p_combatant_id: string
+          p_roll: Json
+          p_skill: string
+          p_target_ids: string[]
+          p_words: string
+        }
+        Returns: Json
       }
       throw_dice: {
         Args: { p_campaign_id: string; p_roll: Json }
