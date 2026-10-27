@@ -82,6 +82,8 @@ import type { GivingControls } from '../../live/giving.ts'
 import { useSessionClock } from './useSessionClock.ts'
 import { useRollsForDm } from '../../live/useRollsForDm.ts'
 import { RollsForDm } from '../rolls/RollsForDm.tsx'
+import { SessionNotes } from './SessionNotes.tsx'
+import type { LogEvent } from '../../live/notebook.ts'
 import styles from './DmView.module.css'
 
 type DmTab = 'story' | 'party' | 'encounter' | 'npcs' | 'items' | 'log'
@@ -133,6 +135,8 @@ type DmViewProps = {
   onUpdate: (characterId: string, patch: TrackerPatch) => void
   /** Lets characters go up a level (left out in the previews). */
   onLevelUp?: (characterIds: string[]) => void
+  /** Every quick note and scene change, for searching past sessions (left out in the previews). */
+  loadSessionNotes?: () => Promise<LogEvent[]>
   saveError?: string | null
   log: RollLogState
   diceStyle: DiceStyle
@@ -175,6 +179,7 @@ type DmViewProps = {
  * throws landing in the middle. Combat arrives in milestone 6.
  */
 export function DmView({
+  loadSessionNotes,
   campaign,
   me,
   members,
@@ -233,6 +238,8 @@ export function DmView({
   } | null>(null)
   const [hiddenFor, setHiddenFor] = useState<string | null>(null)
   const [tab, setTab] = useState<DmTab>(startTab)
+  // The Log tab shows every roll and note, or the notes alone, by session, to search.
+  const [logView, setLogView] = useState<'all' | 'notes'>('all')
   const [sheetFor, setSheetFor] = useState<string | null>(null)
   const [sheetTab, setSheetTab] = useState<SheetTabName>('sheet')
   const [mode, setMode] = useState<RollMode>('normal')
@@ -683,14 +690,38 @@ export function DmView({
               }}
             />
           ) : (
-            <RollLog
-              rolls={log.rolls}
-              events={events.events}
-              members={members}
-              characters={characters}
-              loading={log.status === 'loading'}
-              error={log.status === 'error' ? log.message : undefined}
-            />
+            <>
+              <div className={styles.logSwitch} role="group" aria-label="What to show">
+                <button
+                  type="button"
+                  className={cx(styles.logOption, logView === 'all' && styles.logOptionOn)}
+                  aria-pressed={logView === 'all'}
+                  onClick={() => setLogView('all')}
+                >
+                  Rolls and notes
+                </button>
+                <button
+                  type="button"
+                  className={cx(styles.logOption, logView === 'notes' && styles.logOptionOn)}
+                  aria-pressed={logView === 'notes'}
+                  onClick={() => setLogView('notes')}
+                >
+                  Session notes
+                </button>
+              </div>
+              {logView === 'notes' ? (
+                <SessionNotes load={loadSessionNotes} recent={events.events} />
+              ) : (
+                <RollLog
+                  rolls={log.rolls}
+                  events={events.events}
+                  members={members}
+                  characters={characters}
+                  loading={log.status === 'loading'}
+                  error={log.status === 'error' ? log.message : undefined}
+                />
+              )}
+            </>
           )}
         </div>
         <nav className={styles.verbs} aria-label="DM actions">

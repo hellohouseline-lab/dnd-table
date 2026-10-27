@@ -148,6 +148,19 @@ export async function listLogEvents(campaignId: string): Promise<LogEvent[]> {
   return data.map(rowToLogEvent)
 }
 
+/** Every quick note and scene change at a table, oldest first, for searching past sessions. */
+export async function listSessionNotes(campaignId: string): Promise<LogEvent[]> {
+  const { data, error } = await db()
+    .from('log_events')
+    .select('*')
+    .eq('campaign_id', campaignId)
+    .in('kind', ['note', 'stage'])
+    .order('created_at', { ascending: true })
+    .limit(5000)
+  if (error) throw fromDatabaseError(error)
+  return data.map(rowToLogEvent)
+}
+
 /** The DM adds to the log: a quick note, damage dealt, a rest. */
 export async function addLogEvent(campaignId: string, kind: LogKind, text: string, visible = false): Promise<LogEvent> {
   const { data, error } = await db()

@@ -297,3 +297,30 @@
   flex-direction: column;
   gap: 8px;
 }
+
+/* The Log tab: everything, or the notes alone by session. */
+.logSwitch {
+  display: inline-flex;
+  margin-bottom: 12px;
+  border: 1px solid var(--chip-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.logOption {
+  height: 34px;
+  padding: 0 16px;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.logOption + .logOption {
+  border-left: 1px solid var(--chip-border);
+}
+
+.logOptionOn {
+  background: rgba(212, 175, 90, 0.16);
+  color: var(--gold-light);
+}

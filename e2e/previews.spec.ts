@@ -1094,3 +1094,21 @@ test('the DM puts coins in the party stash', async ({ page }) => {
   await expect(stash).toContainText('10')
   await expect(stash.getByLabel(/^Coins:/)).toHaveAttribute('aria-label', 'Coins: 10 gp')
 })
+
+test('the DM searches their quick notes, by session, on the Log tab', async ({ page }) => {
+  await page.goto('#/dev/dm/party')
+  const notebook = page.getByRole('region', { name: 'Your notebook' })
+  await notebook.getByLabel('Quick note').fill('Tobin wears a pearl on a string')
+  await notebook.getByRole('button', { name: 'Add', exact: true }).click()
+  await notebook.getByLabel('Quick note').fill('The party owes the innkeeper 5 gp')
+  await notebook.getByRole('button', { name: 'Add', exact: true }).click()
+
+  await page.getByRole('tab', { name: 'Log' }).click()
+  await page.getByRole('button', { name: 'Session notes' }).click()
+  const notes = page.getByRole('region', { name: 'Session notes' })
+  await expect(notes).toContainText('Session 1')
+  await notes.getByLabel('Search your notes').fill('pearl')
+  await expect(notes).toContainText('1 note found')
+  await expect(notes.locator('mark')).toHaveText('pearl')
+  await expect(notes).not.toContainText('innkeeper')
+})
