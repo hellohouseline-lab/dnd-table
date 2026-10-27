@@ -22,10 +22,14 @@ type ArtLibraryProps = {
   onAddStarter?: (starter: StarterArt) => Promise<void>
 }
 
+const FOLDED = 6
+
 /** The art library from design 11: your pictures by kind; click one to put it on stage. */
 export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStarter }: ArtLibraryProps) {
   const [category, setCategory] = useState<ArtCategory>('places')
   const [busy, setBusy] = useState(false)
+  // A long list of pictures that come with the table folds away after the first few.
+  const [allStarters, setAllStarters] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const shown = art.filter((a) => a.category === category)
   const about = ART_CATEGORIES.find((c) => c.key === category)
@@ -55,7 +59,10 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStar
               role="tab"
               aria-selected={category === c.key}
               className={cx(styles.artTab, category === c.key && styles.artTabOn)}
-              onClick={() => setCategory(c.key)}
+              onClick={() => {
+                setCategory(c.key)
+                setAllStarters(false)
+              }}
             >
               {c.name}
             </button>
@@ -80,7 +87,7 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStar
           <span className={styles.startersTitle}>
             {category === 'maps' ? 'Maps that come with the table:' : 'Pictures that come with the table:'}
           </span>
-          {starters.map((starter) => (
+          {(allStarters ? starters : starters.slice(0, FOLDED)).map((starter) => (
             <button
               key={starter.file}
               type="button"
@@ -92,10 +99,15 @@ export function ArtLibrary({ art, onStage, onShow, onUpload, onDelete, onAddStar
                 void onAddStarter(starter).finally(() => setBusy(false))
               }}
             >
-              <img src={starterMapUrl(starter)} alt="" />
+              <img src={starterMapUrl(starter)} alt="" loading="lazy" />
               <span>Add {starter.name}</span>
             </button>
           ))}
+          {starters.length > FOLDED && (
+            <button type="button" className={styles.startersMore} onClick={() => setAllStarters(!allStarters)}>
+              {allStarters ? 'Show fewer' : `Show all ${starters.length}`}
+            </button>
+          )}
         </div>
       )}
       {shown.length === 0 ? (
