@@ -582,6 +582,14 @@ export const PRESET_PORTRAITS = [
   { key: 'gnome-squire', name: 'Gnome squire', monsters: [] },
   { key: 'half-orc-fighter', name: 'Half-orc fighter', monsters: [] },
   { key: 'aasimar-paladin', name: 'Aasimar paladin', monsters: [] },
+  { key: 'landlady', name: 'Tavern landlady', monsters: [] },
+  { key: 'card-sharp', name: 'Card sharp', monsters: [] },
+  { key: 'man-1', name: 'Generic man 1', monsters: [] },
+  { key: 'man-2', name: 'Generic man 2', monsters: [] },
+  { key: 'man-3', name: 'Generic man 3', monsters: [] },
+  { key: 'woman-1', name: 'Generic woman 1', monsters: [] },
+  { key: 'woman-2', name: 'Generic woman 2', monsters: [] },
+  { key: 'woman-3', name: 'Generic woman 3', monsters: [] },
 ] as const satisfies readonly { key: string; name: string; monsters: readonly string[] }[]
 
 export type PresetPortrait = (typeof PRESET_PORTRAITS)[number]
