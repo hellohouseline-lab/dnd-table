@@ -1343,3 +1343,12 @@ test('drop-ins: someone who arrives late is added to a fight already going', asy
   await expect(order).not.toContainText('Not in this fight')
   await expect(order.getByRole('button', { name: 'Elowen', exact: true })).toBeVisible()
 })
+
+test("tonight's scenes: the DM moves the story on from the stage with Go here", async ({ page }) => {
+  await page.goto('#/dev/stage')
+  const tonight = page.getByRole('region', { name: 'Tonight’s scenes' })
+  await expect(tonight).toContainText('Arrive at the tavern')
+  await tonight.getByRole('button', { name: 'Go here: The mill road' }).click()
+  await expect(page.getByRole('textbox', { name: 'Scene now' })).toHaveValue('The mill road')
+  await expect(tonight.getByRole('listitem').filter({ hasText: 'The mill road' })).toContainText('Now')
+})

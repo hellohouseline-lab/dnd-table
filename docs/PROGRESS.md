@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Tonight's scenes on Screen 2 (live).** The Stage screen's "arrive in Phase 2" box is now a list of the chapter you're in (pick another from the menu), each scene with **Go here**: the same as on Screen 1's Story tab (picture, music, ambience, scene name, notebook and log), from `src/screens/dm/story/goHere.ts`, which both screens now share. The scene you're in is marked Now. Preview: `#/dev/stage`. Tests: 74 preview browser tests (1 new).
 - **Eight more ready-made portraits (live).** For NPCs: Tavern landlady, Card sharp, and Generic man 1 to 3 and Generic woman 1 to 3 (painted with Higgsfield in the same style). Matt's Death Pit file now gives Grudge the landlady and Silky the card sharp.
 - **People lines read properly.** A scene's People line keeps only names: notes in brackets ("Olly Coopersmith (heard, not seen)"), "None named" and counted creatures ("four cultists", which are the fight's) no longer become people, and a name in the campaign's Cast is never made twice.
 - **The first drawings are gone (live).** The Tavern, Forest road and Old crypt maps, Market city, Campfire at night and The innkeeper are no longer among the pictures that come with the table; Matt's painted ones replace them. Tables that already added them keep their copies.

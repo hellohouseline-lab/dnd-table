@@ -20,7 +20,14 @@ import {
 } from '../../live/library.ts'
 import { useLoad } from '../../live/useLoad.ts'
 import { useParty } from '../../live/useParty.ts'
-import { useLibrary, useStage } from '../../live/useStage.ts'
+import { useLibrary, useLogEvents, useStage } from '../../live/useStage.ts'
+import { useStory } from '../../live/story.ts'
+import { useNotebook } from '../../live/useNotebook.ts'
+import { useNpcs } from '../../live/npcs.ts'
+import { useGivingControls } from '../../live/giving.ts'
+import { useSrd } from '../../live/useSrd.ts'
+import { loadMonsters } from '../../rules/srd/index.ts'
+import { logForScene, notebookForScene, stageForScene } from '../dm/story/goHere.ts'
 import { useFight, useMapPointers, useTokens } from '../../live/useFight.ts'
 import { useRollRequest } from '../../live/useRollRequest.ts'
 import { useAreas } from '../../live/areas.ts'
@@ -47,6 +54,13 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const areas = useAreas(campaignId, user.id, stage.stage.mode === 'map' ? stage.stage.mapId : null)
   const asking = useRollRequest(campaignId, user.id, true)
   const forDm = useRollsForDm(campaignId, user.id)
+  // Tonight's scenes: Go here from the stage does what it does on Screen 1.
+  const story = useStory(campaignId)
+  const notebook = useNotebook(campaignId)
+  const npcs = useNpcs(campaignId)
+  const giving = useGivingControls(campaignId, user.id)
+  const events = useLogEvents(campaignId, user.id)
+  const monsters = useSrd(loadMonsters)
 
   const me = members.status === 'ready' ? members.data.find((m) => m.user_id === user.id) : undefined
   const pointerName = useMemo(() => ({ userId: user.id, name: me ? `${me.display_name} (DM)` : 'DM' }), [user.id, me])
@@ -154,6 +168,24 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
         now={serverNow}
         map={{ tokens, fight: fight.fight, pointers }}
         onBattle={fighting ? () => setStageDuring(null) : undefined}
+        tonight={{
+          story: story.story,
+          currentSceneId: notebook.notebook.currentSceneId,
+          onGoHere: (scene) => {
+            const ctx = {
+              story: story.story,
+              notebook: notebook.notebook,
+              yours: giving.yours,
+              npcs: npcs.npcs,
+              monsters,
+              stage: stage.stage,
+              fighting: Boolean(fight.fight),
+            }
+            stage.change(stageForScene(scene, ctx, serverNow()))
+            notebook.change(notebookForScene(scene, ctx))
+            events.add('stage', logForScene(scene), true)
+          },
+        }}
       />
       <RollsForDm className={styles.forDm} rolls={forDm.rolls} characters={party.characters} onSettle={forDm.settle} />
     </>

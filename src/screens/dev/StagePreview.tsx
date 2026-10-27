@@ -11,6 +11,7 @@ import type { LibraryControls } from '../../live/useStage.ts'
 import { StageView, type LibraryActions } from '../stage/StageView.tsx'
 import { sampleFight, usePreviewFight } from './previewFight.ts'
 import { usePreviewTokens } from './previewTokens.ts'
+import { usePreviewStory } from './previewStory.ts'
 import { sampleCampaign, sampleCharacters, sampleMembers } from './sampleData.ts'
 
 const online = new Set(['dm', 'p1'])
@@ -54,6 +55,9 @@ export function StagePreview() {
   const tokens = usePreviewTokens(stage.mapId)
   const [fightStart] = useState(() => sampleFight(sampleCharacters))
   const fight = usePreviewFight(fightStart)
+  // Tonight's scenes: Go here puts the scene's name on stage and marks it Now.
+  const story = usePreviewStory()
+  const [currentSceneId, setCurrentSceneId] = useState<string | null>(null)
 
   const actions: LibraryActions = {
     uploadArt: async (file, category) => previewAsset(file, { kind: 'art', category }),
@@ -90,6 +94,14 @@ export function StagePreview() {
         audio={audio}
         now={Date.now}
         map={{ tokens, fight: fight.fight, pointers: { hands: [], pings: [], sendHand: () => {}, sendPing: () => {} } }}
+        tonight={{
+          story: story.story,
+          currentSceneId,
+          onGoHere: (scene) => {
+            change({ sceneName: scene.title || 'A scene' })
+            setCurrentSceneId(scene.id)
+          },
+        }}
       />
     </AuthContext.Provider>
   )
