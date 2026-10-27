@@ -18,7 +18,7 @@ Battle maps are drawn with [Konva](https://konvajs.org) and react-konva by Anton
 
 ## Pictures
 
-The painted places (`public/art/scenes`) and the ready-made portraits (`public/art/tokens`) that come with the table were made by Matt, the table's DM, with [Higgsfield](https://higgsfield.ai) on 27 October 2026, for this table.
+The painted places and moments (`public/art/scenes`), characters (`public/art/people`), ready-made portraits (`public/art/tokens`) and battle maps (`public/maps/*.webp`) that come with the table were made by Matt, the table's DM, with [Higgsfield](https://higgsfield.ai) on 27 October 2026, for this table.
 
 ## Voice and cameras
 

@@ -711,6 +711,16 @@ button.padButton:active {
   color: var(--gold-light);
 }
 
+.startersMore {
+  background: none;
+  border: 0;
+  padding: 0 4px;
+  color: var(--gold);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .starter img {
   width: 56px;
   height: 38px;

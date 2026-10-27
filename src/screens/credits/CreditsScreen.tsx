@@ -52,8 +52,8 @@ export function CreditsScreen() {
 
       <Panel title="Pictures">
         <p>
-          The painted places and the ready-made portraits that come with the table were made by Matt, this table&rsquo;s
-          DM, with <a href="https://higgsfield.ai">Higgsfield</a>, for this table.
+          The painted places, moments, characters, ready-made portraits and battle maps that come with the table were
+          made by Matt, this table&rsquo;s DM, with <a href="https://higgsfield.ai">Higgsfield</a>, for this table.
         </p>
       </Panel>
 
