@@ -967,6 +967,10 @@ test('story mode: the DM writes a scene, goes there and shows the read-aloud', a
   await expect(page.getByText('Scene now:')).toContainText('The mill road')
   await expect(outline.getByRole('button', { name: /The mill road/ })).toContainText('Where we are')
   await expect(scene.getByRole('button', { name: 'Go here again' })).toBeVisible()
+  const notebook = page.getByRole('region', { name: 'Your notebook' })
+  await expect(notebook.getByRole('button', { name: /^The mill road/ })).toBeVisible()
+  await expect(notebook.getByRole('checkbox').first()).toBeVisible()
+  await notebook.screenshot({ path: process.env.NOTEBOOK_SHOT ?? 'test-results/notebook.png' })
 
   await scene.getByRole('button', { name: 'Show the read-aloud' }).click()
   await expect(scene.getByText('Everyone can read this on the stage now.')).toBeVisible()
