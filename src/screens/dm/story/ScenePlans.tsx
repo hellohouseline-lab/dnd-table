@@ -10,6 +10,7 @@ import type { Character } from '../../../rules/character.ts'
 import { boxWords, plannedRollWords, type Fight, type PlannedRoll, type Thing } from '../../../rules/scenes.ts'
 import type { SrdMonster } from '../../../rules/srd/index.ts'
 import { MonsterPicker } from '../../fight/MonsterPicker.tsx'
+import { DIFFICULTY_WORDS, encounterDifficulty } from '../../../rules/encounter.ts'
 import styles from './StoryTab.module.css'
 
 /** What the buttons in a scene do, on the DM screen. */
@@ -20,7 +21,7 @@ export type SceneActions = {
   onOpenBox: (container: Container, richness: Richness) => void
   onOpenShop: (shopId: string) => void
   onStartFight: (fight: Fight) => void
-  onShowNpc: (npc: Npc) => void
+  onShowNpc: (npc: { id?: string; name: string; role: string; portraitId: string | null }) => void
   onOpenNpc: (npcId: string) => void
 }
 
@@ -111,6 +112,7 @@ export function ScenePlans({ scene, onChange, data, actions }: ScenePlansProps) 
               {scene.fight.monsters.length > 0
                 ? scene.fight.monsters.map((m) => `${m.count} × ${monsterName(m.index)}`).join(', ')
                 : 'pick the monsters'}
+              {fightRating(scene.fight, data) && ` (${fightRating(scene.fight, data)} for this party)`}
             </button>
             <Remove onClick={() => onChange({ fight: null })} />
           </li>
@@ -175,6 +177,21 @@ export function ScenePlans({ scene, onChange, data, actions }: ScenePlansProps) 
       )}
     </section>
   )
+}
+
+/** How hard a planned fight is for the party here now: "hard". */
+function fightRating(fight: Fight, data: SceneData): string | null {
+  const xps = fight.monsters.flatMap((m) => {
+    const monster = data.monsters?.find((x) => x.index === m.index)
+    return monster ? Array.from({ length: m.count }, () => monster.xp) : []
+  })
+  if (xps.length === 0 || data.characters.length === 0) return null
+  return DIFFICULTY_WORDS[
+    encounterDifficulty(
+      data.characters.map((c) => c.level),
+      xps,
+    ).difficulty
+  ]
 }
 
 function Remove({ onClick }: { onClick: () => void }) {

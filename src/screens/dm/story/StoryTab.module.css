@@ -442,3 +442,8 @@
   width: 64px;
   color: var(--text-2);
 }
+
+.startButtons {
+  display: flex;
+  gap: 10px;
+}

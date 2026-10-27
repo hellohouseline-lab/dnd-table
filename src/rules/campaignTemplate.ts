@@ -1,0 +1,231 @@
+// The campaign template (S1d), as text to copy: the layout an AI fills in, a short made-up example,
+// and the prompt that goes with them. docs/CAMPAIGN_TEMPLATE.md explains it at more length and holds
+// the same three blocks (a test keeps them matching). Paste your notes reads all of it.
+
+export const CAMPAIGN_TEMPLATE = `# Campaign: <title>
+Pitch: <one sentence: who, where, what's at stake>
+Premise: <3 to 5 sentences the DM needs: what's really going on>
+Truth: <the secret behind it all, which the players uncover>
+Hook: <how it starts for the players>
+Clock: <the deadline or pressure, if there is one>
+Level: <starting level, and how many players>
+Length: <expected hours, or how many sessions>
+Tone: <for example: cosy mystery, grim, romantic, funny>
+Content notes: <themes to check with the group first>
+
+## Cast
+
+### NPC: <name>
+Role: <innkeeper, captain, villain>
+Where: <where they're found first>
+Look: <one or two lines to read out>
+Voice: <how they talk and move, for the DM to act>
+Wants: <what they're after>
+Knows: <what they can tell the players>
+Secrets: <what they hide>
+Attitude: <friendly, warm, neutral, wary or hostile>
+Quest: <what they need help with, and the scene it happens in>
+Fights as: <a monster from the free rules, such as "bandit captain", or a name from Monsters below>
+Portrait: <file name in your library>
+
+## Monsters
+Only for anything not in the free rules. One per monster.
+
+### Monster: <name>
+Like: <the closest free-rules monster, if any>
+AC: <number>  HP: <number>  Speed: <feet>
+Scores: STR <n> DEX <n> CON <n> INT <n> WIS <n> CHA <n>
+Attacks: <name: +to hit, damage and type>
+Special: <anything else, in a line each>
+Weakness: <how the players can beat it, if there's a trick>
+
+## Items
+### Item: <name>
+What it is: <a line>
+Does: <what it does in play, if anything>
+Found: <scene>
+Matters for: <the scene or ending it unlocks>
+Handout: *later* <text a player reads, if it's a note or letter>
+
+## Flags
+Things the story remembers, set in one scene and checked in another.
+- <has the key>: set in <scene>, changes <scene and how>
+
+## Places
+- Picture: <file name>, for <scene>
+- Map: <file name>, for <scene>, <grid size, if it has one>
+- Music: <mood or track>, for <chapter or scene>
+
+# Chapter 1: <title>
+Goal: <what this chapter must do>
+Ends when: <the moment it hands over to the next>
+
+## Scene 1.1: <title>
+Place: <where>
+Picture: <file name>
+Music: <mood or track>
+Read aloud:
+> <what the players hear on arrival: 60 to 150 words, present tense, ending on a question such as "What do you do?">
+Reminders:
+- <what must happen here>
+- <what they might miss, and how to nudge them>
+- <how the people here act>
+People: <names from the Cast>
+Rolls:
+- <Perception> DC <13>, <secret DC>, <outcome shown>: <what it's for>. Pass: <...>. Fail: <...>.
+Choices:
+- <If they go to the docks>: Scene 1.2
+Things:
+- Item: <name>, <how they get it>
+- Box: <chest, sack, body, desk or hoard>, <junk, ordinary, valuable or treasure>
+- Shop: <name>
+Fight: <2 bandit>, <1 Thug>; map: <file name>; ends when <someone flees or drops to half>
+Balance: <how hard the fight should feel: easy, medium, hard or deadly for this party>
+Checkpoint: <a story beat that matters: what the party now knows or has>
+Level up: <who gains a level here, if anyone>
+Side quest: <an optional thread they can pick up here>
+If someone falls: <how a character who dies here could be brought back, and what it costs>
+Sets: <flag>
+If: *later* <flag or earlier choice>: <how the scene changes, in a line or two>
+
+# Endings
+## Ending: <name>
+When: <what the players do to reach it>
+What happens: <for the DM, a few lines>
+Read aloud:
+> <the closing words>
+`
+
+export const CAMPAIGN_EXAMPLE = `# Campaign: The Drowned Bell
+Pitch: A fishing village hears a bell under the sea each night, and boats are vanishing.
+Truth: The old bell-keeper rings a sunken bell to call a sea hag, who pays him in pearls.
+Hook: A child gives the party a wet note: "The bell wants you next."
+Clock: The spring tide in two nights, when the hag can walk on land.
+Level: 2, for 3 or 4 players
+Length: 3 hours
+
+## Cast
+### NPC: Old Tobin
+Role: Bell-keeper
+Where: The chapel on the cliff
+Look: Stooped, salt-white beard, a pearl on a string at his throat
+Voice: Slow, kind, calls everyone "little fish"
+Wants: To keep his pearls coming
+Knows: Where the sunken bell lies
+Secrets: He rings it himself, every night
+Attitude: Friendly
+Fights as: commoner
+
+### NPC: Marra
+Role: Innkeeper
+Where: The Gull and Anchor
+Look: Flour on her apron, a gutting knife on her belt
+Voice: Quick and sharp, stops mid-sentence when she's scared
+Wants: Her brother's boat found
+Knows: Boats vanish on the nights the bell rings loudest
+Attitude: Wary
+Quest: Find her brother's boat, in Scene 1.2
+
+## Items
+### Item: Hag's pearl
+What it is: A cold black pearl that hums when held to the ear
+Does: Whoever holds it hears the sea hag coming, and can't be surprised by her
+Found: Scene 2.1
+Matters for: Ending: Silence the bell
+
+# Chapter 1: The Village
+Goal: The party learns about the bell and suspects the chapel.
+Ends when: They climb to the chapel.
+
+## Scene 1.1: The Gull and Anchor
+Place: The village inn
+Read aloud:
+> Rain drums on the shutters of the Gull and Anchor. Half the tables are empty, and the fishermen who are here talk in low voices. Then, faint and far beneath the sound of the sea, a bell rings. Every head turns towards the window. Someone drops a cup. What do you do?
+Reminders:
+- The innkeeper won't talk about the bell until the fishermen leave.
+- A wet trail of pearls leads from the back door to the cliff path.
+People: Old Tobin, Marra
+Rolls:
+- Perception DC 13, secret DC: to spot the pearls by the back door. Pass: they find the trail. Fail: Tobin pockets them first.
+Choices:
+- If they follow the trail: Scene 1.2
+Side quest: Marra asks them to look for her brother's boat on the way.
+
+## Scene 1.2: The Cliff Path
+Place: The cliff path above the bay
+Read aloud:
+> The path clings to the cliff, slick with spray. Far below, a fishing boat lies broken on the rocks, its sail flapping like a wounded bird. Something moves in the water beside it, then another. Webbed hands grip the rocks. What do you do?
+Rolls:
+- Athletics DC 12: to climb down to the wreck. Pass: they find the brother's log. Fail: they slip and take 1d6 bludgeoning damage, but still get there.
+Fight: 2 Sahuagin, 2 Merfolk; map: Cliff path; ends when two of them fall and the rest dive away
+Balance: medium for four level 2 characters
+Things:
+- Box: body, ordinary
+Checkpoint: The log says the bell rang every night a boat was lost.
+Choices:
+- If they climb to the chapel: Scene 2.1
+
+# Chapter 2: The Chapel
+Goal: The party faces Tobin and the hag.
+Ends when: The bell is silenced or the bargain is made.
+
+## Scene 2.1: The Bell Chapel
+Place: The chapel on the cliff
+Read aloud:
+> Candles gutter in the wind. Old Tobin kneels by a rope that runs down through a hole in the floor, into the dark and the sound of the sea. He smiles at you. "Little fish," he says. "You're just in time." The rope goes taut. What do you do?
+People: Old Tobin
+Fight: 1 Sea Hag; ends when the hag falls or flees
+Balance: hard for three level 2 characters, medium for four; Tobin hides and won't fight
+Things:
+- Item: Hag's pearl, from the hag when she falls
+Level up: Everyone reaches level 3 after this scene.
+If someone falls: The village priest can bring them back for 300 gp, or the hag offers to, for a pearl's worth of their memories.
+Choices:
+- If they cut the rope and smash the bell: Ending: Silence the bell
+- If they let Tobin keep his bargain: Ending: The keeper's bargain
+
+# Endings
+## Ending: Silence the bell
+When: The bell is broken and the hag is gone.
+What happens: The boats come home on the morning tide. Marra pays for their rooms for a month.
+Read aloud:
+> The last echo of the bell fades into the waves. In the grey light, sails appear on the horizon, one after another, coming home.
+
+## Ending: The keeper's bargain
+When: They leave Tobin to his pearls.
+What happens: The bell rings on. Another boat is lost before the month is out.
+Read aloud:
+> As you walk down the cliff path, the bell rings again behind you, slow and patient, as if it's counting.
+`
+
+export const AI_PROMPT = `You're helping me prepare a Dungeons & Dragons (5th edition, 2014 rules) adventure for my online table.
+I'll give you my notes, however rough. Turn them into the campaign template below, exactly as laid out:
+the same headings, the same labels, one label per line, so my table can import it.
+
+Rules:
+- British English, plain words. No em dashes.
+- Don't invent the big things (the secret, the ending, who the villain is). If I haven't said, ask.
+  Small things (a look, a voice, a DC) you may suggest, marked "(suggested)".
+- Read-aloud: 60 to 150 words, present tense, "you", ending on a question. Never say what the players feel or choose.
+- Every roll has a check, a DC (10 easy, 15 medium, 20 hard), what it's for, and what happens on a pass and a fail.
+- Every scene has a way out: a choice, or a reminder of what moves them on.
+- Monsters: use free-rules (SRD) monsters by name where one fits; otherwise write a short stat block under Monsters.
+- Balance every fight for my party with the 2014 encounter rules, and say how hard it is on a Balance line.
+  Mix easy, medium and hard fights, and keep deadly ones rare.
+- One chapter per session. Add Checkpoint lines for the story beats that matter, a Level up line wherever
+  the party should gain a level, Side quest lines for optional threads, and an If someone falls line in
+  dangerous scenes for how a character could be brought back.
+- Anything the players must discover appears in at least three places.
+- After the template, list what's missing or unclear as numbered questions, most important first.
+
+<paste the template from "The template" above here>
+
+My notes:
+<paste your notes here>
+`
+
+/** What Copy the format for your AI copies: the prompt with the template and the example in it. */
+export const AI_PROMPT_TO_COPY = AI_PROMPT.replace(
+  '<paste the template from "The template" above here>',
+  `${CAMPAIGN_TEMPLATE}\nHere is a short made-up example of a filled-in template:\n\n${CAMPAIGN_EXAMPLE}`,
+)

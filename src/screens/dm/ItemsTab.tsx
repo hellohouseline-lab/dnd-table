@@ -43,6 +43,7 @@ export function ItemsTab({
   magicItems,
 }: ItemsTabProps) {
   const { stash } = giving
+  const [stashProblem, setStashProblem] = useState<string | null>(null)
   const worth = (item: InventoryItem) => (equipment ? marketValue(item, equipment, magicItems) : null)
   const stashEmpty = stash.items.length === 0 && coinWords(stash.wallet) === 'nothing'
   return (
@@ -161,6 +162,12 @@ export function ItemsTab({
             </button>
           )}
         </div>
+        <QuickCoins
+          label="Gold in the party stash"
+          onApply={(gp, take) => giving.stashCoins(take ? -gp * 100 : gp * 100)}
+          onProblem={setStashProblem}
+        />
+        {stashProblem && <p className={styles.problem}>{stashProblem}</p>}
         {stashEmpty ? (
           <p className={party.empty}>Empty.</p>
         ) : (
@@ -206,33 +213,9 @@ function CharacterThings({
 }) {
   const weight = character.inventory.reduce((sum, i) => sum + i.weight * i.quantity, 0)
   const attuned = attunedCount(character.inventory)
-  const [taking, setTaking] = useState(false)
-  // Clicks add up for a moment, then go as one gift (or one payment), so the log isn't flooded.
-  const [pending, setPending] = useState(0)
   const [problem, setProblem] = useState<string | null>(null)
   const [offering, setOffering] = useState<string | null>(null)
   const [takingAway, setTakingAway] = useState<string | null>(null)
-  const timer = useRef<number | null>(null)
-  const latest = useRef({ pending: 0, taking: false })
-
-  useEffect(() => () => void (timer.current !== null && window.clearTimeout(timer.current)), [])
-
-  function quick(gp: number) {
-    setProblem(null)
-    const next = pending + gp
-    setPending(next)
-    latest.current = { pending: next, taking }
-    if (timer.current !== null) window.clearTimeout(timer.current)
-    timer.current = window.setTimeout(() => {
-      const { pending: amount, taking: take } = latest.current
-      setPending(0)
-      latest.current = { pending: 0, taking: take }
-      void (take ? giving.take(character.id, amount * 100) : giving.give(character.id, [], {}, amount * 100)).then(
-        setProblem,
-      )
-    }, 1200)
-  }
-
   const answered = offers.filter((o) => o.status === 'sold' || o.status === 'declined').slice(0, 2)
 
   return (
@@ -250,43 +233,13 @@ function CharacterThings({
       </div>
 
       <Purse wallet={character.wallet} />
-      <div className={styles.quick} role="group" aria-label={`Gold for ${character.name}`}>
-        <button
-          type="button"
-          className={cx(styles.way, !taking && styles.wayOn)}
-          aria-pressed={!taking}
-          disabled={pending > 0}
-          onClick={() => setTaking(false)}
-        >
-          Add
-        </button>
-        <button
-          type="button"
-          className={cx(styles.way, taking && styles.wayOn)}
-          aria-pressed={taking}
-          disabled={pending > 0}
-          onClick={() => setTaking(true)}
-        >
-          Take
-        </button>
-        {QUICK.map((gp) => (
-          <button
-            key={gp}
-            type="button"
-            className={styles.coinButton}
-            aria-label={`${taking ? 'Take' : 'Add'} ${gp} gp`}
-            onClick={() => quick(gp)}
-          >
-            {taking ? '−' : '+'}
-            {gp}
-          </button>
-        ))}
-        {pending > 0 && (
-          <span className={styles.pending} role="status">
-            {taking ? 'Taking' : 'Adding'} {pending} gp…
-          </span>
-        )}
-      </div>
+      <QuickCoins
+        label={`Gold for ${character.name}`}
+        onApply={(gp, take) =>
+          take ? giving.take(character.id, gp * 100) : giving.give(character.id, [], {}, gp * 100)
+        }
+        onProblem={setProblem}
+      />
       {problem && <p className={styles.problem}>{problem}</p>}
 
       {character.inventory.length === 0 ? (
@@ -463,6 +416,81 @@ function OfferForm({
         </span>
       )}
     </form>
+  )
+}
+
+/**
+ * One-click gold: Add or Take, then 1, 5, 10, 50 or 100 gp. Clicks add up for a moment and go as
+ * one, so the log isn't flooded.
+ */
+function QuickCoins({
+  label,
+  onApply,
+  onProblem,
+}: {
+  label: string
+  onApply: (gp: number, take: boolean) => Promise<string | null>
+  onProblem: (problem: string | null) => void
+}) {
+  const [taking, setTaking] = useState(false)
+  const [pending, setPending] = useState(0)
+  const timer = useRef<number | null>(null)
+  const latest = useRef({ pending: 0, taking: false })
+
+  useEffect(() => () => void (timer.current !== null && window.clearTimeout(timer.current)), [])
+
+  function quick(gp: number) {
+    onProblem(null)
+    const next = pending + gp
+    setPending(next)
+    latest.current = { pending: next, taking }
+    if (timer.current !== null) window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => {
+      const { pending: amount, taking: take } = latest.current
+      setPending(0)
+      latest.current = { pending: 0, taking: take }
+      void onApply(amount, take).then(onProblem)
+    }, 1200)
+  }
+
+  return (
+    <div className={styles.quick} role="group" aria-label={label}>
+      <button
+        type="button"
+        className={cx(styles.way, !taking && styles.wayOn)}
+        aria-pressed={!taking}
+        disabled={pending > 0}
+        onClick={() => setTaking(false)}
+      >
+        Add
+      </button>
+      <button
+        type="button"
+        className={cx(styles.way, taking && styles.wayOn)}
+        aria-pressed={taking}
+        disabled={pending > 0}
+        onClick={() => setTaking(true)}
+      >
+        Take
+      </button>
+      {QUICK.map((gp) => (
+        <button
+          key={gp}
+          type="button"
+          className={styles.coinButton}
+          aria-label={`${taking ? 'Take' : 'Add'} ${gp} gp`}
+          onClick={() => quick(gp)}
+        >
+          {taking ? '−' : '+'}
+          {gp}
+        </button>
+      ))}
+      {pending > 0 && (
+        <span className={styles.pending} role="status">
+          {taking ? 'Taking' : 'Adding'} {pending} gp…
+        </span>
+      )}
+    </div>
   )
 }
 

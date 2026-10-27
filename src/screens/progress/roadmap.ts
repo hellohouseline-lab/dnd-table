@@ -45,11 +45,31 @@ export const ROADMAP: Milestone[] = [
   },
   {
     name: 'Items and gold',
-    detail: 'Give items and gold, offers, boxes to open and the party stash',
+    detail: 'Give items and gold, take them back, offers, boxes to open, the party stash, and what things are worth',
     status: 'ready',
   },
-  { name: 'Shops', detail: 'Shopkeepers with stock and prices; buy and sell', status: 'ready' },
-  { name: 'Story mode', detail: 'Your campaign on the DM’s screen, scene by scene', status: 'next' },
+  { name: 'Shops', detail: 'Shopkeepers with stock and prices; buy, sell and haggle', status: 'ready' },
+  {
+    name: 'Story mode',
+    detail: 'Chapters and scenes with Go here, planned rolls and fights, secret outcomes, and NPCs to show',
+    status: 'ready',
+  },
+  {
+    name: 'Your campaign in one paste',
+    detail:
+      'Paste a campaign (yours, or written by an AI from the campaign template) and it becomes chapters, scenes, people, items and ready fights, with how hard each fight is',
+    status: 'ready',
+  },
+  {
+    name: 'NPC notes and the party stash',
+    detail: 'What has happened with each person, noted when you show them; add or take coins in the party stash',
+    status: 'ready',
+  },
+  {
+    name: 'Rules for players',
+    detail: 'Spells, conditions, turns and rests in plain words, beside the table',
+    status: 'next',
+  },
   {
     name: 'The rest of the combat rules',
     detail: 'Talk cards for a parley, and conditions that wear off by themselves',
@@ -57,6 +77,12 @@ export const ROADMAP: Milestone[] = [
   },
   { name: 'Stream overlay', detail: "The table on everyone's Twitch stream", status: 'later' },
   { name: 'Rehearsal', detail: 'A full dry run and final polish before the first stream', status: 'later' },
+  {
+    name: 'A whole campaign, built for you',
+    detail:
+      'Give the table one campaign file and it makes the shops, stocks them and sets everything up (a later phase)',
+    status: 'later',
+  },
 ]
 
 export const STATUS_LABEL: Record<MilestoneStatus, string> = {

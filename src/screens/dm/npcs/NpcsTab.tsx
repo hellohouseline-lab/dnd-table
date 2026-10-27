@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { cx } from '../../../components/cx.ts'
 import { StoredImage } from '../../../components/StoredImage.tsx'
 import type { Asset } from '../../../live/library.ts'
-import { BLANK_NPC, type Npc, type NpcControls } from '../../../live/npcs.ts'
+import { BLANK_NPC, type Npc, type NpcControls, type NpcNote } from '../../../live/npcs.ts'
 import { ATTITUDES, capital, madeUpNotes, makeSomeoneUp, type MadeUp } from '../../../rules/npcs.ts'
 import type { Shop } from '../../../rules/shops.ts'
 import styles from './NpcsTab.module.css'
@@ -14,11 +14,13 @@ type NpcsTabProps = {
   shops: Shop[]
   /** The name of whoever is on stage now ('' for nobody). */
   shownName: string
-  onShow: (person: { name: string; role: string; portraitId: string | null }) => void
+  onShow: (person: { id?: string; name: string; role: string; portraitId: string | null }) => void
   onHide: () => void
   onOpenShop: (shopId: string) => void
   /** Who to open first (from a scene). */
   startId?: string | null
+  /** The note showing someone adds to their card ("Met the party at The Rusty Flagon."). */
+  meetNote: string
 }
 
 /**
@@ -26,7 +28,17 @@ type NpcsTabProps = {
  * secrets and attitude to the party; Show puts their portrait and name on stage for everyone. Make
  * someone up is for the person you didn't plan.
  */
-export function NpcsTab({ npcs, library, shops, shownName, onShow, onHide, onOpenShop, startId = null }: NpcsTabProps) {
+export function NpcsTab({
+  npcs,
+  library,
+  shops,
+  shownName,
+  onShow,
+  onHide,
+  onOpenShop,
+  startId = null,
+  meetNote,
+}: NpcsTabProps) {
   const [selectedId, setSelectedId] = useState<string | null>(startId)
   const [madeUp, setMadeUp] = useState<MadeUp | null>(null)
   const selected = npcs.npcs.find((n) => n.id === selectedId) ?? null
@@ -140,6 +152,7 @@ export function NpcsTab({ npcs, library, shops, shownName, onShow, onHide, onOpe
           shops={shops}
           shown={shownName === selected.name}
           onSave={(npc) => void npcs.save(npc)}
+          meetNote={meetNote}
           onShow={() => onShow({ name: selected.name, role: selected.role, portraitId: selected.portraitId })}
           onHide={onHide}
           onOpenShop={onOpenShop}
@@ -167,8 +180,10 @@ function PersonEditor({
   onHide,
   onOpenShop,
   onRemove,
+  meetNote,
 }: {
   npc: Npc
+  meetNote: string
   art: Asset[]
   shops: Shop[]
   shown: boolean
@@ -227,7 +242,19 @@ function PersonEditor({
               Hide
             </button>
           ) : (
-            <button type="button" className={styles.primary} onClick={onShow}>
+            <button
+              type="button"
+              className={styles.primary}
+              onClick={() => {
+                // Their card notes the meeting (once a scene), with anything typed saved too.
+                const note = { id: crypto.randomUUID().slice(0, 8), at: new Date().toISOString(), text: meetNote }
+                const next =
+                  draft.history[0]?.text === meetNote ? draft : { ...draft, history: [note, ...draft.history] }
+                setDraft(next)
+                onSave(next)
+                onShow()
+              }}
+            >
               Show
             </button>
           )}
@@ -288,6 +315,15 @@ function PersonEditor({
         placeholder="She owes the goblins money"
       />
 
+      <History
+        notes={draft.history}
+        onChange={(history) => {
+          const next = { ...draft, history }
+          setDraft(next)
+          onSave(next)
+        }}
+      />
+
       <div className={styles.pickers}>
         <label className={styles.field}>
           <span>Portrait</span>
@@ -328,6 +364,55 @@ function PersonEditor({
         </button>
       </footer>
     </article>
+  )
+}
+
+/** What's happened with them: a note a line, newest first, with the date. */
+function History({ notes, onChange }: { notes: NpcNote[]; onChange: (notes: NpcNote[]) => void }) {
+  const [text, setText] = useState('')
+  const when = (at: string) => (at ? new Date(at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '')
+  return (
+    <section className={styles.block} aria-label="What's happened">
+      <span className={styles.blockTitle}>What&rsquo;s happened</span>
+      <form
+        className={styles.noteForm}
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!text.trim()) return
+          onChange([{ id: crypto.randomUUID().slice(0, 8), at: new Date().toISOString(), text: text.trim() }, ...notes])
+          setText('')
+        }}
+      >
+        <input
+          value={text}
+          maxLength={500}
+          placeholder="Lied about the mill. Gave them a free room. Wants the ledger back."
+          aria-label="Add a note about them"
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button type="submit" className={styles.secondary} disabled={!text.trim()}>
+          Add
+        </button>
+      </form>
+      {notes.length > 0 && (
+        <ul className={styles.history}>
+          {notes.map((note) => (
+            <li key={note.id}>
+              <span className={styles.when}>{when(note.at)}</span>
+              <span className={styles.noteText}>{note.text}</span>
+              <button
+                type="button"
+                className={styles.link}
+                aria-label="Remove this note"
+                onClick={() => onChange(notes.filter((n) => n.id !== note.id))}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }
 

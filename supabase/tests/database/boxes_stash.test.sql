@@ -5,7 +5,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(16);
+select plan(19);
 
 insert into auth.users (id, email) values
   ('5c5c5c5c-0000-4000-8000-000000000001', 'dm@example.invalid'),
@@ -89,6 +89,15 @@ select is(
 select public.clear_stash(current_setting('test.campaign')::uuid);
 select is((select jsonb_array_length(items) from public.party_stash), 0, 'Clearing empties the stash');
 select is((select private.wallet_copper(wallet) from public.party_stash), 0, '...coins and all');
+
+select public.stash_coins(current_setting('test.campaign')::uuid, 1000);
+select is((select wallet ->> 'gp' from public.party_stash), '10', 'The DM puts 10 gp in the stash');
+select public.stash_coins(current_setting('test.campaign')::uuid, -250);
+select is((select private.wallet_copper(wallet) from public.party_stash), 750, '...and takes 2 gp 5 sp out, with change');
+select throws_ok(
+  $$ select public.stash_coins(current_setting('test.campaign')::uuid, -100000) $$,
+  '22023', 'The stash only has 7 gp 5 sp', 'Not more than there is'
+);
 
 select * from finish();
 rollback;

@@ -228,6 +228,7 @@ export function DmPreview({ tab }: { tab: string }) {
         onStage={(patch) => setStage((now) => ({ ...now, ...patch }))}
         library={[]}
         npcs={npcs}
+        importCampaign={async (plan) => story.importPlan(plan)}
       />
     </AuthContext.Provider>
   )
@@ -256,6 +257,7 @@ function usePreviewGiving(
   return {
     stash,
     yours,
+    reloadYours: () => {},
     saveItem: async (item) => {
       setYours((now) =>
         now.some((y) => y.id === item.id)
@@ -300,6 +302,16 @@ function usePreviewGiving(
     },
     removeFromStash: async (itemId) => {
       setStash((s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) }))
+      return null
+    },
+    stashCoins: async (copper) => {
+      if (copper > 0) {
+        setStash((s) => ({ ...s, wallet: addWallets(s.wallet, coinsFor(copper)) }))
+        return null
+      }
+      const after = pay(stash.wallet, -copper)
+      if (!after) return `The stash only has ${coinWords(stash.wallet)}`
+      setStash((s) => ({ ...s, wallet: after }))
       return null
     },
     takeItem: async (id, itemId, quantity) => {

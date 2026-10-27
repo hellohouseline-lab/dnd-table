@@ -20,7 +20,11 @@ export type Npc = {
   attitude: Attitude
   /** The shop they keep, if any. */
   shopId: string | null
+  /** What's happened with them, newest first. */
+  history: NpcNote[]
 }
+
+export type NpcNote = { id: string; at: string; text: string }
 
 export const BLANK_NPC: Npc = {
   id: '',
@@ -34,6 +38,7 @@ export const BLANK_NPC: Npc = {
   secrets: '',
   attitude: 'neutral',
   shopId: null,
+  history: [],
 }
 
 export type NpcControls = {
@@ -43,6 +48,7 @@ export type NpcControls = {
   /** Makes a new person (no id) or saves a change; resolves with the saved person, or null. */
   save: (npc: Npc) => Promise<Npc | null>
   remove: (id: string) => Promise<void>
+  reload: () => void
 }
 
 export const NO_NPCS: NpcControls = {
@@ -51,6 +57,7 @@ export const NO_NPCS: NpcControls = {
   error: null,
   save: async () => null,
   remove: async () => {},
+  reload: () => {},
 }
 
 function db() {
@@ -71,6 +78,13 @@ function rowToNpc(row: Tables<'npcs'>): Npc {
     secrets: row.secrets,
     attitude: ATTITUDES.find((a) => a.key === row.attitude)?.key ?? 'neutral',
     shopId: row.shop_id,
+    history: Array.isArray(row.history)
+      ? row.history.flatMap((h) =>
+          h && typeof h === 'object' && !Array.isArray(h) && typeof h.text === 'string'
+            ? [{ id: String(h.id ?? crypto.randomUUID()), at: String(h.at ?? ''), text: h.text }]
+            : [],
+        )
+      : [],
   }
 }
 
@@ -80,6 +94,7 @@ export function useNpcs(campaignId: string): NpcControls {
   const [npcs, setNpcs] = useState<Npc[]>([])
   const [status, setStatus] = useState<NpcControls['status']>('loading')
   const [error, setError] = useState<string | null>(null)
+  const [loads, setLoads] = useState(0)
 
   useEffect(() => {
     if (!supabase) return
@@ -97,7 +112,7 @@ export function useNpcs(campaignId: string): NpcControls {
     return () => {
       live = false
     }
-  }, [campaignId])
+  }, [campaignId, loads])
 
   const save = useCallback(
     async (npc: Npc) => {
@@ -112,6 +127,7 @@ export function useNpcs(campaignId: string): NpcControls {
         secrets: npc.secrets.slice(0, 2000),
         attitude: npc.attitude,
         shop_id: npc.shopId,
+        history: npc.history.slice(0, 200).map((h) => ({ id: h.id, at: h.at, text: h.text.slice(0, 500) })),
       }
       const saved = npc.id
         ? await db().from('npcs').update(row).eq('id', npc.id).select('*').single()
@@ -138,5 +154,6 @@ export function useNpcs(campaignId: string): NpcControls {
     if (problem) setError(messageFor(fromDatabaseError(problem)))
   }, [])
 
-  return useMemo(() => ({ npcs, status, error, save, remove }), [npcs, status, error, save, remove])
+  const reload = useCallback(() => setLoads((n) => n + 1), [])
+  return useMemo(() => ({ npcs, status, error, save, remove, reload }), [npcs, status, error, save, remove, reload])
 }

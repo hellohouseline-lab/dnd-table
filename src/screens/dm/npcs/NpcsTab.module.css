@@ -317,3 +317,48 @@
   margin: 0;
   color: var(--fail-light);
 }
+
+/* What's happened with them. */
+.noteForm {
+  display: flex;
+  gap: 6px;
+}
+
+.noteForm input {
+  flex: 1;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+}
+
+.history {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.history li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.when {
+  flex-shrink: 0;
+  width: 52px;
+  font-size: 13px;
+  color: var(--label);
+}
+
+.noteText {
+  flex: 1;
+}

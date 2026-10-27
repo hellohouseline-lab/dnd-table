@@ -95,6 +95,7 @@ function render(startTab: 'party' | 'log') {
         onStage={noop}
         library={[]}
         npcs={NO_NPCS}
+        importCampaign={async () => ''}
         log={{ status: 'ready', rolls: [secretRoll] }}
         diceStyle={DEFAULT_DICE_STYLE}
         onDiceStyleChange={noop}
@@ -130,6 +131,7 @@ describe('the DM screen', () => {
           onStage={noop}
           library={[]}
           npcs={NO_NPCS}
+          importCampaign={async () => ''}
           log={{ status: 'ready', rolls: [] }}
           diceStyle={DEFAULT_DICE_STYLE}
           onDiceStyleChange={noop}

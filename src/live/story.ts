@@ -58,6 +58,8 @@ export type StoryControls = {
   removeScene: (id: string) => Promise<void>
   /** Moves a scene up or down within its chapter. */
   moveScene: (id: string, by: -1 | 1) => void
+  /** Loads it all again (after pasting a campaign in). */
+  reload: () => void
 }
 
 function db() {
@@ -131,6 +133,7 @@ export function useStory(campaignId: string): StoryControls {
   // Text is saved a moment after the last key, one timer per scene.
   const pending = useRef(new Map<string, { patch: ScenePatch; timer: number }>())
 
+  const [loads, setLoads] = useState(0)
   useEffect(() => {
     if (!supabase) return
     let live = true
@@ -150,7 +153,7 @@ export function useStory(campaignId: string): StoryControls {
     return () => {
       live = false
     }
-  }, [campaignId])
+  }, [campaignId, loads])
 
   // Anything not yet saved goes when the screen closes.
   useEffect(() => {
@@ -265,6 +268,7 @@ export function useStory(campaignId: string): StoryControls {
         void run(() => db().from('story_scenes').update({ position: other.position }).eq('id', scene.id))
         void run(() => db().from('story_scenes').update({ position: scene.position }).eq('id', other.id))
       },
+      reload: () => setLoads((n) => n + 1),
     }),
     [story, status, error, campaignId, run],
   )
@@ -282,4 +286,5 @@ export const NO_STORY: StoryControls = {
   changeScene: () => {},
   removeScene: async () => {},
   moveScene: () => {},
+  reload: () => {},
 }

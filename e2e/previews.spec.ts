@@ -1054,3 +1054,43 @@ test('the DM takes a handaxe away from a player', async ({ page }) => {
   await expect(thorin).not.toContainText('2 × Handaxe')
   await expect(thorin).toContainText('Handaxe')
 })
+
+test('paste your notes: the example becomes chapters and scenes, with how hard each fight is', async ({ page }) => {
+  await page.goto('#/dev/dm/story')
+  await page
+    .getByRole('navigation', { name: 'Chapters and scenes' })
+    .getByRole('button', { name: 'Paste your notes' })
+    .click()
+  const paste = page.getByRole('dialog', { name: 'Paste your notes' })
+  await paste.getByRole('button', { name: 'Try the example' }).click()
+  const preview = paste.getByRole('region', { name: 'What it makes' })
+  await expect(preview).toContainText('The Drowned Bell: 4 chapters, 6 scenes, 2 people and 1 item')
+  await expect(preview).toContainText('fight: 2 × Sahuagin, 2 × Merfolk (')
+  await expect(preview).toContainText('Nothing called Cliff path in your library yet')
+  await paste.getByRole('button', { name: 'Add it to my story' }).click()
+  await expect(paste.getByRole('status')).toContainText('Added: 4 chapters, 6 scenes')
+  await paste.getByRole('button', { name: 'Done' }).click()
+  await expect(page.getByRole('navigation', { name: 'Chapters and scenes' })).toContainText('The Bell Chapel')
+})
+
+test('notes on an NPC, and one when they are shown', async ({ page }) => {
+  await page.goto('#/dev/dm/npcs')
+  await page
+    .getByRole('navigation', { name: 'Your people' })
+    .getByRole('button', { name: /Brenna/ })
+    .click()
+  const brenna = page.getByRole('article', { name: 'Person: Brenna' })
+  await brenna.getByRole('textbox', { name: 'Add a note about them' }).fill('Lied about the mill.')
+  await brenna.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect(brenna.getByRole('region', { name: "What's happened" })).toContainText('Lied about the mill.')
+  await brenna.getByRole('button', { name: 'Show' }).click()
+  await expect(brenna.getByRole('region', { name: "What's happened" })).toContainText('Met the party.')
+})
+
+test('the DM puts coins in the party stash', async ({ page }) => {
+  await page.goto('#/dev/dm/items')
+  const stash = page.getByRole('region', { name: 'Party stash' })
+  await stash.getByRole('button', { name: 'Add 10 gp' }).click()
+  await expect(stash).toContainText('10')
+  await expect(stash.getByLabel(/^Coins:/)).toHaveAttribute('aria-label', 'Coins: 10 gp')
+})

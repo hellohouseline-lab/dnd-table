@@ -38,6 +38,8 @@ export type Offer = {
 export type GivingControls = {
   /** The DM's own items, and making, changing and throwing them away. */
   yours: DmItem[]
+  /** Loads the DM's items again (after pasting a campaign in). */
+  reloadYours: () => void
   saveItem: (item: DmItem) => Promise<string | null>
   deleteItem: (id: string) => Promise<string | null>
   /** Offers to buy from players: the newest first. */
@@ -49,6 +51,8 @@ export type GivingControls = {
   /** Takes one thing out of the stash for good, or clears it, coins and all. */
   removeFromStash: (itemId: string) => Promise<string | null>
   clearStash: () => Promise<string | null>
+  /** Puts coins in the stash (positive copper) or takes them out (negative), with change made. */
+  stashCoins: (copper: number) => Promise<string | null>
   /** Takes something (or some of a stack) away from a character, for good. */
   takeItem: (characterId: string, itemId: string, quantity: number) => Promise<string | null>
   /** Items (weapons listed with whether the character is trained, for their card) and coins in copper. */
@@ -76,6 +80,7 @@ export const NO_GIVING: GivingControls = {
   split: async () => null,
   stash: EMPTY_STASH,
   yours: [],
+  reloadYours: () => {},
   saveItem: async () => null,
   deleteItem: async () => null,
   offers: [],
@@ -85,6 +90,7 @@ export const NO_GIVING: GivingControls = {
   removeFromStash: async () => null,
   clearStash: async () => null,
   takeItem: async () => null,
+  stashCoins: async () => null,
 }
 
 async function call(
@@ -206,6 +212,7 @@ export function useGivingControls(campaignId: string, userId: string): GivingCon
       split: (ids: string[], copper: number) => splitCoins(campaignId, ids, copper),
       stash,
       yours,
+      reloadYours: reload,
       saveItem: async (item: DmItem) => {
         const row = {
           name: item.name.trim().slice(0, 60),
@@ -247,6 +254,8 @@ export function useGivingControls(campaignId: string, userId: string): GivingCon
       removeFromStash: (itemId: string) =>
         call(() => db().rpc('remove_from_stash', { p_campaign_id: campaignId, p_item_id: itemId })),
       clearStash: () => call(() => db().rpc('clear_stash', { p_campaign_id: campaignId })),
+      stashCoins: (copper: number) =>
+        call(() => db().rpc('stash_coins', { p_campaign_id: campaignId, p_copper: copper })),
       takeItem: (characterId: string, itemId: string, quantity: number) =>
         call(() => db().rpc('take_items', { p_character_id: characterId, p_item_id: itemId, p_quantity: quantity })),
     }),

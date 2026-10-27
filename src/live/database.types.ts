@@ -1,16 +1,10 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.18"
+    PostgrestVersion: '14.18'
   }
   public: {
     Tables: {
@@ -65,25 +59,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "areas_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'areas_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "areas_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'areas_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "areas_map_id_fkey"
-            columns: ["map_id"]
+            foreignKeyName: 'areas_map_id_fkey'
+            columns: ['map_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -144,11 +138,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "assets_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'assets_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -185,11 +179,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "campaign_members_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'campaign_members_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -397,11 +391,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "characters_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'characters_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -429,18 +423,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "combat_event_secrets_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'combat_event_secrets_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combat_event_secrets_event_id_fkey"
-            columns: ["event_id"]
+            foreignKeyName: 'combat_event_secrets_event_id_fkey'
+            columns: ['event_id']
             isOneToOne: true
-            referencedRelation: "combat_events"
-            referencedColumns: ["id"]
+            referencedRelation: 'combat_events'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -489,39 +483,39 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "combat_events_actor_id_fkey"
-            columns: ["actor_id"]
+            foreignKeyName: 'combat_events_actor_id_fkey'
+            columns: ['actor_id']
             isOneToOne: false
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combat_events_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'combat_events_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combat_events_encounter_id_fkey"
-            columns: ["encounter_id"]
+            foreignKeyName: 'combat_events_encounter_id_fkey'
+            columns: ['encounter_id']
             isOneToOne: false
-            referencedRelation: "encounters"
-            referencedColumns: ["id"]
+            referencedRelation: 'encounters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combat_events_roll_id_fkey"
-            columns: ["roll_id"]
+            foreignKeyName: 'combat_events_roll_id_fkey'
+            columns: ['roll_id']
             isOneToOne: false
-            referencedRelation: "rolls"
-            referencedColumns: ["id"]
+            referencedRelation: 'rolls'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combat_events_target_id_fkey"
-            columns: ["target_id"]
+            foreignKeyName: 'combat_events_target_id_fkey'
+            columns: ['target_id']
             isOneToOne: false
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -570,18 +564,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "combatant_secrets_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'combatant_secrets_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combatant_secrets_combatant_id_fkey"
-            columns: ["combatant_id"]
+            foreignKeyName: 'combatant_secrets_combatant_id_fkey'
+            columns: ['combatant_id']
             isOneToOne: true
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -660,25 +654,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "combatants_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'combatants_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combatants_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'combatants_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "combatants_encounter_id_fkey"
-            columns: ["encounter_id"]
+            foreignKeyName: 'combatants_encounter_id_fkey'
+            columns: ['encounter_id']
             isOneToOne: false
-            referencedRelation: "encounters"
-            referencedColumns: ["id"]
+            referencedRelation: 'encounters'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -715,11 +709,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "dm_items_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'dm_items_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -753,18 +747,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "dm_notebooks_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'dm_notebooks_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: true
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "dm_notebooks_current_scene_id_fkey"
-            columns: ["current_scene_id"]
+            foreignKeyName: 'dm_notebooks_current_scene_id_fkey'
+            columns: ['current_scene_id']
             isOneToOne: false
-            referencedRelation: "story_scenes"
-            referencedColumns: ["id"]
+            referencedRelation: 'story_scenes'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -798,18 +792,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "encounters_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'encounters_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "encounters_current_fkey"
-            columns: ["current_id"]
+            foreignKeyName: 'encounters_current_fkey'
+            columns: ['current_id']
             isOneToOne: false
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -864,25 +858,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "haggles_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'haggles_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "haggles_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'haggles_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "haggles_shop_id_fkey"
-            columns: ["shop_id"]
+            foreignKeyName: 'haggles_shop_id_fkey'
+            columns: ['shop_id']
             isOneToOne: false
-            referencedRelation: "shops"
-            referencedColumns: ["id"]
+            referencedRelation: 'shops'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -919,11 +913,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "log_events_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'log_events_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -932,6 +926,7 @@ export type Database = {
           attitude: string
           campaign_id: string
           created_at: string
+          history: Json
           id: string
           knows: string
           name: string
@@ -947,6 +942,7 @@ export type Database = {
           attitude?: string
           campaign_id: string
           created_at?: string
+          history?: Json
           id?: string
           knows?: string
           name: string
@@ -962,6 +958,7 @@ export type Database = {
           attitude?: string
           campaign_id?: string
           created_at?: string
+          history?: Json
           id?: string
           knows?: string
           name?: string
@@ -975,25 +972,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "npcs_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'npcs_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "npcs_portrait_id_fkey"
-            columns: ["portrait_id"]
+            foreignKeyName: 'npcs_portrait_id_fkey'
+            columns: ['portrait_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "npcs_shop_id_fkey"
-            columns: ["shop_id"]
+            foreignKeyName: 'npcs_shop_id_fkey'
+            columns: ['shop_id']
             isOneToOne: false
-            referencedRelation: "shops"
-            referencedColumns: ["id"]
+            referencedRelation: 'shops'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1036,18 +1033,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "offers_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'offers_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "offers_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'offers_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1072,11 +1069,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "party_stash_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'party_stash_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: true
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1113,32 +1110,32 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "reaction_prompts_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'reaction_prompts_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "reaction_prompts_combatant_id_fkey"
-            columns: ["combatant_id"]
+            foreignKeyName: 'reaction_prompts_combatant_id_fkey'
+            columns: ['combatant_id']
             isOneToOne: false
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "reaction_prompts_encounter_id_fkey"
-            columns: ["encounter_id"]
+            foreignKeyName: 'reaction_prompts_encounter_id_fkey'
+            columns: ['encounter_id']
             isOneToOne: false
-            referencedRelation: "encounters"
-            referencedColumns: ["id"]
+            referencedRelation: 'encounters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "reaction_prompts_provoker_id_fkey"
-            columns: ["provoker_id"]
+            foreignKeyName: 'reaction_prompts_provoker_id_fkey'
+            columns: ['provoker_id']
             isOneToOne: false
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1160,18 +1157,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "roll_request_secrets_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'roll_request_secrets_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "roll_request_secrets_request_id_fkey"
-            columns: ["request_id"]
+            foreignKeyName: 'roll_request_secrets_request_id_fkey'
+            columns: ['request_id']
             isOneToOne: true
-            referencedRelation: "roll_requests"
-            referencedColumns: ["id"]
+            referencedRelation: 'roll_requests'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1223,11 +1220,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "roll_requests_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'roll_requests_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1255,25 +1252,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "roll_verdicts_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'roll_verdicts_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "roll_verdicts_request_id_fkey"
-            columns: ["request_id"]
+            foreignKeyName: 'roll_verdicts_request_id_fkey'
+            columns: ['request_id']
             isOneToOne: false
-            referencedRelation: "roll_requests"
-            referencedColumns: ["id"]
+            referencedRelation: 'roll_requests'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "roll_verdicts_roll_id_fkey"
-            columns: ["roll_id"]
+            foreignKeyName: 'roll_verdicts_roll_id_fkey'
+            columns: ['roll_id']
             isOneToOne: true
-            referencedRelation: "rolls"
-            referencedColumns: ["id"]
+            referencedRelation: 'rolls'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1346,25 +1343,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "rolls_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'rolls_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "rolls_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'rolls_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "rolls_request_id_fkey"
-            columns: ["request_id"]
+            foreignKeyName: 'rolls_request_id_fkey'
+            columns: ['request_id']
             isOneToOne: false
-            referencedRelation: "roll_requests"
-            referencedColumns: ["id"]
+            referencedRelation: 'roll_requests'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1410,25 +1407,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "sales_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'sales_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "sales_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'sales_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "sales_shop_id_fkey"
-            columns: ["shop_id"]
+            foreignKeyName: 'sales_shop_id_fkey'
+            columns: ['shop_id']
             isOneToOne: false
-            referencedRelation: "shops"
-            referencedColumns: ["id"]
+            referencedRelation: 'shops'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1450,18 +1447,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "shop_notes_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'shop_notes_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "shop_notes_shop_id_fkey"
-            columns: ["shop_id"]
+            foreignKeyName: 'shop_notes_shop_id_fkey'
+            columns: ['shop_id']
             isOneToOne: true
-            referencedRelation: "shops"
-            referencedColumns: ["id"]
+            referencedRelation: 'shops'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1507,11 +1504,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "shops_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'shops_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1593,39 +1590,39 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "stage_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'stage_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: true
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "stage_image_id_fkey"
-            columns: ["image_id"]
+            foreignKeyName: 'stage_image_id_fkey'
+            columns: ['image_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "stage_map_id_fkey"
-            columns: ["map_id"]
+            foreignKeyName: 'stage_map_id_fkey'
+            columns: ['map_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "stage_music_id_fkey"
-            columns: ["music_id"]
+            foreignKeyName: 'stage_music_id_fkey'
+            columns: ['music_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "stage_npc_image_id_fkey"
-            columns: ["npc_image_id"]
+            foreignKeyName: 'stage_npc_image_id_fkey'
+            columns: ['npc_image_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1653,11 +1650,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "story_chapters_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'story_chapters_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1724,32 +1721,32 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "story_scenes_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'story_scenes_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "story_scenes_chapter_id_fkey"
-            columns: ["chapter_id"]
+            foreignKeyName: 'story_scenes_chapter_id_fkey'
+            columns: ['chapter_id']
             isOneToOne: false
-            referencedRelation: "story_chapters"
-            referencedColumns: ["id"]
+            referencedRelation: 'story_chapters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "story_scenes_image_id_fkey"
-            columns: ["image_id"]
+            foreignKeyName: 'story_scenes_image_id_fkey'
+            columns: ['image_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "story_scenes_music_id_fkey"
-            columns: ["music_id"]
+            foreignKeyName: 'story_scenes_music_id_fkey'
+            columns: ['music_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1789,32 +1786,32 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tokens_campaign_id_fkey"
-            columns: ["campaign_id"]
+            foreignKeyName: 'tokens_campaign_id_fkey'
+            columns: ['campaign_id']
             isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            referencedRelation: 'campaigns'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "tokens_character_id_fkey"
-            columns: ["character_id"]
+            foreignKeyName: 'tokens_character_id_fkey'
+            columns: ['character_id']
             isOneToOne: false
-            referencedRelation: "characters"
-            referencedColumns: ["id"]
+            referencedRelation: 'characters'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "tokens_combatant_id_fkey"
-            columns: ["combatant_id"]
+            foreignKeyName: 'tokens_combatant_id_fkey'
+            columns: ['combatant_id']
             isOneToOne: false
-            referencedRelation: "combatants"
-            referencedColumns: ["id"]
+            referencedRelation: 'combatants'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "tokens_map_id_fkey"
-            columns: ["map_id"]
+            foreignKeyName: 'tokens_map_id_fkey'
+            columns: ['map_id']
             isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
+            referencedRelation: 'assets'
+            referencedColumns: ['id']
           },
         ]
       }
@@ -1848,8 +1845,8 @@ export type Database = {
           total: number
         }[]
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: false
           isSetofReturn: true
         }
@@ -1873,8 +1870,8 @@ export type Database = {
           stock_id: string
         }
         SetofOptions: {
-          from: "*"
-          to: "haggles"
+          from: '*'
+          to: 'haggles'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1894,8 +1891,8 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "offers"
+          from: '*'
+          to: 'offers'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1918,8 +1915,8 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "roll_requests"
+          from: '*'
+          to: 'roll_requests'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1955,8 +1952,8 @@ export type Database = {
           undone: boolean
         }
         SetofOptions: {
-          from: "*"
-          to: "sales"
+          from: '*'
+          to: 'sales'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1981,8 +1978,8 @@ export type Database = {
           wallet: Json
         }
         SetofOptions: {
-          from: "*"
-          to: "party_stash"
+          from: '*'
+          to: 'party_stash'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2011,8 +2008,8 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "encounters"
+          from: '*'
+          to: 'encounters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2029,8 +2026,8 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "encounters"
+          from: '*'
+          to: 'encounters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2097,8 +2094,8 @@ export type Database = {
           wisdom: number
         }
         SetofOptions: {
-          from: "*"
-          to: "characters"
+          from: '*'
+          to: 'characters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2160,8 +2157,8 @@ export type Database = {
           wisdom: number
         }[]
         SetofOptions: {
-          from: "*"
-          to: "characters"
+          from: '*'
+          to: 'characters'
           isOneToOne: false
           isSetofReturn: true
         }
@@ -2192,8 +2189,8 @@ export type Database = {
           stock_id: string
         }
         SetofOptions: {
-          from: "*"
-          to: "haggles"
+          from: '*'
+          to: 'haggles'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2262,8 +2259,8 @@ export type Database = {
           wisdom: number
         }
         SetofOptions: {
-          from: "*"
-          to: "characters"
+          from: '*'
+          to: 'characters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2292,8 +2289,8 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "offers"
+          from: '*'
+          to: 'offers'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2312,8 +2309,8 @@ export type Database = {
           y: number
         }
         SetofOptions: {
-          from: "*"
-          to: "tokens"
+          from: '*'
+          to: 'tokens'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2351,8 +2348,8 @@ export type Database = {
           total: number
         }
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2390,8 +2387,8 @@ export type Database = {
           total: number
         }
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2409,8 +2406,8 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "reaction_prompts"
+          from: '*'
+          to: 'reaction_prompts'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2434,8 +2431,8 @@ export type Database = {
           wallet: Json
         }
         SetofOptions: {
-          from: "*"
-          to: "party_stash"
+          from: '*'
+          to: 'party_stash'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2449,8 +2446,8 @@ export type Database = {
           wallet: Json
         }
         SetofOptions: {
-          from: "*"
-          to: "party_stash"
+          from: '*'
+          to: 'party_stash'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2486,8 +2483,8 @@ export type Database = {
           total: number
         }
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2517,8 +2514,8 @@ export type Database = {
           total: number
         }
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2544,8 +2541,8 @@ export type Database = {
           undone: boolean
         }
         SetofOptions: {
-          from: "*"
-          to: "sales"
+          from: '*'
+          to: 'sales'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2567,8 +2564,8 @@ export type Database = {
           updated_at: string
         }
         SetofOptions: {
-          from: "*"
-          to: "shops"
+          from: '*'
+          to: 'shops'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2598,8 +2595,23 @@ export type Database = {
           status: string
         }
         SetofOptions: {
-          from: "*"
-          to: "encounters"
+          from: '*'
+          to: 'encounters'
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      stash_coins: {
+        Args: { p_campaign_id: string; p_copper: number }
+        Returns: {
+          campaign_id: string
+          items: Json
+          updated_at: string
+          wallet: Json
+        }
+        SetofOptions: {
+          from: '*'
+          to: 'party_stash'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2661,8 +2673,8 @@ export type Database = {
           wisdom: number
         }
         SetofOptions: {
-          from: "*"
-          to: "characters"
+          from: '*'
+          to: 'characters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2686,8 +2698,8 @@ export type Database = {
           stock_id: string
         }
         SetofOptions: {
-          from: "*"
-          to: "haggles"
+          from: '*'
+          to: 'haggles'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2754,8 +2766,8 @@ export type Database = {
           wisdom: number
         }
         SetofOptions: {
-          from: "*"
-          to: "characters"
+          from: '*'
+          to: 'characters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2817,8 +2829,8 @@ export type Database = {
           wisdom: number
         }
         SetofOptions: {
-          from: "*"
-          to: "characters"
+          from: '*'
+          to: 'characters'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2848,8 +2860,8 @@ export type Database = {
           total: number
         }
         SetofOptions: {
-          from: "*"
-          to: "rolls"
+          from: '*'
+          to: 'rolls'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2871,8 +2883,8 @@ export type Database = {
           undone: boolean
         }
         SetofOptions: {
-          from: "*"
-          to: "combat_events"
+          from: '*'
+          to: 'combat_events'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2893,8 +2905,8 @@ export type Database = {
           undone: boolean
         }
         SetofOptions: {
-          from: "*"
-          to: "sales"
+          from: '*'
+          to: 'sales'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2916,8 +2928,8 @@ export type Database = {
           undone: boolean
         }
         SetofOptions: {
-          from: "*"
-          to: "combat_events"
+          from: '*'
+          to: 'combat_events'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2939,8 +2951,8 @@ export type Database = {
           undone: boolean
         }
         SetofOptions: {
-          from: "*"
-          to: "combat_events"
+          from: '*'
+          to: 'combat_events'
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2965,33 +2977,30 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof (DefaultSchema['Tables'] & DefaultSchema['Views']) | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -2999,24 +3008,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -3024,24 +3031,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -3049,37 +3054,34 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
     : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema['CompositeTypes'] | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
     : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {

@@ -1,0 +1,84 @@
+/* Paste your notes: the text on the left, what it makes on the right. */
+.layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.paste {
+  min-height: 300px;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.45;
+  resize: none;
+}
+
+.preview {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary {
+  margin: 0;
+  font-size: 17px;
+  color: var(--gold-light);
+}
+
+.chapter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chapterTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.scenes {
+  margin: 0;
+  padding: 0 0 0 12px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scenes li {
+  display: flex;
+  flex-direction: column;
+}
+
+.sceneTitle {
+  font-size: 16px;
+}
+
+.bits {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.warnings ul {
+  margin: 4px 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: var(--fail-light);
+}
+
+.grow {
+  flex: 1;
+}
