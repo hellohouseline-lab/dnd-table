@@ -1,0 +1,46 @@
+/* Bring in sounds from another of your tables, under the sound effects. */
+
+.panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px dashed var(--chip-border);
+}
+
+.lead {
+  font-size: 14px;
+  color: var(--label);
+}
+
+.panel select {
+  height: 32px;
+  font-size: 14px;
+}
+
+.bring {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  background: none;
+  color: var(--gold-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bring:disabled {
+  opacity: 0.5;
+}
+
+.done {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-2);
+}

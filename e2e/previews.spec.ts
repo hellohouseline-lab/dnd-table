@@ -1371,3 +1371,13 @@ test('on a phone, the table says it works best on a computer; signing in is left
   await page.reload()
   await expect(page.getByRole('dialog', { name: 'Best on a computer' })).toHaveCount(0)
 })
+
+test('sounds: the DM brings in the sounds from another of their tables', async ({ page }) => {
+  await page.goto('#/dev/stage')
+  const bring = page.getByRole('region', { name: 'Sounds from your other tables' })
+  await bring.getByRole('button', { name: 'Bring them in' }).click()
+  await expect(bring.getByRole('status')).toContainText('Brought in 2 sounds from Demo Pits.')
+  await expect(page.getByRole('region', { name: 'Sound effects' })).toContainText('Door creak')
+  await bring.getByRole('button', { name: 'Bring them in' }).click()
+  await expect(bring.getByRole('status')).toContainText('This table already has every sound from Demo Pits.')
+})

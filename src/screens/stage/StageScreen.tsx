@@ -7,10 +7,11 @@ import { Notice } from '../../components/Notice.tsx'
 import { Page } from '../../components/Page.tsx'
 import { PageHeader } from '../../components/PageHeader.tsx'
 import { useOnlineIds } from '../../live/campaignChannel.ts'
-import { getCampaign, listMembers } from '../../live/campaigns.ts'
+import { getCampaign, listMembers, listMyCampaigns } from '../../live/campaigns.ts'
 import { serverNow, syncClock } from '../../live/clock.ts'
 import {
   addStarterMap,
+  copySounds,
   deleteAsset,
   updateAsset,
   uploadArt,
@@ -54,6 +55,8 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
   const areas = useAreas(campaignId, user.id, stage.stage.mode === 'map' ? stage.stage.mapId : null)
   const asking = useRollRequest(campaignId, user.id, true)
   const forDm = useRollsForDm(campaignId, user.id)
+  // Your other tables, to bring their sounds in.
+  const mine = useLoad(() => listMyCampaigns(user.id), [user.id])
   // Tonight's scenes: Go here from the stage does what it does on Screen 1.
   const story = useStory(campaignId)
   const notebook = useNotebook(campaignId)
@@ -110,6 +113,10 @@ export function StageScreen({ campaignId }: { campaignId: string }) {
     update: updateAsset,
     remove: deleteAsset,
     addStarter: (starter) => addStarterMap(campaignId, starter),
+    otherTables: (mine.status === 'ready' ? mine.data : [])
+      .filter((t) => t.role === 'dm' && t.campaign.id !== campaignId)
+      .map((t) => ({ id: t.campaign.id, name: t.campaign.name })),
+    bringSounds: (fromId) => copySounds(fromId, campaignId, library.assets),
   }
 
   function changeHp(character: Character, change: number) {
