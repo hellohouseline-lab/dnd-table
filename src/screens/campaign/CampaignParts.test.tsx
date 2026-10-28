@@ -74,7 +74,11 @@ describe('The DM panels', () => {
   it('show the code and the invite link', () => {
     const html = text(
       renderToStaticMarkup(
-        <DmInvitePanel campaign={campaign} siteUrl="https://hellohouseline-lab.github.io/dnd-table/" onRenewed={noop} />,
+        <DmInvitePanel
+          campaign={campaign}
+          siteUrl="https://hellohouseline-lab.github.io/dnd-table/"
+          onRenewed={noop}
+        />,
       ),
     )
     expect(html).toContain('K7QM2P')
@@ -84,7 +88,13 @@ describe('The DM panels', () => {
   it('list the players with Here tonight and Remove, but not the DM', () => {
     const html = text(
       renderToStaticMarkup(
-        <DmPartyPanel campaign={campaign} members={members} characters={[sampleFighter]} online={new Set()} onChanged={noop} />,
+        <DmPartyPanel
+          campaign={campaign}
+          members={members}
+          characters={[sampleFighter]}
+          online={new Set()}
+          onChanged={noop}
+        />,
       ),
     )
     expect(html).toContain('2 of 4 players have joined')
@@ -95,7 +105,13 @@ describe('The DM panels', () => {
 
   it('show each player’s character with a link to the sheet, or that they have none yet', () => {
     const html = renderToStaticMarkup(
-      <DmPartyPanel campaign={campaign} members={members} characters={[sampleFighter]} online={new Set()} onChanged={noop} />,
+      <DmPartyPanel
+        campaign={campaign}
+        members={members}
+        characters={[sampleFighter]}
+        online={new Set()}
+        onChanged={noop}
+      />,
     )
     expect(text(html)).toContain('Sam · Thorin Ironfist')
     expect(text(html)).toContain('Alex · no character yet')
@@ -106,7 +122,7 @@ describe('The DM panels', () => {
     const html = renderToStaticMarkup(<DmDetailsPanel campaign={campaign} onSaved={noop} />)
     expect(html).toContain('value="The Sunless Citadel"')
     expect(text(html)).toContain('Delete this table')
-    expect(text(html)).toContain("It can’t be undone")
+    expect(text(html)).toContain('It can’t be undone')
   })
 })
 
@@ -125,10 +141,17 @@ describe('The player cards', () => {
     expect(html).toContain('href="#/c/c1/play"')
   })
 
-  it('keep the wizard card from the design, switched off until Phase 2', () => {
+  it('offer the builder, or the plain form for a sheet they already have, before there is a character', () => {
     const html = renderToStaticMarkup(<PlayerChoices campaignId="c1" />)
-    expect(html).toContain('Forge a new character')
-    expect(html.match(/disabled=""/g)).toHaveLength(1)
+    expect(html).toContain('href="#/c/c1/character/new"')
+    expect(html).toContain('href="#/c/c1/character/new/form"')
+    expect(text(html)).toContain('Already have a character sheet?')
+    expect(html).not.toContain('disabled=""')
+  })
+
+  it('drop the second card once there is a character', () => {
+    const html = renderToStaticMarkup(<PlayerChoices campaignId="c1" character={sampleFighter} />)
+    expect(text(html)).not.toContain('Already have a character sheet?')
   })
 
   it('keep the camera box from the design, with voice and camera in place of the VDO.Ninja link', () => {

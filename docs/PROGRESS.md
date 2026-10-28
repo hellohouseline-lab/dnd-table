@@ -3,6 +3,7 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **The Join screen's character cards (live).** The old "Forge a new character, arrives later" card is gone. Before a player has a character, **Your character** explains the step-by-step builder (Create your character), and **Already have a character sheet?** offers the plain form (Type in your sheet). Once they have one, only their character card shows.
 - **Players never see a DC (live).** Matt's call: Quick rolls, Ask for a roll and planned scene rolls never tell players the number (the Tell players the number tick is gone, and rolls planned or pasted as "open DC" are kept secret too); the server still checks pass or fail. A player's own condition with a save each turn no longer shows its DC either. Monsters' armour class was already never shown to players.
 - **Tonight's scenes on Screen 2 (live).** The Stage screen's "arrive in Phase 2" box is now a list of the chapter you're in (pick another from the menu), each scene with **Go here**: the same as on Screen 1's Story tab (picture, music, ambience, scene name, notebook and log), from `src/screens/dm/story/goHere.ts`, which both screens now share. The scene you're in is marked Now. Preview: `#/dev/stage`. Tests: 74 preview browser tests (1 new).
 - **Eight more ready-made portraits (live).** For NPCs: Tavern landlady, Card sharp, and Generic man 1 to 3 and Generic woman 1 to 3 (painted with Higgsfield in the same style). Matt's Death Pit file now gives Grudge the landlady and Silky the card sharp.

@@ -1,6 +1,5 @@
 import { href } from '../../app/router.ts'
 import { ButtonLink } from '../../components/Button.tsx'
-import { buttonClassName } from '../../components/buttonClassName.ts'
 import { Parchment } from '../../components/Parchment.tsx'
 import { Portrait } from '../../components/Portrait.tsx'
 import { StatBox } from '../../components/StatBox.tsx'
@@ -10,8 +9,8 @@ import styles from './PlayerChoices.module.css'
 type PlayerChoicesProps = { campaignId: string; character?: Character }
 
 /**
- * The player's half of the Join screen: their character card (or the button to create one), and
- * the character wizard card, which waits for Phase 2.
+ * The player's half of the Join screen: their character card, or the builder to make one, with the
+ * plain form beside it for anyone typing in a sheet they already have.
  */
 export function PlayerChoices({ campaignId, character }: PlayerChoicesProps) {
   return (
@@ -35,7 +34,11 @@ export function PlayerChoices({ campaignId, character }: PlayerChoicesProps) {
           <ButtonLink href={href(`/c/${campaignId}/play`)} variant="ink" className={styles.push}>
             Take your seat
           </ButtonLink>
-          <ButtonLink href={href(`/c/${campaignId}/character/${character.id}/edit`)} variant="quietInk" className={styles.centre}>
+          <ButtonLink
+            href={href(`/c/${campaignId}/character/${character.id}/edit`)}
+            variant="quietInk"
+            className={styles.centre}
+          >
             Edit character
           </ButtonLink>
         </Parchment>
@@ -43,33 +46,35 @@ export function PlayerChoices({ campaignId, character }: PlayerChoicesProps) {
         <Parchment className={styles.character}>
           <div className={styles.cardTitle}>Your character</div>
           <p className={styles.inkText}>
-            Type in your character sheet: pick a race, class and background from the rules, type your scores, and the table
-            works out every bonus for you.
+            Make your character step by step, with a plain-English explanation at every choice. The table works out
+            every bonus for you.
           </p>
+          <ol className={styles.inkSteps}>
+            <li>Race and subrace</li>
+            <li>Class</li>
+            <li>Background</li>
+            <li>Ability scores: standard set, point buy or rolled dice</li>
+            <li>Starting equipment, picked as cards</li>
+            <li>Spells, if your class casts them</li>
+          </ol>
           <ButtonLink href={href(`/c/${campaignId}/character/new`)} variant="ink" className={styles.push}>
             Create your character
           </ButtonLink>
         </Parchment>
       )}
 
-      <article className={styles.forge}>
-        <div className={styles.cardTitle}>Forge a new character</div>
-        <p className={styles.darkText}>
-          A guided wizard with a plain-English explanation at every choice. It arrives after the first sessions; until
-          then, use {character ? 'Edit character' : 'Create your character'}.
-        </p>
-        <ol className={styles.steps}>
-          <li>Race and subrace</li>
-          <li>Class</li>
-          <li>Background</li>
-          <li>Ability scores: standard set, point buy or rolled dice</li>
-          <li>Starting equipment, picked as cards</li>
-          <li>Spells, if your class casts them</li>
-        </ol>
-        <button type="button" className={buttonClassName('outline', { className: styles.push })} disabled>
-          Start the wizard
-        </button>
-      </article>
+      {!character && (
+        <article className={styles.forge}>
+          <div className={styles.cardTitle}>Already have a character sheet?</div>
+          <p className={styles.darkText}>
+            Type it in from paper or another app: pick a race, class and background from the rules, type your scores,
+            and the table works out every bonus for you.
+          </p>
+          <ButtonLink href={href(`/c/${campaignId}/character/new/form`)} variant="outline" className={styles.push}>
+            Type in your sheet
+          </ButtonLink>
+        </article>
+      )}
     </div>
   )
 }

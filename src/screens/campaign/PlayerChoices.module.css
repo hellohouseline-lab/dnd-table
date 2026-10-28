@@ -56,13 +56,14 @@
   color: var(--text-3);
 }
 
-.steps {
+.inkSteps {
   margin: 0;
   padding-left: 22px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 16px;
+  color: var(--ink-2);
 }
 
 .push {
