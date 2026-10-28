@@ -25,6 +25,7 @@ import { ArtLibrary } from './ArtLibrary.tsx'
 import { MapStage } from './MapStage.tsx'
 import { AmbiencePanel, EffectsPanel, MusicPanel } from './SoundPanels.tsx'
 import { TonightsScenes } from './TonightsScenes.tsx'
+import { BringSounds } from './BringSounds.tsx'
 import styles from './StageView.module.css'
 
 const FREE_STORAGE_BYTES = 1024 * 1024 * 1024
@@ -41,6 +42,9 @@ export type LibraryActions = {
   remove: (asset: Asset) => Promise<void>
   /** Adds one of the maps that come with the table to the library. */
   addStarter?: (starter: StarterArt) => Promise<Asset>
+  /** Your other tables, to bring their music, ambience and sound effects into this one. */
+  otherTables?: { id: string; name: string }[]
+  bringSounds?: (fromCampaignId: string) => Promise<Asset[]>
 }
 
 /** Sounds are marked stream-safe when uploaded; the table no longer asks about licences or credits. */
@@ -321,6 +325,17 @@ export function StageView({
             onDelete={(asset) => void remove(asset)}
             options={UPLOAD_OPTIONS}
           />
+          {actions.bringSounds && actions.otherTables && actions.otherTables.length > 0 && (
+            <BringSounds
+              tables={actions.otherTables}
+              onBring={async (fromId) => {
+                const bring = actions.bringSounds
+                const added = bring ? await attempt(() => bring(fromId)) : null
+                added?.forEach(library.put)
+                return added?.length ?? null
+              }}
+            />
+          )}
         </div>
       </div>
 

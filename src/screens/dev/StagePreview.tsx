@@ -73,6 +73,24 @@ export function StagePreview() {
     update: async (id, patch) => ({ ...(assets.find((a) => a.id === id) as Asset), ...patch }),
     remove: async () => undefined,
     // The real thing turns the drawing into a picture first; the preview shows the drawing itself.
+    // Another table's sounds: the preview makes up two, as if copied.
+    otherTables: [{ id: 'other', name: 'Demo Pits' }],
+    bringSounds: async () =>
+      [
+        { name: 'Tavern fiddle', kind: 'music' as const, mood: 'tavern' as const, hotkey: null },
+        { name: 'Door creak', kind: 'effect' as const, mood: null, hotkey: 9 },
+      ]
+        .filter((s) => !assets.some((a) => a.kind === s.kind && a.name === s.name))
+        .map((s) => ({
+          ...previewAsset(new File([new Uint8Array(1)], `${s.name}.mp3`, { type: 'audio/mpeg' }), {
+            kind: s.kind,
+            mood: s.mood,
+            hotkey: s.hotkey,
+            streamSafe: true,
+            thumbPath: null,
+          }),
+          name: s.name,
+        })),
     addStarter: async (starter) => {
       const drawing = await (await fetch(starterMapUrl(starter))).blob()
       const file = new File([drawing], starter.file.split('/').pop() ?? starter.name, { type: drawing.type })

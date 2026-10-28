@@ -175,6 +175,53 @@ export async function uploadSound(campaignId: string, file: File, details: Sound
   })
 }
 
+/**
+ * Brings the music, ambience and sound effects from another of your tables into this one, so each
+ * sound is uploaded once. Files are copied inside storage, not downloaded. Sounds this table already
+ * has (same kind and name) are skipped; effects keep their key if it's free here.
+ */
+export async function copySounds(fromCampaignId: string, toCampaignId: string, have: Asset[]): Promise<Asset[]> {
+  const { data, error } = await db()
+    .from('assets')
+    .select('*')
+    .eq('campaign_id', fromCampaignId)
+    .neq('kind', 'art')
+    .order('created_at')
+  if (error) throw fromDatabaseError(error)
+  const keys = new Set(have.flatMap((a) => (a.kind === 'effect' && a.hotkey ? [a.hotkey] : [])))
+  const added: Asset[] = []
+  for (const row of data) {
+    if (have.some((a) => a.kind === row.kind && a.name === row.name)) continue
+    const id = crypto.randomUUID()
+    const path = `${toCampaignId}/${id}.${row.path.split('.').pop() ?? 'mp3'}`
+    const copied = await db().storage.from('audio').copy(row.path, path)
+    if (copied.error) throw new TableError(`“${row.name}” couldn't be copied. Try again in a moment.`)
+    let hotkey: number | null = null
+    if (row.kind === 'effect') {
+      hotkey =
+        row.hotkey && !keys.has(row.hotkey)
+          ? row.hotkey
+          : ([1, 2, 3, 4, 5, 6, 7, 8, 9].find((k) => !keys.has(k)) ?? null)
+      if (hotkey) keys.add(hotkey)
+    }
+    added.push(
+      await insert({
+        id,
+        campaign_id: toCampaignId,
+        kind: row.kind,
+        mood: row.mood,
+        hotkey,
+        name: row.name,
+        path,
+        size_bytes: row.size_bytes,
+        stream_safe: row.stream_safe,
+        credit: row.credit,
+      }),
+    )
+  }
+  return added
+}
+
 async function insert(row: TablesInsert<'assets'>): Promise<Asset> {
   const { data, error } = await db().from('assets').insert(row).select('*').single()
   if (error) throw fromDatabaseError(error)

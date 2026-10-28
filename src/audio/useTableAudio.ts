@@ -53,6 +53,55 @@ function useSoundOwner(campaignId: string): boolean {
   return owner || !canLock
 }
 
+const ACTIVE_TABLE_KEY = 'dnd-table-sound-table'
+
+function storedTable(): string | null {
+  try {
+    return window.localStorage.getItem(ACTIVE_TABLE_KEY)
+  } catch {
+    return null
+  }
+}
+
+/**
+ * With two tables open (a test table beside the real one), only the table you last clicked into
+ * plays in this browser. Tabs of that table share it out as before (useSoundOwner).
+ */
+function useActiveTable(campaignId: string): boolean {
+  const [active, setActive] = useState(() => {
+    const stored = storedTable()
+    return stored === null || stored === campaignId || document.hasFocus()
+  })
+  useEffect(() => {
+    const claim = () => {
+      try {
+        if (storedTable() !== campaignId) window.localStorage.setItem(ACTIVE_TABLE_KEY, campaignId)
+      } catch {
+        // Without storage every table plays, as before.
+      }
+    }
+    const onFocus = () => {
+      claim()
+      setActive(true)
+    }
+    const onVisible = () => document.visibilityState === 'visible' && onFocus()
+    // Another tab claimed the sound: only its table plays now.
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === ACTIVE_TABLE_KEY && event.newValue) setActive(event.newValue === campaignId)
+    }
+    if (document.hasFocus()) claim()
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('storage', onStorage)
+    return () => {
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('storage', onStorage)
+    }
+  }, [campaignId])
+  return active
+}
+
 export type TableAudio = {
   /** The browser is waiting for a click before it will play anything. */
   locked: boolean
@@ -68,7 +117,9 @@ export type TableAudio = {
 
 /** Plays the stage's music, ambience and everyone's sound effects in this browser. */
 export function useTableAudio(campaignId: string, userId: string, stage: Stage, sounds: Asset[]): TableAudio {
-  const owner = useSoundOwner(campaignId)
+  const lockOwner = useSoundOwner(campaignId)
+  const activeTable = useActiveTable(campaignId)
+  const owner = lockOwner && activeTable
   const [volume, setVolumeState] = useState(savedVolume)
   const locked = useSyncExternalStore(
     (listener) => mixer.subscribe(listener),
