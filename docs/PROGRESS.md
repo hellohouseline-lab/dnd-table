@@ -357,6 +357,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Approve the P1 plan** (`docs/P1_PLAN.md`): spells for players on the Powers tab, Play as the monsters, voice volume always shown with a boost, and scene fades. Decisions 84 to 95.
 - **Save Death Pit of Moloch as a preset** (refresh first):
   1. On Screen 1, open the **Story** tab and press **Paste your notes**.
   2. Open `private/campaigns/death-pit-of-moloch.md` (in the `dnd-table-starter-pack` folder), copy everything, and paste it into the box.
