@@ -114,6 +114,12 @@ type BattleViewProps = {
 }
 
 /**
+ * The map fills the screen, as a player's does, centred between the turn order on the left and the
+ * cameras on the right; the help line sits above the feed, tools and cards along the bottom.
+ */
+const MAP_INSET = { top: 64, right: 352, bottom: 250, left: 392 }
+
+/**
  * Screen 2 in a fight (docs/COMBAT_PLAN.md section 3): the whole fight on one screen. The turn order
  * and the acting creature on the left, the big map in the middle with what just happened under it,
  * and everyone's cameras on the right. A monster's turn is two clicks: its attack, then its target.
@@ -723,6 +729,9 @@ export function BattleView({
           {map ? (
             <MapStage
               className={styles.map}
+              toolsClassName={styles.mapTools}
+              inset={MAP_INSET}
+              foldTools
               map={map}
               tokens={tokens}
               fight={fight}

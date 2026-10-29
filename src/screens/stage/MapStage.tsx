@@ -7,7 +7,7 @@ import type { Character } from '../../rules/character.ts'
 import { freeSquares, mapTokens } from '../../map/mapTokens.ts'
 import { feetBetween } from '../../rules/combat.ts'
 import { movementLeft, type Reach } from '../../rules/turn.ts'
-import type { MapArea, MapPlacing } from '../../map/BattleMap.tsx'
+import type { MapArea, MapInset, MapPlacing } from '../../map/BattleMap.tsx'
 import styles from './StageView.module.css'
 
 const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
@@ -28,6 +28,12 @@ type MapStageProps = {
   onGrid: (patch: AssetPatch) => void
   /** The Battle screen: the map fills the space it's given. */
   className?: string
+  /** Tuck the grid tools and Add the party behind a Map tools button (the Battle screen, where the map fills the screen). */
+  foldTools?: boolean
+  /** Room taken by panels floating over the map (the Battle screen). */
+  inset?: MapInset
+  /** For the grid and token tools under the map (the Battle screen floats them over it). */
+  toolsClassName?: string
   /** Picking a target: clicking a miniature picks it. */
   targeting?: { onPick: (token: Token) => void } | null
   /** An attack being aimed: who from, and how far it reaches. */
@@ -54,6 +60,9 @@ export function MapStage({
   pointers,
   onGrid,
   className,
+  toolsClassName,
+  inset,
+  foldTools = false,
   targeting = null,
   aim = null,
   areas = [],
@@ -123,6 +132,7 @@ export function MapStage({
         <Suspense fallback={<div className={styles.nothing}>Opening the map…</div>}>
           <BattleMap
             map={map}
+            inset={inset}
             tokens={view}
             selectedId={selected}
             onSelect={(id) => {
@@ -165,79 +175,159 @@ export function MapStage({
           />
         </Suspense>
       </div>
-      <div className={styles.mapTools}>
-        <div className={styles.gridTools} aria-label="Line up the grid">
-          <span className={styles.toolLabel}>Squares</span>
-          <button
-            type="button"
-            className={styles.tool}
-            aria-label="Smaller squares"
-            onClick={(e) => nudge({ size: grid.size - (e.shiftKey ? 10 : GRID_STEP) })}
-          >
-            −
-          </button>
-          <span className={styles.toolValue}>{grid.size}px</span>
-          <button
-            type="button"
-            className={styles.tool}
-            aria-label="Bigger squares"
-            onClick={(e) => nudge({ size: grid.size + (e.shiftKey ? 10 : GRID_STEP) })}
-          >
-            +
-          </button>
-          <span className={styles.toolLabel}>Nudge</span>
-          <button
-            type="button"
-            className={styles.tool}
-            aria-label="Grid left"
-            onClick={() => nudge({ offsetX: grid.offsetX - GRID_STEP })}
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            className={styles.tool}
-            aria-label="Grid right"
-            onClick={() => nudge({ offsetX: grid.offsetX + GRID_STEP })}
-          >
-            →
-          </button>
-          <button
-            type="button"
-            className={styles.tool}
-            aria-label="Grid up"
-            onClick={() => nudge({ offsetY: grid.offsetY - GRID_STEP })}
-          >
-            ↑
-          </button>
-          <button
-            type="button"
-            className={styles.tool}
-            aria-label="Grid down"
-            onClick={() => nudge({ offsetY: grid.offsetY + GRID_STEP })}
-          >
-            ↓
-          </button>
-        </div>
-        <div className={styles.gridTools}>
-          <button
-            type="button"
-            className={styles.control}
-            disabled={partyMissing.length === 0}
-            onClick={() => place('party')}
-          >
-            Add the party{partyMissing.length > 0 ? ` (${partyMissing.length})` : ''}
-          </button>
-          <button
-            type="button"
-            className={styles.control}
-            disabled={monstersMissing.length === 0}
-            title={fight ? undefined : 'Start a fight on Screen 1 to add monsters'}
-            onClick={() => place('monsters')}
-          >
-            Place the monsters{monstersMissing.length > 0 ? ` (${monstersMissing.length})` : ''}
-          </button>
-        </div>
+      <div className={cx(styles.mapTools, toolsClassName)}>
+        {foldTools ? (
+          <details className={styles.fold}>
+            <summary className={styles.foldSummary}>Map tools</summary>
+            <div className={styles.gridTools} aria-label="Line up the grid">
+              <span className={styles.toolLabel}>Squares</span>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Smaller squares"
+                onClick={(e) => nudge({ size: grid.size - (e.shiftKey ? 10 : GRID_STEP) })}
+              >
+                −
+              </button>
+              <span className={styles.toolValue}>{grid.size}px</span>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Bigger squares"
+                onClick={(e) => nudge({ size: grid.size + (e.shiftKey ? 10 : GRID_STEP) })}
+              >
+                +
+              </button>
+              <span className={styles.toolLabel}>Nudge</span>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid left"
+                onClick={() => nudge({ offsetX: grid.offsetX - GRID_STEP })}
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid right"
+                onClick={() => nudge({ offsetX: grid.offsetX + GRID_STEP })}
+              >
+                →
+              </button>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid up"
+                onClick={() => nudge({ offsetY: grid.offsetY - GRID_STEP })}
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid down"
+                onClick={() => nudge({ offsetY: grid.offsetY + GRID_STEP })}
+              >
+                ↓
+              </button>
+            </div>
+            <div className={styles.gridTools}>
+              <button
+                type="button"
+                className={styles.control}
+                disabled={partyMissing.length === 0}
+                onClick={() => place('party')}
+              >
+                Add the party{partyMissing.length > 0 ? ` (${partyMissing.length})` : ''}
+              </button>
+              <button
+                type="button"
+                className={styles.control}
+                disabled={monstersMissing.length === 0}
+                title={fight ? undefined : 'Start a fight on Screen 1 to add monsters'}
+                onClick={() => place('monsters')}
+              >
+                Place the monsters{monstersMissing.length > 0 ? ` (${monstersMissing.length})` : ''}
+              </button>
+            </div>
+          </details>
+        ) : (
+          <>
+            <div className={styles.gridTools} aria-label="Line up the grid">
+              <span className={styles.toolLabel}>Squares</span>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Smaller squares"
+                onClick={(e) => nudge({ size: grid.size - (e.shiftKey ? 10 : GRID_STEP) })}
+              >
+                −
+              </button>
+              <span className={styles.toolValue}>{grid.size}px</span>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Bigger squares"
+                onClick={(e) => nudge({ size: grid.size + (e.shiftKey ? 10 : GRID_STEP) })}
+              >
+                +
+              </button>
+              <span className={styles.toolLabel}>Nudge</span>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid left"
+                onClick={() => nudge({ offsetX: grid.offsetX - GRID_STEP })}
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid right"
+                onClick={() => nudge({ offsetX: grid.offsetX + GRID_STEP })}
+              >
+                →
+              </button>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid up"
+                onClick={() => nudge({ offsetY: grid.offsetY - GRID_STEP })}
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                className={styles.tool}
+                aria-label="Grid down"
+                onClick={() => nudge({ offsetY: grid.offsetY + GRID_STEP })}
+              >
+                ↓
+              </button>
+            </div>
+            <div className={styles.gridTools}>
+              <button
+                type="button"
+                className={styles.control}
+                disabled={partyMissing.length === 0}
+                onClick={() => place('party')}
+              >
+                Add the party{partyMissing.length > 0 ? ` (${partyMissing.length})` : ''}
+              </button>
+              <button
+                type="button"
+                className={styles.control}
+                disabled={monstersMissing.length === 0}
+                title={fight ? undefined : 'Start a fight on Screen 1 to add monsters'}
+                onClick={() => place('monsters')}
+              >
+                Place the monsters{monstersMissing.length > 0 ? ` (${monstersMissing.length})` : ''}
+              </button>
+            </div>
+          </>
+        )}
         {chosen && chosenView && (
           <div className={cx(styles.gridTools, styles.tokenTools)}>
             <span className={styles.toolLabel}>{chosenView.name}</span>

@@ -1495,6 +1495,12 @@ test('play as the monsters: a dragon breathes on whoever the DM picks, who save 
   await cards.getByRole('button', { name: 'Acid Breath (action)' }).click()
   const status = page.getByRole('status').filter({ hasText: 'Acid Breath' })
   await expect(status).toContainText('point it with the mouse and click')
+  // The map fills the screen, so zoom out a little to bring Elowen out from under the turn order.
+  await page.mouse.move(740, 450)
+  for (let i = 0; i < 3; i += 1) {
+    await page.mouse.wheel(0, 100)
+    await page.waitForTimeout(50)
+  }
   const at = await page.evaluate(() => {
     const stage = (window as unknown as { Konva: { stages: KonvaStage[] } }).Konva.stages[0]
     type KonvaStage = {

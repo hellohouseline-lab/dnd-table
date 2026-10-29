@@ -1,5 +1,6 @@
-/* Screen 2 in a fight: turn order and the acting creature on the left, the map in the middle with
-   what happened under it, cameras on the right. 1440 by 900 and up. */
+/* Screen 2 in a fight: the map fills the screen under the header, as on a player's screen, with the
+   turn order and the acting creature floating on the left, cameras on the right, and what happened,
+   the map tools and a monster's cards along the bottom. 1440 by 900 and up. */
 
 .screen {
   position: relative;
@@ -84,6 +85,8 @@
 }
 
 .left {
+  position: relative;
+  z-index: 2;
   min-height: 0;
   overflow-y: auto;
   display: flex;
@@ -151,10 +154,51 @@
   gap: 10px;
 }
 
+/* The map behind everything, below the header. The body and centre column stay unpositioned, so
+   it's placed against the whole screen and clicks in the empty middle reach it. */
 .map {
-  flex: 1;
-  min-height: 0;
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
   aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Darkens the edges so the panels, cards and cameras stay readable over any map. */
+.map::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(13, 10, 18, 0.6) 0, rgba(13, 10, 18, 0) 30%),
+    linear-gradient(270deg, rgba(13, 10, 18, 0.55) 0, rgba(13, 10, 18, 0) 25%),
+    linear-gradient(0deg, rgba(13, 10, 18, 0.6) 0, rgba(13, 10, 18, 0) 30%);
+  pointer-events: none;
+}
+
+/* Everything in the middle column floats over the map. */
+.centre > * {
+  position: relative;
+  z-index: 2;
+}
+
+.centre > .map {
+  position: absolute;
+  z-index: 0;
+}
+
+/* The grid and token tools, a small panel over the map, pushed to the bottom with the cards and feed. */
+.mapTools {
+  margin-top: auto;
+  align-self: flex-start;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--panel-fill);
+  border: 1px solid var(--chip-border);
 }
 
 .aiming {
@@ -282,6 +326,9 @@
 .strip {
   flex: 0 0 auto;
   max-height: 170px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--panel-fill);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -307,7 +354,8 @@
 
 /* Cameras sit in their own column here, below the header. */
 .cameras {
-  position: static;
+  position: relative;
+  z-index: 2;
   width: 320px;
   min-height: 0;
 }

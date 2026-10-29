@@ -55,8 +55,14 @@ const LOOKS: Record<AreaLook, { stroke: string; fill: string; text: string }> = 
   block: { stroke: '#8a7a90', fill: 'rgba(12, 8, 16, 0.6)', text: '#d9cdb6' },
 }
 
+/** Room taken by panels floating over the map, in pixels: the map centres between them. */
+export type MapInset = { top: number; right: number; bottom: number; left: number }
+
+const NO_INSET: MapInset = { top: 0, right: 0, bottom: 0, left: 0 }
+
 type BattleMapProps = {
   map: Pick<Asset, 'path' | 'grid' | 'name'>
+  inset?: MapInset
   tokens: MapToken[]
   onMove: (id: string, x: number, y: number) => void
   onSelect?: (id: string | null) => void
@@ -163,6 +169,7 @@ export default function BattleMap({
   pings = [],
   onHand,
   onPing,
+  inset = NO_INSET,
   className,
 }: BattleMapProps) {
   const [holder, setHolder] = useState<HTMLDivElement | null>(null)
@@ -179,9 +186,15 @@ export default function BattleMap({
   const mapWidth = image?.width ?? 1600
   const mapHeight = image?.height ?? 900
   // Fit the whole map in view, then let the viewer zoom and drag it about.
+  // Fit the whole map in view, then let the viewer zoom and drag it about. With panels floating
+  // over it, it still fills the screen (as a player's does), centred on the clear space between them.
   const fit = width > 0 && height > 0 ? Math.min(width / mapWidth, height / mapHeight) : 1
   const scale = fit * zoom
-  const origin = { x: (width - mapWidth * scale) / 2 + pan.x, y: (height - mapHeight * scale) / 2 + pan.y }
+  const clearWidth = Math.max(200, width - inset.left - inset.right)
+  const origin = {
+    x: (width - mapWidth * scale) / 2 + (inset.left - inset.right) / 2 + pan.x,
+    y: (height - mapHeight * scale) / 2 + pan.y,
+  }
   const centre = (square: number, offset: number) => offset + (square + 0.5) * size
   const toSquare = (pixel: number, offset: number) => Math.max(0, Math.floor((pixel - offset) / size))
 
@@ -558,7 +571,12 @@ export default function BattleMap({
           </Layer>
         </Stage>
       )}
-      <div className={styles.help}>Drag to move around · scroll to zoom · double-click to ping</div>
+      <div
+        className={styles.help}
+        style={inset === NO_INSET ? undefined : { bottom: inset.bottom + 8, left: inset.left + clearWidth / 2 }}
+      >
+        Drag to move around · scroll to zoom · double-click to ping
+      </div>
     </div>
   )
 }

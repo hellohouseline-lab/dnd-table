@@ -644,6 +644,27 @@ button.padButton:active {
   gap: 6px;
 }
 
+/* Map tools folded away behind a button, opening upwards over the map. */
+.fold {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.foldSummary {
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.fold[open] > .foldSummary {
+  margin-bottom: 8px;
+}
+
 .tokenTools {
   padding: 8px;
   border-radius: 6px;
