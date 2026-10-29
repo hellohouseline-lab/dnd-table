@@ -42,7 +42,37 @@ import { ChanceStrip, type OpenChance } from '../fight/Reactions.tsx'
 import { strikesFor, type Strike } from '../fight/strikes.ts'
 import { MapStage } from '../stage/MapStage.tsx'
 import { CameraColumn } from '../table/TableView.tsx'
+import { creaturesIn } from '../../rules/areas.ts'
+import { feetBetween } from '../../rules/combat.ts'
+import { monsterSkill } from '../../rules/monsterBonus.ts'
+import { monsterCards, sameAsBefore, type MonsterCard } from '../../rules/monsterTurn.ts'
+import { actionFree, attacksLeft } from '../../rules/turn.ts'
+import type { TurnAction } from '../../live/combat.ts'
+import { turnLimits } from '../fight/fightRows.ts'
+import { MonsterHand, MonsterPanel } from './MonsterTurn.tsx'
 import styles from './BattleView.module.css'
+
+type SaveCard = Extract<MonsterCard, { kind: 'save' }>
+
+/** Play as the monsters is remembered for the fight, in this tab. */
+const PLAYING_KEY = 'dnd-table-play-monsters'
+
+function wasPlaying(encounterId: string): boolean {
+  try {
+    return window.sessionStorage.getItem(PLAYING_KEY) === encounterId
+  } catch {
+    return false
+  }
+}
+
+function rememberPlaying(encounterId: string, on: boolean) {
+  try {
+    if (on) window.sessionStorage.setItem(PLAYING_KEY, encounterId)
+    else window.sessionStorage.removeItem(PLAYING_KEY)
+  } catch {
+    // It still switches; it just won't be remembered after a reload.
+  }
+}
 
 type Fight = NonNullable<FightControls['fight']>
 
@@ -86,7 +116,8 @@ type BattleViewProps = {
  * Screen 2 in a fight (docs/COMBAT_PLAN.md section 3): the whole fight on one screen. The turn order
  * and the acting creature on the left, the big map in the middle with what just happened under it,
  * and everyone's cameras on the right. A monster's turn is two clicks: its attack, then its target.
- * Keys: 1 to 9 an attack, N next turn, U undo, R reveal the name, Escape to put an attack away.
+ * Keys: 1 to 9 an attack, N next turn, U undo, R reveal the name, A ask for a roll, T parley,
+ * P play as the monsters, Escape to put an attack away.
  */
 export function BattleView({
   campaignId,
@@ -130,8 +161,17 @@ export function BattleView({
     aiming: attacking,
     aimMonster,
     aimCharacter,
+    strikeNow,
     cancel: cancelAttack,
   } = useAiming(controls.attack, table.rollWith, tokens.tokens, monsters)
+  // Play as the monsters (P): the acting monster gets a player's turn panel and its cards.
+  const [playing, setPlaying] = useState(() => wasPlaying(fight.encounter.id))
+  function togglePlaying() {
+    rememberPlaying(fight.encounter.id, !playing)
+    setPlaying(!playing)
+  }
+  // A monster's ability with a save, waiting for who it catches (or where its area goes).
+  const [using, setUsing] = useState<{ row: FightRow; card: SaveCard; picked: string[]; placing: boolean } | null>(null)
 
   const rows = fightRows(fight, characters, 'dm')
   const {
@@ -140,7 +180,8 @@ export function BattleView({
     cancel: cancelCast,
     problem: castProblem,
   } = useCasting(controls.cast, table.rollWith, tokens.tokens, rows)
-  // Whatever is waiting for its target: an attack, or a spell aimed at a creature.
+  // Whatever is waiting for its target: an attack, a spell aimed at a creature, or everyone a
+  // monster's ability catches (each click adds or takes away one).
   const aiming: Aiming =
     attacking ??
     (casting && casting.mode === 'target'
@@ -150,11 +191,29 @@ export function BattleView({
           reach: { melee: casting.rangeFt ?? 5280, normal: null, long: null },
           onPick: casting.onPick,
         }
-      : null)
+      : using && !using.placing
+        ? {
+            label: using.card.name,
+            attackerId: using.row.combatant.id,
+            reach: { melee: 5280, normal: null, long: null },
+            onPick: (target) =>
+              setUsing((now) =>
+                now
+                  ? {
+                      ...now,
+                      picked: now.picked.includes(target.combatant.id)
+                        ? now.picked.filter((id) => id !== target.combatant.id)
+                        : [...now.picked, target.combatant.id],
+                    }
+                  : now,
+              ),
+          }
+        : null)
   const cancel = () => {
     cancelAttack()
     cancelCast()
     setDrawing(null)
+    setUsing(null)
   }
   // Characters who took damage while concentrating, and owe the save.
   const owing = characters.filter(
@@ -210,6 +269,132 @@ export function BattleView({
     if (action) aimMonster(row, action)
   }
 
+  // The monster being played, when it's a monster's turn and Play as the monsters is on.
+  const actingMonster =
+    acting && !acting.character ? monsters?.find((m) => m.index === acting.secret?.monster) : undefined
+  const playRow =
+    playing && acting && actingMonster && (selected === null || selected === acting.combatant.id) ? acting : null
+  const cards = actingMonster ? monsterCards(actingMonster) : []
+  const tokenOfRow = (row: FightRow) =>
+    tokens.tokens.find((t) =>
+      row.combatant.characterId ? t.characterId === row.combatant.characterId : t.combatantId === row.combatant.id,
+    )
+
+  // Same for the rest: the last attack by a monster of the same kind, repeated with this one.
+  const lastAttack = [...controls.events]
+    .reverse()
+    .find(
+      (e) =>
+        e.kind === 'attack' &&
+        !e.undone &&
+        e.targetId !== null &&
+        e.shown.label &&
+        fight.combatants.some((c) => c.id === e.actorId && c.kind === 'monster'),
+    )
+  const past = lastAttack?.actorId
+    ? {
+        actorId: lastAttack.actorId,
+        monster: fight.secrets.find((x) => x.combatantId === lastAttack.actorId)?.monster ?? '',
+        label: lastAttack.shown.label ?? '',
+        targetId: lastAttack.targetId ?? '',
+      }
+    : null
+  const repeat =
+    playRow && actingMonster
+      ? sameAsBefore(
+          past,
+          {
+            id: playRow.combatant.id,
+            monster: playRow.secret?.monster ?? null,
+            acted: !actionFree(playRow.combatant.turn),
+          },
+          (id) => rows.some((r) => r.combatant.id === id && r.combatant.health !== 'down'),
+        )
+      : null
+  const repeatAction = repeat ? actingMonster?.actions.find((a) => a.name === repeat.label) : undefined
+  const repeatTarget = repeat ? rows.find((r) => r.combatant.id === repeat.targetId) : undefined
+
+  function stealthFor(row: FightRow) {
+    if (!actingMonster) return
+    void table.roll({
+      ...freeRoll([{ sides: 20, count: 1 }], {
+        modifier: monsterSkill(actingMonster, 'stealth', 'dexterity'),
+        secret: true,
+      }),
+      label: `${row.name}: Stealth`,
+    })
+  }
+
+  function playCard(row: FightRow, card: MonsterCard) {
+    setProblem(null)
+    if (card.kind === 'attack') {
+      if (card.cost === 'bonus') controls.act(row.combatant, 'bonus')
+      aimMonster(row, card.action, card.cost !== 'action')
+      return
+    }
+    if (card.kind === 'other') {
+      controls
+        .applyFeature(row.combatant, card.name, card.cost === 'legendary' ? 'free' : card.cost)
+        .catch((caught: unknown) => setProblem(messageFor(caught)))
+      return
+    }
+    // An ability with a save: everyone near enough to start with, or a shape to put on the map.
+    const reach = card.ability.reach
+    const from = tokenOfRow(row)
+    const near =
+      reach.kind === 'around' && from
+        ? rows.filter((r) => {
+            const token = tokenOfRow(r)
+            return (
+              r.combatant.id !== row.combatant.id &&
+              r.combatant.health !== 'down' &&
+              (!reach.choice || r.combatant.kind === 'character') &&
+              token !== undefined &&
+              feetBetween(from, token) <= reach.feet
+            )
+          })
+        : []
+    setUsing({
+      row,
+      card,
+      picked: near.map((r) => r.combatant.id),
+      placing: reach.kind === 'area' && map !== null && from !== undefined,
+    })
+  }
+
+  function useAbility() {
+    if (!using || using.picked.length === 0) return
+    const { row, card, picked } = using
+    const a = card.ability
+    setUsing(null)
+    const use = {
+      name: a.name,
+      save: a.save,
+      dc: a.dc,
+      dcSuccess: a.dcSuccess,
+      damageType: a.damageType,
+      cost: card.cost,
+    }
+    if (a.damage) {
+      const damage = a.damage
+      void table.rollWith(() =>
+        controls.monsterAbility(row.combatant, use, picked, damage).then((roll) => {
+          if (!roll) throw new Error('The damage didn’t roll.')
+          return roll
+        }),
+      )
+    } else {
+      controls
+        .monsterAbility(row.combatant, use, picked, null)
+        .catch((caught: unknown) => setProblem(messageFor(caught)))
+    }
+  }
+
+  function actFor(row: FightRow, what: TurnAction) {
+    controls.act(row.combatant, what)
+    if (what === 'hide' || what === 'bonus_hide') stealthFor(row)
+  }
+
   const { next, undo, reveal, setParley } = controls
   const parley = fight.encounter.parley
   function endFight() {
@@ -228,7 +413,8 @@ export function BattleView({
       else if (key === 'u') undo()
       else if (key === 'r' && acting?.unrevealed) reveal(acting.combatant)
       else if (key === 'a') setAskFor({ only: null })
-      else if (key === 'p') setParley(!parley)
+      else if (key === 't') setParley(!parley)
+      else if (key === 'p') togglePlaying()
       else if (/^[1-9]$/.test(key)) attackByNumber(focus, Number(key) - 1)
     }
     window.addEventListener('keydown', press)
@@ -311,6 +497,15 @@ export function BattleView({
             {request.label}: {asking.answers.length} of {request.characterIds.length} rolled · Show results
           </button>
         )}
+        <button
+          type="button"
+          className={cx(styles.headerButton, playing && styles.headerOn)}
+          aria-pressed={playing}
+          title="P: on a monster's turn, play it like a player, with its cards along the bottom"
+          onClick={togglePlaying}
+        >
+          Play as the monsters
+        </button>
         <button type="button" className={styles.headerButton} onClick={() => setAskFor({ only: null })} title="A">
           Ask for a roll
         </button>
@@ -339,24 +534,44 @@ export function BattleView({
             rolling={table.rolling}
             compact
           />
-          <ActingNow
-            campaignId={campaignId}
-            className={styles.acting}
-            row={focus}
-            concentrating={concentratingIn(rows)}
-            controls={controls}
-            monsters={monsters}
-            onAttack={aimMonster}
-            onCharacterAttack={aimCharacter}
-            onDeathSave={(row) => void table.rollWith(() => controls.deathSave(row.combatant))}
-            onUpdate={onUpdate}
-            spells={spells}
-            onCast={(row, spell) => beginCast(row, spell)}
-            onConcentrationSave={(character) => void table.rollWith(() => controls.concentrationSave(character.id))}
-            onRoll={(request) => void table.roll(request)}
-            numbered
-            rolling={table.rolling}
-          />
+          {playRow && actingMonster ? (
+            <MonsterPanel
+              className={styles.acting}
+              row={playRow}
+              monster={actingMonster}
+              onAct={(what) => actFor(playRow, what)}
+              onEndTurn={next}
+              rolling={table.rolling}
+              same={
+                repeat && repeatAction && repeatTarget
+                  ? {
+                      label: repeatAction.name,
+                      target: repeatTarget.name,
+                      onRepeat: () => strikeNow(playRow, repeatAction, repeatTarget),
+                    }
+                  : null
+              }
+            />
+          ) : (
+            <ActingNow
+              campaignId={campaignId}
+              className={styles.acting}
+              row={focus}
+              concentrating={concentratingIn(rows)}
+              controls={controls}
+              monsters={monsters}
+              onAttack={aimMonster}
+              onCharacterAttack={aimCharacter}
+              onDeathSave={(row) => void table.rollWith(() => controls.deathSave(row.combatant))}
+              onUpdate={onUpdate}
+              spells={spells}
+              onCast={(row, spell) => beginCast(row, spell)}
+              onConcentrationSave={(character) => void table.rollWith(() => controls.concentrationSave(character.id))}
+              onRoll={(request) => void table.roll(request)}
+              numbered
+              rolling={table.rolling}
+            />
+          )}
           <div className={styles.foot}>
             <button type="button" className={styles.next} onClick={next} title="N" disabled={parley}>
               Next turn
@@ -365,7 +580,7 @@ export function BattleView({
               type="button"
               className={styles.footButton}
               onClick={() => setParley(!parley)}
-              title="P: stop the fight to talk, then carry on from the same turn"
+              title="T: stop the fight to talk, then carry on from the same turn"
             >
               {parley ? 'End parley' : 'Parley'}
             </button>
@@ -416,12 +631,43 @@ export function BattleView({
               </button>
             </div>
           ))}
-          {aiming && (
+          {aiming && !using && (
             <div className={styles.aiming} role="status">
               {casting && casting.mode === 'target'
                 ? `Cast ${aiming.label}: click who it's for, on the map or in the turn order.`
                 : `Pick a target for ${aiming.label}: click a miniature or a name in the turn order.`}
               {casting && <SlotPicker casting={casting} />}
+              <button type="button" className={styles.aimingCancel} onClick={cancel}>
+                Cancel
+              </button>
+            </div>
+          )}
+          {using && (
+            <div className={styles.aiming} role="status">
+              {using.placing ? (
+                <>
+                  {using.card.name}:{' '}
+                  {using.card.ability.reach.kind === 'area' && using.card.ability.reach.fromSelf
+                    ? 'point it with the mouse and click'
+                    : 'click where it lands'}
+                  .
+                </>
+              ) : (
+                <>
+                  {using.card.name}: click everyone it catches, on the map or in the turn order.{' '}
+                  {using.picked.length === 0
+                    ? 'Nobody yet.'
+                    : `Caught: ${using.picked.map((id) => nameOf(id)).join(', ')}.`}
+                  <button
+                    type="button"
+                    className={styles.aimingGo}
+                    disabled={using.picked.length === 0 || table.rolling}
+                    onClick={useAbility}
+                  >
+                    Roll the saves
+                  </button>
+                </>
+              )}
               <button type="button" className={styles.aimingCancel} onClick={cancel}>
                 Cancel
               </button>
@@ -457,37 +703,62 @@ export function BattleView({
               pointers={pointers}
               onGrid={(patch) => onGrid(map, patch)}
               aim={
-                aiming && !(casting && casting.rangeFt === null)
+                aiming && !using && !(casting && casting.rangeFt === null)
                   ? { attackerId: aiming.attackerId, reach: aiming.reach }
                   : null
               }
+              countMoves={playing}
               areas={areas.areas}
               onAreaClick={(id) => {
                 const area = areas.areas.find((a) => a.id === id)
                 if (area && window.confirm(`Take ${area.label || 'this area'} off the map?`)) areas.remove(area)
               }}
               placing={
-                casting && casting.mode === 'area' && casting.area
+                using?.placing && using.card.ability.reach.kind === 'area'
                   ? {
-                      shape: casting.area.shape,
-                      sizeFt: casting.area.sizeFt,
-                      tone: casting.area.tone,
-                      label: casting.label,
-                      fromId: casting.area.fromCaster ? casting.casterId : null,
-                      onPlace: casting.onPlace,
+                      shape: using.card.ability.reach.shape,
+                      sizeFt: using.card.ability.reach.sizeFt,
+                      tone: 'harm',
+                      label: using.card.name,
+                      fromId: using.card.ability.reach.fromSelf ? using.row.combatant.id : null,
+                      onPlace: (template) => {
+                        // Everyone standing in it (not the monster itself), then check and roll.
+                        const inside = creaturesIn(template, tokens.tokens)
+                        const caught = rows.filter((r) => {
+                          const token = tokenOfRow(r)
+                          return (
+                            token !== undefined && inside.includes(token) && r.combatant.id !== using.row.combatant.id
+                          )
+                        })
+                        setUsing({ ...using, placing: false, picked: caught.map((r) => r.combatant.id) })
+                      },
                     }
-                  : drawing?.draft
+                  : casting && casting.mode === 'area' && casting.area
                     ? {
-                        ...drawing.draft,
-                        fromId: null,
-                        onPlace: (template) => {
-                          const draft = drawing.draft
-                          setDrawing(null)
-                          if (draft)
-                            void areas.add({ ...template, label: draft.label, tone: draft.tone, hidden: draft.hidden })
-                        },
+                        shape: casting.area.shape,
+                        sizeFt: casting.area.sizeFt,
+                        tone: casting.area.tone,
+                        label: casting.label,
+                        fromId: casting.area.fromCaster ? casting.casterId : null,
+                        onPlace: casting.onPlace,
                       }
-                    : null
+                    : drawing?.draft
+                      ? {
+                          ...drawing.draft,
+                          fromId: null,
+                          onPlace: (template) => {
+                            const draft = drawing.draft
+                            setDrawing(null)
+                            if (draft)
+                              void areas.add({
+                                ...template,
+                                label: draft.label,
+                                tone: draft.tone,
+                                hidden: draft.hidden,
+                              })
+                          },
+                        }
+                      : null
               }
               targeting={
                 aiming
@@ -547,6 +818,21 @@ export function BattleView({
               )}
               {maps.length === 0 && <p className={styles.hint}>Or upload your own under Maps on the stage.</p>}
             </section>
+          )}
+          {playRow && actingMonster && (
+            <MonsterHand
+              className={styles.monsterHand}
+              name={playRow.name}
+              cards={cards}
+              turn={{
+                actionFree: actionFree(playRow.combatant.turn),
+                attacksLeft: attacksLeft(playRow.combatant.turn, turnLimits(playRow, monsters).perAction),
+                bonusUsed: playRow.combatant.turn.bonusUsed,
+                reactionUsed: playRow.combatant.turn.reactionUsed,
+              }}
+              onPlay={(card) => playCard(playRow, card)}
+              rolling={table.rolling}
+            />
           )}
           <div className={styles.strip}>
             <MoraleNudges hints={moraleFor(rows, monsters)} onStance={setStances} />

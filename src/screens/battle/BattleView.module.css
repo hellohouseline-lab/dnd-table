@@ -67,6 +67,13 @@
   background: rgba(212, 175, 90, 0.12);
 }
 
+/* Play as the monsters is on. */
+.headerOn,
+.headerOn:hover {
+  background: var(--gold);
+  color: var(--on-gold);
+}
+
 .body {
   flex: 1;
   min-height: 0;
@@ -173,6 +180,30 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+/* A monster's ability: roll everyone's saves once they're picked. */
+.aimingGo {
+  margin-left: auto;
+  padding: 2px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.aimingGo:disabled {
+  opacity: 0.5;
+}
+
+.monsterHand {
+  flex: 0 0 auto;
 }
 
 .noMap {

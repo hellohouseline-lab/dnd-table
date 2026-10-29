@@ -1,6 +1,6 @@
 # P1 plan: spells for players, the DM plays the monsters, voices and scene fades
 
-Written 28 October 2026 from Matt's notes after a test session. **Approved 29 October** with decisions 84 to 95 as recommended. **P1a and P1b are built** (see the notes under sections 1, 3 and 4). The two bugs from the same notes are already fixed and live: sound effects (each table keeps its own sounds; **Bring them in** copies another table's) and music playing in two tables' tabs at once.
+Written 28 October 2026 from Matt's notes after a test session. **Approved 29 October** with decisions 84 to 95 as recommended. **P1a, P1b and P1c are built.** The two bugs from the same notes are already fixed and live: sound effects (each table keeps its own sounds; **Bring them in** copies another table's) and music playing in two tables' tabs at once.
 
 ## In plain words
 
@@ -49,6 +49,7 @@ Written 28 October 2026 from Matt's notes after a test session. **Approved 29 Oc
 - **On characters' turns** the screen is the usual Battle screen.
 - **Groups of the same monster** (three goblins) each get their own turn as now. A **Same for the rest** button repeats the last attack for the next goblin, which saves clicks (decision 89).
 - **Players see nothing new:** monsters' numbers stay behind the screen.
+- **Built (P1c):** the switch is **P**, and Parley moved to **T**. Abilities with a save are new: the claim above that they already rolled each save was wrong, so the server step `monster_ability` was added for them.
 
 ## 3. Voices: always-visible volume, and a boost
 

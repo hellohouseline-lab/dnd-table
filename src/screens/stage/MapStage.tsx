@@ -5,6 +5,7 @@ import type { Token } from '../../live/combat.ts'
 import type { FightControls, Pointer, TokenControls } from '../../live/useFight.ts'
 import type { Character } from '../../rules/character.ts'
 import { freeSquares, mapTokens } from '../../map/mapTokens.ts'
+import { feetBetween } from '../../rules/combat.ts'
 import { movementLeft, type Reach } from '../../rules/turn.ts'
 import type { MapArea, MapPlacing } from '../../map/BattleMap.tsx'
 import styles from './StageView.module.css'
@@ -36,6 +37,8 @@ type MapStageProps = {
   onAreaClick?: (id: string) => void
   /** Putting an area down: where it starts from (a combatant, for a cone), and what happens when it's placed. */
   placing?: (Omit<MapPlacing, 'from'> & { fromId: string | null }) | null
+  /** Play as the monsters: the acting creature's moves count, and going past its speed asks first. */
+  countMoves?: boolean
 }
 
 const GRID_STEP = 2
@@ -56,6 +59,7 @@ export function MapStage({
   areas = [],
   onAreaClick,
   placing = null,
+  countMoves = false,
 }: MapStageProps) {
   const [selected, setSelected] = useState<string | null>(null)
   const combatants = fight?.combatants ?? []
@@ -143,6 +147,15 @@ export function MapStage({
               // The DM can put anyone anywhere, but is asked before two share a square.
               const taken = tokens.tokens.some((t) => t.id !== id && t.x === x && t.y === y)
               if (taken && !window.confirm('Someone is already in that square. Put it there anyway?')) return
+              if (countMoves && acting?.kind === 'monster' && reach && token.id === reach.tokenId) {
+                const feet = feetBetween(token, { x, y })
+                const who = fight?.secrets.find((s) => s.combatantId === acting.id)?.name ?? acting.shownName
+                if (
+                  feet > reach.feet &&
+                  !window.confirm(`${who} has ${reach.feet} ft of movement left, and that's ${feet} ft. Move anyway?`)
+                )
+                  return
+              }
               tokens.move(token, x, y)
             }}
             hands={pointers.hands}

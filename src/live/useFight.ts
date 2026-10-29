@@ -16,6 +16,8 @@ import {
   endFight,
   getActiveFight,
   castSpell,
+  sendMonsterAbility,
+  type MonsterAbilityUse,
   offhandAttack,
   listEvents,
   listPrompts,
@@ -129,6 +131,16 @@ export type FightControls = {
     targetIds: string[],
     roll: Parameters<typeof castSpell>[4],
     area: Parameters<typeof castSpell>[5],
+  ) => Promise<Roll | null>
+  /**
+   * The DM uses a monster's ability with a save on these targets (P1c). Resolves with its damage
+   * roll, if it has one, to show with the dice; throws in plain words if it's refused.
+   */
+  monsterAbility: (
+    monster: Combatant,
+    ability: MonsterAbilityUse,
+    targetIds: string[],
+    roll: Parameters<typeof sendMonsterAbility>[3],
   ) => Promise<Roll | null>
   /** The Constitution save to keep concentrating after taking damage. Throws in plain words if refused. */
   concentrationSave: (characterId: string) => Promise<Roll>
@@ -539,6 +551,22 @@ export function useFight(campaignId: string, userId: string): FightControls {
     [reload],
   )
 
+  const monsterAbility = useCallback(
+    async (
+      monster: Combatant,
+      ability: MonsterAbilityUse,
+      targetIds: string[],
+      roll: Parameters<typeof sendMonsterAbility>[3],
+    ) => {
+      setError(null)
+      const result = await sendMonsterAbility(monster.id, ability, targetIds, roll)
+      setEvents((list) => result.events.reduce(withRow, list).sort((a, b) => a.seq - b.seq))
+      reload()
+      return result.roll
+    },
+    [reload],
+  )
+
   const concentrationSave = useCallback(async (characterId: string) => {
     setError(null)
     const { roll } = await rollConcentrationSave(characterId)
@@ -693,6 +721,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
     letGo,
     deathSave,
     cast,
+    monsterAbility,
     concentrationSave,
     applyFeature,
     applyItem,

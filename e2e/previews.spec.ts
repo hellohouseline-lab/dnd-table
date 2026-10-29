@@ -1430,3 +1430,90 @@ test('spellbook: a player searches every spell, adds one for later, and changes 
   await expect(casting.getByRole('group', { name: '3rd level slots left' })).toHaveCount(0)
   await expect(casting.getByRole('button', { name: 'Reset to my class' })).toHaveCount(0)
 })
+
+test('play as the monsters: the DM runs goblins from their cards, repeats an attack, and switches back', async ({
+  page,
+}) => {
+  page.on('dialog', (dialog) => void dialog.accept())
+  await page.goto('#/dev/battle')
+  await page.keyboard.press('p')
+  await expect(page.getByRole('button', { name: 'Play as the monsters' })).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Next turn' }).click()
+  const panel = page.getByRole('region', { name: 'Playing the monster' })
+  await expect(panel).toContainText('Goblin A’s turn')
+  await expect(panel).toContainText('30 of 30 ft')
+  await expect(panel).toContainText('HP 7/7')
+  // Its cards, like a player's hand: Scimitar, then a target.
+  const cards = page.getByRole('group', { name: 'Goblin A’s cards' })
+  await cards.getByRole('button', { name: 'Scimitar (action)' }).click()
+  await page
+    .getByRole('region', { name: 'Turn order' })
+    .getByRole('button', { name: 'Thorin Ironfist', exact: true })
+    .click()
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText(/Goblin A (hits|misses) Thorin Ironfist with Scimitar/)
+  await expect(cards.getByRole('button', { name: 'Scimitar (action), used' })).toBeVisible()
+  // The next goblin: Same for the rest.
+  await panel.getByRole('button', { name: 'End turn' }).click()
+  await expect(panel).toContainText('Goblin B’s turn')
+  await panel.getByRole('button', { name: 'Same for the rest: Scimitar on Thorin Ironfist' }).click()
+  await expect(feed).toContainText(/Goblin B (hits|misses) Thorin Ironfist with Scimitar/)
+  // T is now Parley; P switches back to the usual Acting now card.
+  await page.keyboard.press('t')
+  await expect(page.getByRole('status').filter({ hasText: 'Parley: talking, not fighting' })).toBeVisible()
+  await page.keyboard.press('t')
+  await page.keyboard.press('p')
+  await expect(panel).toBeHidden()
+  await expect(page.getByRole('region', { name: 'Acting now' })).toBeVisible()
+})
+
+test('play as the monsters: a dragon breathes on whoever the DM picks, who save against a hidden DC', async ({
+  page,
+}) => {
+  await page.goto('#/dev/battle')
+  await page.getByRole('button', { name: 'Add a monster' }).click()
+  await page.getByLabel('Find a monster').fill('young black')
+  await page.getByRole('button', { name: /Young Black Dragon/ }).click()
+  await page.getByRole('button', { name: 'Add to the fight' }).click()
+  await page.keyboard.press('p')
+  const panel = page.getByRole('region', { name: 'Playing the monster' })
+  for (let i = 0; i < 6 && !(await panel.getByText('Young Black Dragon A’s turn').isVisible()); i += 1) {
+    await page.getByRole('button', { name: 'Next turn' }).click()
+  }
+  await expect(panel).toContainText('Young Black Dragon A’s turn')
+  await expect(panel).toContainText('The dragon makes three attacks')
+  const cards = page.getByRole('group', { name: 'Young Black Dragon A’s cards' })
+  await expect(cards).toContainText('DC 14 Dexterity save')
+  // Point the line at Elowen's miniature and click; then make sure she's among those caught.
+  await cards.getByRole('button', { name: 'Acid Breath (action)' }).click()
+  const status = page.getByRole('status').filter({ hasText: 'Acid Breath' })
+  await expect(status).toContainText('point it with the mouse and click')
+  const at = await page.evaluate(() => {
+    const stage = (window as unknown as { Konva: { stages: KonvaStage[] } }).Konva.stages[0]
+    type KonvaStage = {
+      container: () => HTMLElement
+      find: (test: (n: KonvaNode) => boolean) => KonvaNode[]
+    }
+    type KonvaNode = {
+      getClassName: () => string
+      find: (selector: string) => { text: () => string }[]
+      getAbsolutePosition: () => { x: number; y: number }
+    }
+    const group = stage.find((n) => n.getClassName() === 'Group' && n.find('Text').some((t) => t.text() === 'EL'))[0]
+    const box = stage.container().getBoundingClientRect()
+    const point = group.getAbsolutePosition()
+    return { x: box.left + point.x, y: box.top + point.y }
+  })
+  await page.mouse.move(at.x, at.y)
+  await page.mouse.click(at.x, at.y)
+  await expect(status).toContainText('click everyone it catches')
+  if (!(await status.textContent())?.includes('Elowen')) {
+    await page.getByRole('region', { name: 'Turn order' }).getByRole('button', { name: 'Elowen', exact: true }).click()
+  }
+  await expect(status).toContainText('Elowen')
+  await status.getByRole('button', { name: 'Roll the saves' }).click()
+  const feed = page.getByRole('region', { name: 'What happened' })
+  await expect(feed).toContainText(/Elowen (makes|fails) the save against Acid Breath/)
+  await expect(feed).not.toContainText('DC 14')
+  await expect(panel).toContainText(/Action\s*Used/)
+})
