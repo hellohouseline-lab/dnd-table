@@ -3,6 +3,17 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **P1b: the spellbook on the Powers tab (live).**
+  - **Spellbook:** every spell in the free rules, cantrips to 9th level, whether the character can cast it yet or not.
+    - a search box that looks in names first, then in what spells do;
+    - level buttons (All, Cantrips, 1st to 9th);
+    - "<Class> spells" or "Every class's spells".
+  - **Each spell** opens to its full text and classes, and has **Add to my spells** or **Remove**. A spell above your level says "You can cast this from level N" and is added unprepared, for planning ahead. One from another class's list says so.
+  - **Your spells** (renamed from Spells) shows the counts for the class: "Cantrips 1 of 3", then "Known 3 of 4" or "Prepared 4 of 6", in red when over. Going over isn't blocked.
+  - Prepared ticks show only for classes that prepare.
+  - **Slots:** **Change how many slots** gives each level − and +, and **Reset to my class** puts them back to the class table.
+  - Players change their own sheet; the DM can change anyone's. Nothing new on the server.
+  - Rules in `src/rules/spellbook.ts`. Tests: 512 unit (10 new), 78 preview browser tests (1 new).
 - **P1a: scene fades and voices (live).** From `docs/P1_PLAN.md`, approved by Matt with decisions 84 to 95 as recommended.
   - **Scenes fade through.** When the picture on stage changes, or a battle map goes up or down, the new one fades in over the old one in 1.5 seconds. The fade starts once the new picture has loaded, so nobody sees a blank. This happens on every player's screen and on Screen 2's "What everyone sees". The piece (`src/components/SceneFade.tsx`) is ready for the stream overlay.
   - **Music crossfades in 2 seconds** (it was 2.5) when the track changes.
@@ -363,7 +374,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Waiting on Matt
 - **Try P1a** on the night: Go here between two scenes with a player watching. If a player is too quiet even at 100% on your screen, ask them to turn up **Your microphone** on their own camera tile.
-- **Play as the monsters' key (P1c):** M already mutes your microphone, so the switch needs another key. Claude suggests **P** (for Play as the monsters) unless Matt prefers another.
+- **Try P1b:** open a spellcaster's sheet, Powers tab, and search the Spellbook.
 - **Save Death Pit of Moloch as a preset** (refresh first):
   1. On Screen 1, open the **Story** tab and press **Paste your notes**.
   2. Open `private/campaigns/death-pit-of-moloch.md` (in the `dnd-table-starter-pack` folder), copy everything, and paste it into the box.

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { buttonClassName } from '../../components/buttonClassName.ts'
 import { Pips } from '../../components/Pips.tsx'
 import { StatBox } from '../../components/StatBox.tsx'
@@ -7,9 +8,12 @@ import { ABILITY_NAME } from '../../rules/abilities.ts'
 import type { Character, FeatureEntry, SpellEntry } from '../../rules/character.ts'
 import { formatBonus } from '../../rules/maths/core.ts'
 import { deriveSheet } from '../../rules/sheet.ts'
+import { changeSlots, resetSlots, spellCountsFor } from '../../rules/spellbook.ts'
 import { spellLevelName } from '../../rules/spellLevels.ts'
-import { loadSpells, type SrdSpell } from '../../rules/srd/index.ts'
+import { slotsFor } from '../../rules/srd/defaults.ts'
+import { byName, loadClasses, loadSpells, type SrdSpell } from '../../rules/srd/index.ts'
 import { Section } from './SheetTab.tsx'
+import { Spellbook } from './Spellbook.tsx'
 import styles from './sheet.module.css'
 
 type TabProps = { character: Character; canEdit: boolean; onUpdate: (patch: TrackerPatch) => void }
@@ -20,8 +24,14 @@ const RECHARGE = { short: 'Back after a short or long rest', long: 'Back after a
 export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
   const sheet = deriveSheet(character)
   const spells = useSrd(loadSpells)
+  const classes = useSrd(loadClasses)
+  const cls = classes ? byName(classes, character.className) : undefined
+  const [changingSlots, setChangingSlots] = useState(false)
   const { spellcasting } = character
   const edit = canEdit ? onUpdate : undefined
+  const counts = cls ? spellCountsFor(character, cls) : []
+  const classSlots = cls?.spellcastingAbility ? slotsFor(cls, character.level) : null
+  const slotsDiffer = classSlots !== null && classSlots.some((n, i) => n !== spellcasting.slotsMax[i])
 
   const setFeatureUses = (feature: FeatureEntry, usesLeft: number) =>
     edit?.({ features: character.features.map((f) => (f.id === feature.id ? { ...f, usesLeft } : f)) })
@@ -88,22 +98,70 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
               No spellcasting. If your character casts spells, set it up with Edit character.
             </p>
           )}
-          {spellcasting.slotsMax.some((max) => max > 0) && (
+          {(spellcasting.slotsMax.some((max) => max > 0) || changingSlots) && (
             <ul className={styles.rows}>
               {spellcasting.slotsMax.map((max, i) =>
-                max > 0 ? (
+                max > 0 || changingSlots ? (
                   <li key={i} className={styles.row}>
                     <span className={styles.rowName}>{spellLevelName(i + 1)} slots</span>
-                    <Pips
-                      label={`${spellLevelName(i + 1)} slots left`}
-                      total={max}
-                      filled={max - spellcasting.slotsUsed[i]}
-                      onChange={edit && ((left) => setSlotsLeft(i, left))}
-                    />
+                    {changingSlots && edit && (
+                      <span className={styles.slotSteps}>
+                        <button
+                          type="button"
+                          className={styles.slotStep}
+                          aria-label={`One fewer ${spellLevelName(i + 1)} slot`}
+                          disabled={max === 0}
+                          onClick={() => edit({ spellcasting: changeSlots(spellcasting, i, -1) })}
+                        >
+                          −
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.slotStep}
+                          aria-label={`One more ${spellLevelName(i + 1)} slot`}
+                          disabled={max === 9}
+                          onClick={() => edit({ spellcasting: changeSlots(spellcasting, i, 1) })}
+                        >
+                          +
+                        </button>
+                      </span>
+                    )}
+                    {max > 0 ? (
+                      <Pips
+                        label={`${spellLevelName(i + 1)} slots left`}
+                        total={max}
+                        filled={max - spellcasting.slotsUsed[i]}
+                        onChange={edit && ((left) => setSlotsLeft(i, left))}
+                      />
+                    ) : (
+                      <span className={styles.muted}>None</span>
+                    )}
                   </li>
                 ) : null,
               )}
             </ul>
+          )}
+          {edit && (sheet.spell || spellcasting.slotsMax.some((max) => max > 0)) && (
+            <div className={styles.slotActions}>
+              <button
+                type="button"
+                className={buttonClassName('quiet')}
+                aria-pressed={changingSlots}
+                onClick={() => setChangingSlots((on) => !on)}
+              >
+                {changingSlots ? 'Done changing slots' : 'Change how many slots'}
+              </button>
+              {slotsDiffer && classSlots && (
+                <button
+                  type="button"
+                  className={buttonClassName('quiet')}
+                  title={`Back to a level ${character.level} ${cls?.name}'s slots`}
+                  onClick={() => edit({ spellcasting: resetSlots(spellcasting, classSlots) })}
+                >
+                  Reset to my class
+                </button>
+              )}
+            </div>
           )}
           <div className={styles.concentration}>
             {character.concentration ? (
@@ -145,7 +203,16 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
         </Section>
 
         {levels.length > 0 && (
-          <Section title="Spells" note={spells ? undefined : 'Loading spell details…'}>
+          <Section title="Your spells" note={spells ? undefined : 'Loading spell details…'}>
+            {counts.length > 0 && (
+              <p className={styles.spellCounts}>
+                {counts.map((c) => (
+                  <span key={c.label} className={c.over ? styles.over : undefined}>
+                    {c.label} {c.have} of {c.of}
+                  </span>
+                ))}
+              </p>
+            )}
             {levels.map((level) => (
               <div key={level} className={styles.spellLevel}>
                 <h4 className={styles.spellLevelName}>{spellLevelName(level)}</h4>
@@ -177,6 +244,13 @@ export function PowersTab({ character, canEdit, onUpdate }: TabProps) {
             ))}
           </Section>
         )}
+
+        <Spellbook
+          character={character}
+          cls={cls}
+          spells={spells}
+          onChange={edit && ((next) => edit({ spellcasting: next }))}
+        />
       </div>
     </div>
   )
