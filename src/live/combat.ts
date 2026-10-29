@@ -106,6 +106,8 @@ export type CombatEvent = {
     slot?: number
     /** A spell attack (hit, damage and so on as for an attack). */
     attack?: boolean
+    /** A monster's ability with a save (a dragon's breath), named in `spell`. Its DC is never sent. */
+    monster?: boolean
     /** A spell's saving throw: how it went, the ability and the DC. A monster's total is never sent. */
     save?: 'passed' | 'failed' | null
     saveAbility?: string | null
@@ -563,6 +565,40 @@ export async function castSpell(
     p_target_ids: targetIds,
     p_roll: (roll === null ? {} : 'kind' in roll ? requestToJson(roll) : roll) as unknown as Json,
     p_area: (area ? areaToJson(area) : null) as unknown as Json,
+  })
+  if (error) throw fromServerRule(error)
+  const result = data as { roll: Tables<'rolls'> | null; events: Tables<'combat_events'>[] }
+  return {
+    roll: result.roll && result.roll.id ? rowToRoll(result.roll) : null,
+    events: (result.events ?? []).map(rowToEvent),
+  }
+}
+
+/** A monster's ability with a save, for the server: its name, the save and DC, and what it costs. */
+export type MonsterAbilityUse = {
+  name: string
+  save: string
+  dc: number
+  dcSuccess: 'half' | 'none'
+  damageType: string
+  cost: 'action' | 'bonus' | 'reaction' | 'legendary'
+}
+
+/**
+ * The DM uses a monster's ability with a save (P1c): the server throws the damage behind the
+ * screen, rolls each target's save against the DC and takes off full, half or none.
+ */
+export async function sendMonsterAbility(
+  combatantId: string,
+  ability: MonsterAbilityUse,
+  targetIds: string[],
+  roll: { dice: DiceGroup[]; modifier: number } | null,
+): Promise<{ roll: Roll | null; events: CombatEvent[] }> {
+  const { data, error } = await db().rpc('monster_ability', {
+    p_combatant_id: combatantId,
+    p_ability: ability as unknown as Json,
+    p_target_ids: targetIds,
+    p_roll: (roll ?? {}) as unknown as Json,
   })
   if (error) throw fromServerRule(error)
   const result = data as { roll: Tables<'rolls'> | null; events: Tables<'combat_events'>[] }

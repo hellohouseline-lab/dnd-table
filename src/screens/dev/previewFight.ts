@@ -890,6 +890,69 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       })
       return effect
     },
+    // As monster_ability: the damage behind the screen, each target's save, full, half or none.
+    monsterAbility: async (monster, ability, targetIds, roll) => {
+      const f = latest.current.fight
+      const me = f?.combatants.find((c) => c.id === monster.id)
+      if (!f || !me) throw new Error('No fight')
+      const targets = targetIds.flatMap((id) => f.combatants.filter((c) => c.id === id))
+      if (targets.length === 0) throw new Error('Pick who it catches.')
+      setTurn(me.id, (turn) => ({
+        ...turn,
+        actionUsed: turn.actionUsed || ability.cost === 'action',
+        bonusUsed: turn.bonusUsed || ability.cost === 'bonus',
+        reactionUsed: turn.reactionUsed || ability.cost === 'reaction',
+      }))
+      const effect =
+        roll && roll.dice.length > 0
+          ? localRoll(
+              {
+                label: `${ability.name} damage`,
+                kind: 'free',
+                characterId: null,
+                dice: roll.dice,
+                modifier: roll.modifier,
+                parts: [],
+                mode: 'normal',
+                damage: null,
+                secret: true,
+                requestId: null,
+              },
+              { campaignId: 'preview', rollerId: 'preview', style: DEFAULT_DICE_STYLE },
+            )
+          : null
+      const total = Math.max(0, effect?.total ?? 0)
+      const actor = { id: me.id, turn: me.turn }
+      targets.forEach((target, i) => {
+        const targetCharacter = characters.find((c) => c.id === target.characterId)
+        const bonus = targetCharacter ? savingThrow(targetCharacter, ability.save as Ability).modifier : 0
+        const rolled = secureDraw(20) + bonus
+        const passed = rolled >= ability.dc
+        const amount = !passed ? total : ability.dcSuccess === 'half' ? Math.floor(total / 2) : 0
+        const result = total > 0 ? hurt(target, amount, ability.damageType, false, false) : null
+        post(
+          {
+            kind: 'spell',
+            actorId: me.id,
+            targetId: target.id,
+            rollId: effect?.id ?? null,
+            shown: {
+              spell: ability.name,
+              monster: true,
+              save: passed ? 'passed' : 'failed',
+              saveAbility: ability.save,
+              saveTotal: targetCharacter ? rolled : null,
+              damage: result?.damage ?? null,
+              damageType: result ? ability.damageType : null,
+              adjust: result?.adjust ?? null,
+              down: result?.down ?? false,
+            },
+          },
+          { target: result?.undoTarget ?? null, actor: i === 0 ? actor : null },
+        )
+      })
+      return effect
+    },
     concentrationSave: async (characterId) => {
       const character = characters.find((c) => c.id === characterId)
       if (!character?.concentration || character.concentrationDc === null) {

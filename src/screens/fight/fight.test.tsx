@@ -35,6 +35,7 @@ const controls: FightControls = {
   letGo: noop,
   deathSave: () => Promise.reject(new Error('No fight')),
   cast: () => Promise.reject(new Error('No fight')),
+  monsterAbility: () => Promise.reject(new Error('No fight')),
   concentrationSave: () => Promise.reject(new Error('No fight')),
   applyFeature: () => Promise.reject(new Error('No fight')),
   offhandAttack: () => Promise.reject(new Error('No fight')),

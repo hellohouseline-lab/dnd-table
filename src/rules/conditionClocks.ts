@@ -226,7 +226,7 @@ export function attackCause(desc: string): ConditionCause | null {
     return cause({ conditions: ['prone'], resist: { ability: abilityFrom(prone[2])!, dc: Number(prone[1]) } })
   }
   const lasting =
-    /DC (\d+) (\w+) saving throw or be (poisoned|paralyzed|frightened|blinded|charmed|stunned) for 1 (minute|hour)/i.exec(
+    /DC (\d+) (\w+) saving throw or (?:be|become) (poisoned|paralyzed|frightened|blinded|charmed|stunned) for 1 (minute|hour)/i.exec(
       text,
     )
   if (lasting && abilityFrom(lasting[2])) {
@@ -250,6 +250,29 @@ export function attackCause(desc: string): ConditionCause | null {
 export function monsterAttackCause(monster: Pick<SrdMonster, 'actions'>, attackName: string): ConditionCause | null {
   const action = monster.actions.find((a) => a.name.toLowerCase() === attackName.toLowerCase())
   return action ? attackCause(action.desc ?? '') : null
+}
+
+/**
+ * A monster's ability with a save, by name (Frightful Presence), and what failing that save puts
+ * on. The save has already been rolled, so there's no second one first.
+ */
+export function monsterAbilityCause(
+  monster: Pick<SrdMonster, 'actions' | 'legendary' | 'reactions'>,
+  name: string,
+): ConditionCause | null {
+  const wanted = name.toLowerCase()
+  const action = [...monster.actions, ...(monster.legendary ?? []), ...(monster.reactions ?? [])].find(
+    (a) =>
+      a.name
+        .replace(/\s*\([^)]*\)\s*/g, ' ')
+        .trim()
+        .toLowerCase() === wanted,
+  )
+  if (!action) return null
+  const found = attackCause(action.desc ?? '')
+  if (found) return { ...found, resist: null, dc: found.dc ?? action.dc?.value ?? null }
+  // A dragon's Wing Attack: damage "and be knocked prone" on a failed save.
+  return /\bknocked prone\b/i.test(action.desc ?? '') ? cause({ conditions: ['prone'] }) : null
 }
 
 /** The clock a cause puts on, with the DC (the caster's spell DC, or the attack's own) filled in. */

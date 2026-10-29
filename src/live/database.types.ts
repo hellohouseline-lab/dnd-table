@@ -2414,6 +2414,15 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      monster_ability: {
+        Args: {
+          p_ability: Json
+          p_combatant_id: string
+          p_roll: Json
+          p_target_ids: string[]
+        }
+        Returns: Json
+      }
       move_token: {
         Args: { p_token_id: string; p_x: number; p_y: number }
         Returns: {

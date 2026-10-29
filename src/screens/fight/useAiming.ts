@@ -57,19 +57,21 @@ export function useAiming(
     return () => window.removeEventListener('keydown', cancel)
   }, [aim])
 
+  const monsterAim = (row: FightRow, action: SrdMonsterAction, bonus: boolean): Aim => ({
+    label: `${row.name}: ${action.name}${bonus ? ' (bonus action)' : ''}`,
+    attacker: row.combatant,
+    reach: actionReach(action.desc),
+    build: (target, feet) => {
+      const request = monsterAttack(row.name, action)
+      return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
+    },
+  })
+
   // A bonus-action attack (a lion's Pounce bite) doesn't need room in the action.
   const aimMonster = useCallback(
     (row: FightRow, action: SrdMonsterAction, bonus = false) => {
       if (!bonus && !roomFor(row)) return
-      setAim({
-        label: `${row.name}: ${action.name}${bonus ? ' (bonus action)' : ''}`,
-        attacker: row.combatant,
-        reach: actionReach(action.desc),
-        build: (target, feet) => {
-          const request = monsterAttack(row.name, action)
-          return { ...request, mode: attackMode(request.mode, targetState(target), feet) }
-        },
-      })
+      setAim(monsterAim(row, action, bonus))
     },
     [roomFor],
   )
@@ -91,23 +93,31 @@ export function useAiming(
     [roomFor],
   )
 
-  const pick = useCallback(
-    (target: FightRow) => {
-      if (!aim) return
-      const from = tokenOf(tokens, aim.attacker)
+  const fire = useCallback(
+    (chosen: Aim, target: FightRow) => {
+      const from = tokenOf(tokens, chosen.attacker)
       const to = tokenOf(tokens, target.combatant)
       const feet = from && to ? feetBetween(from, to) : null
-      const range = feet === null ? null : inReach(aim.reach, feet)
+      const range = feet === null ? null : inReach(chosen.reach, feet)
       if (range && !range.allowed && !window.confirm(`${range.why}. Attack anyway?`)) return
-      const built = aim.build(target, feet)
+      const built = chosen.build(target, feet)
       const request = range?.disadvantage ? { ...built, mode: combineModes([built.mode, 'disadvantage']) } : built
-      const attacker = aim.attacker
       setAim(null)
-      void rollWith(() => attack(attacker, target.combatant, request))
+      void rollWith(() => attack(chosen.attacker, target.combatant, request))
     },
-    [aim, attack, rollWith, tokens],
+    [attack, rollWith, tokens],
+  )
+
+  const pick = useCallback((target: FightRow) => aim && fire(aim, target), [aim, fire])
+
+  /** Same for the rest: a monster's attack straight at a target, without picking it first. */
+  const strikeNow = useCallback(
+    (row: FightRow, action: SrdMonsterAction, target: FightRow) => {
+      if (roomFor(row)) fire(monsterAim(row, action, false), target)
+    },
+    [fire, roomFor],
   )
 
   const aiming: Aiming = aim ? { label: aim.label, attackerId: aim.attacker.id, reach: aim.reach, onPick: pick } : null
-  return { aiming, aimMonster, aimCharacter, cancel: () => setAim(null) }
+  return { aiming, aimMonster, aimCharacter, strikeNow, cancel: () => setAim(null) }
 }

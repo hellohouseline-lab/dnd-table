@@ -111,6 +111,8 @@ type YourTurnProps = {
   strength?: number
   onAct: (what: TurnAction) => void
   onEndTurn: () => void
+  /** The heading instead of "Your turn" (the DM playing a monster: "Goblin 2's turn"). */
+  title?: string
 }
 
 /**
@@ -129,6 +131,7 @@ export function YourTurn({
   strength,
   onAct,
   onEndTurn,
+  title: heading,
 }: YourTurnProps) {
   const attacks = attacksLeft(turn, perAction)
   const free = actionFree(turn)
@@ -177,7 +180,8 @@ export function YourTurn({
     hide: 'Hide',
     dodge: 'Dodge',
   }
-  const title = myTurn ? 'Your turn' : started ? 'Waiting for your turn' : 'Waiting for everyone’s initiative'
+  const title =
+    heading ?? (myTurn ? 'Your turn' : started ? 'Waiting for your turn' : 'Waiting for everyone’s initiative')
   return (
     <section className={styles.thisTurn} aria-label="This turn">
       <div className={styles.thisTurnTitle}>{title}</div>

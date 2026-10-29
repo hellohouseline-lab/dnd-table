@@ -3,6 +3,18 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **P1c: Play as the monsters (live).** On the Battle screen, **Play as the monsters** in the header, or the **P** key, which it now uses; **Parley** moved to **T**. It stays on for the fight in that tab.
+  - **On a monster's turn**, the left side shows its HP, AC, speed, conditions and Multiattack, then a player-style turn panel: Action, Bonus action, Reaction, Movement ("30 of 30 ft"), Dash, Disengage, Dodge, Hide (which rolls its Stealth secretly), its bonus-action moves, and **End turn** (Next turn).
+  - **Its cards** run under the map: attacks (1 to 9 still work), abilities with a save, bonus-action attacks, legendary actions and reactions. Spent ones grey out.
+    - An attack is the card, then a target.
+    - An ability with a save puts its shape on the map (a dragon's line or cone) or starts with everyone near enough. Click names to add or remove, then **Roll the saves**.
+    - The new server step `monster_ability` (migration `20261029100000_monster_abilities.sql`) throws the damage behind the screen, rolls each save against the DC and takes off full, half or none.
+    - Players see who made or failed the save and what they took, never the DC.
+    - A failed save against Frightful Presence or a Wing Attack offers Frightened or Prone in your feed.
+  - **Movement counts:** dragging the acting monster past what it has left asks "Move anyway?".
+  - **Same for the rest:** on the next monster of the same kind, one button repeats the last attack on the same target, if that target is still up.
+  - The free rules data doesn't say which abilities recharge ("Recharge 5–6"), so the DM still tracks a breath weapon's recharge.
+  - Tests: 14 database (new), 521 unit (9 new), 80 preview browser tests (2 new).
 - **P1b: the spellbook on the Powers tab (live).**
   - **Spellbook:** every spell in the free rules, cantrips to 9th level, whether the character can cast it yet or not.
     - a search box that looks in names first, then in what spells do;
@@ -375,6 +387,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 ## Waiting on Matt
 - **Try P1a** on the night: Go here between two scenes with a player watching. If a player is too quiet even at 100% on your screen, ask them to turn up **Your microphone** on their own camera tile.
 - **Try P1b:** open a spellcaster's sheet, Powers tab, and search the Spellbook.
+- **Try P1c:** in a fight on the Battle screen, press **P** and run a goblin's turn from its cards. Parley is now **T**.
 - **Save Death Pit of Moloch as a preset** (refresh first):
   1. On Screen 1, open the **Story** tab and press **Paste your notes**.
   2. Open `private/campaigns/death-pit-of-moloch.md` (in the `dnd-table-starter-pack` folder), copy everything, and paste it into the box.

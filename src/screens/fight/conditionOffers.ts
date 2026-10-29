@@ -5,6 +5,7 @@
 import type { CombatEvent, Combatant, CombatantSecret } from '../../live/combat.ts'
 import {
   causeClock,
+  monsterAbilityCause,
   monsterAttackCause,
   spellCauseByName,
   type ClockChoice,
@@ -40,7 +41,12 @@ export function conditionOffer(
   let cause: ConditionCause | null = null
   let dc: number | null = null
   let caster: { characterId: string; spell: string } | null = null
-  if (event.kind === 'spell' && event.shown.save === 'failed' && event.shown.spell) {
+  if (event.kind === 'spell' && event.shown.monster && event.shown.save === 'failed' && event.shown.spell) {
+    // A monster's ability with a save (Frightful Presence): what its stat block says failing does.
+    const index = fight.secrets.find((s) => s.combatantId === actor.id)?.monster
+    const monster = monsters?.find((m) => m.index === index)
+    cause = monster ? monsterAbilityCause(monster, event.shown.spell) : null
+  } else if (event.kind === 'spell' && event.shown.save === 'failed' && event.shown.spell) {
     cause = spellCauseByName(event.shown.spell)
     dc = event.shown.dc ?? null
     caster = actor.characterId ? { characterId: actor.characterId, spell: event.shown.spell } : null
