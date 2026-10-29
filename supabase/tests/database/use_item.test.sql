@@ -34,6 +34,7 @@ set local request.jwt.claims = '{"sub": "1e1e1e1e-0000-4000-8000-000000000001", 
 update public.characters set current_hp = 0 where name = 'Mira';
 select set_config('test.encounter', (select id::text from public.start_fight(
   current_setting('test.campaign')::uuid, (select array_agg(id) from public.characters), null)), true);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 select set_config('test.thorin', (select c.id::text from public.combatants c join public.characters ch on ch.id = c.character_id where ch.name = 'Thorin'), true);
 select set_config('test.mira', (select c.id::text from public.combatants c join public.characters ch on ch.id = c.character_id where ch.name = 'Mira'), true);
 insert into public.combatants (encounter_id, campaign_id, kind, shown_name, initiative)

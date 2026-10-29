@@ -185,6 +185,11 @@ const ROUTES: Route[] = [
           render: () => <TablePreview key="gift" variant="gift" />,
         },
         {
+          pattern: '/dev/table/placing',
+          title: `Table preview · ${APP_NAME}`,
+          render: () => <TablePreview key="placing" fighting variant="placing" />,
+        },
+        {
           pattern: '/dev/table/held',
           title: `Table preview · ${APP_NAME}`,
           render: () => <TablePreview key="held" fighting variant="held" />,
@@ -227,6 +232,11 @@ const ROUTES: Route[] = [
           pattern: '/dev/battle/late',
           title: `Battle preview · ${APP_NAME}`,
           render: () => <BattlePreview key="late" late />,
+        },
+        {
+          pattern: '/dev/battle/placing',
+          title: `Battle preview · ${APP_NAME}`,
+          render: () => <BattlePreview key="placing" placing />,
         },
         {
           pattern: '/dev/battle/talk',

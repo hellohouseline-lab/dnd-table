@@ -41,6 +41,7 @@ select set_config('test.encounter', (select id::text from public.start_fight(
   current_setting('test.campaign')::uuid,
   array[current_setting('test.thorin_char')::uuid, current_setting('test.mira_char')::uuid],
   current_setting('test.map')::uuid)), true);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 select set_config('test.thorin', (select id::text from public.combatants where character_id = current_setting('test.thorin_char')::uuid), true);
 select set_config('test.mira', (select id::text from public.combatants where character_id = current_setting('test.mira_char')::uuid), true);
 select is(

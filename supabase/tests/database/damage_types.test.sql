@@ -55,6 +55,7 @@ select is(
 set local request.jwt.claims = '{"sub": "eeeeeeee-0000-4000-8000-000000000001", "role": "authenticated"}';
 select set_config('test.encounter', (select id::text from public.start_fight(
   current_setting('test.campaign')::uuid, array[current_setting('test.tiefling')::uuid], null)), true);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 select set_config('test.hero', (select id::text from public.combatants where kind = 'character'), true);
 insert into public.combatants (encounter_id, campaign_id, kind, shown_name, revealed)
   values (current_setting('test.encounter')::uuid, current_setting('test.campaign')::uuid, 'monster', 'Ice troll', true);

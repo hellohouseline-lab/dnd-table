@@ -216,6 +216,8 @@ export type PlayerCombatProps = {
   fight: FightControls['fight']
   rollInitiative: FightControls['rollInitiative']
   endTurn: () => void
+  /** I'm in place, before the fight starts (left out in the tests). */
+  setPlaced?: FightControls['setPlaced']
   /** What has happened in the fight. */
   events: CombatEvent[]
   attack: FightControls['attack']
@@ -1304,6 +1306,11 @@ export function TableView({
               if (what === 'search') roll(skillCheck(character, 'perception', choices))
             }}
             onEndTurn={combat.endTurn}
+            placing={
+              fight.encounter.placing && combat.setPlaced
+                ? { placed: mine.placed, onPlaced: (placed) => combat.setPlaced?.(mine, placed) }
+                : null
+            }
           />
         )}
         {fight && mine && combat && (

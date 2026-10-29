@@ -3,6 +3,16 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **Placing the miniatures before a fight (live).** Decided with Matt: the DM presses Start, initiative is rolled while placing, and players have an I'm in place button that shows the DM a tick.
+  - **A new fight opens with placing.** Players see **Place your miniature** in their turn panel: drag the miniature anywhere, roll initiative, and press **I'm in place** ("✓ You're in place").
+  - **The DM sees:**
+    - "Placing the miniatures" in the Battle screen's header;
+    - a banner listing each player with ✓ or …;
+    - "Placing" or "✓ In place" in the turn order.
+  - **Start the battle** replaces Next turn on the Battle screen and Screen 1's bar (N too). The first turn waits for it even once everyone has rolled. If someone hasn't rolled yet, it starts by itself with their roll, as before.
+  - Fights already going on aren't affected.
+  - Server: `20261029110000_placing_phase.sql` (`encounters.placing_phase`, `combatants.placed`, `set_placed`, `begin_battle`, and a trigger that holds the first turn while placing). The older fight tests now press Start the battle after starting their fight.
+  - Previews: `#/dev/battle/placing`, `#/dev/table/placing`. Tests: 12 database (new), 81 preview browser tests (1 new).
 - **P1c: Play as the monsters (live).** On the Battle screen, **Play as the monsters** in the header, or the **P** key, which it now uses; **Parley** moved to **T**. It stays on for the fight in that tab.
   - **On a monster's turn**, the left side shows its HP, AC, speed, conditions and Multiattack, then a player-style turn panel: Action, Bonus action, Reaction, Movement ("30 of 30 ft"), Dash, Disengage, Dodge, Hide (which rolls its Stealth secretly), its bonus-action moves, and **End turn** (Next turn).
   - **Its cards** run under the map: attacks (1 to 9 still work), abilities with a save, bonus-action attacks, legendary actions and reactions. Spent ones grey out.
@@ -387,6 +397,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 ## Waiting on Matt
 - **Try P1a** on the night: Go here between two scenes with a player watching. If a player is too quiet even at 100% on your screen, ask them to turn up **Your microphone** on their own camera tile.
 - **Try P1b:** open a spellcaster's sheet, Powers tab, and search the Spellbook.
+- **Try placing:** start a fight; everyone drags their miniature and presses I'm in place; you press **Start the battle**.
 - **Try P1c:** in a fight on the Battle screen, press **P** and run a goblin's turn from its cards. Parley is now **T**.
 - **Save Death Pit of Moloch as a preset** (refresh first):
   1. On Screen 1, open the **Story** tab and press **Paste your notes**.

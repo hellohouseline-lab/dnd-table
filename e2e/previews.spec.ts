@@ -1517,3 +1517,26 @@ test('play as the monsters: a dragon breathes on whoever the DM picks, who save 
   await expect(feed).not.toContainText('DC 14')
   await expect(panel).toContainText(/Action\s*Used/)
 })
+
+test('placing: players place their miniature and say they are in place; the DM starts the battle', async ({ page }) => {
+  await page.goto('#/dev/table/placing')
+  const turn = page.getByRole('region', { name: 'This turn' })
+  await expect(turn).toContainText('Place your miniature')
+  await turn.getByRole('button', { name: 'I’m in place' }).click()
+  await expect(turn.getByRole('button', { name: '✓ You’re in place' })).toHaveAttribute('aria-pressed', 'true')
+
+  await page.goto('#/dev/battle/placing')
+  await expect(page.getByText('Battle · Round 1 · Placing the miniatures')).toBeVisible()
+  const order = page.getByRole('region', { name: 'Turn order' })
+  await expect(order).toContainText('Placing')
+  await expect(order).toContainText('Still to roll: Elowen')
+  await expect(page.getByRole('region', { name: 'Acting now' })).toContainText('Press Start the battle')
+  // Elowen rolls; still nobody's turn until the DM starts it.
+  await order.getByRole('button', { name: 'Roll' }).click()
+  await expect(order).not.toContainText('Still to roll')
+  await expect(page.getByRole('region', { name: 'Acting now' })).toContainText('Nobody yet')
+  await page.getByRole('button', { name: 'Start the battle' }).first().click()
+  // Whoever rolled highest goes first (Elowen's roll is random).
+  await expect(page.getByText(/^Battle · Round 1 · (Thorin Ironfist|Elowen) is acting$/)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Next turn' })).toBeVisible()
+})

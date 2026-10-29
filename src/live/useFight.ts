@@ -16,6 +16,8 @@ import {
   endFight,
   getActiveFight,
   castSpell,
+  beginBattle as beginBattleNow,
+  setPlaced as setPlacedNow,
   sendMonsterAbility,
   type MonsterAbilityUse,
   offhandAttack,
@@ -142,6 +144,10 @@ export type FightControls = {
     targetIds: string[],
     roll: Parameters<typeof sendMonsterAbility>[3],
   ) => Promise<Roll | null>
+  /** Placing the miniatures before the fight: ends it, and the first turn starts once everyone has initiative. */
+  beginBattle: () => void
+  /** I'm in place (or not yet), before the fight starts. */
+  setPlaced: (combatant: Combatant, placed: boolean) => void
   /** The Constitution save to keep concentrating after taking damage. Throws in plain words if refused. */
   concentrationSave: (characterId: string) => Promise<Roll>
   /** Uses a feature (Rage): spends its part of the turn, named in the feed. Throws in plain words if refused. */
@@ -398,9 +404,42 @@ export function useFight(campaignId: string, userId: string): FightControls {
   )
 
   // Moves on at once on screen; the server has the final word on whose turn it is.
+  // Start the battle: placing ends, and the first turn starts if everyone has initiative.
+  const beginBattle = useCallback(() => {
+    const now = current.current
+    if (!now) return
+    patchLocal((f) => ({ ...f, encounter: { ...f.encounter, placing: false } }))
+    void attempt(async () => {
+      const encounter = await beginBattleNow(now.encounter.id)
+      patchLocal((f) => (f.encounter.id === encounter.id ? { ...f, encounter } : f))
+      return true
+    }).then(() => reload())
+  }, [attempt, patchLocal, reload])
+
+  const setPlaced = useCallback(
+    (combatant: Combatant, placed: boolean) => {
+      patchLocal((f) => ({
+        ...f,
+        combatants: f.combatants.map((c) => (c.id === combatant.id ? { ...c, placed } : c)),
+      }))
+      void attempt(async () => {
+        await setPlacedNow(combatant.id, placed)
+        return true
+      }).then((done) => {
+        if (!done) reload()
+      })
+    },
+    [attempt, patchLocal, reload],
+  )
+
   const next = useCallback(() => {
     const now = current.current
     if (!now) return
+    // While placing the miniatures, Next turn is Start the battle.
+    if (now.encounter.placing) {
+      beginBattle()
+      return
+    }
     const entries = now.combatants.map((c) => ({ ...c, out: isOut(c) }))
     const turn = nextTurn(entries, now.encounter.currentId, now.encounter.round)
     // In a parley the server refuses, and says why.
@@ -415,7 +454,7 @@ export function useFight(campaignId: string, userId: string): FightControls {
       // Refused (it wasn't your turn after all): show whose turn the server says it is.
       if (!ended) reload()
     })
-  }, [attempt, patchLocal, reload])
+  }, [attempt, beginBattle, patchLocal, reload])
 
   const setHp = useCallback(
     (secret: CombatantSecret, hp: number) => {
@@ -722,6 +761,8 @@ export function useFight(campaignId: string, userId: string): FightControls {
     deathSave,
     cast,
     monsterAbility,
+    beginBattle,
+    setPlaced,
     concentrationSave,
     applyFeature,
     applyItem,
