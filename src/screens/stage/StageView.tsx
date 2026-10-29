@@ -2,6 +2,7 @@ import { useEffect, useState, type ComponentProps } from 'react'
 import { href } from '../../app/router.ts'
 import { cx } from '../../components/cx.ts'
 import { Notice } from '../../components/Notice.tsx'
+import { SceneFade } from '../../components/SceneFade.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { ReadAloud } from '../../components/ReadAloud.tsx'
 import { NpcCard } from '../../components/NpcCard.tsx'
@@ -236,14 +237,19 @@ export function StageView({
                     onClose={() => change({ readAloud: '' })}
                   />
                 )}
-                {onStage ? (
-                  <StoredImage path={onStage.path} alt={`On stage: ${onStage.name}`} />
-                ) : (
-                  <div className={styles.nothing}>
-                    <span className={styles.nothingTitle}>[ The table ]</span>
-                    <span>Pick a picture from the library below and it appears behind everyone&rsquo;s screen.</span>
-                  </div>
-                )}
+                <SceneFade
+                  sceneKey={onStage ? onStage.id : 'nothing'}
+                  still={onStage ? <StoredImage path={onStage.path} alt="" /> : null}
+                >
+                  {onStage ? (
+                    <StoredImage path={onStage.path} alt={`On stage: ${onStage.name}`} />
+                  ) : (
+                    <div className={styles.nothing}>
+                      <span className={styles.nothingTitle}>[ The table ]</span>
+                      <span>Pick a picture from the library below and it appears behind everyone&rsquo;s screen.</span>
+                    </div>
+                  )}
+                </SceneFade>
               </div>
             )}
           </section>

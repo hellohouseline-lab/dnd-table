@@ -33,6 +33,7 @@ function fakeCall(changes: Partial<TableCall> = {}): TableCall {
     setCamera: noop,
     setMic: noop,
     setDevices: noop,
+    setMicLevel: noop,
     renewCameraKey: async () => undefined,
     ...changes,
   }
@@ -42,10 +43,7 @@ const withCall = (call: TableCall, children: ReactNode) =>
   renderToStaticMarkup(<CallContext.Provider value={call}>{children}</CallContext.Provider>)
 
 const column = (call: TableCall, online = new Set(['dm', 'p1'])) =>
-  withCall(
-    call,
-    <CameraColumn members={sampleMembers} characters={sampleCharacters} online={online} myId="p1" />,
-  )
+  withCall(call, <CameraColumn members={sampleMembers} characters={sampleCharacters} online={online} myId="p1" />)
 
 describe('the camera column in a call', () => {
   it('offers to join from your own tile, and says who is not in the call', () => {
@@ -66,9 +64,12 @@ describe('the camera column in a call', () => {
   })
 
   it('gives each voice its own volume where the call plays, and shows a camera that is off', () => {
-    const html = column(fakeCall({ hearing: true, owner: true, calls: new Map([['dm', { camera: false, mic: false }]]) }))
+    const html = column(
+      fakeCall({ hearing: true, owner: true, calls: new Map([['dm', { camera: false, mic: false }]]) }),
+    )
     expect(html).not.toContain('noaudio')
     expect(html).toContain('aria-label="Matt’s voice, on your screen"')
+    expect(text(html)).toContain('100%')
     expect(text(html)).toContain('Camera off')
     expect(html).toContain('aria-label="Muted"')
   })
@@ -79,6 +80,16 @@ describe('the camera column in a call', () => {
     expect(html).toContain('aria-label="Turn your camera off"')
     expect(html).toContain('aria-label="Leave the call"')
     expect(html).toContain('aria-label="Muted"')
+  })
+
+  it('lets you turn your own microphone up to double for everyone, once you have joined', () => {
+    expect(column(fakeCall())).not.toContain('Your microphone, for everyone')
+    const html = column(
+      fakeCall({ joined: true, status: 'live', owner: true, devices: { camera: '', microphone: '', micLevel: 150 } }),
+    )
+    expect(html).toContain('aria-label="Your microphone, for everyone"')
+    expect(html).toContain('max="200"')
+    expect(text(html)).toContain('150%')
   })
 
   it('asks for a click before voices play', () => {

@@ -95,7 +95,7 @@
   text-align: center;
 }
 
-/* Your buttons (mute, camera, leave) and the volume for anyone else: shown when the pointer is over the tile. */
+/* Your buttons (mute, camera, leave): shown when the pointer is over the tile. */
 .tools {
   position: absolute;
   right: 6px;
@@ -137,12 +137,38 @@
   color: var(--fail-light);
 }
 
+/* Someone else's voice, on your screen: always shown, as a thin bar, brighter under the pointer. */
 .volumeTools {
   left: 6px;
-  padding: 2px 10px;
+  padding: 0 8px;
+  height: 20px;
   border-radius: 999px;
-  background: rgba(13, 10, 18, 0.9);
+  background: rgba(13, 10, 18, 0.72);
   color: var(--gold-light);
+  opacity: 0.85;
+}
+
+.feed:hover .volumeTools,
+.volumeTools:focus-within {
+  background: rgba(13, 10, 18, 0.9);
+  opacity: 1;
+}
+
+/* Your own microphone level sits left of your mute, camera and leave buttons. */
+.micLevel {
+  right: 110px;
+}
+
+.volumePercent {
+  min-width: 34px;
+  text-align: right;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.boosted {
+  color: var(--gold);
+  font-weight: 700;
 }
 
 .volume {

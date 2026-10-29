@@ -37,6 +37,14 @@ describe('sending your camera', () => {
     expect(params(sendUrl({ ...options, cameraOff: true })).has('videomute')).toBe(true)
   })
 
+  it('turns a quiet microphone up (or a loud one down) where it is sent, from half to double', () => {
+    expect(params(sendUrl(options)).has('audiogain')).toBe(false)
+    expect(params(sendUrl({ ...options, devices: { ...options.devices, micLevel: 100 } })).has('audiogain')).toBe(false)
+    expect(params(sendUrl({ ...options, devices: { ...options.devices, micLevel: 160 } })).get('audiogain')).toBe('160')
+    expect(params(sendUrl({ ...options, devices: { ...options.devices, micLevel: 900 } })).get('audiogain')).toBe('200')
+    expect(params(sendUrl({ ...options, devices: { ...options.devices, micLevel: 10 } })).get('audiogain')).toBe('50')
+  })
+
   it('sends no video at all with no camera chosen', () => {
     expect(params(sendUrl({ ...options, devices: { camera: null, microphone: '' } })).get('videodevice')).toBe('0')
   })

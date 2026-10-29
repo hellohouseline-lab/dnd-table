@@ -1,0 +1,31 @@
+/* A new scene fades in over the old one. 1.5 s matches SCENE_FADE_MS. */
+
+.fade {
+  position: absolute;
+  inset: 0;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Paused until the new picture has loaded; the component sets it running. */
+.fresh {
+  animation: scene-in 1.5s ease-in-out both paused;
+}
+
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fresh {
+    animation-duration: 1ms;
+  }
+}

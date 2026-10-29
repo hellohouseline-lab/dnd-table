@@ -12,7 +12,23 @@ export const VDO_ALLOW = 'camera *; microphone *; autoplay'
 /** A camera or microphone by its name as the browser lists it, '' for the computer's own choice, or null for none. */
 export type DeviceChoice = string | null
 
-export type Devices = { camera: DeviceChoice; microphone: DeviceChoice }
+export type Devices = {
+  camera: DeviceChoice
+  microphone: DeviceChoice
+  /** How loud your microphone comes across to everyone, in percent (100 when left out). */
+  micLevel?: number
+}
+
+/**
+ * Your microphone level goes from half to double. VDO.Ninja plays each voice at no more than 100%
+ * where it's heard, so a quiet voice is turned up where it's sent, with its `audiogain` setting.
+ */
+export const MIC_LEVEL_MIN = 50
+export const MIC_LEVEL_MAX = 200
+
+export function clampMicLevel(level: number): number {
+  return Math.round(Math.min(MIC_LEVEL_MAX, Math.max(MIC_LEVEL_MIN, level)))
+}
 
 /** VDO.Ninja picks a device whose name contains this, with underscores for spaces; 1 is the default and 0 none. */
 export function deviceParam(choice: DeviceChoice): string {
@@ -39,15 +55,15 @@ export function sendUrl({ cameraId, key, devices, cameraOff, micOff }: SendOptio
   const flags = ['autostart', 'webcam', 'cleanoutput']
   if (micOff) flags.push('mute')
   if (cameraOff) flags.push('videomute')
-  return address(
-    {
-      push: cameraId,
-      password: key,
-      videodevice: deviceParam(devices.camera),
-      audiodevice: deviceParam(devices.microphone),
-    },
-    flags,
-  )
+  const params: Record<string, string> = {
+    push: cameraId,
+    password: key,
+    videodevice: deviceParam(devices.camera),
+    audiodevice: deviceParam(devices.microphone),
+  }
+  const level = devices.micLevel === undefined ? 100 : clampMicLevel(devices.micLevel)
+  if (level !== 100) params.audiogain = String(level)
+  return address(params, flags)
 }
 
 export type WatchOptions = {
@@ -73,7 +89,10 @@ export function vdoAction(data: unknown): string | null {
   return typeof action === 'string' ? action : null
 }
 
-/** Sends a command to a VDO.Ninja frame, such as `{ mic: false }` or `{ volume: 0.5 }`. */
+/**
+ * Sends a command to a VDO.Ninja frame, such as `{ mic: false }` or `{ volume: 0.5 }`. A volume
+ * goes from 0 to 1: VDO.Ninja reads anything over 1 as a percentage.
+ */
 export function tellFrame(frame: HTMLIFrameElement | null, command: Record<string, unknown>): void {
   frame?.contentWindow?.postMessage(command, VDO_ORIGIN)
 }

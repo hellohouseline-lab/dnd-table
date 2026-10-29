@@ -21,7 +21,7 @@ export type AmbienceWanted = Sound & { level: number }
 
 type Listener = () => void
 
-const CROSSFADE_MS = 2500
+const CROSSFADE_MS = 2000
 const FADE_MS = 400
 
 /**

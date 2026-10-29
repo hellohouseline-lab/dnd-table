@@ -29,6 +29,7 @@ import { ShopPanel } from './ShopPanel.tsx'
 import { ReadAloud } from '../../components/ReadAloud.tsx'
 import { NpcCard } from '../../components/NpcCard.tsx'
 import { coinsFor, coinWords } from '../../rules/money.ts'
+import { SceneFade } from '../../components/SceneFade.tsx'
 import { StoredImage } from '../../components/StoredImage.tsx'
 import { hitDieHealing } from '../../rules/rest.ts'
 import { abilityModifier } from '../../rules/maths/core.ts'
@@ -879,104 +880,126 @@ export function TableView({
       return [{ entry, attack, label: entry.name, why }]
     })
 
+  // Before the DM puts anything on stage.
+  const welcome = (
+    <div className={styles.scene}>
+      <div className={styles.parchment}>
+        <div className={styles.parchmentEyebrow}>Welcome to</div>
+        <h1 className={styles.parchmentTitle}>{campaignName || 'The Adventure'}</h1>
+        <div className={styles.flourish} aria-hidden="true">
+          <span />
+          ✦
+          <span />
+        </div>
+        <p className={styles.parchmentNote}>
+          The DM will set the scene soon. Pictures, maps and your dice appear here.
+        </p>
+      </div>
+    </div>
+  )
+
   return (
     <main className={styles.screen}>
       <div className={styles.floor} aria-hidden="true" />
-      {combat?.map ? (
-        <div className={styles.stageImage}>
-          <Suspense fallback={null}>
-            <BattleMap
-              map={combat.map}
-              tokens={mapView}
-              selectedId={inspected}
-              onSelect={(id) => {
-                const token = tokens.find((t) => t.id === id)
-                const row = token
-                  ? rows.find((r) =>
-                      token.characterId
-                        ? r.combatant.characterId === token.characterId
-                        : r.combatant.id === token.combatantId,
-                    )
-                  : undefined
-                if (aimingSpell?.mode === 'target' && !aimingSpell.chosen && row) aimingSpell.onPick(row)
-                else if (aimingItem && row) pickItemTarget(row)
-                else if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
-                else setInspected(id)
-              }}
-              onMove={(id, x, y) => {
-                const token = tokens.find((t) => t.id === id)
-                if (token) combat.tokens.move(token, x, y)
-              }}
-              reach={myTurn && myToken && !dyingNow ? { tokenId: myToken.id, feet: feetLeft } : null}
-              aim={
-                aiming && myToken
-                  ? (() => {
-                      const reach = weaponReach(findWeapon(aiming.weapon))
-                      return {
-                        tokenId: myToken.id,
-                        near: Math.max(reach.melee ?? 0, reach.normal ?? 0),
-                        long: reach.long,
-                      }
-                    })()
-                  : aimingSpell?.mode === 'target' && !aimingSpell.chosen && aimingSpell.rangeFt !== null && myToken
-                    ? { tokenId: myToken.id, near: aimingSpell.rangeFt, long: null }
-                    : null
-              }
-              targeting={aiming !== null || (aimingSpell?.mode === 'target' && !aimingSpell.chosen)}
-              areas={
-                // An area placed but not yet cast shows where it went.
-                aimingSpell?.chosen?.template && aimingSpell.area
-                  ? [
-                      ...combat.areas,
-                      {
-                        ...aimingSpell.chosen.template,
-                        id: 'placed',
-                        label: aimingSpell.label,
-                        tone: aimingSpell.area.tone,
-                        hidden: false,
-                      },
-                    ]
-                  : combat.areas
-              }
-              placing={
-                aimingSpell?.mode === 'area' && aimingSpell.area && !aimingSpell.chosen
-                  ? {
-                      shape: aimingSpell.area.shape,
-                      sizeFt: aimingSpell.area.sizeFt,
-                      tone: aimingSpell.area.tone,
-                      label: aimingSpell.label,
-                      from: aimingSpell.area.fromCaster && myToken ? { x: myToken.x, y: myToken.y } : null,
-                      onPlace: aimingSpell.onPlace,
-                    }
-                  : null
-              }
-              hands={combat.pointers.hands}
-              pings={combat.pointers.pings}
-              onHand={combat.pointers.sendHand}
-              onPing={combat.pointers.sendPing}
-            />
-          </Suspense>
-        </div>
-      ) : stageImage ? (
-        <div className={styles.stageImage}>
-          <StoredImage path={stageImage.path} alt={`The scene: ${stageImage.name}`} />
-        </div>
-      ) : (
-        <div className={styles.scene}>
-          <div className={styles.parchment}>
-            <div className={styles.parchmentEyebrow}>Welcome to</div>
-            <h1 className={styles.parchmentTitle}>{campaignName || 'The Adventure'}</h1>
-            <div className={styles.flourish} aria-hidden="true">
-              <span />
-              ✦
-              <span />
+      <SceneFade
+        sceneKey={combat?.map ? `map-${combat.map.id}` : stageImage ? stageImage.id : 'welcome'}
+        still={
+          combat?.map ? (
+            <div className={styles.stageImage}>
+              <StoredImage path={combat.map.path} alt="" />
             </div>
-            <p className={styles.parchmentNote}>
-              The DM will set the scene soon. Pictures, maps and your dice appear here.
-            </p>
+          ) : stageImage ? (
+            <div className={styles.stageImage}>
+              <StoredImage path={stageImage.path} alt="" />
+            </div>
+          ) : (
+            welcome
+          )
+        }
+      >
+        {combat?.map ? (
+          <div className={styles.stageImage}>
+            <Suspense fallback={null}>
+              <BattleMap
+                map={combat.map}
+                tokens={mapView}
+                selectedId={inspected}
+                onSelect={(id) => {
+                  const token = tokens.find((t) => t.id === id)
+                  const row = token
+                    ? rows.find((r) =>
+                        token.characterId
+                          ? r.combatant.characterId === token.characterId
+                          : r.combatant.id === token.combatantId,
+                      )
+                    : undefined
+                  if (aimingSpell?.mode === 'target' && !aimingSpell.chosen && row) aimingSpell.onPick(row)
+                  else if (aimingItem && row) pickItemTarget(row)
+                  else if (aiming && row && row.combatant.id !== mine?.id) pickTarget(row)
+                  else setInspected(id)
+                }}
+                onMove={(id, x, y) => {
+                  const token = tokens.find((t) => t.id === id)
+                  if (token) combat.tokens.move(token, x, y)
+                }}
+                reach={myTurn && myToken && !dyingNow ? { tokenId: myToken.id, feet: feetLeft } : null}
+                aim={
+                  aiming && myToken
+                    ? (() => {
+                        const reach = weaponReach(findWeapon(aiming.weapon))
+                        return {
+                          tokenId: myToken.id,
+                          near: Math.max(reach.melee ?? 0, reach.normal ?? 0),
+                          long: reach.long,
+                        }
+                      })()
+                    : aimingSpell?.mode === 'target' && !aimingSpell.chosen && aimingSpell.rangeFt !== null && myToken
+                      ? { tokenId: myToken.id, near: aimingSpell.rangeFt, long: null }
+                      : null
+                }
+                targeting={aiming !== null || (aimingSpell?.mode === 'target' && !aimingSpell.chosen)}
+                areas={
+                  // An area placed but not yet cast shows where it went.
+                  aimingSpell?.chosen?.template && aimingSpell.area
+                    ? [
+                        ...combat.areas,
+                        {
+                          ...aimingSpell.chosen.template,
+                          id: 'placed',
+                          label: aimingSpell.label,
+                          tone: aimingSpell.area.tone,
+                          hidden: false,
+                        },
+                      ]
+                    : combat.areas
+                }
+                placing={
+                  aimingSpell?.mode === 'area' && aimingSpell.area && !aimingSpell.chosen
+                    ? {
+                        shape: aimingSpell.area.shape,
+                        sizeFt: aimingSpell.area.sizeFt,
+                        tone: aimingSpell.area.tone,
+                        label: aimingSpell.label,
+                        from: aimingSpell.area.fromCaster && myToken ? { x: myToken.x, y: myToken.y } : null,
+                        onPlace: aimingSpell.onPlace,
+                      }
+                    : null
+                }
+                hands={combat.pointers.hands}
+                pings={combat.pointers.pings}
+                onHand={combat.pointers.sendHand}
+                onPing={combat.pointers.sendPing}
+              />
+            </Suspense>
           </div>
-        </div>
-      )}
+        ) : stageImage ? (
+          <div className={styles.stageImage}>
+            <StoredImage path={stageImage.path} alt={`The scene: ${stageImage.name}`} />
+          </div>
+        ) : (
+          welcome
+        )}
+      </SceneFade>
       {readAloud && !fight && <ReadAloud text={readAloud} className={styles.readAloud} />}
       {npc && !fight && <NpcCard name={npc.name} role={npc.role} portrait={npc.portrait} className={styles.npc} />}
       <div className={styles.topChips}>

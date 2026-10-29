@@ -1381,3 +1381,20 @@ test('sounds: the DM brings in the sounds from another of their tables', async (
   await bring.getByRole('button', { name: 'Bring them in' }).click()
   await expect(bring.getByRole('status')).toContainText('This table already has every sound from Demo Pits.')
 })
+
+test('scene fades: a new picture on stage fades in over the old one, which then goes', async ({ page }) => {
+  await page.goto('#/dev/stage')
+  const library = page.getByRole('region', { name: 'Art library' })
+  await library.getByRole('button', { name: 'Add Crossroads' }).click()
+  await library.getByRole('button', { name: 'Crossroads', exact: true }).click()
+  await expect(page.getByRole('img', { name: 'On stage: Crossroads' })).toBeVisible()
+  await library.getByRole('button', { name: 'Add Ancient forest' }).click()
+  await library.getByRole('button', { name: 'Ancient forest', exact: true }).click()
+  // Both pictures are there while the new one fades in, then only the new one.
+  const forest = page.getByRole('img', { name: 'On stage: Ancient forest' })
+  await expect(forest).toBeAttached()
+  await expect(page.locator('[class*="layer"]')).toHaveCount(2)
+  await expect(page.locator('[class*="layer"]')).toHaveCount(1, { timeout: 6000 })
+  await expect(forest).toBeVisible()
+  await expect(page.getByRole('img', { name: 'On stage: Crossroads' })).toBeHidden()
+})

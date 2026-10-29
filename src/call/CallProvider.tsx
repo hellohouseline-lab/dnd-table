@@ -12,7 +12,7 @@ import { getCameraDetails, renewCameraKey } from '../live/campaigns.ts'
 import { CallContext, type CallStatus, type TableCall } from './callContext.ts'
 import { checkDevices, loadDevices, saveDevices } from './devices.ts'
 import styles from './Call.module.css'
-import { sendUrl, tellFrame, VDO_ALLOW, vdoAction, VDO_ORIGIN, type Devices } from './vdoLinks.ts'
+import { clampMicLevel, sendUrl, tellFrame, VDO_ALLOW, vdoAction, VDO_ORIGIN, type Devices } from './vdoLinks.ts'
 
 // The table's call lives here, above the screens, so moving between the Join screen, the table, the
 // sheet and the DM's screens never drops it. Nothing starts until you press Join voice and camera;
@@ -141,7 +141,15 @@ type CallEngineProps = {
  * Joining, leaving, muting and devices, the one tab that sends and plays, and the hidden sender.
  * The design previews run it too, with made-up details, to try a real call between two browsers.
  */
-export function CallEngine({ campaignId, userId, details, calls, announce, renewCameraKey, children }: CallEngineProps) {
+export function CallEngine({
+  campaignId,
+  userId,
+  details,
+  calls,
+  announce,
+  renewCameraKey,
+  children,
+}: CallEngineProps) {
   const [prefs, setPrefs] = useState(() => loadPrefs(campaignId))
   const [devices, setDevicesState] = useState(loadDevices)
   const [problem, setProblem] = useState<string | null>(null)
@@ -274,6 +282,10 @@ export function CallEngine({ campaignId, userId, details, calls, announce, renew
     },
     [apply],
   )
+  const setMicLevel = useCallback(
+    (level: number) => apply(latest.current.prefs, { ...latest.current.devices, micLevel: clampMicLevel(level) }, true),
+    [apply],
+  )
 
   const setVolume = useCallback((who: string, volume: number) => {
     setVolumes((before) => {
@@ -327,6 +339,7 @@ export function CallEngine({ campaignId, userId, details, calls, announce, renew
       setCamera,
       setMic,
       setDevices,
+      setMicLevel,
       renewCameraKey,
     }),
     [
@@ -349,6 +362,7 @@ export function CallEngine({ campaignId, userId, details, calls, announce, renew
       setCamera,
       setMic,
       setDevices,
+      setMicLevel,
       renewCameraKey,
     ],
   )
@@ -357,13 +371,7 @@ export function CallEngine({ campaignId, userId, details, calls, announce, renew
     <CallContext.Provider value={value}>
       {children}
       {sending && (
-        <CallSender
-          key={sending.url}
-          url={sending.url}
-          camera={prefs.camera}
-          mic={prefs.mic}
-          onResult={onResult}
-        />
+        <CallSender key={sending.url} url={sending.url} camera={prefs.camera} mic={prefs.mic} onResult={onResult} />
       )}
     </CallContext.Provider>
   )
@@ -405,5 +413,15 @@ function CallSender({ url, camera, mic, onResult }: CallSenderProps) {
     }
   }, [url, onResult])
 
-  return <iframe ref={frame} className={styles.sender} src={url} allow={VDO_ALLOW} title="Your camera, sending" tabIndex={-1} aria-hidden="true" />
+  return (
+    <iframe
+      ref={frame}
+      className={styles.sender}
+      src={url}
+      allow={VDO_ALLOW}
+      title="Your camera, sending"
+      tabIndex={-1}
+      aria-hidden="true"
+    />
+  )
 }
