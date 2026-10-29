@@ -182,6 +182,19 @@
   text-transform: uppercase;
 }
 
+/* Before the fight: everyone places their miniature. */
+.placing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 16px;
+  border-radius: 8px;
+  background: rgba(212, 175, 90, 0.1);
+  border: 1px solid var(--gold);
+  color: var(--text);
+  font-size: 15px;
+}
+
 /* A monster's ability: roll everyone's saves once they're picked. */
 .aimingGo {
   margin-left: auto;

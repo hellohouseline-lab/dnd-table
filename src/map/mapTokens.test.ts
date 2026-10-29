@@ -22,6 +22,7 @@ const goblin: Combatant = {
   art: null,
   speed: 30,
   reachFt: 5,
+  placed: false,
   turn: FRESH_TURN,
   createdAt: '2026-10-26T20:00:00Z',
 }

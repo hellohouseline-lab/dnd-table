@@ -742,7 +742,14 @@ export function DmView({
           )}
         </div>
         <nav className={styles.verbs} aria-label="DM actions">
-          {(fighting ? COMBAT_VERBS : VERBS).map((verb) => (
+          {(fighting
+            ? COMBAT_VERBS.map((v) =>
+                v.verb === 'next' && fight.fight?.encounter.placing
+                  ? { ...v, label: 'Start the battle', title: 'Placing is done: the first turn starts' }
+                  : v,
+              )
+            : VERBS
+          ).map((verb) => (
             <button
               key={verb.label}
               type="button"

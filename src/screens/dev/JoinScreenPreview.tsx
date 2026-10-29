@@ -73,7 +73,7 @@ export function TablePreview({
 }: {
   asked?: boolean
   fighting?: boolean
-  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | 'story' | 'rules' | 'held' | null
+  variant?: 'reaction' | 'dying' | 'caster' | 'dual' | 'gift' | 'story' | 'rules' | 'held' | 'placing' | null
 }) {
   const caster = variant === 'caster'
   const [characters, setCharacters] = useState<Character[]>(() =>
@@ -134,6 +134,8 @@ export function TablePreview({
     if (!fighting) return null
     const sample = sampleFight(sampleCharacters)
     if (variant === 'reaction') return { ...sample, encounter: { ...sample.encounter, currentId: 'goblin-1' } }
+    // #/dev/table/placing: the fight has just started; place your miniature, then say you're in place.
+    if (variant === 'placing') return { ...sample, encounter: { ...sample.encounter, currentId: null, placing: true } }
     if (variant === 'held') {
       const thorin = `fighter-${sampleCharacters[0].id}`
       const clock = {
@@ -505,6 +507,7 @@ export function TablePreview({
                 fight: fight.fight,
                 rollInitiative: fight.rollInitiative,
                 endTurn: fight.next,
+                setPlaced: fight.setPlaced,
                 events: fight.events,
                 attack: fight.attack,
                 offhandAttack: fight.offhandAttack,

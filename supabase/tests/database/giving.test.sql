@@ -128,6 +128,7 @@ select throws_ok(
 -- Not in a fight.
 set local request.jwt.claims = '{"sub": "9a9a9a9a-0000-4000-8000-000000000001", "role": "authenticated"}';
 select public.start_fight(current_setting('test.campaign')::uuid, (select array_agg(id) from public.characters), null);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 set local request.jwt.claims = '{"sub": "9a9a9a9a-0000-4000-8000-000000000002", "role": "authenticated"}';
 select throws_ok(
   $$ select public.hand_over(current_setting('test.thorin')::uuid, current_setting('test.mira')::uuid, null, 0, '{"gp": 1}', null) $$,

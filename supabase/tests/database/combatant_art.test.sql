@@ -19,6 +19,7 @@ select public.join_campaign(current_setting('test.code'), 'Sam');
 set local request.jwt.claims = '{"sub": "a7700000-0000-4000-8000-000000000001", "role": "authenticated"}';
 select set_config('test.encounter', (select id::text from public.start_fight(
   current_setting('test.campaign')::uuid, array[]::uuid[], null)), true);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 
 set local role authenticated;
 select lives_ok(

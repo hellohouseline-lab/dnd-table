@@ -129,6 +129,7 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
         fight: fight.fight,
         rollInitiative: fight.rollInitiative,
         endTurn: fight.next,
+        setPlaced: fight.setPlaced,
         events: fight.events,
         attack: fight.attack,
         offhandAttack: fight.offhandAttack,

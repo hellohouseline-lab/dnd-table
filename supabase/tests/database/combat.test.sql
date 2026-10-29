@@ -31,12 +31,14 @@ select lives_ok(
   $$ insert into public.encounters (campaign_id) values (current_setting('test.campaign')::uuid) $$,
   'The DM starts a fight'
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 select set_config('test.encounter', (select id::text from public.encounters), true);
 select throws_ok(
   $$ insert into public.encounters (campaign_id) values (current_setting('test.campaign')::uuid) $$,
   '23505', null,
   'One fight at a time'
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 insert into public.combatants (encounter_id, campaign_id, kind, character_id, shown_name, revealed)
   values (current_setting('test.encounter')::uuid, current_setting('test.campaign')::uuid, 'character',
     current_setting('test.fighter')::uuid, 'Dwarf Fighter', true);
@@ -241,6 +243,7 @@ select lives_ok(
   $$ insert into public.encounters (campaign_id) values (current_setting('test.campaign')::uuid) $$,
   'A new fight can start once the last has ended'
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 
 reset role;
 select * from finish();

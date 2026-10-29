@@ -57,6 +57,7 @@ function characterCombatant(character: Character, encounterId: string, initiativ
     art: null,
     speed: character.speed,
     reachFt: /glaive|halberd|lance|pike|whip/i.test(JSON.stringify(character.attacks)) ? 10 : 5,
+    placed: false,
     turn: FRESH_TURN,
     createdAt: stamp(),
   }
@@ -86,6 +87,7 @@ export function sampleFight(characters: Character[]): Fight {
       art: 'goblin',
       speed: 30,
       reachFt: 5,
+      placed: false,
       turn: FRESH_TURN,
       createdAt: stamp(),
     })
@@ -98,6 +100,7 @@ export function sampleFight(characters: Character[]): Fight {
       status: 'active',
       round: 1,
       currentId: combatants[0].id,
+      placing: false,
       parley: false,
       startedAt: stamp(),
     },
@@ -423,6 +426,41 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
   }
   const shownFight = fight && { ...fight, combatants: fight.combatants.map(held) }
 
+  // As end_turn: the next creature's turn.
+  function advance() {
+    if (latest.current.fight?.encounter.parley) return
+    setPrompts([])
+    tick(latest.current.fight?.encounter.currentId ?? null, 'end')
+    // As end_turn: a monster that's running leaves as its turn comes round, and the turn passes on.
+    for (let guard = 0; guard < 100; guard++) {
+      set((f) => {
+        const entries = f.combatants.map((c) => ({ ...c, out: isOut(c) }))
+        const turn = nextTurn(entries, f.encounter.currentId, f.encounter.round)
+        return { ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }
+      })
+      const f = latest.current.fight
+      const up = f?.combatants.find((c) => c.id === f.encounter.currentId)
+      if (!up || up.stance !== 'running') break
+      update(up, { stance: 'fled' })
+      post(
+        { kind: 'talk', actorId: up.id, targetId: up.id, rollId: null, shown: { stance: 'fled' } },
+        { target: null, actor: null, stances: { [up.id]: 'running' } },
+      )
+    }
+    set((f) => ({
+      ...f,
+      combatants: f.combatants.map((c) => (c.id === f.encounter.currentId ? { ...c, turn: FRESH_TURN } : c)),
+    }))
+    tick(latest.current.fight?.encounter.currentId ?? null, 'start')
+  }
+
+  // As begin_battle: placing ends, and the first turn starts if everyone has initiative.
+  function beginBattle() {
+    set((f) => ({ ...f, encounter: { ...f.encounter, placing: false } }))
+    const f = latest.current.fight
+    if (f && f.encounter.currentId === null && f.combatants.every((c) => c.initiative !== null)) advance()
+  }
+
   return {
     fight: shownFight,
     status: 'ready',
@@ -438,6 +476,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
           round: 1,
           currentId: null,
           parley: false,
+          placing: true,
           startedAt: stamp(),
         },
         combatants: party.map((c) => characterCombatant(c, encounterId, null)),
@@ -486,6 +525,7 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
         art: portraitForMonster(monster.index)?.key ?? null,
         speed: monster.speed,
         reachFt: threatReach(monster.actions),
+        placed: false,
         turn: FRESH_TURN,
         createdAt: stamp(),
       }))
@@ -514,31 +554,12 @@ export function usePreviewFight(start: Fight | null = null, options: PreviewOpti
       return null
     },
     next: () => {
-      if (latest.current.fight?.encounter.parley) return
-      setPrompts([])
-      tick(latest.current.fight?.encounter.currentId ?? null, 'end')
-      // As end_turn: a monster that's running leaves as its turn comes round, and the turn passes on.
-      for (let guard = 0; guard < 100; guard++) {
-        set((f) => {
-          const entries = f.combatants.map((c) => ({ ...c, out: isOut(c) }))
-          const turn = nextTurn(entries, f.encounter.currentId, f.encounter.round)
-          return { ...f, encounter: { ...f.encounter, currentId: turn.currentId, round: turn.round } }
-        })
-        const f = latest.current.fight
-        const up = f?.combatants.find((c) => c.id === f.encounter.currentId)
-        if (!up || up.stance !== 'running') break
-        update(up, { stance: 'fled' })
-        post(
-          { kind: 'talk', actorId: up.id, targetId: up.id, rollId: null, shown: { stance: 'fled' } },
-          { target: null, actor: null, stances: { [up.id]: 'running' } },
-        )
-      }
-      set((f) => ({
-        ...f,
-        combatants: f.combatants.map((c) => (c.id === f.encounter.currentId ? { ...c, turn: FRESH_TURN } : c)),
-      }))
-      tick(latest.current.fight?.encounter.currentId ?? null, 'start')
+      // While placing the miniatures, Next turn is Start the battle.
+      if (latest.current.fight?.encounter.placing) beginBattle()
+      else advance()
     },
+    beginBattle: () => beginBattle(),
+    setPlaced: (combatant, placed) => update(combatant, { placed }),
     setMonsterHp: (secret, hp) =>
       set((f) => {
         const clamped = Math.max(0, Math.min(secret.maxHp, hp))

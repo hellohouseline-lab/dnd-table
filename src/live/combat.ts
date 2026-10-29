@@ -40,6 +40,8 @@ export type Encounter = {
   currentId: string | null
   /** A parley: the fight is paused to talk, and Next turn waits (C3b). */
   parley: boolean
+  /** Placing miniatures before the fight: the first turn waits for the DM's Start the battle. */
+  placing: boolean
   startedAt: string
 }
 
@@ -66,6 +68,8 @@ export type Combatant = {
   speed: number
   /** How far it threatens for opportunity attacks: 5 feet, or more with a reach weapon. */
   reachFt: number
+  /** Before the fight starts: the player has said I'm in place. */
+  placed: boolean
   /** What's used of this creature's turn, kept by the server and reset when its turn starts. */
   turn: TurnRecord
   createdAt: string
@@ -212,6 +216,7 @@ export function rowToEncounter(row: Tables<'encounters'>): Encounter {
     round: row.round,
     currentId: row.current_id,
     parley: row.parley,
+    placing: row.placing_phase,
     startedAt: row.started_at,
   }
 }
@@ -234,6 +239,7 @@ export function rowToCombatant(row: Tables<'combatants'>): Combatant {
     art: row.art,
     speed: row.speed,
     reachFt: row.reach_ft,
+    placed: row.placed,
     turn: {
       actionUsed: row.action_used,
       attacksMade: row.attacks_made,
@@ -909,6 +915,20 @@ export async function setParley(encounterId: string, on: boolean): Promise<Comba
   const { data, error } = await db().rpc('set_parley', { p_encounter_id: encounterId, p_on: on })
   if (error) throw fromServerRule(error)
   return rowToEvent(data)
+}
+
+/** DM: ends placing the miniatures; the first turn starts now if everyone has initiative. */
+export async function beginBattle(encounterId: string): Promise<Encounter> {
+  const { data, error } = await db().rpc('begin_battle', { p_encounter_id: encounterId })
+  if (error) throw fromServerRule(error)
+  return rowToEncounter(data)
+}
+
+/** I'm in place (or not yet), before the fight starts: a player for their own miniature, the DM for anyone. */
+export async function setPlaced(combatantId: string, placed: boolean): Promise<Combatant> {
+  const { data, error } = await db().rpc('set_placed', { p_combatant_id: combatantId, p_placed: placed })
+  if (error) throw fromServerRule(error)
+  return rowToCombatant(data)
 }
 
 /** DM: adds characters to a fight that's already going (someone who joined late). They roll initiative. */

@@ -712,3 +712,9 @@ a.secondary {
   vertical-align: middle;
 }
 
+
+/* A player who has said I'm in place, while placing the miniatures. */
+.placed {
+  color: var(--pass);
+  font-weight: 700;
+}

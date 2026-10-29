@@ -671,6 +671,7 @@ export type Database = {
           id: string
           initiative: number | null
           kind: string
+          placed: boolean
           reach_ft: number
           reaction_used: boolean
           revealed: boolean
@@ -698,6 +699,7 @@ export type Database = {
           id?: string
           initiative?: number | null
           kind: string
+          placed?: boolean
           reach_ft?: number
           reaction_used?: boolean
           revealed?: boolean
@@ -725,6 +727,7 @@ export type Database = {
           id?: string
           initiative?: number | null
           kind?: string
+          placed?: boolean
           reach_ft?: number
           reaction_used?: boolean
           revealed?: boolean
@@ -850,6 +853,7 @@ export type Database = {
           ended_at: string | null
           id: string
           parley: boolean
+          placing_phase: boolean
           round: number
           started_at: string
           status: string
@@ -860,6 +864,7 @@ export type Database = {
           ended_at?: string | null
           id?: string
           parley?: boolean
+          placing_phase?: boolean
           round?: number
           started_at?: string
           status?: string
@@ -870,6 +875,7 @@ export type Database = {
           ended_at?: string | null
           id?: string
           parley?: boolean
+          placing_phase?: boolean
           round?: number
           started_at?: string
           status?: string
@@ -2028,6 +2034,26 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      begin_battle: {
+        Args: { p_encounter_id: string }
+        Returns: {
+          campaign_id: string
+          current_id: string | null
+          ended_at: string | null
+          id: string
+          parley: boolean
+          placing_phase: boolean
+          round: number
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "encounters"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       bonus_attack: {
         Args: {
           p_attacker_id: string
@@ -2117,6 +2143,7 @@ export type Database = {
           ended_at: string | null
           id: string
           parley: boolean
+          placing_phase: boolean
           round: number
           started_at: string
           status: string
@@ -2136,6 +2163,7 @@ export type Database = {
           ended_at: string | null
           id: string
           parley: boolean
+          placing_phase: boolean
           round: number
           started_at: string
           status: string
@@ -2709,6 +2737,43 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      set_placed: {
+        Args: { p_combatant_id: string; p_placed: boolean }
+        Returns: {
+          action_used: boolean
+          art: string | null
+          attacks_made: number
+          bonus_used: boolean
+          campaign_id: string
+          character_id: string | null
+          condition_clocks: Json
+          conditions: string[]
+          created_at: string
+          disengaged: boolean
+          dodging: boolean
+          encounter_id: string
+          extra_feet: number
+          feet_moved: number
+          health: string
+          id: string
+          initiative: number | null
+          kind: string
+          placed: boolean
+          reach_ft: number
+          reaction_used: boolean
+          revealed: boolean
+          shown_name: string
+          speed: number
+          stance: string
+          tiebreak: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "combatants"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_shop_open: {
         Args: { p_open: boolean; p_shop_id: string }
         Returns: {
@@ -2798,6 +2863,7 @@ export type Database = {
           ended_at: string | null
           id: string
           parley: boolean
+          placing_phase: boolean
           round: number
           started_at: string
           status: string

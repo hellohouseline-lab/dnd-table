@@ -87,11 +87,19 @@ export function TurnOrder({
         </h2>
         <span className={styles.round}>Round {fight.encounter.round}</span>
       </div>
-      {waiting.length > 0 && (
+      {fight.encounter.placing ? (
         <p className={styles.hint}>
-          Waiting for initiative from {waiting.map((r) => r.name).join(', ')}. The first turn starts by itself once
-          everyone has rolled, or press Next turn to start now.
+          Placing the miniatures: everyone drags theirs to where they start and rolls initiative.
+          {waiting.length > 0 && ` Still to roll: ${waiting.map((r) => r.name).join(', ')}.`} Press Start the battle
+          when the map looks right.
         </p>
+      ) : (
+        waiting.length > 0 && (
+          <p className={styles.hint}>
+            Waiting for initiative from {waiting.map((r) => r.name).join(', ')}. The first turn starts by itself once
+            everyone has rolled, or press Next turn to start now.
+          </p>
+        )
       )}
       {aiming && (
         <p className={styles.aimHint}>Pick a target for {aiming.label}: click a name below, or a miniature.</p>
@@ -147,6 +155,12 @@ export function TurnOrder({
                     >
                       {row.character && !compact ? 'Roll for them' : 'Roll'}
                     </button>
+                  ) : fight.encounter.placing && row.character ? (
+                    row.combatant.placed ? (
+                      <span className={styles.placed}>✓ In place</span>
+                    ) : (
+                      'Placing'
+                    )
                   ) : row.status ? (
                     STATUS_WORDS[row.status]
                   ) : row.combatant.stance !== 'fighting' ? (
@@ -268,7 +282,9 @@ export function ActingNow({
       <section className={cx(styles.actingCard, className)} aria-label="Acting now">
         <div className={styles.eyebrow}>Acting now</div>
         <p className={styles.hint}>
-          Nobody yet. The first turn starts once everyone has initiative, or press Next turn.
+          {controls.fight?.encounter.placing
+            ? 'Nobody yet: everyone is placing their miniature. Press Start the battle when the map looks right.'
+            : 'Nobody yet. The first turn starts once everyone has initiative, or press Next turn.'}
         </p>
       </section>
     )

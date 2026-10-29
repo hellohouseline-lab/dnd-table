@@ -26,6 +26,7 @@ set local request.jwt.claims = '{"sub": "d1000000-0000-4000-8000-000000000001", 
 select set_config('test.encounter', (select id::text from public.start_fight(
   current_setting('test.campaign')::uuid,
   array(select id from public.characters where campaign_id = current_setting('test.campaign')::uuid), null)), true);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 
 -- A drop-in joins mid-fight.
 set local request.jwt.claims = '{"sub": "d1000000-0000-4000-8000-000000000003", "role": "authenticated"}';

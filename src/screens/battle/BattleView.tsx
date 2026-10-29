@@ -483,13 +483,15 @@ export function BattleView({
         <h1 className={styles.title}>{campaignName}</h1>
         <span className={styles.battle}>
           Battle · Round {fight.encounter.round}
-          {parley
-            ? ' · Parley'
-            : acting
-              ? ` · ${acting.name} is acting`
-              : fight.encounter.currentId
-                ? ''
-                : ' · waiting for initiative'}
+          {fight.encounter.placing
+            ? ' · Placing the miniatures'
+            : parley
+              ? ' · Parley'
+              : acting
+                ? ` · ${acting.name} is acting`
+                : fight.encounter.currentId
+                  ? ''
+                  : ' · waiting for initiative'}
         </span>
         <span className={styles.spacer} />
         {request && !showResults && (
@@ -573,8 +575,14 @@ export function BattleView({
             />
           )}
           <div className={styles.foot}>
-            <button type="button" className={styles.next} onClick={next} title="N" disabled={parley}>
-              Next turn
+            <button
+              type="button"
+              className={styles.next}
+              onClick={next}
+              title={fight.encounter.placing ? 'N: placing is done, and the first turn starts' : 'N'}
+              disabled={parley}
+            >
+              {fight.encounter.placing ? 'Start the battle' : 'Next turn'}
             </button>
             <button
               type="button"
@@ -608,6 +616,21 @@ export function BattleView({
             }}
             rolling={table.rolling}
           />
+          {fight.encounter.placing && (
+            <div className={styles.placing} role="status">
+              <span>
+                <strong>Placing the miniatures.</strong> Drag the monsters to where they start; players drag theirs and
+                roll initiative.{' '}
+                {rows
+                  .filter((r) => r.character)
+                  .map((r) => `${r.name} ${r.combatant.placed ? '✓' : '…'}`)
+                  .join(' · ')}
+              </span>
+              <button type="button" className={styles.aimingGo} onClick={next}>
+                Start the battle
+              </button>
+            </div>
+          )}
           {parley && <ParleyBanner onBack={() => setParley(false)} onEnd={endFight} />}
           <TalkCards
             waiting={waitingTalks(controls.events)}

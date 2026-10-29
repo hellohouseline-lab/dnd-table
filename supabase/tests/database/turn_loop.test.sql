@@ -35,6 +35,7 @@ select throws_ok(
   '42501', 'Only the DM starts a fight',
   'Players can''t start a fight'
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 
 set local request.jwt.claims = '{"sub": "dddddddd-0000-4000-8000-000000000001", "role": "authenticated"}';
 select throws_ok(
@@ -42,12 +43,14 @@ select throws_ok(
   '22023', null,
   'Only a map from the table''s own library'
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 select set_config(
   'test.encounter',
   (select id::text from public.start_fight(
     current_setting('test.campaign')::uuid, array[current_setting('test.fighter')::uuid], current_setting('test.map')::uuid)),
   true
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 select set_config('test.thorin', (select id::text from public.combatants where kind = 'character'), true);
 select is((select count(*)::int from public.combatants), 1, 'Starting a fight puts the party in the turn order');
 select is((select speed from public.combatants), 25::smallint, '...with their speed from the sheet');
@@ -61,6 +64,7 @@ select throws_ok(
   '23505', null,
   'One fight at a time'
 );
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 
 -- A goblin, as the DM's screen adds one, and everyone's miniature.
 insert into public.combatants (encounter_id, campaign_id, kind, shown_name, tiebreak, speed)

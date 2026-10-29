@@ -62,7 +62,15 @@ function talkFight() {
  * #/dev/battle: Thorin's turn against two goblins. #/dev/battle/talk: the same, with Thorin's
  * Intimidation waiting on a talk card, and Goblin B nearly dead (the morale nudge).
  */
-export function BattlePreview({ talk = false, late = false }: { talk?: boolean; late?: boolean }) {
+export function BattlePreview({
+  talk = false,
+  late = false,
+  placing = false,
+}: {
+  talk?: boolean
+  late?: boolean
+  placing?: boolean
+}) {
   // Thorin has a portrait, to see it in his token.
   const [characters, setCharacters] = useState<Character[]>(() =>
     sampleCharacters.map((c, i) => (i === 0 ? { ...c, portraitPath: previewPortrait() } : c)),
@@ -79,8 +87,17 @@ export function BattlePreview({ talk = false, late = false }: { talk?: boolean; 
   const [{ fight: fightStart, events }] = useState(() =>
     talk
       ? talkFight()
-      : // #/dev/battle/late: Elowen arrived after the fight started.
-        { fight: sampleFight(late ? sampleCharacters.slice(0, 1) : sampleCharacters), events: [] },
+      : placing
+        ? // #/dev/battle/placing: the fight has just started, and everyone is placing their miniature.
+          (() => {
+            const sample = sampleFight(sampleCharacters)
+            return {
+              fight: { ...sample, encounter: { ...sample.encounter, currentId: null, placing: true } },
+              events: [],
+            }
+          })()
+        : // #/dev/battle/late: Elowen arrived after the fight started.
+          { fight: sampleFight(late ? sampleCharacters.slice(0, 1) : sampleCharacters), events: [] },
   )
   const fight = usePreviewFight(fightStart, { characters, onCharacter: update, onArea: areas.fromSpell, events })
   // Made-up players answer a roll the DM asks for a moment after it's sent.

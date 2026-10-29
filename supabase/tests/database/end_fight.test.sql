@@ -29,6 +29,7 @@ select set_config('test.thorin', (select id::text from public.characters), true)
 set local request.jwt.claims = '{"sub": "cdcdcdcd-0000-4000-8000-000000000001", "role": "authenticated"}';
 select set_config('test.encounter', (select id::text from public.start_fight(
   current_setting('test.campaign')::uuid, array[current_setting('test.thorin')::uuid], current_setting('test.map')::uuid)), true);
+select public.begin_battle(e.id) from public.encounters e where e.placing_phase and e.campaign_id in (select m.campaign_id from public.campaign_members m where m.user_id = auth.uid() and m.role = 'dm');
 insert into public.combatants (encounter_id, campaign_id, kind, shown_name)
   values (current_setting('test.encounter')::uuid, current_setting('test.campaign')::uuid, 'monster', 'Goblin A');
 insert into public.tokens (campaign_id, map_id, character_id, x, y)

@@ -113,6 +113,8 @@ type YourTurnProps = {
   onEndTurn: () => void
   /** The heading instead of "Your turn" (the DM playing a monster: "Goblin 2's turn"). */
   title?: string
+  /** Before the fight: placing your miniature, and whether you've said I'm in place. */
+  placing?: { placed: boolean; onPlaced: (placed: boolean) => void } | null
 }
 
 /**
@@ -132,6 +134,7 @@ export function YourTurn({
   onAct,
   onEndTurn,
   title: heading,
+  placing = null,
 }: YourTurnProps) {
   const attacks = attacksLeft(turn, perAction)
   const free = actionFree(turn)
@@ -181,11 +184,35 @@ export function YourTurn({
     dodge: 'Dodge',
   }
   const title =
-    heading ?? (myTurn ? 'Your turn' : started ? 'Waiting for your turn' : 'Waiting for everyone’s initiative')
+    heading ??
+    (placing
+      ? 'Place your miniature'
+      : myTurn
+        ? 'Your turn'
+        : started
+          ? 'Waiting for your turn'
+          : 'Waiting for everyone’s initiative')
   return (
     <section className={styles.thisTurn} aria-label="This turn">
       <div className={styles.thisTurnTitle}>{title}</div>
-      {!started && <p className={styles.placing}>Put your miniature where your character is standing.</p>}
+      {placing ? (
+        <div className={styles.placingBox}>
+          <p className={styles.placing}>
+            Drag your miniature to where your character is standing, then say you&rsquo;re in place. The DM starts the
+            fight when everyone is ready.
+          </p>
+          <button
+            type="button"
+            className={cx(styles.inPlace, placing.placed && styles.inPlaceDone)}
+            aria-pressed={placing.placed}
+            onClick={() => placing.onPlaced(!placing.placed)}
+          >
+            {placing.placed ? '✓ You’re in place' : 'I’m in place'}
+          </button>
+        </div>
+      ) : (
+        !started && <p className={styles.placing}>Put your miniature where your character is standing.</p>
+      )}
       <ul className={styles.turnRows}>
         <li className={styles.turnRow}>
           <span className={cx(styles.dot, styles.gold, turn.actionUsed && attacks === 0 && styles.dotUsed)} />

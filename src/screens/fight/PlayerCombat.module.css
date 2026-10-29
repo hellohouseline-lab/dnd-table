@@ -481,3 +481,29 @@
   vertical-align: middle;
 }
 
+
+/* Before the fight: I'm in place. */
+.placingBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inPlace {
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.inPlaceDone {
+  background: none;
+  color: var(--pass);
+  border-color: var(--pass);
+}
