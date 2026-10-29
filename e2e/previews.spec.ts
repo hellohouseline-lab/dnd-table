@@ -1442,7 +1442,9 @@ test('play as the monsters: the DM runs goblins from their cards, repeats an att
   const panel = page.getByRole('region', { name: 'Playing the monster' })
   await expect(panel).toContainText('Goblin A’s turn')
   await expect(panel).toContainText('30 of 30 ft')
-  await expect(panel).toContainText('HP 7/7')
+  await expect(panel).toContainText(/Hit points\s*7 \/ 7/)
+  if (process.env.MONSTER_SHOT) await page.screenshot({ path: process.env.MONSTER_SHOT })
+  await expect(page.getByText('Goblin A’s turn · Round 1')).toBeVisible()
   // Its cards, like a player's hand: Scimitar, then a target.
   const cards = page.getByRole('group', { name: 'Goblin A’s cards' })
   await cards.getByRole('button', { name: 'Scimitar (action)' }).click()
@@ -1453,6 +1455,10 @@ test('play as the monsters: the DM runs goblins from their cards, repeats an att
   const feed = page.getByRole('region', { name: 'What happened' })
   await expect(feed).toContainText(/Goblin A (hits|misses) Thorin Ironfist with Scimitar/)
   await expect(cards.getByRole('button', { name: 'Scimitar (action), used' })).toBeVisible()
+  // Nimble Escape, from its Bonus actions tab, like a player's.
+  await cards.getByRole('button', { name: 'Bonus actions' }).click()
+  await cards.getByRole('button', { name: 'Disengage (bonus action)' }).click()
+  await expect(cards.getByRole('button', { name: 'Disengage (bonus action), used' })).toBeVisible()
   // The next goblin: Same for the rest.
   await panel.getByRole('button', { name: 'End turn' }).click()
   await expect(panel).toContainText('Goblin B’s turn')
@@ -1483,6 +1489,7 @@ test('play as the monsters: a dragon breathes on whoever the DM picks, who save 
   await expect(panel).toContainText('Young Black Dragon A’s turn')
   await expect(panel).toContainText('The dragon makes three attacks')
   const cards = page.getByRole('group', { name: 'Young Black Dragon A’s cards' })
+  await cards.getByRole('button', { name: 'Abilities' }).click()
   await expect(cards).toContainText('DC 14 Dexterity save')
   // Point the line at Elowen's miniature and click; then make sure she's among those caught.
   await cards.getByRole('button', { name: 'Acid Breath (action)' }).click()

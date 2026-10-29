@@ -1,6 +1,3 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { cx } from '../../components/cx.ts'
-import { Icon, type IconName } from '../../components/Icon.tsx'
 import type { AttackEntry, Character, FeatureEntry, InventoryItem } from '../../rules/character.ts'
 import type { Usable } from '../../rules/items.ts'
 import { coveredFeatures } from '../../rules/bonusActions.ts'
@@ -13,17 +10,9 @@ import type { BonusMove } from '../../rules/turn.ts'
 import type { BonusChoice } from '../fight/BonusReady.tsx'
 import { SlotPips } from '../fight/SpellParts.tsx'
 import { levelWords, srdSpellFor } from '../fight/useCasting.ts'
-import { CardInfo } from './CardPanel.tsx'
-import {
-  attackDetails,
-  featureDetails,
-  moveDetails,
-  spellDetails,
-  weaponIcon,
-  type CardDetails,
-} from './cardDetails.ts'
+import { CardHand, type HandCard } from './CardHand.tsx'
+import { attackDetails, featureDetails, moveDetails, spellDetails, weaponIcon } from './cardDetails.ts'
 import type { RollMode } from '../../rules/dice.ts'
-import styles from './Hand.module.css'
 
 /** A caster's spells for the hand: the SRD list, why one can't be cast now (or null), and casting one. */
 export type HandSpells = {
@@ -63,25 +52,6 @@ type HandProps = {
   className?: string
 }
 
-type Card = {
-  key: string
-  tag: string
-  tone: 'action' | 'feature' | 'spell' | 'bonus' | 'roll'
-  icon: IconName
-  name: string
-  detail: string
-  why: string | null
-  info: CardDetails
-  spent: boolean
-  /** A concentration spell: a C seal on the card. */
-  concentration?: boolean
-  play: () => void
-}
-
-type CardSet = 'weapons' | 'spells' | 'bonus' | 'checks' | 'items'
-
-const MOST_CARDS = 9
-
 const MOVE_WORDS: Record<BonusMove, [string, string]> = {
   dash: ['Dash', 'Move your speed again this turn.'],
   disengage: ['Disengage', 'Moving away draws no opportunity attacks this turn.'],
@@ -113,17 +83,6 @@ export function Hand({
   className,
 }: HandProps) {
   const sheet = deriveSheet(character)
-  const [showing, setShowing] = useState<CardSet>('weapons')
-  // Hovering on a card for 2 seconds shows what it does.
-  const [about, setAbout] = useState<string | null>(null)
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  useEffect(() => () => clearTimeout(timer.current), [])
-  const hover = (key: string | null) => {
-    clearTimeout(timer.current)
-    setAbout(null)
-    if (key) timer.current = setTimeout(() => setAbout(key), 2000)
-  }
-
   // In a fight, a bonus action card can't be played once the bonus action is gone, or off your turn.
   const bonusWhy = turn
     ? turn.bonusUsed
@@ -140,7 +99,7 @@ export function Hand({
       return spell ? [spell] : []
     })
     .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name))
-  const spellCard = (spell: SrdSpell): Card => {
+  const spellCard = (spell: SrdSpell): HandCard => {
     const bonus = castingCost(spell.castingTime) === 'bonus'
     const why = spells?.whyNot(spell) ?? null
     return {
@@ -158,7 +117,7 @@ export function Hand({
     }
   }
 
-  const attackCard = (entry: AttackEntry, offhand: boolean): Card => {
+  const attackCard = (entry: AttackEntry, offhand: boolean): HandCard => {
     const result = sheet.attacks.find((a) => a.entry.id === entry.id)?.result
     const why = offhand && turn && !turn.offhand(entry) ? (bonusWhy ?? 'attack with your main weapon first') : null
     return {
@@ -175,7 +134,7 @@ export function Hand({
     }
   }
 
-  const featureCard = (feature: FeatureEntry): Card => {
+  const featureCard = (feature: FeatureEntry): HandCard => {
     const bonus = featureCost(feature.name, feature.description) === 'bonus'
     const why =
       feature.usesMax !== null && feature.usesLeft <= 0
@@ -197,7 +156,7 @@ export function Hand({
     }
   }
 
-  const moveCard = (move: BonusMove): Card => ({
+  const moveCard = (move: BonusMove): HandCard => ({
     key: `move-${move}`,
     tag: 'Bonus action',
     tone: 'bonus',
@@ -210,7 +169,7 @@ export function Hand({
     play: () => onBonusMove?.(move),
   })
 
-  const bonusAttackCard = (choice: BonusChoice & { why: string | null }): Card => {
+  const bonusAttackCard = (choice: BonusChoice & { why: string | null }): HandCard => {
     const why = choice.why ?? bonusWhy
     return {
       key: `bonus-${choice.entry.key}`,
@@ -257,7 +216,7 @@ export function Hand({
     ...(light.length >= 2 ? light.map((entry) => attackCard(entry, true)) : []),
   ]
 
-  const itemCard = ({ item, use, why }: { item: InventoryItem; use: Usable; why: string | null }): Card => ({
+  const itemCard = ({ item, use, why }: { item: InventoryItem; use: Usable; why: string | null }): HandCard => ({
     key: `item-${item.id}`,
     tag: 'Item',
     tone: 'action',
@@ -282,7 +241,7 @@ export function Hand({
   })
 
   // Rolls for the DM: the same size as every other card, so the hand doesn't jump.
-  const rollCard = (mode: RollMode, name: string, detail: string, what: string): Card => ({
+  const rollCard = (mode: RollMode, name: string, detail: string, what: string): HandCard => ({
     key: `roll-${mode}`,
     tag: 'Check',
     tone: 'roll',
@@ -313,87 +272,19 @@ export function Hand({
       ]
     : []
 
-  const all: { key: CardSet; name: string; cards: Card[] }[] = [
-    { key: 'weapons', name: 'Attacks and features', cards: weaponCards },
-    { key: 'spells', name: 'Spells', cards: spells ? spellCards : [] },
-    { key: 'bonus', name: 'Bonus actions', cards: bonusCards },
-    { key: 'items', name: 'Items', cards: items.map(itemCard) },
-    { key: 'checks', name: 'Checks', cards: checkCards },
-  ]
-  const sets = all.filter((s) => s.cards.length > 0)
-  // A caster with nothing else to play starts on their spells.
-  const set = sets.find((s) => s.key === showing) ?? sets[0]
-  if (!set) return null
-  const cards = set.cards.slice(0, MOST_CARDS)
-  const middle = (cards.length - 1) / 2
-
   return (
-    <div className={cx(styles.wrap, className)}>
-      {sets.length > 1 && (
-        <div className={styles.sets}>
-          <div className={styles.tabs} role="group" aria-label="Which cards">
-            {sets.map((s) => (
-              <button
-                key={s.key}
-                type="button"
-                className={cx(styles.tab, s.key === 'bonus' && styles.tabBonus, set.key === s.key && styles.tabOn)}
-                aria-pressed={set.key === s.key}
-                onClick={() => setShowing(s.key)}
-              >
-                {s.name}
-                {s.key === 'bonus' && turn && (
-                  <span className={cx(styles.bonusDot, turn.bonusUsed && styles.bonusDotUsed)} aria-hidden="true" />
-                )}
-              </button>
-            ))}
-          </div>
-          {set.key === 'spells' && <SlotPips spellcasting={character.spellcasting} />}
-        </div>
-      )}
-      <div className={styles.hand} aria-label="Your hand">
-        {cards.map((card, i) => {
-          const offset = i - middle
-          return (
-            // The wrapper hears the mouse even when the card is greyed out.
-            <span
-              key={card.key}
-              className={styles.slot}
-              onMouseEnter={() => hover(card.key)}
-              onMouseLeave={() => hover(null)}
-            >
-              <button
-                type="button"
-                className={cx(styles.card, card.tone === 'bonus' && styles.bonusCard, card.spent && styles.spent)}
-                style={{ '--rot': `${offset * 3}deg`, '--lift': `${offset * offset * 1.5}px` } as CSSProperties}
-                disabled={disabled || card.spent}
-                onClick={() => {
-                  hover(null)
-                  card.play()
-                }}
-              >
-                <span className={cx(styles.tag, styles[card.tone])}>{card.tag}</span>
-                {card.concentration && (
-                  <span className={styles.concSeal} title="Concentration: one at a time, and damage means a save">
-                    C<span className={styles.hidden}> (concentration)</span>
-                  </span>
-                )}
-                <span className={styles.art}>
-                  <Icon name={card.icon} size={26} />
-                </span>
-                <span className={styles.name}>{card.name}</span>
-                <span className={styles.detail}>{card.detail}</span>
-              </button>
-            </span>
-          )
-        })}
-      </div>
-      {cards
-        .filter((card) => card.key === about)
-        .map((card) => (
-          <div key={card.key} className={styles.info}>
-            <CardInfo details={card.info} why={card.why} />
-          </div>
-        ))}
-    </div>
+    <CardHand
+      className={className}
+      disabled={disabled}
+      bonusUsed={turn ? turn.bonusUsed : null}
+      sets={[
+        { key: 'weapons', name: 'Attacks and features', cards: weaponCards },
+        { key: 'spells', name: 'Spells', cards: spells ? spellCards : [] },
+        { key: 'bonus', name: 'Bonus actions', cards: bonusCards, bonus: true },
+        { key: 'items', name: 'Items', cards: items.map(itemCard) },
+        { key: 'checks', name: 'Checks', cards: checkCards },
+      ]}
+      extra={(key) => (key === 'spells' ? <SlotPips spellcasting={character.spellcasting} /> : null)}
+    />
   )
 }

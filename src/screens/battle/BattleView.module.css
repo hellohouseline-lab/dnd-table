@@ -219,6 +219,12 @@
   flex: 0 0 auto;
 }
 
+/* Playing a monster: the gold banner a player gets on their turn. */
+.turnBanner {
+  display: flex;
+  justify-content: center;
+}
+
 .noMap {
   flex: 1;
   min-height: 0;
