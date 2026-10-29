@@ -35,6 +35,8 @@ export type TableCall = {
   setCamera: (on: boolean) => void
   setMic: (on: boolean) => void
   setDevices: (devices: Devices) => void
+  /** How loud your microphone comes across to everyone, in percent. Reconnects your camera for a moment. */
+  setMicLevel: (level: number) => void
   /** DM: a new camera password for the table. */
   renewCameraKey: () => Promise<void>
 }

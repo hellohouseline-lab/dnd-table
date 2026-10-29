@@ -3,6 +3,11 @@
 Live site: https://hellohouseline-lab.github.io/dnd-table/
 
 ## Done
+- **P1a: scene fades and voices (live).** From `docs/P1_PLAN.md`, approved by Matt with decisions 84 to 95 as recommended.
+  - **Scenes fade through.** When the picture on stage changes, or a battle map goes up or down, the new one fades in over the old one in 1.5 seconds. The fade starts once the new picture has loaded, so nobody sees a blank. This happens on every player's screen and on Screen 2's "What everyone sees". The piece (`src/components/SceneFade.tsx`) is ready for the stream overlay.
+  - **Music crossfades in 2 seconds** (it was 2.5) when the track changes.
+  - **Voices:** under every other person's camera, the volume now always shows as a thin bar with its percentage. VDO.Ninja won't play a voice louder than 100% where it's heard (its code caps it), so the boost is decision 91's second choice: **Your microphone, for everyone** on your own tile, from 50% to 200%. It's VDO.Ninja's `audiogain` on the sending link, saved in that browser. Changing it reconnects your camera for a moment, so it waits until you let go of the slider.
+  - Tests: 504 unit (2 new), 77 preview browser tests (1 new).
 - **Sound fixes (live).** Sounds belong to a table, so a new table started with none: Screen 2 now has **Sounds from another of your tables: Bring them in**, which copies another table's music, ambience and effects in storage (skipping any this table has, keeping effect keys where free). And with two tables open in one browser, only the table you last clicked into plays its sound (tabs of one table already shared one player).
 - **The Join screen's character cards (live).** The old "Forge a new character, arrives later" card is gone. Before a player has a character, **Your character** explains the step-by-step builder (Create your character), and **Already have a character sheet?** offers the plain form (Type in your sheet). Once they have one, only their character card shows.
 - **Players never see a DC (live).** Matt's call: Quick rolls, Ask for a roll and planned scene rolls never tell players the number (the Tell players the number tick is gone, and rolls planned or pasted as "open DC" are kept secret too); the server still checks pass or fail. A player's own condition with a save each turn no longer shows its DC either. Monsters' armour class was already never shown to players.
@@ -357,7 +362,8 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Approve the P1 plan** (`docs/P1_PLAN.md`): spells for players on the Powers tab, Play as the monsters, voice volume always shown with a boost, and scene fades. Decisions 84 to 95.
+- **Try P1a** on the night: Go here between two scenes with a player watching. If a player is too quiet even at 100% on your screen, ask them to turn up **Your microphone** on their own camera tile.
+- **Play as the monsters' key (P1c):** M already mutes your microphone, so the switch needs another key. Claude suggests **P** (for Play as the monsters) unless Matt prefers another.
 - **Save Death Pit of Moloch as a preset** (refresh first):
   1. On Screen 1, open the **Story** tab and press **Paste your notes**.
   2. Open `private/campaigns/death-pit-of-moloch.md` (in the `dnd-table-starter-pack` folder), copy everything, and paste it into the box.

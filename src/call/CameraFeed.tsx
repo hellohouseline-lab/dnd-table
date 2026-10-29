@@ -6,10 +6,13 @@ import type { CallPresence } from '../live/campaignChannel.ts'
 import { useTableCall, type TableCall } from './callContext.ts'
 import styles from './Call.module.css'
 import { useLocalMedia } from './devices.ts'
-import { tellFrame, VDO_ALLOW, vdoAction, VDO_ORIGIN, watchUrl } from './vdoLinks.ts'
+import { MIC_LEVEL_MAX, MIC_LEVEL_MIN, tellFrame, VDO_ALLOW, vdoAction, VDO_ORIGIN, watchUrl } from './vdoLinks.ts'
 
 /** How much of someone's upload one camera tile may use, in kilobits a second. */
 const TILE_BITRATE = 300
+
+/** Changing your microphone level reconnects your camera, so it waits until you stop moving the slider. */
+const MIC_LEVEL_SETTLE_MS = 700
 
 type CameraFeedProps = {
   userId: string
@@ -27,7 +30,9 @@ type CameraFeedProps = {
 export function CameraFeed({ userId, cameraId, name, portraitPath, online, you }: CameraFeedProps) {
   const call = useTableCall()
   if (!call) {
-    return <Placeholder portraitPath={portraitPath} name={name} label={online ? 'Here' : 'Not here yet'} here={online} />
+    return (
+      <Placeholder portraitPath={portraitPath} name={name} label={online ? 'Here' : 'Not here yet'} here={online} />
+    )
   }
   if (you) return <OwnFeed call={call} portraitPath={portraitPath} name={name} />
   const presence = call.calls.get(userId)
@@ -97,7 +102,12 @@ function OwnFeed({ call, portraitPath, name }: { call: TableCall; portraitPath: 
           label={call.problem ? 'Couldn’t start' : 'Not in the call'}
           problem={Boolean(call.problem)}
         >
-          <button type="button" className={styles.join} title={call.problem ?? undefined} onClick={() => void call.join()}>
+          <button
+            type="button"
+            className={styles.join}
+            title={call.problem ?? undefined}
+            onClick={() => void call.join()}
+          >
             Join voice and camera
           </button>
         </Placeholder>
@@ -116,6 +126,7 @@ function OwnFeed({ call, portraitPath, name }: { call: TableCall; portraitPath: 
         <Placeholder portraitPath={portraitPath} name={name} label={label} problem={call.status === 'failed'} />
       )}
       {call.needsClick && <div className={styles.notice}>Click anywhere to hear everyone</div>}
+      {call.devices.microphone !== null && <MicLevel call={call} />}
       <div className={cx(styles.tools, (!call.mic || call.status === 'failed') && styles.toolsShown)}>
         <button
           type="button"
@@ -149,6 +160,46 @@ function OwnFeed({ call, portraitPath, name }: { call: TableCall; portraitPath: 
           <Icon name="leave" size={15} />
         </button>
       </div>
+    </div>
+  )
+}
+
+/**
+ * Your microphone level, on your own tile: turns your voice up (to 200%) or down for everyone.
+ * VDO.Ninja won't play anyone louder than 100% where they're heard, so a quiet voice is fixed here.
+ */
+function MicLevel({ call }: { call: TableCall }) {
+  const saved = call.devices.micLevel ?? 100
+  const [draft, setDraft] = useState<number | null>(null)
+  const settle = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => () => clearTimeout(settle.current ?? undefined), [])
+  const level = draft ?? saved
+
+  function change(next: number) {
+    setDraft(next)
+    clearTimeout(settle.current ?? undefined)
+    settle.current = setTimeout(() => {
+      setDraft(null)
+      if (next !== saved) call.setMicLevel(next)
+    }, MIC_LEVEL_SETTLE_MS)
+  }
+
+  const words = 'Your microphone, for everyone. Your camera reconnects for a moment when you change it.'
+  return (
+    <div className={cx(styles.tools, styles.volumeTools, styles.micLevel)} title={words}>
+      <Icon name="mic" size={14} />
+      <input
+        className={styles.volume}
+        type="range"
+        min={MIC_LEVEL_MIN}
+        max={MIC_LEVEL_MAX}
+        step={10}
+        value={level}
+        aria-label="Your microphone, for everyone"
+        aria-valuetext={`${level}%`}
+        onChange={(event) => change(Number(event.target.value))}
+      />
+      <span className={cx(styles.volumePercent, level > 100 && styles.boosted)}>{level}%</span>
     </div>
   )
 }
@@ -215,9 +266,11 @@ function RemoteFeed({ call, userId, cameraId, cameraKey, presence, portraitPath,
             step={0.05}
             value={volume}
             aria-label={`${name}’s voice, on your screen`}
-            title={`${name}’s voice, on your screen`}
+            aria-valuetext={`${Math.round(volume * 100)}%`}
+            title={`${name}’s voice, on your screen. Too quiet even at 100%? Ask them to turn up their microphone on their own camera.`}
             onChange={(event) => call.setVolume(userId, Number(event.target.value))}
           />
+          <span className={styles.volumePercent}>{Math.round(volume * 100)}%</span>
         </div>
       )}
     </div>

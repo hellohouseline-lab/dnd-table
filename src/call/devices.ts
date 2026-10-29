@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { DeviceChoice, Devices } from './vdoLinks.ts'
+import { clampMicLevel, type DeviceChoice, type Devices } from './vdoLinks.ts'
 
 // Your camera and microphone in this browser: which ones you picked (kept between visits), the list
 // to pick from, your own camera for your tile and the camera check, and how loud your microphone is.
@@ -16,7 +16,9 @@ export function loadDevices(): Devices {
   try {
     const saved = JSON.parse(window.localStorage.getItem(DEVICES_KEY) ?? 'null') as Partial<Devices> | null
     if (saved && isChoice(saved.camera) && isChoice(saved.microphone)) {
-      return { camera: saved.camera, microphone: saved.microphone }
+      const devices: Devices = { camera: saved.camera, microphone: saved.microphone }
+      if (typeof saved.micLevel === 'number') devices.micLevel = clampMicLevel(saved.micLevel)
+      return devices
     }
   } catch {
     // Nothing saved, or a private window that refuses; use the computer's own choice.
@@ -37,8 +39,9 @@ export type DeviceList = { cameras: string[]; microphones: string[] }
 /** The names of the cameras and microphones. Browsers give names only once you've allowed them. */
 export async function listDevices(): Promise<DeviceList> {
   const all = (await navigator.mediaDevices?.enumerateDevices?.()) ?? []
-  const names = (kind: MediaDeviceKind) =>
-    [...new Set(all.filter((d) => d.kind === kind && d.label && d.deviceId !== 'default').map((d) => d.label))]
+  const names = (kind: MediaDeviceKind) => [
+    ...new Set(all.filter((d) => d.kind === kind && d.label && d.deviceId !== 'default').map((d) => d.label)),
+  ]
   return { cameras: names('videoinput'), microphones: names('audioinput') }
 }
 
