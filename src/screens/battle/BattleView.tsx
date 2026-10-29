@@ -50,6 +50,7 @@ import { actionFree, attacksLeft } from '../../rules/turn.ts'
 import type { TurnAction } from '../../live/combat.ts'
 import { turnLimits } from '../fight/fightRows.ts'
 import { MonsterHand, MonsterPanel } from './MonsterTurn.tsx'
+import { TurnBanner } from '../fight/PlayerCombat.tsx'
 import styles from './BattleView.module.css'
 
 type SaveCard = Extract<MonsterCard, { kind: 'save' }>
@@ -607,6 +608,11 @@ export function BattleView({
         </div>
 
         <div className={styles.centre}>
+          {playRow && (
+            <div className={styles.turnBanner}>
+              <TurnBanner round={fight.encounter.round} mine acting={null} who={playRow.name} />
+            </div>
+          )}
           <ChanceStrip
             chances={chances}
             onStrike={strikeFor}
@@ -846,6 +852,8 @@ export function BattleView({
             <MonsterHand
               className={styles.monsterHand}
               name={playRow.name}
+              monster={actingMonster}
+              onAct={(what) => actFor(playRow, what)}
               cards={cards}
               turn={{
                 actionFree: actionFree(playRow.combatant.turn),

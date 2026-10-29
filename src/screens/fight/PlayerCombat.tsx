@@ -84,8 +84,24 @@ export function InitiativeRibbon({ rows, picking = null, yours = null }: RibbonP
   )
 }
 
-export function TurnBanner({ round, mine, acting }: { round: number; mine: boolean; acting: string | null }) {
-  if (mine) return <div className={styles.banner}>Your turn · Round {round}</div>
+/** The gold banner on your turn ("Your turn · Round 2"), or the DM's when playing a monster ("Goblin A’s turn"). */
+export function TurnBanner({
+  round,
+  mine,
+  acting,
+  who,
+}: {
+  round: number
+  mine: boolean
+  acting: string | null
+  who?: string
+}) {
+  if (mine)
+    return (
+      <div className={styles.banner}>
+        {who ? `${who}’s turn` : 'Your turn'} · Round {round}
+      </div>
+    )
   return (
     <div className={styles.roundChip}>
       Round {round}
