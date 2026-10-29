@@ -700,3 +700,50 @@
   justify-content: space-between;
   gap: 10px;
 }
+
+/* Changing how many spell slots there are, and the spell counts for the class. */
+.slotSteps {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.slotStep {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.slotStep:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.slotStep:disabled {
+  opacity: 0.4;
+}
+
+.slotActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spellCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.over {
+  color: var(--fail-light);
+  font-weight: 700;
+}

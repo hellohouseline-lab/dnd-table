@@ -1,6 +1,6 @@
 # P1 plan: spells for players, the DM plays the monsters, voices and scene fades
 
-Written 28 October 2026 from Matt's notes after a test session. **Approved 29 October** with decisions 84 to 95 as recommended. **P1a is built** (see the notes under section 3 and 4). The two bugs from the same notes are already fixed and live: sound effects (each table keeps its own sounds; **Bring them in** copies another table's) and music playing in two tables' tabs at once.
+Written 28 October 2026 from Matt's notes after a test session. **Approved 29 October** with decisions 84 to 95 as recommended. **P1a and P1b are built** (see the notes under sections 1, 3 and 4). The two bugs from the same notes are already fixed and live: sound effects (each table keeps its own sounds; **Bring them in** copies another table's) and music playing in two tables' tabs at once.
 
 ## In plain words
 
@@ -32,6 +32,7 @@ Written 28 October 2026 from Matt's notes after a test session. **Approved 29 Oc
   - a **Reset to my class** link puts them back;
   - the DM sees and can change the same (decision 86).
 - **Who can change it:** players change only their own sheet; the DM can change anyone's. Nothing new on the server: the same character rules as now.
+- **Built (P1b):** slots change behind **Change how many slots**, so the usual ticks stay simple. A spell added above your level comes in unprepared.
 
 ## 2. The DM plays the monsters like a player
 
@@ -89,7 +90,7 @@ Nothing here sends anything new to players. The spellbook is the free rules plus
 84. **The order:** P1a first (small and visible on the night), then P1b, then P1c (the biggest). *Recommended.*
 85. **The spellbook shows every level and lets players add spells above their level for planning,** marked "from level N". *Recommended.* Or only spells they can cast now.
 86. **Slots can be changed by the player as well as the DM,** with Reset to my class. *Recommended.* Or only the DM changes how many slots there are.
-87. **Play as the monsters is a switch on the Battle screen, key M** (M already mutes your microphone, so it'll be **P** unless Matt says otherwise), remembered while the fight lasts. *Recommended.* Or a separate monsters screen.
+87. **Play as the monsters is a switch on the Battle screen, key M** (M already mutes your microphone, so Matt chose **P**), remembered while the fight lasts. *Recommended.* Or a separate monsters screen.
 88. **A monster's movement counts like a player's,** with "Move anyway?" past its speed. *Recommended.* Or the DM moves freely, as now.
 89. **Same for the rest** repeats the last attack for the next monster of the same kind. *Recommended.* Or leave it out.
 90. **Voice sliders always show under each camera.** *Recommended.* Or keep them on hover.

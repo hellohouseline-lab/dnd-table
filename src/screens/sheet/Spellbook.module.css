@@ -1,0 +1,160 @@
+/* The spellbook on the Powers tab: search, level buttons, and every spell with Add to my spells. */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search {
+  flex: 1 1 220px;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--chip-fill);
+  color: var(--text);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.scope {
+  height: 36px;
+  padding: 0 10px;
+  background: var(--chip-fill);
+  color: var(--text-2);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.level {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-fill);
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.level:hover {
+  border-color: var(--gold);
+}
+
+.levelOn {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--on-gold);
+  font-weight: 700;
+}
+
+.none {
+  margin: 0;
+  font-size: 15px;
+  color: var(--label);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.spell {
+  padding: 8px 12px;
+  background: var(--card-fill);
+  border: 1px solid var(--chip-border);
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.yours {
+  border-color: var(--gold-rule);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.name {
+  flex: 1;
+  min-width: 160px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.meta {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--label);
+}
+
+.prepared {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.prepared input {
+  accent-color: var(--gold);
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.have {
+  color: var(--gold-light);
+}
+
+.when {
+  color: var(--label);
+  font-style: italic;
+}
+
+.details summary {
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.details p {
+  margin: 6px 0 0;
+}
+
+.muted {
+  color: var(--label);
+  font-size: 14px;
+}
+
+.prose {
+  white-space: pre-line;
+  color: var(--text-2);
+  line-height: 1.5;
+}
