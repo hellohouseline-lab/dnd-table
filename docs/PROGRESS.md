@@ -395,6 +395,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
+- **Pick from the review** (`docs/UX_REVIEW.md`, 11 November): 17 improvements for players and the DM, from walking every screen at laptop sizes. Decisions 96 to 100; the recommendation is A1 to A6 before the one-shot.
 - **Try P1a** on the night: Go here between two scenes with a player watching. If a player is too quiet even at 100% on your screen, ask them to turn up **Your microphone** on their own camera tile.
 - **Try P1b:** open a spellcaster's sheet, Powers tab, and search the Spellbook.
 - **Try placing:** start a fight; everyone drags their miniature and presses I'm in place; you press **Start the battle**.
