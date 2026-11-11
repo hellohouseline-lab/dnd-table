@@ -31,11 +31,6 @@ import styles from './StageView.module.css'
 
 const FREE_STORAGE_BYTES = 1024 * 1024 * 1024
 
-const LATER: { label: string; title: string }[] = [
-  { label: 'Reveal hidden areas', title: 'Arrives in Phase 2' },
-  { label: 'Chapter title card', title: 'Arrives in Phase 2' },
-]
-
 export type LibraryActions = {
   uploadArt: (file: File, category: ArtCategory) => Promise<Asset>
   uploadSound: (file: File, details: SoundDetails) => Promise<Asset>
@@ -279,11 +274,6 @@ export function StageView({
             >
               Players move their own tokens: {stage.playersMoveTokens ? 'on' : 'off'}
             </button>
-            {LATER.map((later) => (
-              <button key={later.label} type="button" className={styles.control} disabled title={later.title}>
-                {later.label}
-              </button>
-            ))}
           </div>
           {(problem || controls.error || library.error) && (
             <Notice tone="error">{problem ?? controls.error ?? library.error}</Notice>

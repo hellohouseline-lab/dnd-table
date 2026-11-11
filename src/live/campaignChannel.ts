@@ -30,6 +30,10 @@ type LiveCampaign = {
   cameraKeyListeners: Set<() => void>
   /** Told to load everything again: after the connection comes back, or when the tab is looked at again. */
   catchUpListeners: Set<() => void>
+  /** Told when the live connection drops or comes back. */
+  linkListeners: Set<() => void>
+  /** The live connection isn't joined right now (lost, or still trying). */
+  down: boolean
   subscribedBefore: boolean
   users: number
   closeTimer?: ReturnType<typeof setTimeout>
@@ -126,6 +130,8 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
     pointerListeners: new Set(),
     cameraKeyListeners: new Set(),
     catchUpListeners: new Set(),
+    linkListeners: new Set(),
+    down: false,
     subscribedBefore: false,
     users: 1,
   }
@@ -218,7 +224,14 @@ function acquire(campaignId: string, userId: string): LiveCampaign | null {
 
   channel.on('broadcast', { event: 'camera-key' }, () => live.cameraKeyListeners.forEach((listener) => listener()))
 
+  const setDown = (down: boolean) => {
+    if (live.down === down) return
+    live.down = down
+    live.linkListeners.forEach((listener) => listener())
+  }
   channel.subscribe((status) => {
+    // Closed on purpose (this screen was left) isn't a lost connection.
+    setDown(status !== 'SUBSCRIBED' && open.get(campaignId) === live)
     if (status === 'SUBSCRIBED') {
       void channel.track(presencePayload(campaignId, live))
       // Changes made while the connection was down never arrive, so after a reconnect, load again.
@@ -241,6 +254,42 @@ function release(campaignId: string): void {
     open.delete(campaignId)
     void supabase?.removeChannel(live.channel)
   }, CLOSE_DELAY_MS)
+}
+
+/** How long the live link must be down before anyone is told: a blip isn't worth a warning. */
+const DOWN_AFTER_MS = 3000
+
+/**
+ * Whether this table's live connection has dropped (for a few seconds or more), or the browser says
+ * it's offline. The app catches up by itself when it's back; this is only so people know to wait.
+ */
+export function useLinkDown(campaignId: string, userId: string): boolean {
+  const [down, setDown] = useState(false)
+
+  useEffect(() => {
+    const live = acquire(campaignId, userId)
+    if (!live) return
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const update = () => {
+      clearTimeout(timer)
+      const lost = live.down || navigator.onLine === false
+      if (lost) timer = setTimeout(() => setDown(true), DOWN_AFTER_MS)
+      else setDown(false)
+    }
+    live.linkListeners.add(update)
+    window.addEventListener('online', update)
+    window.addEventListener('offline', update)
+    update()
+    return () => {
+      clearTimeout(timer)
+      live.linkListeners.delete(update)
+      window.removeEventListener('online', update)
+      window.removeEventListener('offline', update)
+      release(campaignId)
+    }
+  }, [campaignId, userId])
+
+  return down
 }
 
 /** The user ids of everyone with this campaign open right now, including you. */

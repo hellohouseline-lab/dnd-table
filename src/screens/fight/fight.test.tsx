@@ -136,7 +136,7 @@ describe('the player in a fight', () => {
       ),
     )
     expect(html).toMatch(
-      /Your turn Action Ready Bonus action Ready Reaction Ready Movement 10 of 25 ft Dash Disengage Dodge Hide Help Search Ready Use an object End turn/,
+      /Your turn Action Ready Bonus action Ready Reaction Ready Movement 10 of 25 ft Dash Disengage Dodge More actions Hide Help Search Ready Use an object End turn/,
     )
   })
 

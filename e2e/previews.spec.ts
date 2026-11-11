@@ -215,7 +215,9 @@ test('a player at 0 hit points rolls one death save on their turn', async ({ pag
   await page.goto('#/dev/table/dying')
   const saves = page.getByRole('region', { name: 'Death saves' })
   await expect(saves).toContainText('Dying')
-  await expect(page.getByRole('button', { name: 'Dash' })).toBeDisabled()
+  // At 0 hit points there's nothing to do but roll and end the turn: the actions aren't shown.
+  await expect(page.getByRole('button', { name: 'Dash' })).toHaveCount(0)
+  await expect(page.getByRole('region', { name: 'This turn' }).getByRole('button', { name: 'End turn' })).toBeVisible()
   await saves.getByRole('button', { name: 'Roll a death save' }).click()
   await expect(page.getByRole('region', { name: 'What happened' })).toContainText(
     /You (succeed on|fail|roll a 20 on) a (\w+ )?death save/,
@@ -1491,34 +1493,14 @@ test('play as the monsters: a dragon breathes on whoever the DM picks, who save 
   const cards = page.getByRole('group', { name: 'Young Black Dragon A’s cards' })
   await cards.getByRole('button', { name: 'Abilities' }).click()
   await expect(cards).toContainText('DC 14 Dexterity save')
-  // Point the line at Elowen's miniature and click; then make sure she's among those caught.
+  // Point the line and click; then make sure Elowen is among those caught.
   await cards.getByRole('button', { name: 'Acid Breath (action)' }).click()
   const status = page.getByRole('status').filter({ hasText: 'Acid Breath' })
   await expect(status).toContainText('point it with the mouse and click')
-  // The map fills the screen, so zoom out a little to bring Elowen out from under the turn order.
-  await page.mouse.move(740, 450)
-  for (let i = 0; i < 3; i += 1) {
-    await page.mouse.wheel(0, 100)
-    await page.waitForTimeout(50)
-  }
-  const at = await page.evaluate(() => {
-    const stage = (window as unknown as { Konva: { stages: KonvaStage[] } }).Konva.stages[0]
-    type KonvaStage = {
-      container: () => HTMLElement
-      find: (test: (n: KonvaNode) => boolean) => KonvaNode[]
-    }
-    type KonvaNode = {
-      getClassName: () => string
-      find: (selector: string) => { text: () => string }[]
-      getAbsolutePosition: () => { x: number; y: number }
-    }
-    const group = stage.find((n) => n.getClassName() === 'Group' && n.find('Text').some((t) => t.text() === 'EL'))[0]
-    const box = stage.container().getBoundingClientRect()
-    const point = group.getAbsolutePosition()
-    return { x: box.left + point.x, y: box.top + point.y }
-  })
-  await page.mouse.move(at.x, at.y)
-  await page.mouse.click(at.x, at.y)
+  // The map slides to keep the dragon in the clear, so point the line at the open middle of the
+  // map; anyone it misses is added from the turn order.
+  await page.mouse.move(740, 330)
+  await page.mouse.click(740, 330)
   await expect(status).toContainText('click everyone it catches')
   if (!(await status.textContent())?.includes('Elowen')) {
     await page.getByRole('region', { name: 'Turn order' }).getByRole('button', { name: 'Elowen', exact: true }).click()
@@ -1552,4 +1534,37 @@ test('placing: players place their miniature and say they are in place; the DM s
   // Whoever rolled highest goes first (Elowen's roll is random).
   await expect(page.getByText(/^Battle · Round 1 · (Thorin Ironfist|Elowen) is acting$/)).toBeVisible()
   await expect(page.getByRole('button', { name: 'Next turn' })).toBeVisible()
+})
+
+test('ready for the night: on a laptop screen End turn and Next turn stay in view, and the tab calls you back', async ({
+  page,
+}) => {
+  // A 1366 × 768 laptop, less the browser's own bars.
+  await page.setViewportSize({ width: 1366, height: 700 })
+  await page.goto('#/dev/table/fight')
+  const turn = page.getByRole('region', { name: 'This turn' })
+  const end = turn.getByRole('button', { name: 'End turn' })
+  await expect(end).toBeInViewport({ ratio: 1 })
+  await expect(page).toHaveTitle(/^● Your turn · /)
+  // The actions used less often are folded away, and still there.
+  await expect(turn.getByRole('button', { name: 'Search' })).toBeHidden()
+  await turn.getByText('More actions').click()
+  await expect(turn.getByRole('button', { name: 'Search' })).toBeVisible()
+  await expect(end).toBeInViewport({ ratio: 1 })
+  // Nothing that doesn't work yet is on a player's screen.
+  await expect(page.getByRole('navigation', { name: 'Panels' }).getByRole('button', { name: 'Lore' })).toHaveCount(0)
+  await end.click()
+  await expect(page).not.toHaveTitle(/Your turn/)
+
+  // Asked to roll: the tab says so.
+  await page.goto('#/dev/table/asked')
+  await expect(page).toHaveTitle(/^● Roll: Constitution saving throw · /)
+
+  // The DM, playing a monster on a 1440 × 900 screen: Next turn never scrolls away.
+  await page.setViewportSize({ width: 1440, height: 800 })
+  await page.goto('#/dev/battle')
+  await page.keyboard.press('p')
+  await page.getByRole('button', { name: 'Next turn' }).click()
+  await expect(page.getByRole('region', { name: 'Playing the monster' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Next turn' })).toBeInViewport({ ratio: 1 })
 })

@@ -120,7 +120,6 @@ const COMBAT_VERBS: VerbButton[] = [
   { label: 'Next turn', icon: 'play', title: 'The next in the turn order goes', verb: 'next', primary: true },
   { label: 'Ask for a roll', icon: 'd20', title: 'Ask everyone, some or one to roll', verb: 'ask' },
   { label: 'Add a monster', icon: 'sword', title: 'Add monsters from the SRD to this fight', verb: 'monster' },
-  { label: 'Too hard? Rebalance', icon: 'star', title: 'Arrives in Phase 2' },
   {
     label: 'End fight',
     icon: 'moon',

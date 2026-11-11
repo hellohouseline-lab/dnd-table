@@ -1,6 +1,10 @@
 # A look through everything: what would make it better for players and the DM
 
-Written 11 November 2026, ten days before the test one-shot (21 to 22 November). **Nothing here is built. It waits for Matt to pick.**
+Written 11 November 2026, ten days before the test one-shot (21 to 22 November). **A1 to A6 are built (milestone N1, the same day).** The rest waits for Matt to pick after the one-shot.
+
+Two things turned out differently while building:
+- **A2:** a player's panels are the same width on both sides, so centring the map changed nothing. The map now slides to keep whoever's acting out from under the panels.
+- **A4:** the project was found already paused, 13 days after it was last used. Matt needs to restore it by hand once (steps in `PROGRESS.md`).
 
 ## How this was done, and what it can't tell you
 

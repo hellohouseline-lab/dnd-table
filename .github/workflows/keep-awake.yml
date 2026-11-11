@@ -1,0 +1,37 @@
+# Keeps the free Supabase project awake. The free plan pauses a project after a week without use,
+# and a paused project takes the whole table offline until it's restored by hand in the dashboard.
+# Once a day this asks the database one harmless question with the public (publishable) key, the
+# same one every browser already has. Row-level security means it's shown nothing.
+#
+# If the project is ever down or paused, this run fails and GitHub emails the repo's owner, which is
+# the early warning: open the Supabase dashboard and press Restore project.
+name: Keep the database awake
+
+on:
+  schedule:
+    # 06:17 UTC every day (an odd minute, away from the busy top of the hour).
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask the database one question
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          status=$(curl --silent --show-error --max-time 30 --retry 3 --retry-delay 20 --retry-all-errors \
+            --output /dev/null --write-out '%{http_code}' \
+            --header "apikey: $SUPABASE_KEY" --header "Authorization: Bearer $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/campaigns?select=id&limit=1") || status=000
+          echo "The database answered with status $status"
+          # Any answer from the database counts, even "not allowed"; no answer or a server error doesn't.
+          if [ "$status" = "000" ] || [ "$status" -ge 500 ]; then
+            echo "::error::The Supabase project didn't answer. It may be paused: open the dashboard and press Restore project."
+            exit 1
+          fi

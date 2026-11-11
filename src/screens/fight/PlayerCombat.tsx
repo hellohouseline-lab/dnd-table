@@ -131,6 +131,8 @@ type YourTurnProps = {
   title?: string
   /** Before the fight: placing your miniature, and whether you've said I'm in place. */
   placing?: { placed: boolean; onPlaced: (placed: boolean) => void } | null
+  /** End turn stays at the bottom of the column it scrolls in, so it's never out of sight (the player's screen). */
+  pinEnd?: boolean
 }
 
 /**
@@ -151,6 +153,7 @@ export function YourTurn({
   onEndTurn,
   title: heading,
   placing = null,
+  pinEnd = false,
 }: YourTurnProps) {
   const attacks = attacksLeft(turn, perAction)
   const free = actionFree(turn)
@@ -258,57 +261,71 @@ export function YourTurn({
           </span>
         </li>
       </ul>
-      {leap && (
-        <p className={styles.jump} title="A jump costs movement. Standing still first, it's half as far.">
-          Jump: {leap.long} ft long, {leap.high} ft high ({leap.standingLong} and {leap.standingHigh} from standing)
-        </p>
+      {canAct && (
+        <>
+          <div className={styles.moves} role="group" aria-label="Other actions">
+            {moves.map(([what, label, hint]) => (
+              <button
+                key={what}
+                type="button"
+                className={styles.move}
+                title={hint}
+                disabled={!myTurn || !free}
+                onClick={() => onAct(what)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {bonusMoves.length > 0 && (
+            <div className={styles.moves} role="group" aria-label="As a bonus action">
+              <span className={styles.bonusLabel}>Bonus action:</span>
+              {bonusMoves.map((move) => (
+                <button
+                  key={move}
+                  type="button"
+                  className={cx(styles.move, styles.moveBonus)}
+                  title={`${BONUS_WORDS[move]} with your bonus action, keeping your action`}
+                  disabled={!myTurn || turn.bonusUsed}
+                  onClick={() => onAct(`bonus_${move}` as TurnAction)}
+                >
+                  {BONUS_WORDS[move]}
+                </button>
+              ))}
+            </div>
+          )}
+          {/* The actions used less often, folded away so End turn stays in view on a laptop. */}
+          <details className={styles.more}>
+            <summary>More actions</summary>
+            <div className={styles.moves} role="group" aria-label="More actions">
+              {others.map(([what, label, hint]) => (
+                <button
+                  key={what}
+                  type="button"
+                  className={cx(styles.move, styles.moveSmall)}
+                  title={hint}
+                  disabled={!myTurn || !free}
+                  onClick={() => onAct(what)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {leap && (
+              <p className={styles.jump} title="A jump costs movement. Standing still first, it's half as far.">
+                Jump: {leap.long} ft long, {leap.high} ft high ({leap.standingLong} and {leap.standingHigh} from
+                standing)
+              </p>
+            )}
+          </details>
+        </>
       )}
-      <div className={styles.moves} role="group" aria-label="Other actions">
-        {moves.map(([what, label, hint]) => (
-          <button
-            key={what}
-            type="button"
-            className={styles.move}
-            title={hint}
-            disabled={!myTurn || !free || !canAct}
-            onClick={() => onAct(what)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className={styles.moves} role="group" aria-label="More actions">
-        {others.map(([what, label, hint]) => (
-          <button
-            key={what}
-            type="button"
-            className={cx(styles.move, styles.moveSmall)}
-            title={hint}
-            disabled={!myTurn || !free || !canAct}
-            onClick={() => onAct(what)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {bonusMoves.length > 0 && (
-        <div className={styles.moves} role="group" aria-label="As a bonus action">
-          <span className={styles.bonusLabel}>Bonus action:</span>
-          {bonusMoves.map((move) => (
-            <button
-              key={move}
-              type="button"
-              className={cx(styles.move, styles.moveBonus)}
-              title={`${BONUS_WORDS[move]} with your bonus action, keeping your action`}
-              disabled={!myTurn || turn.bonusUsed || !canAct}
-              onClick={() => onAct(`bonus_${move}` as TurnAction)}
-            >
-              {BONUS_WORDS[move]}
-            </button>
-          ))}
-        </div>
-      )}
-      <button type="button" className={styles.endTurn} disabled={!myTurn} onClick={onEndTurn}>
+      <button
+        type="button"
+        className={cx(styles.endTurn, pinEnd && styles.endTurnPinned)}
+        disabled={!myTurn}
+        onClick={onEndTurn}
+      >
         End turn
       </button>
     </section>

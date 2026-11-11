@@ -8,7 +8,16 @@ import styles from './SoundControls.module.css'
  * "Now playing" from design 02, with this listener's own volume. Browsers only play sound after a
  * click on the page, so until then it asks for one.
  */
-export function NowPlaying({ audio, className }: { audio: TableAudio; className?: string }) {
+export function NowPlaying({
+  audio,
+  chime,
+  className,
+}: {
+  audio: TableAudio
+  /** The chime that plays on your turn or when the DM asks you to roll, and its switch (players). */
+  chime?: { on: boolean; set: (on: boolean) => void }
+  className?: string
+}) {
   const [open, setOpen] = useState(false)
   if (!audio.owner) {
     return (
@@ -53,6 +62,12 @@ export function NowPlaying({ audio, className }: { audio: TableAudio; className?
             onChange={(event) => audio.setVolume(Number(event.target.value))}
           />
           <span className={styles.percent}>{Math.round(audio.volume * 100)}%</span>
+        </label>
+      )}
+      {open && !audio.locked && chime && (
+        <label className={styles.chime}>
+          <input type="checkbox" checked={chime.on} onChange={(event) => chime.set(event.target.checked)} />
+          <span>Chime when it&rsquo;s your turn or the DM asks you to roll</span>
         </label>
       )}
     </div>

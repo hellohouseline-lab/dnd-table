@@ -63,6 +63,11 @@ const NO_INSET: MapInset = { top: 0, right: 0, bottom: 0, left: 0 }
 type BattleMapProps = {
   map: Pick<Asset, 'path' | 'grid' | 'name'>
   inset?: MapInset
+  /**
+   * A miniature to keep in the clear: whoever's turn it is. When it changes (or that miniature
+   * moves) and it's under a panel or off the edge, the map slides just far enough to show it.
+   */
+  followId?: string | null
   tokens: MapToken[]
   onMove: (id: string, x: number, y: number) => void
   onSelect?: (id: string | null) => void
@@ -170,6 +175,7 @@ export default function BattleMap({
   onHand,
   onPing,
   inset = NO_INSET,
+  followId = null,
   className,
 }: BattleMapProps) {
   const [holder, setHolder] = useState<HTMLDivElement | null>(null)
@@ -196,6 +202,28 @@ export default function BattleMap({
     y: (height - mapHeight * scale) / 2 + pan.y,
   }
   const centre = (square: number, offset: number) => offset + (square + 0.5) * size
+
+  // Keep the followed miniature out from under the panels: slide the map the least that shows it.
+  const followed = followId ? tokens.find((t) => t.id === followId) : undefined
+  const followX = followed?.x
+  const followY = followed?.y
+  const ready = width > 0 && height > 0 && image !== null
+  useEffect(() => {
+    if (!ready || followX === undefined || followY === undefined) return
+    const margin = size * scale
+    const shift = (at: number, low: number, high: number) =>
+      high <= low ? (low + high) / 2 - at : at < low ? low - at : at > high ? high - at : 0
+    setPan((now) => {
+      const x =
+        (width - mapWidth * scale) / 2 + (inset.left - inset.right) / 2 + now.x + centre(followX, offsetX) * scale
+      const y = (height - mapHeight * scale) / 2 + now.y + centre(followY, offsetY) * scale
+      const dx = shift(x, inset.left + margin, width - inset.right - margin)
+      const dy = shift(y, inset.top + margin, height - inset.bottom - margin)
+      return dx === 0 && dy === 0 ? now : { x: now.x + dx, y: now.y + dy }
+    })
+    // Only when who is followed, or where they stand, changes: dragging the map away afterwards is left alone.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [followId, followX, followY, ready])
   const toSquare = (pixel: number, offset: number) => Math.max(0, Math.floor((pixel - offset) / size))
 
   // The pointer in grid squares (with fractions), for hands and pings.

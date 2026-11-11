@@ -142,6 +142,7 @@ export function MapStage({
             }}
             targeting={targeting !== null}
             reach={reach}
+            followId={actingToken?.id ?? null}
             aim={aimBand}
             areas={areas}
             onAreaClick={onAreaClick}
