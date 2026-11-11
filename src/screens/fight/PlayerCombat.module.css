@@ -507,3 +507,44 @@
   color: var(--pass);
   border-color: var(--pass);
 }
+
+/* The actions used less often, behind More actions. */
+.more summary {
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.more[open] summary {
+  margin-bottom: 6px;
+}
+
+.more .jump {
+  margin: 6px 0 0;
+}
+
+/* End turn stays at the bottom of the column it scrolls in: solid, so nothing shows through it. */
+.endTurnPinned {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  flex: none;
+  background: var(--gold);
+  color: var(--on-gold);
+  box-shadow: 0 -8px 12px -4px rgba(13, 10, 18, 0.9);
+}
+
+.endTurnPinned:hover:not(:disabled) {
+  background: var(--gold-light);
+}
+
+.endTurnPinned:disabled {
+  opacity: 1;
+  background: #17121c;
+  border-color: var(--chip-border);
+  color: var(--label);
+}

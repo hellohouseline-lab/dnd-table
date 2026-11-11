@@ -22,6 +22,7 @@ import { answerOffer, handOver, useGiftArrivals, useOffers, useStashControls } f
 import { useShopping } from '../../live/shops.ts'
 import type { Gift } from '../../live/notebook.ts'
 import { giftWords } from '../../rules/money.ts'
+import { setTableTitle } from '../../audio/attention.ts'
 import { playChime } from '../../audio/chime.ts'
 
 /** The player's table screen. The DM is sent to the DM screen; a player without a character, to make one. */
@@ -74,9 +75,10 @@ export function TableScreen({ campaignId }: { campaignId: string }) {
     else if (!character) navigate(`/c/${campaignId}/character/new`, { replace: true })
   }, [ready, me, character, campaignId])
 
+  const characterName = character?.name
   useEffect(() => {
-    if (character) document.title = `${character.name} · D&D Table`
-  }, [character])
+    if (characterName) setTableTitle(`${characterName} · D&D Table`)
+  }, [characterName])
 
   if (members.status === 'error' || party.status === 'error') {
     return (

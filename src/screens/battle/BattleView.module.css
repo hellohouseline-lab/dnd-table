@@ -104,10 +104,18 @@
   flex: 0 0 auto;
 }
 
+/* Next turn and its neighbours stay at the bottom of the left column, whatever is scrolled above. */
 .foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding-top: 8px;
+  background: var(--bg-scene);
+  box-shadow: 0 -10px 14px -6px rgba(13, 10, 18, 0.95);
 }
 
 .next {

@@ -9,6 +9,7 @@ import {
   type CallPresence,
 } from '../live/campaignChannel.ts'
 import { getCameraDetails, renewCameraKey } from '../live/campaigns.ts'
+import { LinkChip } from '../components/LinkChip.tsx'
 import { CallContext, type CallStatus, type TableCall } from './callContext.ts'
 import { checkDevices, loadDevices, saveDevices } from './devices.ts'
 import styles from './Call.module.css'
@@ -86,6 +87,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
   return (
     <TableCallLayer key={`${campaignId}:${userId}`} campaignId={campaignId} userId={userId}>
       {children}
+      {/* On a table's own screens: "Reconnecting…" while its live connection is down. */}
+      {inPath === campaignId && <LinkChip campaignId={campaignId} userId={userId} />}
     </TableCallLayer>
   )
 }

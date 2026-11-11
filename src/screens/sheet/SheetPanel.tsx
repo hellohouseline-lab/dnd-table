@@ -19,8 +19,7 @@ const TABS: { name: string; tab?: SheetTabName }[] = [
   { name: 'Inventory', tab: 'inventory' },
   { name: 'Powers', tab: 'powers' },
   { name: 'Your path', tab: 'path' },
-  { name: 'Journal' },
-  { name: 'Lore' },
+  // Journal and Lore arrive in Phase 2; they aren't shown until they work (decision 98).
 ]
 
 type SheetPanelProps = {

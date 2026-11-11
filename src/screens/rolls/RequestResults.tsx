@@ -282,9 +282,6 @@ export function RequestResults({
               {CONDITION_VERBS[condition]} the ones who failed
             </button>
           </div>
-          <button type="button" className={styles.outcome} disabled title="Handouts arrive in Phase 2">
-            Tell the passers a secret
-          </button>
         </div>
         {done.length > 0 && (
           <ul className={styles.done} aria-live="polite">

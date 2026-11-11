@@ -74,3 +74,23 @@
     animation: none;
   }
 }
+
+/* The turn chime's switch, under your volume. */
+.chime {
+  position: absolute;
+  top: calc(100% + 58px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(16, 12, 20, 0.96);
+  border: 1px solid var(--gold-rule);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.chime input {
+  accent-color: var(--gold);
+}

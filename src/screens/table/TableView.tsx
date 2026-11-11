@@ -18,6 +18,7 @@ import { rollForDm, type Roll } from '../../live/rolls.ts'
 import { useRollChanges } from '../../live/campaignChannel.ts'
 import type { RequestControls } from '../../live/useRollRequest.ts'
 import type { Asset } from '../../live/library.ts'
+import { useAttention, useTurnChime } from '../../audio/attention.ts'
 import { NowPlaying } from '../../audio/SoundControls.tsx'
 import callStyles from '../../call/Call.module.css'
 import { isMuted, useTableCall } from '../../call/callContext.ts'
@@ -204,6 +205,9 @@ function ArrivalCard({ arrival, onSeen, onOpen }: { arrival: Arrival; onSeen: ()
 }
 
 const BattleMap = lazy(() => import('../../map/BattleMap.tsx'))
+
+/** What floats over the player's map: the plate on the left, cameras on the right, the banner above, the hand below. */
+const MAP_INSET = { top: 100, right: 352, bottom: 196, left: 352 }
 const RulesPanel = lazy(() => import('../rules/RulesPanel.tsx'))
 
 const NO_CAST = () => Promise.reject(new Error('There’s no fight going on.'))
@@ -259,9 +263,9 @@ const PANEL_BUTTONS: { label: string; icon: IconName; tab?: SheetTabName; rules?
   { label: 'Sheet', icon: 'sheet', tab: 'sheet', title: 'Character sheet' },
   { label: 'Items', icon: 'items', tab: 'inventory', title: 'What you carry and your coins' },
   { label: 'Powers', icon: 'powers', tab: 'powers', title: 'Features and spells' },
-  // Rules takes the switched-off Journal's place until Phase 2 (decision 64).
+  // Rules takes the Journal's place until Phase 2 (decision 64). Lore (handouts) isn't built yet,
+  // so it isn't shown: nothing on a streamed screen should be a dead button (decision 98).
   { label: 'Rules', icon: 'rules', rules: true, title: 'The rules in plain words' },
-  { label: 'Lore', icon: 'lore', title: 'Handouts arrive in Phase 2' },
 ]
 
 /**
@@ -346,6 +350,9 @@ export function TableView({
   const mine = fight?.combatants.find((c) => c.characterId === character.id) ?? null
   // A parley pauses the fight: nobody acts until the DM goes back to it.
   const myTurn = Boolean(fight && mine && fight.encounter.currentId === mine.id && !fight.encounter.parley)
+  // Called back to the table: a chime and a mark in the tab's title for your turn or a roll you owe.
+  const chime = useTurnChime()
+  useAttention(request && askedMe && !myAnswer ? `Roll: ${request.label}` : myTurn ? 'Your turn' : null, chime.on)
   const acting = rows.find((r) => r.status === 'acting')
   const badges: Record<string, string> = {}
   for (const row of rows) {
@@ -356,6 +363,14 @@ export function TableView({
   // Your turn, as the server keeps it: movement left, and attacks left from your action.
   const tokens = combat?.tokens.tokens ?? []
   const myToken = tokens.find((t) => t.characterId === character.id)
+  // Whoever's turn it is, if the player can see their miniature: the map keeps them in the clear.
+  const actingToken = acting
+    ? tokens.find((t) =>
+        acting.combatant.characterId
+          ? t.characterId === acting.combatant.characterId
+          : t.combatantId === acting.combatant.id,
+      )
+    : undefined
   const feetLeft = mine ? movementLeft(mine.turn, character.speed) : character.speed
   const perAction = attacksPerAction(character.className, character.level)
   const mapView = combat
@@ -925,6 +940,8 @@ export function TableView({
               <BattleMap
                 map={combat.map}
                 tokens={mapView}
+                inset={MAP_INSET}
+                followId={actingToken?.id ?? myToken?.id ?? null}
                 selectedId={inspected}
                 onSelect={(id) => {
                   const token = tokens.find((t) => t.id === id)
@@ -1074,7 +1091,7 @@ export function TableView({
         {fight && combat && combat.events.length > 0 && (
           <CombatFeed className={styles.feed} events={combat.events} nameOf={nameOf} youId={mine?.id} limit={3} />
         )}
-        {audio && <NowPlaying audio={audio} />}
+        {audio && <NowPlaying audio={audio} chime={chime} />}
         {shopping && shopping.shops.length > 0 && !shopOpen && (
           <button type="button" className={styles.shopButton} onClick={() => setShopOpen(true)}>
             <Icon name="items" size={22} />
@@ -1306,6 +1323,7 @@ export function TableView({
               if (what === 'search') roll(skillCheck(character, 'perception', choices))
             }}
             onEndTurn={combat.endTurn}
+            pinEnd
             placing={
               fight.encounter.placing && combat.setPlaced
                 ? { placed: mine.placed, onPlaced: (placed) => combat.setPlaced?.(mine, placed) }
