@@ -14,7 +14,8 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
   - **Keep the database awake (A4).** `.github/workflows/keep-awake.yml` asks the database one harmless question every day at 06:17 UTC with the public key. If the project doesn't answer, the run fails and GitHub emails Matt.
   - **Reconnecting… (A5).** A chip at the top of any table screen once the live connection has been down for 3 seconds, or the browser is offline. **Not yet seen against a real dropped connection.**
   - **No dead buttons (A6).** Lore, Journal, Too hard? Rebalance, Reveal hidden areas, Chapter title card and Tell the passers a secret are hidden until they're built.
-  - No database change. Tests: 522 unit (1 new), 82 preview browser tests (1 new, at 1366 × 700 and 1440 × 800). The database tests weren't run: the project was paused (see Waiting on Matt).
+  - No database change. Tests: 522 unit (1 new), 82 preview browser tests (1 new, at 1366 × 700 and 1440 × 800).
+  - **The project was found paused on 11 November** (unused since 29 October). Matt restored it the same day: it's healthy, all migrations are in place, the 3 tables and 129 uploads are there, every database test passes, and the keep-awake job ran green (the database answers the public key with "not allowed", which counts as an answer).
 - **Placing the miniatures before a fight (live).** Decided with Matt: the DM presses Start, initiative is rolled while placing, and players have an I'm in place button that shows the DM a tick.
   - **A new fight opens with placing.** Players see **Place your miniature** in their turn panel: drag the miniature anywhere, roll initiative, and press **I'm in place** ("✓ You're in place").
   - **The DM sees:**
@@ -407,12 +408,7 @@ Live site: https://hellohouseline-lab.github.io/dnd-table/
 - First stream: 5 to 6 December 2026.
 
 ## Waiting on Matt
-- **Restore the Supabase project: it's paused (found 11 November), so the live table can't load.** It went more than a week unused after 29 October.
-  1. Open https://supabase.com/dashboard and sign in.
-  2. Click the project **dnd-table**.
-  3. Press **Restore project** and wait a few minutes until it says it's healthy.
-  4. Open the live site and check **Your tables** loads.
-  5. On GitHub, open the repo's **Actions** tab, click **Keep the database awake**, then **Run workflow**, and check it goes green. From then on it runs by itself every morning.
+- **Before the one-shot, in a real call:** check the turn chime can be heard, and that players can find **More actions**.
 - **After the one-shot, pick what's next** from `docs/UX_REVIEW.md`: B8 to B14 and C15 to C17.
 - **Try P1a** on the night: Go here between two scenes with a player watching. If a player is too quiet even at 100% on your screen, ask them to turn up **Your microphone** on their own camera tile.
 - **Try P1b:** open a spellcaster's sheet, Powers tab, and search the Spellbook.
